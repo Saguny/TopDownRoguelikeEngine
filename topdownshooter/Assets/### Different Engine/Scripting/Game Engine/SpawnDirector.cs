@@ -39,6 +39,9 @@ public class SpawnDirector : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float secretBossChancePerCheck = 0.0005f;
     [SerializeField] private float secretBossCheckInterval = 30f;
 
+    // NEW: scene reference to the hallucination ui (drag in inspector)
+    [SerializeField] private SecretBossHallucinationUI secretBossUi;
+
     [Header("Final Rush UI")]
     [SerializeField] private Slider finalRushSlider;
 
@@ -292,6 +295,13 @@ public class SpawnDirector : MonoBehaviour
         if (go != null)
         {
             secretBossSpawnedThisRun = true;
+
+            // NEW: hook up the ui to the spawned secret boss
+            var behavior = go.GetComponent<SecretBossBehavior>();
+            if (behavior != null && secretBossUi != null)
+            {
+                behavior.Init(secretBossUi.gameObject);
+            }
         }
     }
 

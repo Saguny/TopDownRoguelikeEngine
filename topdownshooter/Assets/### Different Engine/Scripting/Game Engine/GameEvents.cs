@@ -11,4 +11,5 @@ public static class GameEvents
     public static Action<int> OnEnemyKilled;
     public static Action<GameObject> OnPurgeEnemiesWithFx;
     public static Action OnCollectAllGears;
+    public static Action<SecretBossBehavior> OnSecretBossSpawned;
 }

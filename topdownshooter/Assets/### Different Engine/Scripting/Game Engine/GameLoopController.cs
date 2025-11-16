@@ -8,15 +8,37 @@ public class GameLoopController : MonoBehaviour
     [SerializeField] private float breakAfterWave = 2f;
     [SerializeField] private GameObject subjectiveDeathFx;
 
+    // new: scene ui reference
+    [Header("secret boss ui")]
+    [SerializeField] private SecretBossHallucinationUI hallucinationUi;
+
     private int waveIndex;
     private float elapsed;
     private int waveKills;
     private bool finalRush;
     private float totalRun;
 
-    private void OnEnable() => GameEvents.OnEnemyKilled += OnEnemyKilled;
-    private void OnDisable() => GameEvents.OnEnemyKilled -= OnEnemyKilled;
+    private void OnEnable()
+    {
+        GameEvents.OnEnemyKilled += OnEnemyKilled;
+        GameEvents.OnSecretBossSpawned += OnSecretBossSpawned;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.OnEnemyKilled -= OnEnemyKilled;
+        GameEvents.OnSecretBossSpawned -= OnSecretBossSpawned;
+    }
+
     private void Start() => StartCoroutine(Loop());
+
+    // this is where we inject the scene ui into the spawned prefab
+    private void OnSecretBossSpawned(SecretBossBehavior boss)
+    {
+        if (boss == null || hallucinationUi == null) return;
+
+        boss.Init(hallucinationUi.gameObject);
+    }
 
     private IEnumerator Loop()
     {

@@ -6988,9 +6988,10 @@ MonoBehaviour:
   fastPhasePostClearDelay: 1
   bossArchetype: {fileID: 11400000, guid: b5a152337a0dd734facb49ee513816db, type: 2}
   secretBossArchetype: {fileID: 11400000, guid: 256a27c8ddb8c7a4f947e8be4e336b35, type: 2}
-  secretBossMinRunTime: 5
-  secretBossChancePerCheck: 1
-  secretBossCheckInterval: 5
+  secretBossMinRunTime: 90
+  secretBossChancePerCheck: 0.0005
+  secretBossCheckInterval: 30
+  secretBossUi: {fileID: 1972766150}
   finalRushSlider: {fileID: 1684449902}
   baseMaxSpawnsPerFrame: 3
   extraSpawnsPerFrameAtMax: 6
@@ -7015,6 +7016,7 @@ MonoBehaviour:
   baseKillsToClear: 300
   breakAfterWave: 5
   subjectiveDeathFx: {fileID: 1185364733144309390, guid: 8dbdeab253bc16a41b359021d27d4fb4, type: 3}
+  hallucinationUi: {fileID: 0}
 --- !u!4 &1446568115
 Transform:
   m_ObjectHideFlags: 0
@@ -10221,8 +10223,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -16, y: -89}
-  m_SizeDelta: {x: 405.1617, y: 14.255}
+  m_AnchoredPosition: {x: 0.000044703, y: -67}
+  m_SizeDelta: {x: 444.7, y: 14.255}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1981542288
 MonoBehaviour:
