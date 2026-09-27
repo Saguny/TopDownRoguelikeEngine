@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3983d9866324329a06e14efeddea69a, type: 3}
+  m_Name: DragonLine
+  m_EditorClassIdentifier: 
+  title: Dragon Line
+  type: 24
+  icon: {fileID: 0}
+  iconFrames: []
+  iconFps: 6
+  includeInPool: 1
+  value: 0
+  additive: 0
+  description: An azure dragon flies a line cast across the screen.
+  level: 0
+  maxLevel: 5
+  overcharge: 0
+  overchargeCeiling: 1
+  overchargeHalfStacks: 8
+  evolutionPartner: {fileID: 11400000, guid: 3507a1f6098e4e37a533cacec337109f, type: 2}
+  evolvedIcon: {fileID: 0}
+  evolvedIconFrames: []
+  evolvedTitle: Coiling Azure Dragon

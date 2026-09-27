@@ -68,6 +68,8 @@ public class EnemyMovement : MonoBehaviour
         ClearHeading();
         _slowFactor = 1f;
         _slowUntil = 0f;
+        _shove = Vector2.zero;
+        _shoveUntil = 0f;
         _smoothedDirection = Vector2.zero;
         _avoidanceSide = 0f;
         _radius = -1f;
@@ -120,6 +122,7 @@ public class EnemyMovement : MonoBehaviour
             velocity = _smoothedDirection.normalized * (_speed * slow * _headingSpeedMul);
         }
         velocity += push;
+        if (now < _shoveUntil) velocity += _shove;
         _rigidbody.linearVelocity = velocity;
 
         // only touch the renderer and animator when something actually changes
@@ -202,6 +205,20 @@ public class EnemyMovement : MonoBehaviour
     // a temporary slow from a weapon. the strongest one running wins, and it wears off by itself
     private float _slowFactor = 1f;
     private float _slowUntil;
+
+    private Vector2 _shove;
+    private float _shoveUntil;
+
+    // an outside force for a moment, on top of its own walk: a dragon's coils pushing it back, a
+    // tornado pulling it in. it still moves under a freeze. a stronger shove replaces a weaker one
+    public void Shove(Vector2 velocity, float seconds)
+    {
+        if (Time.time >= _shoveUntil || velocity.sqrMagnitude >= _shove.sqrMagnitude)
+        {
+            _shove = velocity;
+            _shoveUntil = Time.time + Mathf.Max(0f, seconds);
+        }
+    }
 
     public void ApplySlow(float factor, float seconds)
     {

@@ -11,7 +11,8 @@ public class FinalRushArenaController : MonoBehaviour
 
     public bool HasArena => activeArena != null;
     public Vector3 Center => activeArena != null ? activeArena.transform.position : Vector3.zero;
-    public float Radius => activeArena != null ? activeArena.Radius : 0f;
+    // where the player is held: just inside the ring of seals
+    public float Radius => activeArena != null ? activeArena.WalkRadius : 0f;
 
     private void Awake()
     {
