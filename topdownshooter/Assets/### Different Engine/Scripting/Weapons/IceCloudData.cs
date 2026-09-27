@@ -75,6 +75,8 @@ public class IceCloudData : WeaponData<IceCloud>
     public float sprayFreezeSeconds = 2f;
     [Tooltip("snow piles each spray leaves around it")]
     [Min(0)] public int sprayPiles = 5;
+    [Tooltip("snow bursts scattered over the field with every spray, on top of the ones on the enemies it freezes")]
+    [Min(0)] public int sprayGusts = 10;
     [Tooltip("how fast the tornado wanders")]
     public float tornadoSpeed = 1.2f;
 
@@ -93,7 +95,10 @@ public class IceCloudData : WeaponData<IceCloud>
     [Tooltip("the ice over a frozen enemy")]
     public Sprite[] iceFrames = Array.Empty<Sprite>();
     [Min(0.01f)] public float iceFps = 16f;
+    [Tooltip("the tornado seen from three quarters above, standing on its base")]
     public Sprite[] tornadoFrames = Array.Empty<Sprite>();
+    [Tooltip("art pixels from the Tornado Frames' centre down to where it touches the ground")]
+    public float tornadoBasePixels = 44f;
     [Min(0.01f)] public float tornadoFps = 14f;
     [Tooltip("played where a spray freezes an enemy")]
     public GameObject frostBurstFx;

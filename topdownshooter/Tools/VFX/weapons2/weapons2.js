@@ -480,34 +480,44 @@ function makeCloud() {
   return el("ic_cloud", "IceCloud", Wd, H, [{ name: "cloud", frames }], Array(N).fill(150), [["drift", 0, N - 1]]);
 }
 
-// the snowfall on the ground under a cloud, 96x96, for a 1.6 unit radius: a thin dithered frost on
-// the floor with a dotted rim, and flakes drifting down through it, looping
+// the snow falling from a cloud, 96x144, the canvas centre on the middle of the ground it lands
+// on (drawn for a 1.6 unit radius): just flakes, drifting down from the cloud's underside 50px
+// above to their spots on the ground (an ellipse, the floor seen at three quarters), settling for
+// a moment as they land. no ring and no frost on the floor: only the snow itself. loops
 function makeSnow() {
-  const S = 96, c = 48, R = 45.5, N = 6, frost = [], flakes = [];
-  const r = D.rng(1600), flakeSet = Array.from({ length: 38 }, () => [r() * S, r() * S, r() < 0.2 ? 1 : 0, r()]);
-  for (let f = 0; f < N; f++) {
-    const G = img(S, S);
-    for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) {
-      const d = Math.hypot(x + 0.5 - c, y + 0.5 - c);
-      if (d > R) continue;
-      if (d > R - 1.5) { if (((Math.atan2(y - c, x - c) * R / 3 + f) | 0) % 3 !== 0) put(G, x, y, P.I3); continue; }
-      // frost settling: scattered specks, thicker toward the rim, a few twinkling
-      const k = d / R, h = hash2(x, y, 16);
-      if (h < 0.012 + 0.05 * k * k) put(G, x, y, k > 0.75 ? P.I3 : P.I2);
-      else if (h > 0.9985 && (x + f) % 3 === 0) put(G, x, y, P.W);
-    }
-    frost.push(G);
-    const Fl = img(S, S);
-    for (const [x0, y0, big, ph] of flakeSet) {
-      // falling down and a little sideways, wrapping round over the loop
-      const y = (y0 + f * S / N) % S, x = (x0 + Math.sin(ph * TAU + f * TAU / N) * 2 + S) % S;
-      if (Math.hypot(x - c, y - c) > R - 2) continue;
-      if (big) twinkle(Fl, x, y, 1, [P.W, P.I4]);
-      else { put(Fl, x, y, P.I5); if (ph > 0.5) put(Fl, x, y - 1, P.I3); }
-    }
-    flakes.push(Fl);
+  const Wd = 96, H = 144, cx = 48, cy = 72, RX = 44, RY = 18, FALL = 52, N = 6;
+  const r = D.rng(1600);
+  const flakes = [];
+  while (flakes.length < 46) {
+    // thicker toward the middle of the cloud
+    const a = r() * TAU, d = Math.sqrt(r()) * (r() < 0.7 ? 0.8 : 1);
+    flakes.push({ gx: cx + Math.cos(a) * d * RX, gy: cy + Math.sin(a) * d * RY, phase: r(), size: r() < 0.25 ? 2 : r() < 0.5 ? 1 : 0, sway: r() * TAU });
   }
-  return el("ic_snow", "IceCloud", S, S, [{ name: "frost", frames: frost }, { name: "flakes", frames: flakes }], Array(N).fill(90), [["fall", 0, N - 1]]);
+  const frames = [];
+  for (let f = 0; f < N; f++) {
+    const im = img(Wd, H);
+    // the far flakes first, so the near ones fall in front of them
+    for (const fl of [...flakes].sort((p, q) => p.gy - q.gy)) {
+      const t = (fl.phase + f / N) % 1;
+      const x = Math.round(fl.gx + Math.sin(fl.sway + t * TAU) * 2);
+      if (t > 0.9) {
+        // landed: a dab of snow on the floor that's gone by the next fall
+        if (t < 0.97) { put(im, x, fl.gy, P.I4); put(im, x + 1, fl.gy, P.I3); }
+        continue;
+      }
+      const y = Math.round(fl.gy - FALL * (1 - t / 0.9));
+      if (fl.size === 2) {
+        px(im, [[x, y - 1], [x - 1, y], [x + 1, y], [x, y + 1]], P.I5); put(im, x, y, P.W);
+        put(im, x + 1, y + 1, P.I2);                      // a touch of shade so it reads on pale floors
+      } else if (fl.size === 1) {
+        put(im, x, y, P.W); put(im, x + 1, y, P.I4); put(im, x + 1, y + 1, P.I2);
+      } else {
+        put(im, x, y, t < 0.15 ? P.I4 : P.I5); put(im, x, y + 1, P.I2);
+      }
+    }
+    frames.push(im);
+  }
+  return el("ic_snow", "IceCloud", Wd, H, [{ name: "snow", frames }], Array(N).fill(90), [["fall", 0, N - 1]]);
 }
 
 // a snow pile, 24x14: heaps up (frames 0-3, resting on 3), then melts away (4-7) into a puddle
@@ -591,47 +601,121 @@ function makeIceBurst() {
   return el("ic_burst", "IceCloud", S, S, [{ name: "burst", frames }], Array(N).fill(40), [["burst", 0, N - 1]]);
 }
 
-// the frost tornado, 48x72, standing on its base: a funnel of wind bands spiralling up and out,
-// snow chunks whirled round it, a skirt of snow kicked up where it touches the ground. loops
-function makeTornado() {
-  const Wd = 48, H = 72, c = 24, N = 6, frames = [];
-  const base = 66, top = 4;
-  for (let f = 0; f < N; f++) {
-    const im = img(Wd, H);
-    for (let y = top; y <= base; y++) {
-      const k = (base - y) / (base - top);                       // 0 at the ground, 1 at the top
-      const half = 3 + 19 * Math.pow(k, 1.3);
-      const sway = Math.sin(k * 3.2 + f * TAU / N) * 3 * k;
-      for (let x = 0; x < Wd; x++) {
-        const u = (x + 0.5 - c - sway) / half;
-        if (Math.abs(u) > 1) continue;
-        // bands wrapping round the funnel: a stripe pattern that climbs as the frames go by
-        const band = (y * 0.5 + Math.asin(Math.max(-1, Math.min(1, u))) * 5 - f * (8 / N) * 2 + 64) % 8;
-        const lit = u > 0.3, shadow = u < -0.55;
-        let col = band < 2 ? (lit ? P.W : P.I4) : band < 4 ? (lit ? P.I4 : P.I3) : band < 6 ? P.I3 : P.I2;
-        if (shadow && col !== P.W) col = band < 4 ? P.I2 : P.I1;
-        put(im, x, y, col);
+// the frost tornado, 96x120, seen from three quarters above like the rest of the game: a funnel
+// of wind bands winding up from a point on the ground to a wide mouth, and into that mouth we see
+// down on the vortex itself, spiral arms of snow wheeling round a dark eye. round the foot a
+// churning ring of snow; chunks of snow and ice shards whirled round it at every height, behind
+// it and in front, with streaks behind them; white gusts wrapping it; snow flung out off the top.
+// the base sits 44px below the canvas centre. loops over 6 frames
+const TORNADO = { W: 96, H: 120, cx: 48, base: 104, top: 24, N: 6, ws: 1, detail: true };
+function tornadoFrame(f, T = TORNADO) {
+  const { W: Wd, H, cx, base, top, N, ws, detail } = T;
+  const spin = f * TAU / N;
+  const width = k => (4 + 32 * Math.pow(k, 1.55)) * ws;              // half width, k 0 at the foot, 1 at the mouth
+  const axis = k => cx + (Math.sin(k * 2.6 + spin) * 3 * k + k * 4) * ws;   // it bends and wobbles as it turns
+  const back = img(Wd, H), body = img(Wd, H), front = img(Wd, H);
+
+  // the ground: a ring of snow churned up round the foot, in streaks turning with it
+  for (let y = Math.floor(base - 16 * ws); y <= Math.ceil(base + 14 * ws); y++) for (let x = 0; x < Wd; x++) {
+    const dx = (x + 0.5 - cx) / (42 * ws), dy = (y + 0.5 - base) / (14 * ws), d = Math.hypot(dx, dy);
+    if (d > 1 || d < 0.18) continue;
+    const ang = Math.atan2(dy, dx), streak = (ang * 3 + d * 9 - spin * 2 + TAU * 8) % TAU;
+    if (streak > 2.6) continue;
+    if (bayer(x, y) > 1.2 - d * 0.9) continue;
+    put(dy < 0 ? back : front, x, y, streak < 0.7 ? P.I4 : d < 0.55 ? P.I3 : P.I2);
+  }
+
+  // the funnel: wind bands spiralling up it, lit on the right, the far side of each band darker
+  const topY = top + 8 * ws;
+  for (let y = topY; y <= base; y++) {
+    const k = (base - y) / (base - topY), w = width(k), ax = axis(k);
+    for (let x = Math.floor(ax - w); x <= Math.ceil(ax + w); x++) {
+      const u = (x + 0.5 - ax) / w;
+      if (Math.abs(u) > 1) continue;
+      const theta = Math.asin(u);                                    // round the front of the funnel
+      const band = ((theta * 6 / Math.PI + y * 0.28 / ws - f * 12 / N) % 6 + 6) % 6;
+      const lit = u > 0.25, dark = u < -0.55;
+      let c = band < 1.4 ? P.W : band < 2.6 ? P.I4 : band < 4 ? P.I3 : P.I2;
+      if (lit && c === P.I3) c = P.I4;
+      if (dark) c = c === P.W ? P.I4 : c === P.I4 ? P.I3 : P.I1;
+      if (band >= 5.2 && Math.abs(u) < 0.8) c = P.I1;                // the gaps between the bands
+      put(body, x, y, c);
+    }
+  }
+  // the mouth, seen from above: spiral arms of snow round a dark eye, a bright lip round it
+  const mx = axis(1), rx = width(1) + 2, ry = rx * 0.36;
+  for (let y = Math.floor(topY - ry); y <= Math.ceil(topY + ry); y++) for (let x = Math.floor(mx - rx); x <= Math.ceil(mx + rx); x++) {
+    const dx = (x + 0.5 - mx) / rx, dy = (y + 0.5 - topY) / ry, r = Math.hypot(dx, dy);
+    if (r > 1) continue;
+    const phi = Math.atan2(dy, dx);
+    const arm = ((phi * 3 - r * 7 + spin * 3) % TAU + TAU) % TAU / TAU;   // three arms, winding in
+    let c;
+    if (r > 0.86) c = (x + y + f) % 3 === 0 ? P.W : P.I4;                // the lip
+    else if (r < 0.2) c = r < 0.1 ? P.I0 : P.I1;                          // the eye
+    else c = arm < 0.18 ? P.W : arm < 0.4 ? P.I4 : arm < 0.65 ? P.I3 : r < 0.45 ? P.I1 : P.I2;
+    put(body, x, y, c);
+  }
+  const solid = withOutline(body, P.I0);
+  // frost lightning crackling down the funnel now and then
+  if (detail && (f === 1 || f === 4)) {
+    const r3 = D.rng(300 + f), k0 = 0.85, k1 = 0.15;
+    const pts = D.bolt(r3, axis(k0) + (f === 1 ? -8 : 10) * ws, base - k0 * (base - topY), axis(k1) + (f === 1 ? 4 : -3) * ws, base - k1 * (base - topY), 7 * ws, 3);
+    const M = D.polyline(mask(Wd, H), pts);
+    D.paint(solid, D.minus(D.dilate(M, 1, false), M), P.I3);
+    D.paint(solid, M, P.W);
+  }
+  // a cold glow round it, dithered, so it stands out on any floor
+  const glow = detail ? halo(solid, P.I1, 0.5, f, 2) : img(Wd, H);
+
+  // snow chunks and ice shards whirled round it: behind it when on the far side, in front on the
+  // near side, each with a short streak behind it
+  const orbit = [[0.08, 5, 0.55], [0.3, 6, 0.4], [0.55, 7, 0.34], [0.8, 6, 0.3], [0.97, 5, 0.26]];   // [height, how many, ry/rx]
+  if (detail) orbit.forEach(([k, n, sq], j) => {
+    const y0 = base - k * (base - topY), R = width(k) + (7 + j * 2) * ws, ax = axis(k);
+    for (let i = 0; i < n; i++) {
+      const a = spin * (1.4 - k * 0.5) + j * 1.9 + i * TAU / n;
+      const layer = Math.sin(a) > 0 ? front : back;
+      const x = ax + Math.cos(a) * R, y = y0 + Math.sin(a) * R * sq;
+      for (let s2 = 1; s2 <= 6; s2++) {                                 // the streak behind it
+        const b2 = a - s2 * 0.07, sx = ax + Math.cos(b2) * R, sy = y0 + Math.sin(b2) * R * sq;
+        if (bayer(Math.round(sx), Math.round(sy)) < 1 - s2 * 0.14) put(layer, sx, sy, s2 <= 2 ? P.I4 : s2 <= 4 ? P.I3 : P.I2);
+      }
+      if ((i + j) % 3 === 0) {                                          // an ice shard, long and glinting
+        px(layer, [[x, y - 2], [x, y - 1], [x - 1, y], [x + 1, y], [x, y + 1]], P.I3); put(layer, x, y, P.W); put(layer, x, y - 1, P.I5);
+        px(layer, [[x - 1, y - 2], [x + 1, y + 1]], P.I1);
+      } else if ((i + j) % 3 === 1) {                                   // a big chunk of snow
+        px(layer, [[x - 1, y], [x, y - 1], [x + 1, y - 1], [x, y], [x + 1, y], [x + 2, y], [x, y + 1], [x + 1, y + 1]], P.I5);
+        px(layer, [[x + 1, y - 1], [x + 2, y]], P.W); px(layer, [[x - 1, y + 1], [x, y + 2], [x + 1, y + 2]], P.I1);
+      } else {                                                          // a small one
+        px(layer, [[x, y], [x + 1, y], [x, y + 1], [x + 1, y + 1]], P.I5); put(layer, x + 1, y, P.W); put(layer, x, y + 2, P.I1);
       }
     }
-    // snow chunks whirling round it, in front and behind
-    for (let k = 0; k < 7; k++) {
-      const h = top + 8 + k * 8, kk = (base - h) / (base - top), R = 5 + 21 * Math.pow(kk, 1.3);
-      const a = f * TAU / N + k * 1.7, x = c + Math.cos(a) * R, y = h + Math.sin(a) * 2;
-      put(im, x, y, P.W); put(im, x + 1, y, P.I4); if (k % 2) put(im, x, y - 1, P.I3);
+  });
+  // gusts: white arcs wrapping the funnel's near side
+  for (let g = 0; g < (detail ? 3 : 0); g++) {
+    const k = 0.2 + g * 0.3, y0 = base - k * (base - topY), R = width(k) + 3 * ws, ax = axis(k), a0 = spin * 2 + g * 2.2;
+    for (let i = 0; i < 14; i++) {
+      const a = a0 + i * 0.1;
+      if (Math.sin(a) <= 0.05) continue;
+      put(front, ax + Math.cos(a) * R, y0 + Math.sin(a) * R * 0.3, i > 10 ? P.I4 : P.W);
     }
-    const out = withOutline(im, P.I0);
-    // the skirt of snow kicked up at its foot, and wind streaks round it (not outlined: loose snow)
-    for (let x = 6; x < 42; x++) for (let y = base - 1; y <= base + 4; y++) {
-      const d = Math.hypot((x - c) / 16, (y - base - 1) / 3.2);
-      if (d < 1 && !D.get(im, x, y) && bayer(x + f * 2, y) < 0.75 - d * 0.6) put(out, x, y, d < 0.5 ? P.I4 : P.I3);
-    }
-    for (let k = 0; k < 3; k++) {
-      const y = 18 + k * 16, kk = (base - y) / (base - top), R = 6 + 21 * Math.pow(kk, 1.3), a0 = f * TAU / N + k * 2;
-      for (let i = 0; i < 6; i++) { const a = a0 + i * 0.12; if (Math.sin(a) > 0) put(out, c + Math.cos(a) * R, y + Math.sin(a) * 2.5, P.I5); }
-    }
-    frames.push(out);
   }
-  return el("ic_tornado", "IceCloud", Wd, H, [{ name: "tornado", frames }], Array(N).fill(70), [["spin", 0, N - 1]]);
+  // snow flung out off the top, drifting outward over the loop
+  const rr = D.rng(88);
+  for (let i = 0; i < (detail ? 14 : 4); i++) {
+    const a = rr() * TAU, t = (rr() + f / N) % 1, d = rx * (0.9 + t * 0.6);
+    const x = mx + Math.cos(a) * d, y = topY + Math.sin(a) * d * 0.36 - t * 10 * ws;
+    if (bayer(Math.round(x), Math.round(y)) < 1 - t * 0.7) put(Math.sin(a) > 0 ? front : back, x, y, t < 0.5 ? P.W : P.I3);
+  }
+
+  const out = img(Wd, H);
+  D.over(out, glow); D.over(out, back); D.over(out, solid); D.over(out, front);
+  return out;
+}
+function makeTornado() {
+  const frames = [];
+  for (let f = 0; f < TORNADO.N; f++) frames.push(tornadoFrame(f));
+  return el("ic_tornado", "IceCloud", TORNADO.W, TORNADO.H, [{ name: "tornado", frames }], Array(TORNADO.N).fill(70), [["spin", 0, TORNADO.N - 1]]);
 }
 
 function makeIceIcons() {
@@ -649,19 +733,8 @@ function makeIceIcons() {
     for (let k = 0; k < 6; k++) { const x = 9 + k * 3, y = 16 + ((k * 5 + f * 2) % 9); twinkle(out, x, y, k % 3 === 0 ? 1 : 0, [P.W, P.I3]); }
     a.push(out);
 
-    // evolved: the tornado, snow flung off it
-    const ev = img(S, S);
-    for (let y = 3; y <= 28; y++) {
-      const k = (28 - y) / 25, half = 1.5 + 11 * Math.pow(k, 1.2), sway = Math.sin(k * 3 + f * 1.57) * 2 * k;
-      for (let x = 0; x < S; x++) {
-        const u = (x + 0.5 - 16 - sway) / half;
-        if (Math.abs(u) > 1) continue;
-        const band = (y * 0.6 + u * 4 - f * 2 + 40) % 6;
-        put(ev, x, y, band < 2 ? P.W : band < 4 ? P.I4 : P.I3);
-      }
-    }
-    const evo = withOutline(ev, P.I0);
-    for (let k = 0; k < 5; k++) { const a2 = f * 1.57 + k * 1.3, x = 16 + Math.cos(a2) * 14, y = 8 + k * 4 + Math.sin(a2) * 2; put(evo, x, y, P.W); }
+    // evolved: the frost tornado, a small one, seen from three quarters above like the real one
+    const evo = tornadoFrame(f, { W: 32, H: 32, cx: 15, base: 27, top: 3, N: 4, ws: 0.33, detail: false });
     b.push(evo);
   }
   return [

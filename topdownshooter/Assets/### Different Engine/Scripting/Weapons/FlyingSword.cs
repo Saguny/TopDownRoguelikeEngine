@@ -37,7 +37,7 @@ public class FlyingSword : Weapon<FlyingSwordData>
     private readonly List<Pair> pairs = new List<Pair>();
     private readonly List<EnemyHealth> touching = new List<EnemyHealth>();
     private Camera cam;
-    private float timer, cageTimer;
+    private float timer, cageTimer, topWall;
     private Sprite plainLaser;
 
     private void Update()
@@ -49,6 +49,7 @@ public class FlyingSword : Weapon<FlyingSwordData>
         if (cam == null) return;
 
         var lv = Data.At(Level);
+        topWall = TopWall();
 
         // with nobody in range it waits, ready, and throws as soon as someone shows up
         timer += dt;
@@ -196,7 +197,7 @@ public class FlyingSword : Weapon<FlyingSwordData>
         if (b.pos.x < c.x - halfW && b.dir.x < 0f) { b.dir.x = -b.dir.x; b.pos.x = c.x - halfW; hit = true; }
         else if (b.pos.x > c.x + halfW && b.dir.x > 0f) { b.dir.x = -b.dir.x; b.pos.x = c.x + halfW; hit = true; }
         if (b.pos.y < c.y - halfH && b.dir.y < 0f) { b.dir.y = -b.dir.y; b.pos.y = c.y - halfH; hit = true; }
-        else if (b.pos.y > c.y + halfH && b.dir.y > 0f) { b.dir.y = -b.dir.y; b.pos.y = c.y + halfH; hit = true; }
+        else if (b.pos.y > topWall && b.dir.y > 0f) { b.dir.y = -b.dir.y; b.pos.y = topWall; hit = true; }
         if (!hit) return false;
 
         // a spent cage sword doesn't bounce: it has come to its edge
@@ -206,6 +207,21 @@ public class FlyingSword : Weapon<FlyingSwordData>
         b.bouncesLeft--;
         b.speed = Mathf.Min(Data.maxSpeed * SpeedMul, b.speed * (1f + lv.wallAcceleration));
         return true;
+    }
+
+    // the top of the play area: the screen's top edge, or just under the level progress bar when
+    // it's there, so blades bounce off the bar and embed below it instead of hiding behind it
+    private float TopWall()
+    {
+        float top = cam.transform.position.y + cam.orthographicSize;
+        var bar = ProgressBarGradient.Active;
+        if (bar != null && bar.isActiveAndEnabled && bar.TryScreenBottom(out float screenY) && screenY > 0f && screenY < Screen.height)
+        {
+            float barBottom = cam.ScreenToWorldPoint(new Vector3(0f, screenY, -cam.transform.position.z)).y;
+            // a little clear of it, so a sword stuck there shows whole
+            top = Mathf.Min(top, barBottom - 0.2f);
+        }
+        return top;
     }
 
     private EnemyHealth NextTarget(Vector2 from, EnemyHealth not)

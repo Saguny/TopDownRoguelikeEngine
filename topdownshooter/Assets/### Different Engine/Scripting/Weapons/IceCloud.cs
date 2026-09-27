@@ -100,7 +100,8 @@ public class IceCloud : Weapon<IceCloudData>
         var c = new Cloud
         {
             cloud = WeaponFx.Make(Fx, "Cloud", null, WeaponFx.Disc, Data.cloudColor, Data.cloudLayer, Data.cloudOrder),
-            snow = WeaponFx.Make(Fx, "Snowfall", null, WeaponFx.Ring, new Color(1f, 1f, 1f, 0.35f), Data.cloudLayer, Data.cloudOrder - 1),
+            // only the snow itself: no marker on the ground under it
+            snow = WeaponFx.Make(Fx, "Snowfall", null, null, Color.white, Data.cloudLayer, Data.cloudOrder - 1),
         };
         return c;
     }
@@ -134,7 +135,7 @@ public class IceCloud : Weapon<IceCloudData>
             var view = Vector2.Lerp(c.fromView, c.toView, k) + new Vector2(0f, Mathf.Sin(now * 0.9f + c.wobble) * 0.03f);
             Vector2 ground = cam.ViewportToWorldPoint(new Vector3(view.x, view.y, z));
 
-            c.cloud.enabled = c.snow.enabled = true;
+            c.cloud.enabled = true;
             c.cloud.transform.position = ground + Vector2.up * Data.cloudHeight;
             c.snow.transform.position = ground;
             if (Data.Animated)
@@ -145,13 +146,13 @@ public class IceCloud : Weapon<IceCloudData>
                 c.cloud.transform.localScale = Vector3.one * (radius * 2.1f / Mathf.Max(0.01f, cloudWidth));
                 var snow = Pick(Data.snowFrames, frame + (int)c.wobble);
                 c.snow.sprite = snow;
-                c.snow.color = snow != null ? Color.white : new Color(1f, 1f, 1f, 0.35f);
+                c.snow.enabled = snow != null;
                 c.snow.transform.localScale = Vector3.one * (radius / Mathf.Max(0.01f, Data.snowArtRadius));
             }
             else
             {
                 WeaponFx.Resize(c.cloud, radius * 2.2f);
-                WeaponFx.Resize(c.snow, radius * 2f);
+                c.snow.enabled = false;
             }
 
             Snow(ground, radius, lv, now);
@@ -261,8 +262,10 @@ public class IceCloud : Weapon<IceCloudData>
         var sr = WeaponFx.Make(Fx, "Frost Tornado", null, WeaponFx.Disc, Data.tornadoColor, Data.tornadoLayer, Data.tornadoOrder);
         Vector2 at = TouchDown();
         Vector2 wander = Random.insideUnitCircle.normalized;
-        float spray = Data.sprayInterval * 0.5f, life = Mathf.Max(1f, Data.tornadoSeconds);
-        Juice.Shake(0.12f);
+        float spray = 0f, life = Mathf.Max(1f, Data.tornadoSeconds);
+        // it touches down hard: a shake and a first blast of snow straight away
+        Juice.Shake(0.3f);
+        Spray(at);
 
         for (float t = 0f; t < life; t += Time.deltaTime)
         {
@@ -276,7 +279,9 @@ public class IceCloud : Weapon<IceCloudData>
             at += wander * Data.tornadoSpeed * dt;
             if (((at + wander) - me).magnitude < Data.tornadoMinDistance * 0.8f) at = me + away.normalized * Data.tornadoMinDistance;
 
-            Draw(sr, at, t);
+            // it winds up out of nothing and unwinds back into it at the end
+            float grow = Mathf.Min(Mathf.Clamp01(t / 0.35f), Mathf.Clamp01((life - t) / 0.35f));
+            Draw(sr, at, t, 1f - (1f - grow) * (1f - grow));
 
             // it drags the horde in
             EnemiesIn(at, Data.pullRadius * AreaMul, touching);
@@ -309,23 +314,30 @@ public class IceCloud : Weapon<IceCloudData>
             if (!Hit(e, Data.sprayDamage * Might)) Frost.Apply(e, Data.sprayFreezeSeconds, Data.iceFrames, Data.iceFps);
         }
         for (int i = 0; i < Data.sprayPiles; i++) DropPile(at + Random.insideUnitCircle * radius * 0.8f);
+
+        // gusts of snow bursting all over the field it sprays, not only on the enemies it catches
+        if (Data.frostBurstFx != null)
+            for (int i = 0; i < Data.sprayGusts; i++)
+                FxOneShot.Play(Data.frostBurstFx, at + Random.insideUnitCircle * radius, Random.Range(0f, 360f), Random.Range(0.8f, 1.4f));
+        Juice.Shake(0.08f);
     }
 
-    private void Draw(SpriteRenderer sr, Vector2 at, float t)
+    private void Draw(SpriteRenderer sr, Vector2 at, float t, float grow)
     {
         var frame = Pick(Data.tornadoFrames, (int)(t * Data.tornadoFps));
+        float scale = AreaMul * Mathf.Max(0.05f, grow);
         if (frame != null)
         {
             sr.sprite = frame;
             sr.color = Color.white;
-            sr.transform.localScale = Vector3.one * AreaMul;
+            sr.transform.localScale = Vector3.one * scale;
             // drawn standing on its base: the base sits on the point
-            sr.transform.position = at + Vector2.up * frame.bounds.extents.y * AreaMul;
+            sr.transform.position = at + Vector2.up * (Data.tornadoBasePixels / frame.pixelsPerUnit) * scale;
         }
         else
         {
-            WeaponFx.Resize(sr, 2.2f * AreaMul);
-            sr.transform.position = at + Vector2.up * 1.1f * AreaMul;
+            WeaponFx.Resize(sr, 2.2f * scale);
+            sr.transform.position = at + Vector2.up * 1.1f * scale;
             sr.transform.rotation = Quaternion.Euler(0f, 0f, t * 720f);
         }
     }

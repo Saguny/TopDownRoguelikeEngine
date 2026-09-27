@@ -117,6 +117,39 @@ public class ProgressBarGradient : MonoBehaviour
 
     private RectTransform Bar() => (RectTransform)(slider ? slider.transform : fillImage.transform);
 
+    // the bar on screen, for things that bounce round the screen's edges (the Flying Sword): its
+    // bottom is their top wall, so they don't disappear behind it
+    public static ProgressBarGradient Active { get; private set; }
+
+    private void OnEnable() => Active = this;
+
+    private void OnDisable()
+    {
+        if (Active == this) Active = null;
+    }
+
+    private static readonly Vector3[] corners = new Vector3[4];
+
+    // the lowest point of the bar and its background on screen, in pixels up from the bottom
+    public bool TryScreenBottom(out float y)
+    {
+        y = float.MaxValue;
+        var canvas = GetComponentInParent<Canvas>();
+        if (canvas == null) return false;
+        var root = canvas.rootCanvas;
+        var cam = root.renderMode == RenderMode.ScreenSpaceOverlay ? null : root.worldCamera;
+        Lowest((RectTransform)transform, cam, ref y);
+        if (slider || fillImage) Lowest(Bar(), cam, ref y);
+        return y < float.MaxValue;
+    }
+
+    private static void Lowest(RectTransform rect, Camera cam, ref float y)
+    {
+        if (rect == null) return;
+        rect.GetWorldCorners(corners);
+        foreach (var c in corners) y = Mathf.Min(y, RectTransformUtility.WorldToScreenPoint(cam, c).y);
+    }
+
     private void Paint(float t)
     {
         // a pop taller that settles back
