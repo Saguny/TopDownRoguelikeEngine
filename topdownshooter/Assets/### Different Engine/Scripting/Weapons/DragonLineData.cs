@@ -115,6 +115,24 @@ public class DragonLineData : WeaponData<DragonLine>
     public LevelStats At(int level) =>
         levels == null || levels.Length == 0 ? default : levels[Mathf.Clamp(level - 1, 0, levels.Length - 1)];
 
+    public override void Attributes(int level, StatContext st, List<Attribute> into)
+    {
+        if (IsEvolved(level))
+        {
+            Add(into, "Fire damage", N(Hurt(st, fireDamage, AttackClass)));
+            Add(into, "Head damage", N(Hurt(st, fireDamage * evolvedHeadMultiplier, AttackClass)));
+            Add(into, "Coil damage", N(Hurt(st, coilDamage, AttackClass)));
+            Add(into, "Segments", evolvedSegments.ToString());
+            Add(into, "Cooldown", Sec(Every(st, evolvedCooldown)));
+            return;
+        }
+        var s = At(level);
+        Add(into, "Dragons", s.dragons.ToString());
+        Add(into, "Body damage", N(Hurt(st, s.damage, AttackClass)));
+        Add(into, "Head damage", N(Hurt(st, s.damage * headMultiplier, AttackClass)));
+        Add(into, "Cooldown", Sec(Every(st, s.cooldown)));
+    }
+
     public override string Describe(int level)
     {
         if (IsEvolved(level))

@@ -38,6 +38,14 @@ public class ElectricAuraData : WeaponData<ElectricAuraWeapon>
     public LevelStats At(int level) =>
         levels == null || levels.Length == 0 ? default : levels[Mathf.Clamp(level - 1, 0, levels.Length - 1)];
 
+    public override void Attributes(int level, StatContext st, List<Attribute> into)
+    {
+        var s = At(level);
+        Add(into, "Damage", N(Hurt(st, s.damage, AttackClass)));
+        Add(into, "Radius", N(Wide(st, s.radius)));
+        Add(into, "Hits each enemy every", Sec(Every(st, s.interval, UpgradeType.AuraCooldown)));
+    }
+
     public override string Describe(int level)
     {
         var s = At(level);

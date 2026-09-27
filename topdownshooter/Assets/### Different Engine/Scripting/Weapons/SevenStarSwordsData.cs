@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System;
 using UnityEngine;
 
@@ -88,6 +89,20 @@ public class SevenStarSwordsData : WeaponData<SevenStarSwords>
 
     public LevelStats At(int level) =>
         levels == null || levels.Length == 0 ? default : levels[Mathf.Clamp(level - 1, 0, levels.Length - 1)];
+
+    public override void Attributes(int level, StatContext st, List<Attribute> into)
+    {
+        var s = At(level);
+        Add(into, "Swords", SwordsAt(level).ToString());
+        Add(into, "Cut damage", N(Hurt(st, s.contactDamage, AttackClass)));
+        Add(into, "Orbit radius", N(Wide(st, orbitRadius)));
+        if (IsEvolved(level))
+        {
+            Add(into, "Star damage", N(Hurt(st, starDamage, AttackClass)));
+            Add(into, "Stars per sword", starsPerSword.ToString());
+            Add(into, "Stars every", Sec(Every(st, starInterval)));
+        }
+    }
 
     public override string Describe(int level)
     {

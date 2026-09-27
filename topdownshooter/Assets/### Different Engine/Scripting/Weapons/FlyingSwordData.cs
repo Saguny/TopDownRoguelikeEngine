@@ -131,6 +131,22 @@ public class FlyingSwordData : WeaponData<FlyingSword>
     public LevelStats At(int level) =>
         levels == null || levels.Length == 0 ? default : levels[Mathf.Clamp(level - 1, 0, levels.Length - 1)];
 
+    public override void Attributes(int level, StatContext st, List<Attribute> into)
+    {
+        var s = At(level);
+        Add(into, "Blades", s.blades.ToString());
+        Add(into, "Bounces", s.bounces.ToString());
+        Add(into, "Damage", N(Hurt(st, s.damage, AttackClass)));
+        Add(into, "Faster per bounce", $"+{bounceAcceleration * 100f:0}%");
+        Add(into, "Cooldown", Sec(Every(st, s.cooldown)));
+        if (IsEvolved(level))
+        {
+            Add(into, "Tripwire damage", $"{N(Hurt(st, laserDamage, AttackClass))} / {Sec(laserTick)}");
+            Add(into, "Tripwire lasts", Sec(laserSeconds));
+            Add(into, "Array every", Sec(Every(st, cageCooldown)));
+        }
+    }
+
     public override string Describe(int level)
     {
         if (IsEvolved(level))

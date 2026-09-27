@@ -36,6 +36,7 @@ public class LoadoutPanel : MonoBehaviour
         public TMP_Text tmp;
         public Text text;
         public IconAnimator anim;
+        public TooltipTrigger tip;
         public Vector3 scale;
     }
 
@@ -140,6 +141,9 @@ public class LoadoutPanel : MonoBehaviour
         else { label = u.Level.ToString(); colour = levelColor; }
         SetText(s, label, colour);
 
+        // hover it, or click to pin it, for its attributes
+        if (s.tip != null) s.tip.Item = u;
+
         // the highlighted item plays its idle loop and pulses
         if (s.anim != null) s.anim.Play(preview ? u.CardIconFrames : null, u.iconFps);
         if (preview && !isNew) pulsing = s;
@@ -175,6 +179,9 @@ public class LoadoutPanel : MonoBehaviour
             s.text = levelT.GetComponent<Text>();
         }
         if (s.icon != null && !s.icon.TryGetComponent(out s.anim)) s.anim = s.icon.gameObject.AddComponent<IconAnimator>();
+        // the icon catches the pointer; the slot shows the tooltip
+        if (s.icon != null) s.icon.raycastTarget = true;
+        if (!go.TryGetComponent(out s.tip)) s.tip = go.AddComponent<TooltipTrigger>();
         return s;
     }
 

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System;
 using UnityEngine;
 
@@ -92,6 +93,17 @@ public class PeachTalismansData : WeaponData<PeachTalismans>
 
     public LevelStats At(int level) =>
         levels == null || levels.Length == 0 ? default : levels[Mathf.Clamp(level - 1, 0, levels.Length - 1)];
+
+    public override void Attributes(int level, StatContext st, List<Attribute> into)
+    {
+        var s = At(level);
+        if (IsEvolved(level)) Add(into, "Talismans at once", evolvedCount.ToString());
+        Add(into, "Impact", N(Hurt(st, s.impactDamage, AttackClass)));
+        Add(into, "Burn per second", N(Hurt(st, s.damagePerSecond, AttackClass)));
+        Add(into, "Burns for", Sec(stickSeconds));
+        Add(into, "Slow", $"{(1f - stuckSlow) * 100f:0}%");
+        Add(into, "Cooldown", Sec(Every(st, s.interval)));
+    }
 
     public override string Describe(int level)
     {

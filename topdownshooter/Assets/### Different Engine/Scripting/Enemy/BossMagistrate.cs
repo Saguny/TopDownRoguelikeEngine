@@ -70,6 +70,12 @@ public class BossMagistrate : MonoBehaviour
     public float minionHealthShare = 0.03f;
     public GameObject raiseFx;
     public float raiseRadius = 3.2f;
+    [Tooltip("seconds a seal glows under each spot before the dead come up there, so the player can get clear")]
+    public float raiseWarning = 0.9f;
+    [Tooltip("the radius of that seal, world units")]
+    public float raiseMarkRadius = 0.75f;
+    [Tooltip("seconds a raised jiangshi takes to climb out of the ground; it can't hurt or move until it's up")]
+    public float riseSeconds = 0.5f;
 
     [Header("Health bar")]
     public float barWidth = 2.2f;
@@ -296,6 +302,10 @@ public class BossMagistrate : MonoBehaviour
         }
     }
 
+    // it casts, a seal lights up under every spot round the player where the dead will come up
+    // and fills over the warning, then lightning strikes each and a jiangshi claws its way out of
+    // the ground there, harmless until it's up. the spots are fixed when the seals appear, so the
+    // player can read them and step out of the ring
     private IEnumerator Raise()
     {
         pose = Pose.Cast;
@@ -305,20 +315,63 @@ public class BossMagistrate : MonoBehaviour
 
         int n = Mathf.Min(minions + (torn ? 2 : 0), maxMinions - raised.Count);
         float start = Random.value * 360f;
+        var spots = new List<Vector2>(n);
         for (int i = 0; i < n; i++)
         {
             float a = (start + i * 360f / Mathf.Max(1, n)) * Mathf.Deg2Rad;
-            Vector2 at = (Vector2)player.position + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * raiseRadius;
+            spots.Add((Vector2)player.position + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * raiseRadius);
+        }
+
+        float warning = raiseWarning / Pace;
+        foreach (var at in spots)
+        {
+            var mark = FxOneShot.Play(markPrefab, at, 0f, raiseMarkRadius / Mathf.Max(0.01f, artRadius));
+            if (mark == null) continue;
+            if (mark.TryGetComponent(out Flipbook seal)) seal.PlayOver(warning);
+            if (mark.TryGetComponent(out FxOneShot shot)) shot.lifetime = warning + 0.15f;
+        }
+        Juice.Shake(slamShake * 0.3f);
+        yield return new WaitForSeconds(warning);
+
+        foreach (var at in spots)
+        {
             FxOneShot.Play(raiseFx, at);
-            yield return new WaitForSeconds(0.12f);
             var go = ObjectPool.For(minionPrefab).Get(at, Quaternion.identity);
             if (go.TryGetComponent(out EnemyHealth e))
             {
                 e.SetScaled(Mathf.Max(1f, health.Max * minionHealthShare));
                 raised.Add(e);
             }
+            StartCoroutine(ClimbOut(go));
+            yield return new WaitForSeconds(0.07f);
         }
         yield return new WaitForSeconds(0.2f);
+    }
+
+    // a raised jiangshi comes up out of the ground: it grows from a sliver at its feet, overshoots
+    // and settles, and only once it's up can it move or hurt anyone
+    private IEnumerator ClimbOut(GameObject go)
+    {
+        if (go == null) yield break;
+        var t = go.transform;
+        Vector3 rest = t.localScale;
+        go.TryGetComponent(out EnemyContactDamage bite);
+        go.TryGetComponent(out EnemyMovement move);
+        if (bite != null) bite.enabled = false;
+        float seconds = Mathf.Max(0.05f, riseSeconds);
+        if (move != null) move.ApplySlow(0f, seconds);
+
+        for (float k = 0f; k < 1f && go.activeInHierarchy; k += Time.deltaTime / seconds)
+        {
+            float up = k < 0.7f ? Mathf.Lerp(0.05f, 1.15f, k / 0.7f) : Mathf.Lerp(1.15f, 1f, (k - 0.7f) / 0.3f);
+            float wide = k < 0.7f ? Mathf.Lerp(1.3f, 0.9f, k / 0.7f) : Mathf.Lerp(0.9f, 1f, (k - 0.7f) / 0.3f);
+            t.localScale = new Vector3(rest.x * wide, rest.y * up, rest.z);
+            yield return null;
+        }
+        // back to normal even if it was killed on the way up, so the pooled one isn't left harmless
+        if (go == null) yield break;
+        t.localScale = rest;
+        if (bite != null) bite.enabled = true;
     }
 
     // the seal tears: a shudder and a burst of corpse fire, and from now on it's faster

@@ -92,6 +92,17 @@ public class CommandTokenData : WeaponData<CommandToken>
     public LevelStats At(int level) =>
         levels == null || levels.Length == 0 ? default : levels[Mathf.Clamp(level - 1, 0, levels.Length - 1)];
 
+    public override void Attributes(int level, StatContext st, List<Attribute> into)
+    {
+        var s = At(level);
+        Add(into, "Key", activationKey.ToString());
+        Add(into, "Damage (whole screen)", N(Hurt(st, s.damage, AttackClass)));
+        Add(into, "Recharge", Sec(Every(st, s.cooldown)));
+        if (s.stunSeconds > 0f) Add(into, "Stun", Sec(s.stunSeconds));
+        if (s.pullsWen) Add(into, "Pulls wen", "yes");
+        Add(into, "Spawns paused for", Sec(spawnPauseSeconds));
+    }
+
     public override string Describe(int level)
     {
         var s = At(level);

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 // what kind of harm a weapon does. every weapon is one or the other; StatContext keeps a damage
@@ -42,6 +43,24 @@ public abstract class WeaponData : UpgradeData
     public string GetEvolvedTitle() => string.IsNullOrEmpty(evolvedTitle) ? "Evolved " + GetBaseTitle() : evolvedTitle;
 
     public abstract Weapon AddTo(GameObject owner);
+
+    // one line of a weapon's numbers, as the attribute tooltip shows it (ItemTooltip)
+    public readonly struct Attribute
+    {
+        public readonly string label, value;
+        public Attribute(string label, string value) { this.label = label; this.value = value; }
+    }
+
+    // the weapon's numbers at a level, with the player's stats applied (Might, its attack class,
+    // Cooldown, Area) when there's a StatContext: what it actually does right now
+    public virtual void Attributes(int level, StatContext stats, List<Attribute> into) { }
+
+    protected static float Hurt(StatContext s, float damage, AttackClass c) => s != null ? damage * s.MightMul * s.ClassMul(c) : damage;
+    protected static float Every(StatContext s, float seconds, UpgradeType type = UpgradeType.Weapon) => s != null ? s.CooldownFor(type, seconds) : seconds;
+    protected static float Wide(StatContext s, float radius) => s != null ? radius * s.AreaMul : radius;
+    protected static string N(float v) => v.ToString(v >= 100f ? "0" : "0.#");
+    protected static string Sec(float v) => v.ToString("0.##") + "s";
+    protected static void Add(List<Attribute> into, string label, string value) => into.Add(new Attribute(label, value));
 
     public override string GetLevelProgress() => NextPickEvolves ? "Evolution" : Level == 0 ? "New" : $"Lv. {Level + 1}";
 

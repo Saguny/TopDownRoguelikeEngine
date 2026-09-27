@@ -31,6 +31,12 @@ public class UpgradeMenuUI : MonoBehaviour
     private Action<UpgradeData> onChosen;
     private int selectedIndex = 0;
 
+    // the card under the mouse, or -1. it wins the preview over the keyboard's selection, so a
+    // movement key still held from the game can't drag the preview off the card being looked at
+    private int hoveredIndex = -1;
+    private bool navigationWas = true;
+    private bool navigationOff;
+
     private void Awake()
     {
         if (panel != null)
@@ -52,8 +58,11 @@ public class UpgradeMenuUI : MonoBehaviour
                 if (!b.TryGetComponent(out EventTrigger trigger)) trigger = b.gameObject.AddComponent<EventTrigger>();
                 var enter = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
                 int index = i;
-                enter.callback.AddListener(_ => FocusButton(index));
+                enter.callback.AddListener(_ => { hoveredIndex = index; FocusButton(index); });
                 trigger.triggers.Add(enter);
+                var exit = new EventTrigger.Entry { eventID = EventTriggerType.PointerExit };
+                exit.callback.AddListener(_ => { if (hoveredIndex == index) hoveredIndex = -1; });
+                trigger.triggers.Add(exit);
             }
         }
     }
@@ -91,6 +100,17 @@ public class UpgradeMenuUI : MonoBehaviour
         }
 
         panel.SetActive(true);
+        hoveredIndex = -1;
+        // the menu steps through its cards itself (HandleKeyboard). the event system's own
+        // navigation is off while it's open: a movement key still held from the game would
+        // otherwise keep moving the selection on its own
+        var es = EventSystem.current;
+        if (es != null && !navigationOff)
+        {
+            navigationWas = es.sendNavigationEvents;
+            es.sendNavigationEvents = false;
+            navigationOff = true;
+        }
         current.Clear();
         current.AddRange(filtered);
 
@@ -138,6 +158,11 @@ public class UpgradeMenuUI : MonoBehaviour
                 }
             }
 
+            // hovering a card shows its weapon's numbers now and after the pick
+            if (!btn.TryGetComponent(out TooltipTrigger tip)) tip = btn.gameObject.AddComponent<TooltipTrigger>();
+            tip.Item = data;
+            tip.compare = true;
+
             int index = i;
             btn.onClick.AddListener(() => Choose(index));
         }
@@ -166,6 +191,12 @@ public class UpgradeMenuUI : MonoBehaviour
 
     public void Close()
     {
+        hoveredIndex = -1;
+        if (navigationOff)
+        {
+            navigationOff = false;
+            if (EventSystem.current != null) EventSystem.current.sendNavigationEvents = navigationWas;
+        }
         if (panel != null)
             panel.SetActive(false);
     }
@@ -188,6 +219,7 @@ public class UpgradeMenuUI : MonoBehaviour
 
         if (step != 0)
         {
+            hoveredIndex = -1;      // the keyboard takes over from the mouse
             selectedIndex = NextActiveIndex(selectedIndex, step);
             FocusButton(selectedIndex);
         }
@@ -247,6 +279,7 @@ public class UpgradeMenuUI : MonoBehaviour
         get
         {
             if (!IsOpen) return null;
+            if (hoveredIndex >= 0 && hoveredIndex < current.Count && IsActive(hoveredIndex)) return current[hoveredIndex];
             var selected = EventSystem.current != null ? EventSystem.current.currentSelectedGameObject : null;
             int index = selectedIndex;
             for (int i = 0; selected != null && i < upgradeButtons.Length; i++)

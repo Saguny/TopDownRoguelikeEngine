@@ -56,6 +56,18 @@ public class BowData : WeaponData<BowWeapon>
     public LevelStats At(int level) =>
         levels == null || levels.Length == 0 ? default : levels[Mathf.Clamp(level - 1, 0, levels.Length - 1)];
 
+    public override void Attributes(int level, StatContext st, List<Attribute> into)
+    {
+        var s = At(level);
+        int extra = st != null ? st.ArrowCountTotal : 0;
+        float dmg = s.damage * (st != null ? st.arrowDamageMul : 1f);
+        Add(into, "Arrows", (s.arrows + extra).ToString());
+        Add(into, "Damage", N(Hurt(st, dmg, AttackClass)));
+        Add(into, "Cooldown", IsEvolved(level) ? Sec(evolvedInterval) + " (none)" : Sec(Every(st, s.cooldown, UpgradeType.ArrowCooldown)));
+        Add(into, "Speed", N(s.speed * (st != null ? st.arrowSpeedMul * st.WeaponSpeedMul : 1f)));
+        if (st != null && st.PierceTotal > 0) Add(into, "Pierce", st.PierceTotal.ToString());
+    }
+
     public override string Describe(int level)
     {
         if (IsEvolved(level))
