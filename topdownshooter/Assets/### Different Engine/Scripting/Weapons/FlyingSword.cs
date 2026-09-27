@@ -219,10 +219,12 @@ public class FlyingSword : Weapon<FlyingSwordData>
             b.hitAt[e] = now;
             Hit(e, damage * (1f + Data.bonusPerBounce * b.bounced));
 
-            if (Data.bounceOffStrong && !b.spent && Strong(e))
+            // only while it's heading into them: one already on its way out isn't turned again
+            Vector2 off = b.pos - (Vector2)e.transform.position;
+            if (Data.bounceOffStrong && !b.spent && Strong(e) && Vector2.Dot(b.dir, off) < 0f)
             {
-                Vector2 off = b.pos - (Vector2)e.transform.position;
                 Bounce(b, off.sqrMagnitude > 0.0001f ? off.normalized : -b.dir, e.transform.position);
+                b.hitAt[e] = now;   // the bounce forgets who it hit; not this one, it's still inside it
                 break;
             }
         }
@@ -291,7 +293,8 @@ public class FlyingSword : Weapon<FlyingSwordData>
     {
         float top = cam.transform.position.y + cam.orthographicSize;
         var bar = ProgressBarGradient.Active;
-        if (bar != null && bar.isActiveAndEnabled && bar.TryScreenBottom(out float screenY) && screenY > 0f && screenY < Screen.height)
+        // only a bar along the top of the screen counts: anything lower would be a wall of nothing
+        if (bar != null && bar.isActiveAndEnabled && bar.TryScreenBottom(out float screenY) && screenY > Screen.height * 0.75f && screenY < Screen.height)
         {
             float barBottom = cam.ScreenToWorldPoint(new Vector3(0f, screenY, -cam.transform.position.z)).y;
             // a little clear of it, so a blade anchored there shows whole

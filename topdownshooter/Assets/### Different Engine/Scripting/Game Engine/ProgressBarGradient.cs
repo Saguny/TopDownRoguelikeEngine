@@ -130,7 +130,8 @@ public class ProgressBarGradient : MonoBehaviour
 
     private static readonly Vector3[] corners = new Vector3[4];
 
-    // the lowest point of the bar and its background on screen, in pixels up from the bottom
+    // the lowest point of the bar as drawn, its background and fill, on screen in pixels up from
+    // the bottom. not this object's own rect: that's an invisible holder in the middle of the screen
     public bool TryScreenBottom(out float y)
     {
         y = float.MaxValue;
@@ -138,8 +139,9 @@ public class ProgressBarGradient : MonoBehaviour
         if (canvas == null) return false;
         var root = canvas.rootCanvas;
         var cam = root.renderMode == RenderMode.ScreenSpaceOverlay ? null : root.worldCamera;
-        Lowest((RectTransform)transform, cam, ref y);
-        if (slider || fillImage) Lowest(Bar(), cam, ref y);
+        if (backgroundImage) Lowest(backgroundImage.rectTransform, cam, ref y);
+        if (fillImage) Lowest(fillImage.rectTransform, cam, ref y);
+        else if (slider) Lowest(Bar(), cam, ref y);
         return y < float.MaxValue;
     }
 
