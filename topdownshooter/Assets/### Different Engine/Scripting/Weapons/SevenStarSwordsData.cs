@@ -39,7 +39,7 @@ public class SevenStarSwordsData : WeaponData<SevenStarSwords>
     [Tooltip("seconds between bursts, before Cooldown")]
     public float starInterval = 1.3f;
     [Tooltip("base damage of each star, before Might")]
-    public float starDamage = 15f;
+    public float starDamage = 10f;
     [Min(1)] public int starsPerSword = 8;
     [Tooltip("before Weapon Speed")]
     public float starSpeed = 7f;
