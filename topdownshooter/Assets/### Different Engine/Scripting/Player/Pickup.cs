@@ -1,41 +1,27 @@
-﻿using UnityEngine;
+using UnityEngine;
+using UnityEngine.Serialization;
 
+// what a wen pickup is worth and how it sounds. the prefab is only read for its settings and its
+// look: drops go straight into PickupSystem as data (a position each), which draws them all as one
+// mesh and collects them in one loop. one placed in a scene by hand turns itself into data too
 public class Pickup : MonoBehaviour
 {
     [Header("Pickup Settings")]
-    [SerializeField] private int gears = 1;
+    [SerializeField, FormerlySerializedAs("gears")] private int wen = 1;
 
     [Header("Pickup Sound")]
-    [SerializeField] private AudioClip pickupSound;         // 🎵 Sound beim Aufheben
-    [Range(0f, 1f)][SerializeField] private float pickupVolume = 1f; // 🔊 Lautstärkeregler
+    [SerializeField] private AudioClip pickupSound;
+    [Range(0f, 1f)][SerializeField] private float pickupVolume = 1f;
 
-    private bool pulling;
-    private Transform target;
+    public int Wen => wen;
+    public AudioClip Sound => pickupSound;
+    public float Volume => pickupVolume;
 
-    public void PullTo(Transform t)
+    private void OnEnable()
     {
-        pulling = true;
-        target = t;
+        if (Application.isPlaying) PickupSystem.Adopt(this);
     }
 
-    private void Update()
-    {
-        if (!pulling || target == null) return;
-        transform.position = Vector3.Lerp(transform.position, target.position, Time.deltaTime * 8f);
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (!other.CompareTag("Player")) return;
-
-        if (other.TryGetComponent(out PlayerInventory inv))
-            inv.AddGears(gears);
-
-        // 🔊 Optional: Sound für Gears
-        if (pickupSound != null)
-            AudioSource.PlayClipAtPoint(pickupSound, transform.position, pickupVolume);
-
-        Destroy(gameObject);
-    }
-
+    // for anything that still pulls a pickup in by hand
+    public void PullTo(Transform _) { }
 }

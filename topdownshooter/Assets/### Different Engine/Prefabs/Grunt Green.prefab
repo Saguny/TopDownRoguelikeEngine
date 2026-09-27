@@ -19,7 +19,6 @@ GameObject:
   - component: {fileID: 5718124482810303360}
   - component: {fileID: 5088608087563689285}
   - component: {fileID: 4450218037733749501}
-  - component: {fileID: 3845682338706684569}
   m_Layer: 11
   m_Name: Grunt Green
   m_TagString: Enemy
@@ -191,15 +190,15 @@ MonoBehaviour:
   baseGearsOnKill: 1
   gearDropChance: 0.1
   deathVfxPrefab: {fileID: 1185364733144309390, guid: 8dbdeab253bc16a41b359021d27d4fb4, type: 3}
-  deathSound: {fileID: 8300000, guid: 51f49a435780a224f9fd0f008a22a0c3, type: 3}
-  deathVolume: 0.324
+  deathSound: {fileID: 8300000, guid: 5eec17cadaeab7b40a70810e685603bd, type: 3}
+  deathVolume: 0.45
   healItemPrefab: {fileID: 1653245802588275055, guid: 9b80ca85b45a48f428cf70029f106a15, type: 3}
   healDropChance: 0.0005
   spriteRenderer: {fileID: 5088608087563689285}
   hitColor: {r: 1, g: 0, b: 0, a: 1}
   flashDuration: 0.1
-  hitSound: {fileID: 8300000, guid: dd45327e668360443bbb60b08529d526, type: 3}
-  hitVolume: 0.16
+  hitSound: {fileID: 8300000, guid: ce99a0e0e1574605a192c0be864e97d2, type: 3}
+  hitVolume: 0.3
   audioSource: {fileID: 0}
   destroyOnDeath: 1
 --- !u!95 &5718124482810303360
@@ -376,23 +375,3 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &3845682338706684569
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4184005365869111389}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad6891fd2c692dc47b62f49e2704c89d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  barSprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  sortingLayer: HUD
-  bgOrder: 199
-  fgOrder: 200
-  size: {x: 0.8, y: 0.08}
-  offset: {x: 0, y: -0.8, z: 0}
-  bgPadding: 0.04
-  pixelSnap: 0

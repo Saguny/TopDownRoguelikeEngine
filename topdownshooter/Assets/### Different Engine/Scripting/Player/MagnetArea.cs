@@ -11,19 +11,29 @@ public class MagnetArea : MonoBehaviour
     private void Awake()
     {
         cc = GetComponent<CircleCollider2D>();
+
+        // the magnet needs a circle collider of its own, on a child. next to a Rigidbody2D that
+        // circle is the body, and turning it into a trigger stops every contact hit from landing
+        if (!cc.isTrigger && TryGetComponent<Rigidbody2D>(out _))
+        {
+            Debug.LogError($"MagnetArea on '{name}' would turn its body collider into a trigger. Put it on a child object with its own CircleCollider2D.", this);
+            enabled = false;
+            return;
+        }
+
         cc.isTrigger = true;
         stats = GetComponentInParent<StatContext>();
     }
 
+    // the magnet's reach in world units, for PickupSystem
+    public float Radius => (cc != null ? cc.radius : baseRadius) * Mathf.Abs(transform.lossyScale.x);
+
     private void Update()
     {
-        float mul = stats ? stats.pickupRadiusMul : 1f;
+        float mul = stats ? stats.PickupRadiusTotal : 1f;
         cc.radius = baseRadius * mul;
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.TryGetComponent(out Pickup p))
-            p.PullTo(transform);
-    }
+    // no trigger callback: wen is pulled by PickupSystem reading Radius, and heals were never
+    // magnetised (they wait to be walked over)
 }

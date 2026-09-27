@@ -1,0 +1,102 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a65d07184d61a3140b4a99c72393565a, type: 3}
+  m_Name: VfxLibrary
+  m_EditorClassIdentifier: 
+  enemyDeath:
+  - {fileID: 3983494996387700251, guid: 163bcfd446cadf5479ed001643c4386a, type: 3}
+  - {fileID: 396829444849065116, guid: 163bcfd446cadf5479ed001643c4386a, type: 3}
+  - {fileID: -4178389161521509668, guid: 163bcfd446cadf5479ed001643c4386a, type: 3}
+  - {fileID: 4090695083976377990, guid: 163bcfd446cadf5479ed001643c4386a, type: 3}
+  - {fileID: -2308346476393127492, guid: 163bcfd446cadf5479ed001643c4386a, type: 3}
+  - {fileID: 7426170102754082955, guid: 163bcfd446cadf5479ed001643c4386a, type: 3}
+  - {fileID: -137403935680486791, guid: 163bcfd446cadf5479ed001643c4386a, type: 3}
+  - {fileID: -6721066095184522801, guid: 163bcfd446cadf5479ed001643c4386a, type: 3}
+  - {fileID: 3849196606051625985, guid: 163bcfd446cadf5479ed001643c4386a, type: 3}
+  enemyDeathBloodless:
+  - {fileID: 8800520710370536086, guid: 053d409a4ca7ae9488d019ce82bab46f, type: 3}
+  - {fileID: -776290945398730849, guid: 053d409a4ca7ae9488d019ce82bab46f, type: 3}
+  - {fileID: 7998180064276377594, guid: 053d409a4ca7ae9488d019ce82bab46f, type: 3}
+  - {fileID: -5538161915139516404, guid: 053d409a4ca7ae9488d019ce82bab46f, type: 3}
+  - {fileID: -4366907128615773535, guid: 053d409a4ca7ae9488d019ce82bab46f, type: 3}
+  - {fileID: 4321660762557913781, guid: 053d409a4ca7ae9488d019ce82bab46f, type: 3}
+  - {fileID: -6835728880420906135, guid: 053d409a4ca7ae9488d019ce82bab46f, type: 3}
+  - {fileID: -3420222376259526699, guid: 053d409a4ca7ae9488d019ce82bab46f, type: 3}
+  - {fileID: -6132684340565298660, guid: 053d409a4ca7ae9488d019ce82bab46f, type: 3}
+  deathFps: 28.571428
+  wenBronze: {fileID: 4220423173639750493, guid: 8b6ed492f769c5243b55c5a9b158c961, type: 3}
+  wenJade: {fileID: 1084549593670647610, guid: 9f58a9d7045f6f24584edb06e56168b1, type: 3}
+  wenEnvelope: {fileID: 5443783112731395607, guid: 17ede8f3c77f4114f97e00daf77ac456, type: 3}
+  bronzeUpTo: 2
+  jadeUpTo: 9
+  maxOnGround: 400
+  loadingSword:
+  - {fileID: -1117548846619240305, guid: ae3c3cb0195ab544b8cf51feaccc8bad, type: 3}
+  - {fileID: -6682085346416090734, guid: ae3c3cb0195ab544b8cf51feaccc8bad, type: 3}
+  - {fileID: -8906756034670228933, guid: ae3c3cb0195ab544b8cf51feaccc8bad, type: 3}
+  - {fileID: -186069706798881493, guid: ae3c3cb0195ab544b8cf51feaccc8bad, type: 3}
+  - {fileID: -5757464642133703457, guid: ae3c3cb0195ab544b8cf51feaccc8bad, type: 3}
+  - {fileID: -1612541391364922643, guid: ae3c3cb0195ab544b8cf51feaccc8bad, type: 3}
+  loadingStar:
+  - {fileID: 4671478779129212478, guid: 000b12160c142f5498f63c93e1f0d650, type: 3}
+  - {fileID: -2355015010249997108, guid: 000b12160c142f5498f63c93e1f0d650, type: 3}
+  - {fileID: 2303139522124322377, guid: 000b12160c142f5498f63c93e1f0d650, type: 3}
+  - {fileID: 8473048759960040320, guid: 000b12160c142f5498f63c93e1f0d650, type: 3}
+  - {fileID: 562621698587168204, guid: 000b12160c142f5498f63c93e1f0d650, type: 3}
+  - {fileID: -904139150114713992, guid: 000b12160c142f5498f63c93e1f0d650, type: 3}
+  loadingTalisman:
+  - {fileID: 2331235710795911450, guid: 36f7ba5b5fad87e48af6a5fcbee3a968, type: 3}
+  - {fileID: -6751399571775503712, guid: 36f7ba5b5fad87e48af6a5fcbee3a968, type: 3}
+  - {fileID: -3459227295869497443, guid: 36f7ba5b5fad87e48af6a5fcbee3a968, type: 3}
+  - {fileID: 2549097060250780824, guid: 36f7ba5b5fad87e48af6a5fcbee3a968, type: 3}
+  - {fileID: 333490806515173230, guid: 36f7ba5b5fad87e48af6a5fcbee3a968, type: 3}
+  - {fileID: 614112640794457509, guid: 36f7ba5b5fad87e48af6a5fcbee3a968, type: 3}
+  loadingMeteor:
+  - {fileID: -4666881670044698386, guid: ebe547d5cdbb11d4d8324430585c9c25, type: 3}
+  - {fileID: -3030239414718555737, guid: ebe547d5cdbb11d4d8324430585c9c25, type: 3}
+  - {fileID: -7241634319981990662, guid: ebe547d5cdbb11d4d8324430585c9c25, type: 3}
+  - {fileID: 5025322632128822305, guid: ebe547d5cdbb11d4d8324430585c9c25, type: 3}
+  - {fileID: -8441852178101544196, guid: ebe547d5cdbb11d4d8324430585c9c25, type: 3}
+  - {fileID: 5295938881838028246, guid: ebe547d5cdbb11d4d8324430585c9c25, type: 3}
+  loadingArrow:
+  - {fileID: 1469615692209849901, guid: 24a2222235fb4f441903a590b5cbd254, type: 3}
+  - {fileID: 450101649235535636, guid: 24a2222235fb4f441903a590b5cbd254, type: 3}
+  - {fileID: -7141447400448902647, guid: 24a2222235fb4f441903a590b5cbd254, type: 3}
+  - {fileID: 8864519173946347562, guid: 24a2222235fb4f441903a590b5cbd254, type: 3}
+  loadingRing:
+  - {fileID: -1357886849653285458, guid: 25a3aecb6b99c7642adf68dba08af6f0, type: 3}
+  - {fileID: 7184327099356836651, guid: 25a3aecb6b99c7642adf68dba08af6f0, type: 3}
+  - {fileID: -3134149049958247840, guid: 25a3aecb6b99c7642adf68dba08af6f0, type: 3}
+  - {fileID: -3002206750356323276, guid: 25a3aecb6b99c7642adf68dba08af6f0, type: 3}
+  - {fileID: 7538124267010117759, guid: 25a3aecb6b99c7642adf68dba08af6f0, type: 3}
+  - {fileID: -6727208976075546789, guid: 25a3aecb6b99c7642adf68dba08af6f0, type: 3}
+  lockIcon: {fileID: 6402575185618066086, guid: 7c5828eb57bd7ce428a06ac6392d0164, type: 3}
+  wuchangBai: {fileID: 7011347684056878657, guid: cab7b629e6d485f41b2dbb9c85d5c845, type: 3}
+  wuchangHei: {fileID: 4141753614074192170, guid: 3afdd752da8eb6547a535442455e1af3, type: 3}
+  wenSpinBronze:
+  - {fileID: -8335817242182580146, guid: 878d881a6e3b1674da72259a6ce39f13, type: 3}
+  - {fileID: 5200842043963919459, guid: 878d881a6e3b1674da72259a6ce39f13, type: 3}
+  - {fileID: -6518455701486953803, guid: 878d881a6e3b1674da72259a6ce39f13, type: 3}
+  - {fileID: 311653761280345419, guid: 878d881a6e3b1674da72259a6ce39f13, type: 3}
+  - {fileID: -2847608649663515983, guid: 878d881a6e3b1674da72259a6ce39f13, type: 3}
+  - {fileID: 5443529079402430435, guid: 878d881a6e3b1674da72259a6ce39f13, type: 3}
+  - {fileID: 6189742236206052726, guid: 878d881a6e3b1674da72259a6ce39f13, type: 3}
+  - {fileID: -9202013108989809623, guid: 878d881a6e3b1674da72259a6ce39f13, type: 3}
+  wenSpinJade:
+  - {fileID: -8489662011138453113, guid: 878d881a6e3b1674da72259a6ce39f13, type: 3}
+  - {fileID: 370008381170190103, guid: 878d881a6e3b1674da72259a6ce39f13, type: 3}
+  - {fileID: 8726001758972856391, guid: 878d881a6e3b1674da72259a6ce39f13, type: 3}
+  - {fileID: 820883863668953338, guid: 878d881a6e3b1674da72259a6ce39f13, type: 3}
+  - {fileID: -7600930178738037524, guid: 878d881a6e3b1674da72259a6ce39f13, type: 3}
+  - {fileID: 7286762260677590395, guid: 878d881a6e3b1674da72259a6ce39f13, type: 3}
+  - {fileID: -6433135044627273128, guid: 878d881a6e3b1674da72259a6ce39f13, type: 3}
+  - {fileID: -5694228319397356132, guid: 878d881a6e3b1674da72259a6ce39f13, type: 3}

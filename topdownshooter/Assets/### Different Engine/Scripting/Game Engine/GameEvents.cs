@@ -10,6 +10,11 @@ public static class GameEvents
     public static Action<int> OnFinalRushEnded;
     public static Action<int> OnEnemyKilled;
     public static Action<GameObject> OnPurgeEnemiesWithFx;
-    public static Action OnCollectAllGears;
+    public static Action OnCollectAllWen;
     public static Action<SecretBossBehavior> OnSecretBossSpawned;
+
+    // normal mode ending: the last wave clears, the final boss spawns, killing it opens the exit
+    public static Action OnFinalBossStarted;
+    public static Action<Vector3> OnFinalBossDefeated;
+    public static Action OnRunWon;
 }

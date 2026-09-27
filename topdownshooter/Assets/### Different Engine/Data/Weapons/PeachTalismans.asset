@@ -1,0 +1,112 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f59a3bad2d6a39d8518018d768ebae01, type: 3}
+  m_Name: PeachTalismans
+  m_EditorClassIdentifier: 
+  title: Peach Talismans
+  type: 24
+  icon: {fileID: -5619740753450253251, guid: 0f5392f2a6a3a1b4ca980a0746fb50ba, type: 3}
+  iconFrames:
+  - {fileID: -5619740753450253251, guid: 0f5392f2a6a3a1b4ca980a0746fb50ba, type: 3}
+  - {fileID: 172268133685395460, guid: 0f5392f2a6a3a1b4ca980a0746fb50ba, type: 3}
+  - {fileID: -1987443536888803675, guid: 0f5392f2a6a3a1b4ca980a0746fb50ba, type: 3}
+  - {fileID: -1152303486059593470, guid: 0f5392f2a6a3a1b4ca980a0746fb50ba, type: 3}
+  iconFps: 6
+  includeInPool: 1
+  value: 0
+  additive: 0
+  description: Talismans stick to enemies and burn them.
+  level: 0
+  maxLevel: 5
+  overcharge: 0
+  overchargeCeiling: 1
+  overchargeHalfStacks: 8
+  evolutionPartner: {fileID: 11400000, guid: 42d6a117291763fd41ad22cd1ff7247e, type: 2}
+  evolvedIcon: {fileID: 5494365917804193173, guid: 8377c8cc154a77a4fbf861c85f03051c, type: 3}
+  evolvedIconFrames:
+  - {fileID: 5494365917804193173, guid: 8377c8cc154a77a4fbf861c85f03051c, type: 3}
+  - {fileID: -3347205369998945957, guid: 8377c8cc154a77a4fbf861c85f03051c, type: 3}
+  - {fileID: -6207680446711719938, guid: 8377c8cc154a77a4fbf861c85f03051c, type: 3}
+  - {fileID: -7480436786197472063, guid: 8377c8cc154a77a4fbf861c85f03051c, type: 3}
+  levels:
+  - damagePerSecond: 2
+    interval: 1.5
+  - damagePerSecond: 3
+    interval: 1.4
+  - damagePerSecond: 4
+    interval: 1.3
+  - damagePerSecond: 6
+    interval: 1.2
+  - damagePerSecond: 8
+    interval: 1.1
+  - damagePerSecond: 10
+    interval: 1
+  flightSpeed: 6
+  waveAmplitude: 0.6
+  waveLength: 3
+  range: 12
+  trailLength: 3
+  trailSpacing: 0.18
+  stickSeconds: 5
+  tickSeconds: 0.5
+  stuckSlow: 0.3
+  evolvedCount: 8
+  blastRadius: 1.5
+  slowFactor: 0.5
+  slowSeconds: 2
+  talismanSprite: {fileID: 21300000, guid: ff22084c8116d2749ae9b32c6c4a350a, type: 3}
+  burstFrames:
+  - {fileID: -2531493245796521012, guid: c5b1db2b4564b36409dbe3bf871d6b10, type: 3}
+  - {fileID: -1816124620266064322, guid: c5b1db2b4564b36409dbe3bf871d6b10, type: 3}
+  - {fileID: 155851333118075875, guid: c5b1db2b4564b36409dbe3bf871d6b10, type: 3}
+  - {fileID: -4750181735973356098, guid: c5b1db2b4564b36409dbe3bf871d6b10, type: 3}
+  - {fileID: -1465156011469177451, guid: c5b1db2b4564b36409dbe3bf871d6b10, type: 3}
+  - {fileID: -7574132987620478757, guid: c5b1db2b4564b36409dbe3bf871d6b10, type: 3}
+  - {fileID: -7899084772047607562, guid: c5b1db2b4564b36409dbe3bf871d6b10, type: 3}
+  - {fileID: 502454336258649736, guid: c5b1db2b4564b36409dbe3bf871d6b10, type: 3}
+  - {fileID: -6914137898537267851, guid: c5b1db2b4564b36409dbe3bf871d6b10, type: 3}
+  - {fileID: -2512885504577203590, guid: c5b1db2b4564b36409dbe3bf871d6b10, type: 3}
+  burstSeconds: 0.45000002
+  burstSprite: {fileID: 21300000, guid: aca45fe0c21222a43a61a5b6d1d24701, type: 3}
+  talismanSize: 0.45
+  talismanColor: {r: 0.85, g: 0.15, b: 0.12, a: 1}
+  burstColor: {r: 1, g: 0.55, b: 0.45, a: 1}
+  sortingLayer: Aura
+  sortingOrder: 6
+  flightFrames:
+  - {fileID: 2331235710795911450, guid: 36f7ba5b5fad87e48af6a5fcbee3a968, type: 3}
+  - {fileID: -6751399571775503712, guid: 36f7ba5b5fad87e48af6a5fcbee3a968, type: 3}
+  - {fileID: -3459227295869497443, guid: 36f7ba5b5fad87e48af6a5fcbee3a968, type: 3}
+  - {fileID: 2549097060250780824, guid: 36f7ba5b5fad87e48af6a5fcbee3a968, type: 3}
+  - {fileID: 333490806515173230, guid: 36f7ba5b5fad87e48af6a5fcbee3a968, type: 3}
+  - {fileID: 614112640794457509, guid: 36f7ba5b5fad87e48af6a5fcbee3a968, type: 3}
+  flightFps: 14.3
+  burnFrames:
+  - {fileID: 2359270916883289142, guid: 88aa684c5a1be754f89dd712696e27c8, type: 3}
+  - {fileID: -2765601590952137938, guid: 88aa684c5a1be754f89dd712696e27c8, type: 3}
+  - {fileID: -8483990644007934366, guid: 88aa684c5a1be754f89dd712696e27c8, type: 3}
+  - {fileID: -3865952293386272135, guid: 88aa684c5a1be754f89dd712696e27c8, type: 3}
+  - {fileID: 5926753806052983240, guid: 88aa684c5a1be754f89dd712696e27c8, type: 3}
+  - {fileID: 8001810273597304477, guid: 88aa684c5a1be754f89dd712696e27c8, type: 3}
+  - {fileID: 7888232913590811460, guid: 88aa684c5a1be754f89dd712696e27c8, type: 3}
+  - {fileID: 5545944392746303695, guid: 88aa684c5a1be754f89dd712696e27c8, type: 3}
+  - {fileID: -7620980750996577069, guid: 88aa684c5a1be754f89dd712696e27c8, type: 3}
+  - {fileID: -3286432476242298979, guid: 88aa684c5a1be754f89dd712696e27c8, type: 3}
+  - {fileID: -5041372731441059327, guid: 88aa684c5a1be754f89dd712696e27c8, type: 3}
+  - {fileID: -3458005999203886914, guid: 88aa684c5a1be754f89dd712696e27c8, type: 3}
+  - {fileID: -6199882196531268074, guid: 88aa684c5a1be754f89dd712696e27c8, type: 3}
+  - {fileID: -7335692817823390173, guid: 88aa684c5a1be754f89dd712696e27c8, type: 3}
+  - {fileID: -2777647891394689213, guid: 88aa684c5a1be754f89dd712696e27c8, type: 3}
+  - {fileID: -3512179040402757590, guid: 88aa684c5a1be754f89dd712696e27c8, type: 3}
+  burnFlickerFps: 12.5
+  ashFx: {fileID: 8058079621691345023, guid: f969fbbdf1b1f9541a9cef0052e3e280, type: 3}
+  burstArtRadius: 1.5108107

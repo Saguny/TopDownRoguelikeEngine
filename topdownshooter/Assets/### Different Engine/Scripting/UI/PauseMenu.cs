@@ -18,8 +18,17 @@ public class PauseMenu : MonoBehaviour
     [Header("other ui")]
     [SerializeField] private UpgradeMenuUI upgradeMenu; // block pause while this is open
 
-    const string MusicKey = "vol_music";
-    const string SfxKey = "vol_sfx";
+    [Header("buttons and options (empty: found by name under the pause panel)")]
+    [Tooltip("empty: the toggle with Blood in its name. switches the Show Blood option")]
+    [SerializeField] private Toggle showBloodToggle;
+    [Tooltip("empty: the button called Resume. wired to Resume unless it already calls something")]
+    [SerializeField] private Button resumeButton;
+    [Tooltip("empty: the button called Quit. wired to Exit To Menu unless it already calls something")]
+    [SerializeField] private Button quitButton;
+
+    // shared with the main menu's options, so both sets of sliders move the same volumes
+    const string MusicKey = GameSettings.MusicKey;
+    const string SfxKey = GameSettings.SfxKey;
 
     bool paused;
 
@@ -27,7 +36,7 @@ public class PauseMenu : MonoBehaviour
     {
         // auto-find upgrade menu if not wired in inspector
         if (upgradeMenu == null)
-            upgradeMenu = FindObjectOfType<UpgradeMenuUI>();
+            upgradeMenu = FindFirstObjectByType<UpgradeMenuUI>();
 
         // 1) migrate any old saved zeros so we don't load “perma-mute”
         float musicSaved = PlayerPrefs.GetFloat(MusicKey, 100f);
@@ -47,20 +56,30 @@ public class PauseMenu : MonoBehaviour
         musicSlider.onValueChanged.AddListener(ApplyMusic);
         sfxSlider.onValueChanged.AddListener(ApplySfx);
 
+        if (showBloodToggle == null) showBloodToggle = FindUnderPanel<Toggle>("Blood");
+        if (showBloodToggle != null)
+        {
+            showBloodToggle.SetIsOnWithoutNotify(GameSettings.ShowBlood);
+            showBloodToggle.onValueChanged.AddListener(on => GameSettings.ShowBlood = on);
+        }
+        Wire(resumeButton != null ? resumeButton : FindUnderPanel<Button>("Resume"), OnResume);
+        Wire(quitButton != null ? quitButton : FindUnderPanel<Button>("Quit"), OnExitToMenu);
+
         pausePanel.SetActive(false);
 
         // keep mouse usable
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
 
-        // safety: ensure global listener isn’t muted
+        // safety: ensure global listener isn’t paused. its volume is the options menu's General
         AudioListener.pause = false;
-        AudioListener.volume = 1f;
+        AudioListener.volume = GameSettings.MasterVolume / 100f;
+        GameSettings.Mixer = mixer;
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && !SceneLoader.Busy)
         {
             // if upgrade menu is open, ignore pause toggle completely
             if (upgradeMenu != null && upgradeMenu.IsOpen)
@@ -77,6 +96,7 @@ public class PauseMenu : MonoBehaviour
     public void TogglePause()
     {
         paused = !paused;
+        if (paused) Juice.Yield();
         Time.timeScale = paused ? 0f : 1f;
         pausePanel.SetActive(paused);
 
@@ -104,11 +124,8 @@ public class PauseMenu : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    public void OnExitToMenu()
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene("MainMenu");
-    }
+    // back to the menu behind the loading screen (it holds the game still until the menu is up)
+    public void OnExitToMenu() => SceneLoader.Load("MainMenu");
 
     public void OnQuitApp()
     {
@@ -117,6 +134,21 @@ public class PauseMenu : MonoBehaviour
 #else
         Application.Quit();
 #endif
+    }
+
+    // a button set up in the inspector keeps its own calls; an empty one gets this
+    private static void Wire(Button button, UnityEngine.Events.UnityAction action)
+    {
+        if (button != null && button.onClick.GetPersistentEventCount() == 0)
+            button.onClick.AddListener(action);
+    }
+
+    private T FindUnderPanel<T>(string namePart) where T : Component
+    {
+        if (pausePanel == null) return null;
+        foreach (var c in pausePanel.GetComponentsInChildren<T>(true))
+            if (c.name.IndexOf(namePart, System.StringComparison.OrdinalIgnoreCase) >= 0) return c;
+        return null;
     }
 
     // === volume logic ===

@@ -5,7 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Enemy
-  - Gear
+  - Wen
   - Projectile
   - Obstacles
   - SongNameText

@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db49e41a9181053e22e812dba5e53e21, type: 3}
+  m_Name: CommandToken
+  m_EditorClassIdentifier: 
+  title: Command Token
+  type: 24
+  icon: {fileID: 6932329855101400424, guid: 10e19ad6d3817734492ea39876d379a6, type: 3}
+  iconFrames:
+  - {fileID: 6932329855101400424, guid: 10e19ad6d3817734492ea39876d379a6, type: 3}
+  - {fileID: -414502637220347731, guid: 10e19ad6d3817734492ea39876d379a6, type: 3}
+  - {fileID: -5411291157267219952, guid: 10e19ad6d3817734492ea39876d379a6, type: 3}
+  - {fileID: 3254745583044706026, guid: 10e19ad6d3817734492ea39876d379a6, type: 3}
+  iconFps: 6
+  includeInPool: 1
+  value: 0
+  additive: 0
+  description: A shockwave hits every enemy on screen.
+  level: 0
+  maxLevel: 5
+  overcharge: 0
+  overchargeCeiling: 1
+  overchargeHalfStacks: 8
+  evolutionPartner: {fileID: 0}
+  evolvedIcon: {fileID: 0}
+  evolvedIconFrames: []
+  levels:
+  - damage: 40
+    cooldown: 90
+    stunSeconds: 0
+    pullsWen: 0
+  - damage: 40
+    cooldown: 75
+    stunSeconds: 0
+    pullsWen: 0
+  - damage: 40
+    cooldown: 75
+    stunSeconds: 1.5
+    pullsWen: 0
+  - damage: 40
+    cooldown: 75
+    stunSeconds: 1.5
+    pullsWen: 1
+  firstShotDelay: 2
+  castAnimation: {fileID: 1882361935638995688, guid: 8afc62b5c4772ee438a2da0e3eca6ee0, type: 3}
+  sealSprites:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  sealCount: 3
+  sealSize: 1.6
+  sealSpacing: 1.9
+  sealRowHeight: 0.62
+  stampStartScale: 2.5
+  stampSeconds: 0.18
+  stampGap: 0.15
+  stampShake: 0.08
+  holdSeconds: 0.3
+  sealColor: {r: 0.85, g: 0.15, b: 0.12, a: 1}
+  explodeSeconds: 0.25
+  shockwaveSprite: {fileID: 0}
+  shockwaveSeconds: 0.6
+  shockwaveColor: {r: 0.62, g: 0.3, b: 1, a: 1}
+  shake: 0.3
+  explosionFx: {fileID: 0}
+  explosionFxSeconds: 2
+  sortingLayer: HUD
+  sortingOrder: 50

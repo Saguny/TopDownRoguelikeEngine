@@ -1,0 +1,2833 @@
+{
+ "name": "CommandTokenCast",
+ "ppu": 18,
+ "length": 2.35,
+ "lifetime": 3,
+ "sortingLayer": "HUD",
+ "prefabPath": "Assets/### Different Engine/Prefabs/VFX/CommandTokenCast.prefab",
+ "clipPath": "Assets/### Different Engine/Animations/VFX/CommandTokenCast.anim",
+ "controllerPath": "Assets/### Different Engine/Animations/VFX/CommandTokenCast.controller",
+ "weaponAsset": "Assets/### Different Engine/Data/Weapons/CommandToken.asset",
+ "sources": [
+  {
+   "key": "seals",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/VFX/CommandToken/ct_seals.aseprite"
+  },
+  {
+   "key": "impact",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/VFX/CommandToken/ct_stamp_impact.aseprite"
+  },
+  {
+   "key": "arc",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/VFX/CommandToken/ct_arc.aseprite"
+  },
+  {
+   "key": "sigil",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/VFX/CommandToken/ct_sigil.aseprite"
+  },
+  {
+   "key": "bolts",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/VFX/CommandToken/ct_bolts.aseprite"
+  },
+  {
+   "key": "shatter",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/VFX/CommandToken/ct_shatter.aseprite"
+  },
+  {
+   "key": "detonation",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/VFX/CommandToken/ct_detonation.aseprite"
+  },
+  {
+   "key": "ring",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/VFX/CommandToken/ct_ring.aseprite"
+  },
+  {
+   "key": "spark",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/VFX/CommandToken/ct_spark.aseprite"
+  },
+  {
+   "key": "flash",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/VFX/CommandToken/ct_flash.aseprite"
+  }
+ ],
+ "objects": [
+  {
+   "name": "Dim",
+   "sprite": "flash:0",
+   "x": 0,
+   "y": 0,
+   "order": 40,
+   "scale": 180,
+   "color": [
+    0.07,
+    0.024,
+    0.125,
+    1
+   ],
+   "active": true
+  },
+  {
+   "name": "Sigil",
+   "sprite": "sigil:0",
+   "x": 0,
+   "y": 100,
+   "order": 44,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": true
+  },
+  {
+   "name": "Echo_Tian",
+   "sprite": "seals:0",
+   "x": -54,
+   "y": 100,
+   "order": 54,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Seal_Tian",
+   "sprite": "seals:0",
+   "x": -54,
+   "y": 100,
+   "order": 55,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Impact_Tian",
+   "sprite": "impact:0",
+   "x": -54,
+   "y": 100,
+   "order": 58,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Echo_Ling",
+   "sprite": "seals:1",
+   "x": 0,
+   "y": 100,
+   "order": 54,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Seal_Ling",
+   "sprite": "seals:1",
+   "x": 0,
+   "y": 100,
+   "order": 55,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Impact_Ling",
+   "sprite": "impact:0",
+   "x": 0,
+   "y": 100,
+   "order": 58,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Echo_Wang",
+   "sprite": "seals:2",
+   "x": 54,
+   "y": 100,
+   "order": 54,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Seal_Wang",
+   "sprite": "seals:2",
+   "x": 54,
+   "y": 100,
+   "order": 55,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Impact_Wang",
+   "sprite": "impact:0",
+   "x": 54,
+   "y": 100,
+   "order": 58,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Arc_Left",
+   "sprite": "arc:0",
+   "x": -27,
+   "y": 100,
+   "order": 50,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Arc_Right",
+   "sprite": "arc:1",
+   "x": 27,
+   "y": 100,
+   "order": 50,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Spark_01",
+   "sprite": "spark:0",
+   "x": -84,
+   "y": 124,
+   "order": 64,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Spark_02",
+   "sprite": "spark:0",
+   "x": -30,
+   "y": 136,
+   "order": 64,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Spark_03",
+   "sprite": "spark:0",
+   "x": 22,
+   "y": 130,
+   "order": 64,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Spark_04",
+   "sprite": "spark:0",
+   "x": 80,
+   "y": 122,
+   "order": 64,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Spark_05",
+   "sprite": "spark:0",
+   "x": -70,
+   "y": 74,
+   "order": 64,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Spark_06",
+   "sprite": "spark:0",
+   "x": -14,
+   "y": 68,
+   "order": 64,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Spark_07",
+   "sprite": "spark:0",
+   "x": 38,
+   "y": 76,
+   "order": 64,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Spark_08",
+   "sprite": "spark:0",
+   "x": 88,
+   "y": 84,
+   "order": 64,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Bolt_Tian",
+   "sprite": "bolts:0",
+   "x": -54,
+   "y": 172,
+   "order": 60,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Bolt_Ling",
+   "sprite": "bolts:5",
+   "x": 0,
+   "y": 172,
+   "order": 60,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Bolt_Wang",
+   "sprite": "bolts:10",
+   "x": 54,
+   "y": 172,
+   "order": 60,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Flash",
+   "sprite": "flash:0",
+   "x": 0,
+   "y": 0,
+   "order": 70,
+   "scale": 180,
+   "color": [
+    0.94,
+    0.88,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Shatter_Tian",
+   "sprite": "shatter:0",
+   "x": -54,
+   "y": 100,
+   "order": 61,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Shatter_Ling",
+   "sprite": "shatter:7",
+   "x": 0,
+   "y": 100,
+   "order": 61,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Shatter_Wang",
+   "sprite": "shatter:14",
+   "x": 54,
+   "y": 100,
+   "order": 61,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Detonation",
+   "sprite": "detonation:0",
+   "x": 0,
+   "y": 100,
+   "order": 63,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Shockwave",
+   "sprite": "ring:0",
+   "x": 0,
+   "y": 100,
+   "order": 62,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Shockwave_Echo",
+   "sprite": "ring:0",
+   "x": 0,
+   "y": 100,
+   "order": 61,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Spark_09",
+   "sprite": "spark:0",
+   "x": -150,
+   "y": 110,
+   "order": 64,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Spark_10",
+   "sprite": "spark:0",
+   "x": -118,
+   "y": -30,
+   "order": 64,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Spark_11",
+   "sprite": "spark:0",
+   "x": -40,
+   "y": 150,
+   "order": 64,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Spark_12",
+   "sprite": "spark:0",
+   "x": 64,
+   "y": -50,
+   "order": 64,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Spark_13",
+   "sprite": "spark:0",
+   "x": 128,
+   "y": 130,
+   "order": 64,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Spark_14",
+   "sprite": "spark:0",
+   "x": 176,
+   "y": 40,
+   "order": 64,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Spark_15",
+   "sprite": "spark:0",
+   "x": -196,
+   "y": 60,
+   "order": 64,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  },
+  {
+   "name": "Spark_16",
+   "sprite": "spark:0",
+   "x": 8,
+   "y": -70,
+   "order": 64,
+   "scale": 1,
+   "color": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "active": false
+  }
+ ],
+ "tracks": [
+  {
+   "path": "Dim",
+   "prop": "alpha",
+   "mode": "linear",
+   "times": [
+    0,
+    0.15,
+    1.6,
+    1.95
+   ],
+   "values": [
+    0,
+    0.4,
+    0.4,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Dim",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    2
+   ],
+   "values": [
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Sigil",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.8
+   ],
+   "values": [
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Sigil",
+   "prop": "scale",
+   "mode": "step",
+   "times": [
+    0,
+    0.05,
+    0.1
+   ],
+   "values": [
+    0.5,
+    0.75,
+    1
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Sigil",
+   "prop": "alpha",
+   "mode": "step",
+   "times": [
+    0,
+    0.05,
+    0.1,
+    1.62,
+    1.68,
+    1.74
+   ],
+   "values": [
+    0.4,
+    0.7,
+    1,
+    0.75,
+    0.5,
+    0.25
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Sigil",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    0.083,
+    0.167,
+    0.25,
+    0.333,
+    0.417,
+    0.5,
+    0.583,
+    0.667,
+    0.75,
+    0.833,
+    0.917,
+    1,
+    1.05,
+    1.1,
+    1.15,
+    1.2,
+    1.25,
+    1.3,
+    1.35,
+    1.4,
+    1.45,
+    1.5,
+    1.55,
+    1.6,
+    1.65,
+    1.7,
+    1.75
+   ],
+   "values": [],
+   "sprites": [
+    "sigil:0",
+    "sigil:1",
+    "sigil:2",
+    "sigil:3",
+    "sigil:4",
+    "sigil:5",
+    "sigil:0",
+    "sigil:1",
+    "sigil:2",
+    "sigil:3",
+    "sigil:4",
+    "sigil:5",
+    "sigil:0",
+    "sigil:0",
+    "sigil:1",
+    "sigil:2",
+    "sigil:3",
+    "sigil:4",
+    "sigil:5",
+    "sigil:0",
+    "sigil:1",
+    "sigil:2",
+    "sigil:3",
+    "sigil:6",
+    "sigil:0",
+    "sigil:1",
+    "sigil:2",
+    "sigil:3"
+   ]
+  },
+  {
+   "path": "Echo_Tian",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    0.317,
+    0.467
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Echo_Tian",
+   "prop": "scale",
+   "mode": "step",
+   "times": [
+    0,
+    0.367,
+    0.417
+   ],
+   "values": [
+    1.25,
+    1.5,
+    1.75
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Echo_Tian",
+   "prop": "alpha",
+   "mode": "step",
+   "times": [
+    0,
+    0.367,
+    0.417
+   ],
+   "values": [
+    0.55,
+    0.3,
+    0.15
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Seal_Tian",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    0.25,
+    1.6
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Seal_Tian",
+   "prop": "scale",
+   "mode": "step",
+   "times": [
+    0,
+    0.283,
+    0.317
+   ],
+   "values": [
+    3,
+    2,
+    1
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Seal_Tian",
+   "prop": "alpha",
+   "mode": "step",
+   "times": [
+    0,
+    0.283,
+    0.317
+   ],
+   "values": [
+    0.4,
+    0.75,
+    1
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Seal_Tian",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    0.317,
+    0.367,
+    1.05,
+    1.1,
+    1.15,
+    1.2,
+    1.25,
+    1.55
+   ],
+   "values": [],
+   "sprites": [
+    "seals:0",
+    "seals:6",
+    "seals:0",
+    "seals:3",
+    "seals:0",
+    "seals:3",
+    "seals:0",
+    "seals:3",
+    "seals:6"
+   ]
+  },
+  {
+   "path": "Impact_Tian",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    0.317,
+    0.65
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Impact_Tian",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    0.317,
+    0.358,
+    0.4,
+    0.442,
+    0.483,
+    0.525,
+    0.567,
+    0.608
+   ],
+   "values": [],
+   "sprites": [
+    "impact:0",
+    "impact:0",
+    "impact:1",
+    "impact:2",
+    "impact:3",
+    "impact:4",
+    "impact:5",
+    "impact:6",
+    "impact:7"
+   ]
+  },
+  {
+   "path": "Echo_Ling",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    0.567,
+    0.717
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Echo_Ling",
+   "prop": "scale",
+   "mode": "step",
+   "times": [
+    0,
+    0.617,
+    0.667
+   ],
+   "values": [
+    1.25,
+    1.5,
+    1.75
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Echo_Ling",
+   "prop": "alpha",
+   "mode": "step",
+   "times": [
+    0,
+    0.617,
+    0.667
+   ],
+   "values": [
+    0.55,
+    0.3,
+    0.15
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Seal_Ling",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    0.5,
+    1.6
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Seal_Ling",
+   "prop": "scale",
+   "mode": "step",
+   "times": [
+    0,
+    0.533,
+    0.567
+   ],
+   "values": [
+    3,
+    2,
+    1
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Seal_Ling",
+   "prop": "alpha",
+   "mode": "step",
+   "times": [
+    0,
+    0.533,
+    0.567
+   ],
+   "values": [
+    0.4,
+    0.75,
+    1
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Seal_Ling",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    0.567,
+    0.617,
+    1.07,
+    1.12,
+    1.17,
+    1.22,
+    1.27,
+    1.55
+   ],
+   "values": [],
+   "sprites": [
+    "seals:1",
+    "seals:6",
+    "seals:1",
+    "seals:4",
+    "seals:1",
+    "seals:4",
+    "seals:1",
+    "seals:4",
+    "seals:6"
+   ]
+  },
+  {
+   "path": "Impact_Ling",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    0.567,
+    0.9
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Impact_Ling",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    0.567,
+    0.608,
+    0.65,
+    0.692,
+    0.733,
+    0.775,
+    0.817,
+    0.858
+   ],
+   "values": [],
+   "sprites": [
+    "impact:0",
+    "impact:0",
+    "impact:1",
+    "impact:2",
+    "impact:3",
+    "impact:4",
+    "impact:5",
+    "impact:6",
+    "impact:7"
+   ]
+  },
+  {
+   "path": "Echo_Wang",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    0.817,
+    0.967
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Echo_Wang",
+   "prop": "scale",
+   "mode": "step",
+   "times": [
+    0,
+    0.867,
+    0.917
+   ],
+   "values": [
+    1.25,
+    1.5,
+    1.75
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Echo_Wang",
+   "prop": "alpha",
+   "mode": "step",
+   "times": [
+    0,
+    0.867,
+    0.917
+   ],
+   "values": [
+    0.55,
+    0.3,
+    0.15
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Seal_Wang",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    0.75,
+    1.6
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Seal_Wang",
+   "prop": "scale",
+   "mode": "step",
+   "times": [
+    0,
+    0.783,
+    0.817
+   ],
+   "values": [
+    3,
+    2,
+    1
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Seal_Wang",
+   "prop": "alpha",
+   "mode": "step",
+   "times": [
+    0,
+    0.783,
+    0.817
+   ],
+   "values": [
+    0.4,
+    0.75,
+    1
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Seal_Wang",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    0.817,
+    0.867,
+    1.09,
+    1.14,
+    1.19,
+    1.24,
+    1.29,
+    1.55
+   ],
+   "values": [],
+   "sprites": [
+    "seals:2",
+    "seals:6",
+    "seals:2",
+    "seals:5",
+    "seals:2",
+    "seals:5",
+    "seals:2",
+    "seals:5",
+    "seals:6"
+   ]
+  },
+  {
+   "path": "Impact_Wang",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    0.817,
+    1.15
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Impact_Wang",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    0.817,
+    0.858,
+    0.9,
+    0.942,
+    0.983,
+    1.025,
+    1.067,
+    1.108
+   ],
+   "values": [],
+   "sprites": [
+    "impact:0",
+    "impact:0",
+    "impact:1",
+    "impact:2",
+    "impact:3",
+    "impact:4",
+    "impact:5",
+    "impact:6",
+    "impact:7"
+   ]
+  },
+  {
+   "path": "Arc_Left",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.08,
+    1.55
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Arc_Left",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    1.08,
+    1.13,
+    1.18,
+    1.23,
+    1.28,
+    1.33,
+    1.38,
+    1.43,
+    1.48,
+    1.53
+   ],
+   "values": [],
+   "sprites": [
+    "arc:0",
+    "arc:0",
+    "arc:2",
+    "arc:1",
+    "arc:3",
+    "arc:0",
+    "arc:2",
+    "arc:1",
+    "arc:3",
+    "arc:0",
+    "arc:2"
+   ]
+  },
+  {
+   "path": "Arc_Right",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.13,
+    1.55
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Arc_Right",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    1.13,
+    1.18,
+    1.23,
+    1.28,
+    1.33,
+    1.38,
+    1.43,
+    1.48,
+    1.53
+   ],
+   "values": [],
+   "sprites": [
+    "arc:1",
+    "arc:1",
+    "arc:3",
+    "arc:0",
+    "arc:2",
+    "arc:1",
+    "arc:3",
+    "arc:0",
+    "arc:2",
+    "arc:1"
+   ]
+  },
+  {
+   "path": "Spark_01",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1,
+    1.3
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Spark_01",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    1,
+    1.05,
+    1.1,
+    1.15,
+    1.2,
+    1.25
+   ],
+   "values": [],
+   "sprites": [
+    "spark:0",
+    "spark:0",
+    "spark:1",
+    "spark:2",
+    "spark:3",
+    "spark:4",
+    "spark:5"
+   ]
+  },
+  {
+   "path": "Spark_02",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.065,
+    1.365
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Spark_02",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    1.065,
+    1.115,
+    1.165,
+    1.215,
+    1.265,
+    1.315
+   ],
+   "values": [],
+   "sprites": [
+    "spark:0",
+    "spark:0",
+    "spark:1",
+    "spark:2",
+    "spark:3",
+    "spark:4",
+    "spark:5"
+   ]
+  },
+  {
+   "path": "Spark_03",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.13,
+    1.43
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Spark_03",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    1.13,
+    1.18,
+    1.23,
+    1.28,
+    1.33,
+    1.38
+   ],
+   "values": [],
+   "sprites": [
+    "spark:0",
+    "spark:0",
+    "spark:1",
+    "spark:2",
+    "spark:3",
+    "spark:4",
+    "spark:5"
+   ]
+  },
+  {
+   "path": "Spark_04",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.195,
+    1.495
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Spark_04",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    1.195,
+    1.245,
+    1.295,
+    1.345,
+    1.395,
+    1.445
+   ],
+   "values": [],
+   "sprites": [
+    "spark:0",
+    "spark:0",
+    "spark:1",
+    "spark:2",
+    "spark:3",
+    "spark:4",
+    "spark:5"
+   ]
+  },
+  {
+   "path": "Spark_05",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.26,
+    1.56
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Spark_05",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    1.26,
+    1.31,
+    1.36,
+    1.41,
+    1.46,
+    1.51
+   ],
+   "values": [],
+   "sprites": [
+    "spark:0",
+    "spark:0",
+    "spark:1",
+    "spark:2",
+    "spark:3",
+    "spark:4",
+    "spark:5"
+   ]
+  },
+  {
+   "path": "Spark_06",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.325,
+    1.625
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Spark_06",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    1.325,
+    1.375,
+    1.425,
+    1.475,
+    1.525,
+    1.575
+   ],
+   "values": [],
+   "sprites": [
+    "spark:0",
+    "spark:0",
+    "spark:1",
+    "spark:2",
+    "spark:3",
+    "spark:4",
+    "spark:5"
+   ]
+  },
+  {
+   "path": "Spark_07",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.39,
+    1.69
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Spark_07",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    1.39,
+    1.44,
+    1.49,
+    1.54,
+    1.59,
+    1.64
+   ],
+   "values": [],
+   "sprites": [
+    "spark:0",
+    "spark:0",
+    "spark:1",
+    "spark:2",
+    "spark:3",
+    "spark:4",
+    "spark:5"
+   ]
+  },
+  {
+   "path": "Spark_08",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.455,
+    1.755
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Spark_08",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    1.455,
+    1.505,
+    1.555,
+    1.605,
+    1.655,
+    1.705
+   ],
+   "values": [],
+   "sprites": [
+    "spark:0",
+    "spark:0",
+    "spark:1",
+    "spark:2",
+    "spark:3",
+    "spark:4",
+    "spark:5"
+   ]
+  },
+  {
+   "path": "Bolt_Tian",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.567,
+    1.734
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Bolt_Tian",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    1.567,
+    1.6,
+    1.634,
+    1.667,
+    1.7
+   ],
+   "values": [],
+   "sprites": [
+    "bolts:0",
+    "bolts:0",
+    "bolts:1",
+    "bolts:2",
+    "bolts:3",
+    "bolts:4"
+   ]
+  },
+  {
+   "path": "Bolt_Ling",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.55,
+    1.717
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Bolt_Ling",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    1.55,
+    1.583,
+    1.617,
+    1.65,
+    1.683
+   ],
+   "values": [],
+   "sprites": [
+    "bolts:5",
+    "bolts:5",
+    "bolts:6",
+    "bolts:7",
+    "bolts:8",
+    "bolts:9"
+   ]
+  },
+  {
+   "path": "Bolt_Wang",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.583,
+    1.75
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Bolt_Wang",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    1.583,
+    1.616,
+    1.65,
+    1.683,
+    1.716
+   ],
+   "values": [],
+   "sprites": [
+    "bolts:10",
+    "bolts:10",
+    "bolts:11",
+    "bolts:12",
+    "bolts:13",
+    "bolts:14"
+   ]
+  },
+  {
+   "path": "Flash",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.55,
+    1.72
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Flash",
+   "prop": "alpha",
+   "mode": "step",
+   "times": [
+    0,
+    1.583,
+    1.617,
+    1.65,
+    1.683
+   ],
+   "values": [
+    0.42,
+    0.26,
+    0.13,
+    0.06,
+    0.02
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Shatter_Tian",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.6,
+    1.892
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Shatter_Tian",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    1.6,
+    1.642,
+    1.683,
+    1.725,
+    1.767,
+    1.808,
+    1.85
+   ],
+   "values": [],
+   "sprites": [
+    "shatter:0",
+    "shatter:0",
+    "shatter:1",
+    "shatter:2",
+    "shatter:3",
+    "shatter:4",
+    "shatter:5",
+    "shatter:6"
+   ]
+  },
+  {
+   "path": "Shatter_Ling",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.6,
+    1.892
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Shatter_Ling",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    1.6,
+    1.642,
+    1.683,
+    1.725,
+    1.767,
+    1.808,
+    1.85
+   ],
+   "values": [],
+   "sprites": [
+    "shatter:7",
+    "shatter:7",
+    "shatter:8",
+    "shatter:9",
+    "shatter:10",
+    "shatter:11",
+    "shatter:12",
+    "shatter:13"
+   ]
+  },
+  {
+   "path": "Shatter_Wang",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.6,
+    1.892
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Shatter_Wang",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    1.6,
+    1.642,
+    1.683,
+    1.725,
+    1.767,
+    1.808,
+    1.85
+   ],
+   "values": [],
+   "sprites": [
+    "shatter:14",
+    "shatter:14",
+    "shatter:15",
+    "shatter:16",
+    "shatter:17",
+    "shatter:18",
+    "shatter:19",
+    "shatter:20"
+   ]
+  },
+  {
+   "path": "Detonation",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.6,
+    2.1
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Detonation",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    1.6,
+    1.642,
+    1.683,
+    1.725,
+    1.767,
+    1.808,
+    1.85,
+    1.892,
+    1.933,
+    1.975,
+    2.017,
+    2.058
+   ],
+   "values": [],
+   "sprites": [
+    "detonation:0",
+    "detonation:0",
+    "detonation:1",
+    "detonation:2",
+    "detonation:3",
+    "detonation:4",
+    "detonation:5",
+    "detonation:6",
+    "detonation:7",
+    "detonation:8",
+    "detonation:9",
+    "detonation:10",
+    "detonation:11"
+   ]
+  },
+  {
+   "path": "Shockwave",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.62,
+    2.12
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Shockwave",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    1.62,
+    1.637,
+    1.653,
+    1.687,
+    1.72,
+    1.82
+   ],
+   "values": [],
+   "sprites": [
+    "ring:0",
+    "ring:0",
+    "ring:1",
+    "ring:2",
+    "ring:3",
+    "ring:4",
+    "ring:5"
+   ]
+  },
+  {
+   "path": "Shockwave",
+   "prop": "scale",
+   "mode": "step",
+   "times": [
+    0,
+    1.62,
+    1.637,
+    1.653,
+    1.67,
+    1.687,
+    1.703,
+    1.72,
+    1.737,
+    1.753,
+    1.77,
+    1.787,
+    1.803,
+    1.82,
+    1.837,
+    1.853,
+    1.87,
+    1.887,
+    1.903,
+    1.92,
+    1.937,
+    1.953,
+    1.97,
+    1.987,
+    2.003,
+    2.02,
+    2.037,
+    2.053,
+    2.07,
+    2.087,
+    2.103,
+    2.12
+   ],
+   "values": [
+    1,
+    0.833,
+    1.188,
+    1.158,
+    1.559,
+    1.197,
+    1.426,
+    1.019,
+    1.15,
+    1.275,
+    1.394,
+    1.508,
+    1.616,
+    1.062,
+    1.122,
+    1.178,
+    1.232,
+    1.281,
+    1.328,
+    1.371,
+    1.41,
+    1.446,
+    1.479,
+    1.508,
+    1.534,
+    1.556,
+    1.575,
+    1.59,
+    1.602,
+    1.611,
+    1.616,
+    1.618
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Shockwave",
+   "prop": "alpha",
+   "mode": "linear",
+   "times": [
+    0,
+    1.62,
+    1.637,
+    1.653,
+    1.67,
+    1.687,
+    1.703,
+    1.72,
+    1.737,
+    1.753,
+    1.77,
+    1.787,
+    1.803,
+    1.82,
+    1.837,
+    1.853,
+    1.87,
+    1.887,
+    1.903,
+    1.92,
+    1.937,
+    1.953,
+    1.97,
+    1.987,
+    2.003,
+    2.02,
+    2.037,
+    2.053,
+    2.07,
+    2.087,
+    2.103,
+    2.12
+   ],
+   "values": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0.963,
+    0.889,
+    0.815,
+    0.741,
+    0.667,
+    0.593,
+    0.519,
+    0.444,
+    0.37,
+    0.296,
+    0.222,
+    0.148,
+    0.074,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Shockwave_Echo",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.7,
+    2.25
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Shockwave_Echo",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    1.7,
+    1.717,
+    1.733,
+    1.767,
+    1.817,
+    1.967
+   ],
+   "values": [],
+   "sprites": [
+    "ring:0",
+    "ring:0",
+    "ring:1",
+    "ring:2",
+    "ring:3",
+    "ring:4",
+    "ring:5"
+   ]
+  },
+  {
+   "path": "Shockwave_Echo",
+   "prop": "scale",
+   "mode": "step",
+   "times": [
+    0,
+    1.7,
+    1.717,
+    1.733,
+    1.75,
+    1.767,
+    1.783,
+    1.8,
+    1.817,
+    1.833,
+    1.85,
+    1.867,
+    1.883,
+    1.9,
+    1.917,
+    1.933,
+    1.95,
+    1.967,
+    1.983,
+    2,
+    2.017,
+    2.033,
+    2.05,
+    2.067,
+    2.083,
+    2.1,
+    2.117,
+    2.133,
+    2.15,
+    2.167,
+    2.183,
+    2.2,
+    2.217,
+    2.233,
+    2.25
+   ],
+   "values": [
+    1,
+    0.583,
+    1.025,
+    1.036,
+    1.408,
+    1.08,
+    1.28,
+    1.465,
+    1.014,
+    1.113,
+    1.204,
+    1.288,
+    1.365,
+    1.435,
+    1.499,
+    1.557,
+    1.609,
+    1.023,
+    1.048,
+    1.071,
+    1.091,
+    1.108,
+    1.122,
+    1.135,
+    1.145,
+    1.154,
+    1.16,
+    1.166,
+    1.17,
+    1.173,
+    1.174,
+    1.176,
+    1.176,
+    1.176,
+    1.176
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Shockwave_Echo",
+   "prop": "alpha",
+   "mode": "linear",
+   "times": [
+    0,
+    1.7,
+    1.717,
+    1.733,
+    1.75,
+    1.767,
+    1.783,
+    1.8,
+    1.817,
+    1.833,
+    1.85,
+    1.867,
+    1.883,
+    1.9,
+    1.917,
+    1.933,
+    1.95,
+    1.967,
+    1.983,
+    2,
+    2.017,
+    2.033,
+    2.05,
+    2.067,
+    2.083,
+    2.1,
+    2.117,
+    2.133,
+    2.15,
+    2.167,
+    2.183,
+    2.2,
+    2.217,
+    2.233,
+    2.25
+   ],
+   "values": [
+    0.55,
+    0.55,
+    0.55,
+    0.55,
+    0.55,
+    0.55,
+    0.55,
+    0.55,
+    0.55,
+    0.55,
+    0.55,
+    0.548,
+    0.524,
+    0.5,
+    0.476,
+    0.452,
+    0.429,
+    0.405,
+    0.381,
+    0.357,
+    0.333,
+    0.31,
+    0.286,
+    0.262,
+    0.238,
+    0.214,
+    0.19,
+    0.167,
+    0.143,
+    0.119,
+    0.095,
+    0.071,
+    0.048,
+    0.024,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Spark_09",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.72,
+    2.02
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Spark_09",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    1.72,
+    1.77,
+    1.82,
+    1.87,
+    1.92,
+    1.97
+   ],
+   "values": [],
+   "sprites": [
+    "spark:0",
+    "spark:0",
+    "spark:1",
+    "spark:2",
+    "spark:3",
+    "spark:4",
+    "spark:5"
+   ]
+  },
+  {
+   "path": "Spark_10",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.765,
+    2.065
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Spark_10",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    1.765,
+    1.815,
+    1.865,
+    1.915,
+    1.965,
+    2.015
+   ],
+   "values": [],
+   "sprites": [
+    "spark:0",
+    "spark:0",
+    "spark:1",
+    "spark:2",
+    "spark:3",
+    "spark:4",
+    "spark:5"
+   ]
+  },
+  {
+   "path": "Spark_11",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.81,
+    2.11
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Spark_11",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    1.81,
+    1.86,
+    1.91,
+    1.96,
+    2.01,
+    2.06
+   ],
+   "values": [],
+   "sprites": [
+    "spark:0",
+    "spark:0",
+    "spark:1",
+    "spark:2",
+    "spark:3",
+    "spark:4",
+    "spark:5"
+   ]
+  },
+  {
+   "path": "Spark_12",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.855,
+    2.155
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Spark_12",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    1.855,
+    1.905,
+    1.955,
+    2.005,
+    2.055,
+    2.105
+   ],
+   "values": [],
+   "sprites": [
+    "spark:0",
+    "spark:0",
+    "spark:1",
+    "spark:2",
+    "spark:3",
+    "spark:4",
+    "spark:5"
+   ]
+  },
+  {
+   "path": "Spark_13",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.9,
+    2.2
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Spark_13",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    1.9,
+    1.95,
+    2,
+    2.05,
+    2.1,
+    2.15
+   ],
+   "values": [],
+   "sprites": [
+    "spark:0",
+    "spark:0",
+    "spark:1",
+    "spark:2",
+    "spark:3",
+    "spark:4",
+    "spark:5"
+   ]
+  },
+  {
+   "path": "Spark_14",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.945,
+    2.245
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Spark_14",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    1.945,
+    1.995,
+    2.045,
+    2.095,
+    2.145,
+    2.195
+   ],
+   "values": [],
+   "sprites": [
+    "spark:0",
+    "spark:0",
+    "spark:1",
+    "spark:2",
+    "spark:3",
+    "spark:4",
+    "spark:5"
+   ]
+  },
+  {
+   "path": "Spark_15",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    1.99,
+    2.29
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Spark_15",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    1.99,
+    2.04,
+    2.09,
+    2.14,
+    2.19,
+    2.24
+   ],
+   "values": [],
+   "sprites": [
+    "spark:0",
+    "spark:0",
+    "spark:1",
+    "spark:2",
+    "spark:3",
+    "spark:4",
+    "spark:5"
+   ]
+  },
+  {
+   "path": "Spark_16",
+   "prop": "active",
+   "mode": "step",
+   "times": [
+    0,
+    2.035,
+    2.335
+   ],
+   "values": [
+    0,
+    1,
+    0
+   ],
+   "sprites": []
+  },
+  {
+   "path": "Spark_16",
+   "prop": "sprite",
+   "mode": "step",
+   "times": [
+    0,
+    2.035,
+    2.085,
+    2.135,
+    2.185,
+    2.235,
+    2.285
+   ],
+   "values": [],
+   "sprites": [
+    "spark:0",
+    "spark:0",
+    "spark:1",
+    "spark:2",
+    "spark:3",
+    "spark:4",
+    "spark:5"
+   ]
+  }
+ ],
+ "events": [
+  {
+   "time": 0.317,
+   "fn": "Shake",
+   "f": 0.08
+  },
+  {
+   "time": 0.317,
+   "fn": "Sound",
+   "f": 0
+  },
+  {
+   "time": 0.567,
+   "fn": "Shake",
+   "f": 0.08
+  },
+  {
+   "time": 0.567,
+   "fn": "Sound",
+   "f": 0
+  },
+  {
+   "time": 0.817,
+   "fn": "Shake",
+   "f": 0.08
+  },
+  {
+   "time": 0.817,
+   "fn": "Sound",
+   "f": 0
+  },
+  {
+   "time": 1.1,
+   "fn": "Shake",
+   "f": 0.03
+  },
+  {
+   "time": 1.2,
+   "fn": "Shake",
+   "f": 0.03
+  },
+  {
+   "time": 1.3,
+   "fn": "Shake",
+   "f": 0.03
+  },
+  {
+   "time": 1.4,
+   "fn": "Shake",
+   "f": 0.03
+  },
+  {
+   "time": 1.5,
+   "fn": "Shake",
+   "f": 0.03
+  },
+  {
+   "time": 1.55,
+   "fn": "Sound",
+   "f": 0
+  },
+  {
+   "time": 1.55,
+   "fn": "Shake",
+   "f": 0.15
+  },
+  {
+   "time": 1.6,
+   "fn": "Hit",
+   "f": 0
+  },
+  {
+   "time": 1.6,
+   "fn": "Shake",
+   "f": 0.3
+  },
+  {
+   "time": 1.6,
+   "fn": "Sound",
+   "f": 0
+  },
+  {
+   "time": 2.35,
+   "fn": "End",
+   "f": 0
+  }
+ ]
+}

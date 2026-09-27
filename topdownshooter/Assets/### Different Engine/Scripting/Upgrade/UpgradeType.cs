@@ -1,17 +1,31 @@
-public enum UpgradeType
+﻿public enum UpgradeType
 {
-    FireRate,
-    BulletSpeed,
-    BulletCount,
+    ArrowCooldown,
+    ArrowSpeed,
+    ArrowCount,
     PickupRadius,
     AuraUnlock,
     AuraDamage,
     AuraRadius,
-    BulletDamage,
+    ArrowDamage,
     MaxHealth,
     HealthRegen,
     AOEAttack,
     AOEAttackRadius,
     AOEAttackProjectileCount,
-    AOEAttackDamage
+    AOEAttackDamage,
+    CritChance,
+    CritDamage,
+    Pierce,
+    MoveSpeed,
+    AuraCooldown,
+    AOEAttackCooldown,
+    Cooldown,
+    Area,
+    WeaponSpeed,
+    // assets store these as numbers, so new types only ever go at the end
+    BowUnlock,
+    Weapon,
+    AOEAttackSmart,
+    Might
 }

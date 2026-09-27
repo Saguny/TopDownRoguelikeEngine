@@ -26,21 +26,29 @@ public class HealPickup : MonoBehaviour
         transform.position = Vector3.Lerp(transform.position, target.position, Time.deltaTime * moveSpeed);
     }
 
+    private void OnDisable()
+    {
+        // pooled pickups must forget last life's magnet target or they fly off on spawn
+        pulling = false;
+        target = null;
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (!other.CompareTag("Player")) return;
 
         // 🎵 Sound abspielen
         if (pickupSound != null)
-            AudioSource.PlayClipAtPoint(pickupSound, transform.position, pickupVolume);
+            SfxPlayer.PlayAt(pickupSound, transform.position, pickupVolume);
 
         // 💚 Spieler heilen
         if (other.TryGetComponent(out PlayerHealth playerHealth))
         {
             playerHealth.Heal(healAmount);
+            RunStats.PickedUpHeal();
             playerHealth.StartHealFlash(); //  visuelles Feedback
         }
 
-        Destroy(gameObject);
+        ObjectPool.Recycle(gameObject);
     }
 }

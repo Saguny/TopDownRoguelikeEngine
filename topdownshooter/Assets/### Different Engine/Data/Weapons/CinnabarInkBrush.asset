@@ -1,0 +1,156 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efba4dbac68f4294c9077f3e29b230c1, type: 3}
+  m_Name: CinnabarInkBrush
+  m_EditorClassIdentifier: 
+  title: Cinnabar Ink Brush
+  type: 24
+  icon: {fileID: -8379052017618996131, guid: 2dda92b8a7e563c459e5651093a9212c, type: 3}
+  iconFrames:
+  - {fileID: -8379052017618996131, guid: 2dda92b8a7e563c459e5651093a9212c, type: 3}
+  - {fileID: -959406620592006274, guid: 2dda92b8a7e563c459e5651093a9212c, type: 3}
+  - {fileID: -5558797696960415880, guid: 2dda92b8a7e563c459e5651093a9212c, type: 3}
+  - {fileID: -400647324446499212, guid: 2dda92b8a7e563c459e5651093a9212c, type: 3}
+  iconFps: 8
+  includeInPool: 1
+  value: 1.1
+  additive: 0
+  description: 
+  level: 0
+  maxLevel: 5
+  overcharge: 0
+  overchargeCeiling: 1
+  overchargeHalfStacks: 8
+  evolutionPartner: {fileID: 0}
+  evolvedIcon: {fileID: 5415327537664319433, guid: c6dffb350189759489154b4df357bff0, type: 3}
+  evolvedIconFrames:
+  - {fileID: 5415327537664319433, guid: c6dffb350189759489154b4df357bff0, type: 3}
+  - {fileID: -6469398439340093343, guid: c6dffb350189759489154b4df357bff0, type: 3}
+  - {fileID: 5232586913928633892, guid: c6dffb350189759489154b4df357bff0, type: 3}
+  - {fileID: -6375252412723205117, guid: c6dffb350189759489154b4df357bff0, type: 3}
+  evolvedTitle: Calligraphic Seal Grid
+  levels:
+  - seconds: 2
+    width: 0.55
+    damage: 3
+  - seconds: 2.5
+    width: 0.55
+    damage: 4
+  - seconds: 2.5
+    width: 0.65
+    damage: 5
+  - seconds: 3
+    width: 0.65
+    damage: 6
+  - seconds: 3
+    width: 0.75
+    damage: 8
+  - seconds: 3.5
+    width: 0.8
+    damage: 10
+  - seconds: 4
+    width: 0.9
+    damage: 12
+  tickSeconds: 0.3
+  spacing: 0.2
+  pressure: 0.24
+  wetShare: 0.45
+  dryingShare: 0.25
+  fadeShare: 0.18
+  flamesPerSecond: 0.9
+  trailBehind: 0.35
+  feetBelow: 0.65
+  brushFollow: 14
+  brushLean: 32
+  minLoopArea: 2.5
+  loopDamage: 400
+  eliteShare: 0.35
+  loopCooldown: 1.2
+  blastSpacing: 1.1
+  maxBlasts: 40
+  rippleSeconds: 0.35
+  loopShake: 0.3
+  loopSound: {fileID: 8300000, guid: d0212a9b33df449b9eea0c4fafcd1775, type: 3}
+  loopVolume: 1
+  dabFrames:
+  - {fileID: 1046874561667946525, guid: f9ef92dec5442354cb9e3813eac246f6, type: 3}
+  - {fileID: -7039086938228976204, guid: f9ef92dec5442354cb9e3813eac246f6, type: 3}
+  - {fileID: -1654909923590825298, guid: f9ef92dec5442354cb9e3813eac246f6, type: 3}
+  - {fileID: 905672067262038676, guid: f9ef92dec5442354cb9e3813eac246f6, type: 3}
+  - {fileID: -3348159552033492333, guid: f9ef92dec5442354cb9e3813eac246f6, type: 3}
+  - {fileID: 591568207428212084, guid: f9ef92dec5442354cb9e3813eac246f6, type: 3}
+  - {fileID: 8134270110056709269, guid: f9ef92dec5442354cb9e3813eac246f6, type: 3}
+  - {fileID: 2562291570648520510, guid: f9ef92dec5442354cb9e3813eac246f6, type: 3}
+  - {fileID: 4995776076999513243, guid: f9ef92dec5442354cb9e3813eac246f6, type: 3}
+  - {fileID: 1601760574251033806, guid: f9ef92dec5442354cb9e3813eac246f6, type: 3}
+  - {fileID: -6747001195614494750, guid: f9ef92dec5442354cb9e3813eac246f6, type: 3}
+  - {fileID: -3122949503829156981, guid: f9ef92dec5442354cb9e3813eac246f6, type: 3}
+  - {fileID: -1107614966423788291, guid: f9ef92dec5442354cb9e3813eac246f6, type: 3}
+  - {fileID: 9218989093167346228, guid: f9ef92dec5442354cb9e3813eac246f6, type: 3}
+  - {fileID: -3237647653534942940, guid: f9ef92dec5442354cb9e3813eac246f6, type: 3}
+  - {fileID: -3214956790633452226, guid: f9ef92dec5442354cb9e3813eac246f6, type: 3}
+  - {fileID: -5826836306129223374, guid: f9ef92dec5442354cb9e3813eac246f6, type: 3}
+  - {fileID: 5594037619902357131, guid: f9ef92dec5442354cb9e3813eac246f6, type: 3}
+  - {fileID: 5043964277626498688, guid: f9ef92dec5442354cb9e3813eac246f6, type: 3}
+  - {fileID: -6582370319834514023, guid: f9ef92dec5442354cb9e3813eac246f6, type: 3}
+  dabArtWidth: 0.4919185
+  brushFrames:
+  - {fileID: 6073785454916131452, guid: 70ca8f530ccad7245bf4682fd295ed77, type: 3}
+  - {fileID: 4314632374544711228, guid: 70ca8f530ccad7245bf4682fd295ed77, type: 3}
+  - {fileID: 8640744907248246740, guid: 70ca8f530ccad7245bf4682fd295ed77, type: 3}
+  - {fileID: -1411771088983988152, guid: 70ca8f530ccad7245bf4682fd295ed77, type: 3}
+  - {fileID: 710460998361410949, guid: 70ca8f530ccad7245bf4682fd295ed77, type: 3}
+  - {fileID: -3829444488294715121, guid: 70ca8f530ccad7245bf4682fd295ed77, type: 3}
+  brushFps: 10
+  brushTipPixels: 16.5
+  flameFrames:
+  - {fileID: -5886158333240528500, guid: 72f616569937aae448114d42033d0fd8, type: 3}
+  - {fileID: 3290394674266054359, guid: 72f616569937aae448114d42033d0fd8, type: 3}
+  - {fileID: -1870892255169180535, guid: 72f616569937aae448114d42033d0fd8, type: 3}
+  - {fileID: 9030460065214556074, guid: 72f616569937aae448114d42033d0fd8, type: 3}
+  - {fileID: -5662089075430165992, guid: 72f616569937aae448114d42033d0fd8, type: 3}
+  - {fileID: -642230264487147813, guid: 72f616569937aae448114d42033d0fd8, type: 3}
+  - {fileID: -2927561319408113310, guid: 72f616569937aae448114d42033d0fd8, type: 3}
+  flameFps: 16
+  sealFrames:
+  - {fileID: -6433746064697300191, guid: 1b1d27ed54ccd2746bf6b40351d91b80, type: 3}
+  - {fileID: 7707141443217982363, guid: 1b1d27ed54ccd2746bf6b40351d91b80, type: 3}
+  - {fileID: -1558393492508302692, guid: 1b1d27ed54ccd2746bf6b40351d91b80, type: 3}
+  - {fileID: 5440482050390723839, guid: 1b1d27ed54ccd2746bf6b40351d91b80, type: 3}
+  - {fileID: 7877953701357847111, guid: 1b1d27ed54ccd2746bf6b40351d91b80, type: 3}
+  - {fileID: -2356502778681182675, guid: 1b1d27ed54ccd2746bf6b40351d91b80, type: 3}
+  - {fileID: 2416606006313742285, guid: 1b1d27ed54ccd2746bf6b40351d91b80, type: 3}
+  - {fileID: -5911884910814347689, guid: 1b1d27ed54ccd2746bf6b40351d91b80, type: 3}
+  - {fileID: -6091291479072829936, guid: 1b1d27ed54ccd2746bf6b40351d91b80, type: 3}
+  - {fileID: 5864056251834539126, guid: 1b1d27ed54ccd2746bf6b40351d91b80, type: 3}
+  - {fileID: -297321059089352894, guid: 1b1d27ed54ccd2746bf6b40351d91b80, type: 3}
+  - {fileID: 4511930269321574534, guid: 1b1d27ed54ccd2746bf6b40351d91b80, type: 3}
+  sealFps: 20
+  sealArtSize: 2.5
+  blastFrames:
+  - {fileID: 7157116361035956728, guid: d4f5224f3a9bc8a4a8c6fe845277282c, type: 3}
+  - {fileID: 3376254439379486165, guid: d4f5224f3a9bc8a4a8c6fe845277282c, type: 3}
+  - {fileID: 7060080615623714117, guid: d4f5224f3a9bc8a4a8c6fe845277282c, type: 3}
+  - {fileID: -4226588481597092603, guid: d4f5224f3a9bc8a4a8c6fe845277282c, type: 3}
+  - {fileID: -2781587149814463521, guid: d4f5224f3a9bc8a4a8c6fe845277282c, type: 3}
+  - {fileID: -1362825291766947834, guid: d4f5224f3a9bc8a4a8c6fe845277282c, type: 3}
+  - {fileID: 2278367742973585127, guid: d4f5224f3a9bc8a4a8c6fe845277282c, type: 3}
+  - {fileID: 7046783937810311419, guid: d4f5224f3a9bc8a4a8c6fe845277282c, type: 3}
+  - {fileID: 1769150735620992067, guid: d4f5224f3a9bc8a4a8c6fe845277282c, type: 3}
+  - {fileID: 5996954967948140380, guid: d4f5224f3a9bc8a4a8c6fe845277282c, type: 3}
+  blastFps: 25
+  trailLayer: Player
+  trailOrder: -10
+  brushLayer: Player
+  brushOrder: 0
+  blastLayer: Aura
+  blastOrder: 8

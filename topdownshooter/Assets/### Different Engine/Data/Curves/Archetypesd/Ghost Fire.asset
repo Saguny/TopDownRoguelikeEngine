@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48e0b7cb409370741a046cd96fa59353, type: 3}
+  m_Name: Ghost Fire
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 1048871670121432657, guid: b9ce17fd1fd876b4aab44a59e95184a0, type: 3}
+  cost: 1
+  weight: 0.5
+  baseHealth: 3
+  baseSpeed: 1.5
+  baseDamage: 8
+  contactTickInterval: 0.5

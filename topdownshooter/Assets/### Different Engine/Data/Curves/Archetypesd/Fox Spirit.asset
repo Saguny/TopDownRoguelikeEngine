@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48e0b7cb409370741a046cd96fa59353, type: 3}
+  m_Name: Fox Spirit
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 5659293968997509946, guid: fdf38f6745bfc3549bb146217bf089f7, type: 3}
+  cost: 4
+  weight: 0.2
+  baseHealth: 6
+  baseSpeed: 1.9
+  baseDamage: 12
+  contactTickInterval: 0.5

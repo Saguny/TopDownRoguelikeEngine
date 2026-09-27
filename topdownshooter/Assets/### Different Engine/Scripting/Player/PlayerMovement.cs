@@ -11,20 +11,26 @@ public class PlayerMovement : MonoBehaviour
     [Header("Visuals")]
     [SerializeField] private Transform firePoint;
     [SerializeField] private Animator _animator;
+    [Tooltip("which way the character art faces when not flipped. the Qing warrior faces right; the old robot faced left")]
+    [SerializeField] private bool _artFacesRight = true;
 
     private Rigidbody2D _rb;
+    private StatContext _stats;
     private Vector2 _moveInput;                 // raw input from WASD/Stick
     private Vector2 _velocitySmoothRef;         // ref for SmoothDamp
     private Vector3 _originalScale;
     private Vector3 _originalFirePointLocalPos;
     private int _facingSign = -1;                // 1 = right, -1 = left
+    private Vector2 _lastPosition;              // for the run's distance walked
 
     private void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
+        _stats = GetComponent<StatContext>();
         _rb.gravityScale = 0f;
         _rb.interpolation = RigidbodyInterpolation2D.Interpolate;
         _rb.freezeRotation = true;
+        _lastPosition = _rb.position;
 
         _originalScale = transform.localScale;
 
@@ -34,17 +40,25 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // the run's distance walked: how far the body really got, walls and all. more than a
+        // unit in one step is a teleport, not walking
+        Vector2 at = _rb.position;
+        float moved = (at - _lastPosition).magnitude;
+        if (moved < 1f) RunStats.Walked(moved);
+        _lastPosition = at;
+
         // normalize so diagonals aren't faster
         Vector2 dir = _moveInput.sqrMagnitude > 1f ? _moveInput.normalized : _moveInput;
 
         // target velocity and smooth acceleration/deceleration
-        Vector2 desiredVel = dir * _speed;
+        Vector2 desiredVel = dir * (_speed * (_stats ? _stats.MoveSpeedTotal : 1f));
         _rb.linearVelocity = Vector2.SmoothDamp(_rb.linearVelocity, desiredVel, ref _velocitySmoothRef, _accelTime);
 
         // flip from velocity when there's horizontal motion
-        if (Mathf.Abs(_rb.linearVelocity.x) > -0.001f)
+        if (Mathf.Abs(_rb.linearVelocity.x) > 0.001f)
         {
-            _facingSign = _rb.linearVelocity.x > 0 ? -1 : 1;
+            // mirror the art only when moving against the way it's drawn
+            _facingSign = (_rb.linearVelocity.x > 0) == _artFacesRight ? 1 : -1;
             transform.localScale = new Vector3(Mathf.Abs(_originalScale.x) * _facingSign, _originalScale.y, _originalScale.z);
 
             if (firePoint != null)

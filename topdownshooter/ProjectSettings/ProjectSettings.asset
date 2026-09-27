@@ -12,12 +12,12 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: SMML
-  productName: Futurid
+  companyName: Off-By-One
+  productName: Wanjian
   defaultCursor: {fileID: 2800000, guid: 57818a594eeacf44db14b7f3e1a9cc90, type: 3}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
-  m_ShowUnitySplashScreen: 1
+  m_ShowUnitySplashScreen: 0
   m_ShowUnitySplashLogo: 1
   m_SplashScreenOverlayOpacity: 1
   m_SplashScreenAnimation: 0
@@ -291,7 +291,7 @@ PlayerSettings:
   - m_BuildTarget: 
     m_Icons:
     - serializedVersion: 2
-      m_Icon: {fileID: 2800000, guid: 42f03ec7768331e45898dd033464f387, type: 3}
+      m_Icon: {fileID: 2800000, guid: 5293b65d1624f44448793a4744905856, type: 3}
       m_Width: 128
       m_Height: 128
       m_Kind: 0

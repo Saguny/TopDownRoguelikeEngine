@@ -1,76 +1,76 @@
-﻿using TMPro;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
+using UnityEngine.Serialization;
 
+// the screen at the end of a run, won or lost. it switches the panel on and slams it in
+// (ScaleIn), counts the run towards Endless and stops the game behind it. what's on
+// the panel fills itself as it opens: the numbers (RunStatText), the weapons (WeaponStatsList)
+// and what the run unlocked (UnlockList). the player's death opens it once the body has lain
+// there a moment (PlayerHealth); walking out through the exit opens it as a win (ExitTunnel)
 public class GameOverScreen : MonoBehaviour
 {
-    [SerializeField] private GameObject gameOverUI;
+    [Tooltip("the whole screen, switched on when the run ends")]
+    [SerializeField, FormerlySerializedAs("gameOverUI")] private GameObject panel;
+    [Tooltip("optional: a screen of its own for a win. empty = the one above for both")]
+    [SerializeField, FormerlySerializedAs("victoryUI")] private GameObject victoryPanel;
 
-    [Header("Texts")]
-    [SerializeField] private TMP_Text levelText;
-    [SerializeField] private TMP_Text timeText;
-    [SerializeField] private TMP_Text killsText;
+    [Header("Endless")]
+    [Tooltip("optional: NEW BEST! or the time to beat")]
+    [SerializeField] private TMP_Text bestText;
 
-    [Header("Optional Icons")]
-    [SerializeField] private Image levelIcon;
-    [SerializeField] private Image timeIcon;
-    [SerializeField] private Image killsIcon;
+    [Header("Slam in")]
+    [Tooltip("how many times its size the screen starts at")]
+    [SerializeField, Min(1f)] private float startScale = 3.2f;
+    [SerializeField, Min(0.05f)] private float slamSeconds = 0.45f;
 
-    public void Setup(float currentHealth)
+    private const string BestKey = "endless_best_seconds";
+
+    // death and victory can't both land, and a run is only counted once
+    public bool Shown { get; private set; }
+
+    public void ShowDefeat() => Show(false);
+    public void ShowVictory() => Show(true);
+
+    private void Show(bool won)
     {
-        if (gameOverUI != null)
-            gameOverUI.SetActive(true);
+        if (Shown) return;
+        Shown = true;
+        RunStats.EndRun();
 
-        // Player inventory → level + kills
-        var inv = FindObjectOfType<PlayerInventory>();
-        if (inv != null)
+        // a finished run counts towards Endless (it may be the one that unlocks it; the unlock
+        // list hears about it). in Endless the score is how long you lasted
+        if (GameMode.IsEndless) ShowBest();
+        else RunProgress.RecordNormalRun();
+
+        var screen = won && victoryPanel != null ? victoryPanel : panel;
+        if (screen != null)
         {
-            if (levelText != null)
-                levelText.text = "Level " + inv.CurrentLevel;
-
-            if (killsText != null)
-                killsText.text = " " + inv.totalKills;
+            screen.SetActive(true);
+            ScaleIn.Play(screen, startScale, slamSeconds);
         }
 
-        // Show / hide icons based on assignment
-        if (levelIcon != null)
-            levelIcon.gameObject.SetActive(levelIcon.sprite != null);
-
-        if (killsIcon != null)
-            killsIcon.gameObject.SetActive(killsIcon.sprite != null);
-
-        // SpawnDirector → runtime
-        var dir = FindObjectOfType<SpawnDirector>();
-        if (dir != null && timeText != null)
-        {
-            float t = dir.GetRunTime();
-            timeText.text = " " + FormatTime(t);
-        }
-
-        if (timeIcon != null)
-            timeIcon.gameObject.SetActive(timeIcon.sprite != null);
-
-        // pause the game
+        Juice.Yield();
         Time.timeScale = 0f;
     }
 
-    public void RestartButton()
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene("MainTestGame");
-    }
+    // the same run again, same map and character, through the loading screen
+    public void RestartButton() => SceneLoader.Load(SceneManager.GetActiveScene().name);
 
-    public void ExitButton()
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene("MainMenu");
-    }
+    // back to the menu through the loading screen
+    public void ExitButton() => SceneLoader.Load("MainMenu");
 
-    private string FormatTime(float seconds)
+    private void ShowBest()
     {
-        int min = Mathf.FloorToInt(seconds / 60f);
-        int sec = Mathf.FloorToInt(seconds % 60f);
-        return $"{min:00}:{sec:00}";
+        var director = FindFirstObjectByType<SpawnDirector>();
+        float seconds = director != null ? director.GetRunTime() : RunStats.RunClock;
+        float best = PlayerPrefs.GetFloat(BestKey, 0f);
+        bool beaten = seconds > best;
+        if (beaten)
+        {
+            PlayerPrefs.SetFloat(BestKey, seconds);
+            PlayerPrefs.Save();
+        }
+        if (bestText != null) bestText.text = beaten ? "NEW BEST!" : $"Best {RunStats.Clock(best)}";
     }
 }

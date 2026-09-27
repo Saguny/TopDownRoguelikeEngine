@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48e0b7cb409370741a046cd96fa59353, type: 3}
+  m_Name: Nian Beast
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 8347196155723260340, guid: a9e34cd8a93ba4a4fb386f9a33dbc934, type: 3}
+  cost: 9
+  weight: 0.15
+  baseHealth: 70
+  baseSpeed: 0.55
+  baseDamage: 25
+  contactTickInterval: 0.5

@@ -1,0 +1,469 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ca22b22bb1b43e8899bd14243b7baf6, type: 3}
+  m_Name: CourtyardTimeline
+  m_EditorClassIdentifier: 
+  crowdScale: 1
+  hardCap: 250
+  waveMinutes: 4.5
+  beats:
+  - label: 'Restless dead'
+    fromMinute: 0
+    minimum: 8
+    perInterval: 1
+    interval: 1.5
+    cap: 20
+    enemies:
+    - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
+      weight: 3
+    - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
+      weight: 2
+  - label: 'Wisps gather'
+    fromMinute: 1.5
+    minimum: 15
+    perInterval: 2
+    interval: 1.25
+    cap: 30
+    enemies:
+    - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
+      weight: 4
+    - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
+      weight: 2
+  - label: 'The hungry wake'
+    fromMinute: 3
+    minimum: 24
+    perInterval: 2
+    interval: 1
+    cap: 40
+    enemies:
+    - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
+      weight: 2
+    - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
+      weight: 3
+    - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
+      weight: 2
+  - label: 'Hungry procession'
+    fromMinute: 4.5
+    minimum: 30
+    perInterval: 3
+    interval: 1
+    cap: 50
+    enemies:
+    - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
+      weight: 4
+    - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
+      weight: 2
+    - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
+      weight: 1
+  - label: 'Foxes in the eaves'
+    fromMinute: 7.5
+    minimum: 40
+    perInterval: 3
+    interval: 1
+    cap: 64
+    enemies:
+    - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
+      weight: 3
+    - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
+      weight: 2
+    - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
+      weight: 2
+  - label: 'Coffin row'
+    fromMinute: 9
+    minimum: 45
+    perInterval: 3
+    interval: 0.9
+    cap: 72
+    enemies:
+    - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
+      weight: 5
+    - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
+      weight: 2
+    - archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
+      weight: 0.3
+  - label: 'Fox fire'
+    fromMinute: 12
+    minimum: 55
+    perInterval: 4
+    interval: 0.9
+    cap: 85
+    enemies:
+    - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
+      weight: 4
+    - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
+      weight: 4
+  - label: 'Temple overrun'
+    fromMinute: 13.5
+    minimum: 60
+    perInterval: 4
+    interval: 0.8
+    cap: 95
+    enemies:
+    - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
+      weight: 2
+    - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
+      weight: 3
+    - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
+      weight: 2
+    - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
+      weight: 2
+    - archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
+      weight: 0.4
+  - label: 'Year of the Nian'
+    fromMinute: 18
+    minimum: 75
+    perInterval: 4
+    interval: 0.8
+    cap: 115
+    enemies:
+    - archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
+      weight: 1
+    - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
+      weight: 3
+    - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
+      weight: 2
+  - label: 'Nine-tailed night'
+    fromMinute: 22.5
+    minimum: 90
+    perInterval: 5
+    interval: 0.7
+    cap: 135
+    enemies:
+    - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
+      weight: 5
+    - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
+      weight: 2
+    - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
+      weight: 3
+  - label: 'Hungry ghost festival'
+    fromMinute: 27
+    minimum: 105
+    perInterval: 5
+    interval: 0.7
+    cap: 155
+    enemies:
+    - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
+      weight: 5
+    - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
+      weight: 3
+    - archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
+      weight: 0.5
+  - label: 'The dead march'
+    fromMinute: 31.5
+    minimum: 120
+    perInterval: 6
+    interval: 0.6
+    cap: 175
+    enemies:
+    - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
+      weight: 4
+    - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
+      weight: 2
+    - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
+      weight: 2
+    - archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
+      weight: 0.8
+  - label: 'Every grave open'
+    fromMinute: 36
+    minimum: 135
+    perInterval: 6
+    interval: 0.6
+    cap: 200
+    enemies:
+    - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
+      weight: 2
+    - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
+      weight: 2
+    - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
+      weight: 2
+    - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
+      weight: 2
+    - archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
+      weight: 1
+  - label: 'The last night'
+    fromMinute: 40.5
+    minimum: 150
+    perInterval: 7
+    interval: 0.5
+    cap: 220
+    enemies:
+    - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
+      weight: 2
+    - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
+      weight: 3
+    - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
+      weight: 2
+    - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
+      weight: 3
+    - archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
+      weight: 1.5
+  events:
+  - label: 'Will-o''-wisps!'
+    atMinute: 2.25
+    repeatEveryMinutes: 0
+    kind: 0
+    archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
+    count: 18
+    speed: 1.8
+    health: 1
+    crowd: 1.6
+    seconds: 20
+  - label: 'The dead surround you'
+    atMinute: 3.75
+    repeatEveryMinutes: 0
+    kind: 2
+    archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
+    count: 16
+    speed: 1.6
+    health: 1
+    crowd: 1.6
+    seconds: 20
+  - label: 'Elite: Hungry Ghost'
+    atMinute: 6
+    repeatEveryMinutes: 0
+    kind: 3
+    archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
+    count: 1
+    speed: 1.6
+    health: 10
+    crowd: 1.6
+    seconds: 20
+  - label: 'Will-o''-wisps!'
+    atMinute: 6.75
+    repeatEveryMinutes: 0
+    kind: 0
+    archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
+    count: 26
+    speed: 1.8
+    health: 1
+    crowd: 1.6
+    seconds: 20
+  - label: 'Coffin procession'
+    atMinute: 8.25
+    repeatEveryMinutes: 0
+    kind: 1
+    archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
+    count: 10
+    speed: 2.2
+    health: 1
+    crowd: 1.6
+    seconds: 20
+  - label: 'The hungry close in'
+    atMinute: 10.5
+    repeatEveryMinutes: 0
+    kind: 2
+    archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
+    count: 24
+    speed: 1.6
+    health: 1
+    crowd: 1.6
+    seconds: 20
+  - label: 'Elite: Jiangshi'
+    atMinute: 11.25
+    repeatEveryMinutes: 0
+    kind: 3
+    archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
+    count: 1
+    speed: 1.6
+    health: 12
+    crowd: 1.6
+    seconds: 20
+  - label: 'Fox run'
+    atMinute: 12.75
+    repeatEveryMinutes: 0
+    kind: 0
+    archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
+    count: 16
+    speed: 1.4
+    health: 1
+    crowd: 1.6
+    seconds: 20
+  - label: 'The horde swells'
+    atMinute: 15
+    repeatEveryMinutes: 0
+    kind: 4
+    archetype: {fileID: 0}
+    count: 1
+    speed: 1.6
+    health: 1
+    crowd: 1.6
+    seconds: 25
+  - label: 'Elite foxes'
+    atMinute: 15.75
+    repeatEveryMinutes: 0
+    kind: 3
+    archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
+    count: 2
+    speed: 1.6
+    health: 10
+    crowd: 1.6
+    seconds: 20
+  - label: 'Nian stampede!'
+    atMinute: 16.5
+    repeatEveryMinutes: 0
+    kind: 1
+    archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
+    count: 6
+    speed: 2.5
+    health: 1
+    crowd: 1.6
+    seconds: 20
+  - label: 'The dead surround you'
+    atMinute: 19.5
+    repeatEveryMinutes: 0
+    kind: 2
+    archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
+    count: 32
+    speed: 1.6
+    health: 1
+    crowd: 1.6
+    seconds: 20
+  - label: 'Will-o''-wisps!'
+    atMinute: 20.25
+    repeatEveryMinutes: 0
+    kind: 0
+    archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
+    count: 40
+    speed: 1.8
+    health: 1
+    crowd: 1.6
+    seconds: 20
+  - label: 'Elite: Nian'
+    atMinute: 21.75
+    repeatEveryMinutes: 0
+    kind: 3
+    archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
+    count: 1
+    speed: 1.6
+    health: 6
+    crowd: 1.6
+    seconds: 20
+  - label: 'Fox run'
+    atMinute: 24
+    repeatEveryMinutes: 0
+    kind: 1
+    archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
+    count: 14
+    speed: 1.6
+    health: 1
+    crowd: 1.6
+    seconds: 20
+  - label: 'The hungry close in'
+    atMinute: 25.5
+    repeatEveryMinutes: 0
+    kind: 2
+    archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
+    count: 36
+    speed: 1.6
+    health: 1
+    crowd: 1.6
+    seconds: 20
+  - label: 'The horde swells'
+    atMinute: 28.5
+    repeatEveryMinutes: 0
+    kind: 4
+    archetype: {fileID: 0}
+    count: 1
+    speed: 1.6
+    health: 1
+    crowd: 1.8
+    seconds: 30
+  - label: 'Fox run'
+    atMinute: 29.25
+    repeatEveryMinutes: 0
+    kind: 0
+    archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
+    count: 24
+    speed: 1.4
+    health: 1
+    crowd: 1.6
+    seconds: 20
+  - label: 'Elite hunger'
+    atMinute: 30
+    repeatEveryMinutes: 0
+    kind: 3
+    archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
+    count: 3
+    speed: 1.6
+    health: 8
+    crowd: 1.6
+    seconds: 20
+  - label: 'The dead surround you'
+    atMinute: 33
+    repeatEveryMinutes: 0
+    kind: 2
+    archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
+    count: 44
+    speed: 1.6
+    health: 1
+    crowd: 1.6
+    seconds: 20
+  - label: 'Nian stampede!'
+    atMinute: 34.5
+    repeatEveryMinutes: 0
+    kind: 1
+    archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
+    count: 9
+    speed: 2.5
+    health: 1
+    crowd: 1.6
+    seconds: 20
+  - label: 'Will-o''-wisps!'
+    atMinute: 37.5
+    repeatEveryMinutes: 9
+    kind: 0
+    archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
+    count: 60
+    speed: 1.8
+    health: 1
+    crowd: 1.6
+    seconds: 20
+  - label: 'Elite: Nian'
+    atMinute: 38.25
+    repeatEveryMinutes: 9
+    kind: 3
+    archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
+    count: 2
+    speed: 1.6
+    health: 6
+    crowd: 1.6
+    seconds: 20
+  - label: 'Every grave opens'
+    atMinute: 39
+    repeatEveryMinutes: 9
+    kind: 2
+    archetype: {fileID: 0}
+    count: 48
+    speed: 1.6
+    health: 1
+    crowd: 1.6
+    seconds: 20
+  - label: 'The horde swells'
+    atMinute: 42
+    repeatEveryMinutes: 9
+    kind: 4
+    archetype: {fileID: 0}
+    count: 1
+    speed: 1.6
+    health: 1
+    crowd: 2
+    seconds: 30
+  - label: 'Fox run'
+    atMinute: 43.5
+    repeatEveryMinutes: 9
+    kind: 1
+    archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
+    count: 18
+    speed: 2
+    health: 1
+    crowd: 1.6
+    seconds: 20

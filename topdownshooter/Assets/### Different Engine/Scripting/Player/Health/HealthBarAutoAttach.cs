@@ -1,18 +1,31 @@
 using UnityEngine;
 
+// the player's health bar: a bar of pixels under the feet, solid red on solid black, drawn over
+// every effect so it can always be read. it's measured in the character art's own pixels, so it
+// sits on the same grid as the sprite
 [DefaultExecutionOrder(10)]
 public class HealthBarAutoAttach : MonoBehaviour
 {
-    [Header("bar settings")]
-    public Sprite barSprite;                         // optional; HealthBarSprite will generate if null
-    public string sortingLayer = "Default";
-    public int bgOrder = 199;
-    public int fgOrder = 200;
+    [Header("size, in the character art's pixels")]
+    [Tooltip("the art's pixels per unit. 0 = the player's own sprite's, so the bar follows the character's size")]
+    [Min(0f)] public float artPixelsPerUnit = 0f;
+    [Tooltip("the red part at full health: width and height")]
+    public Vector2Int barPixels = new Vector2Int(20, 3);
+    [Tooltip("the black edge around it")]
+    [Min(0)] public int borderPixels = 1;
+    [Tooltip("how far below the player's position the art ends: the bottom of the drop shadow")]
+    public int artBottomPixels = 23;
+    [Tooltip("space between the art and the bar")]
+    [Min(0)] public int gapPixels = 1;
 
-    public Vector2 size = new Vector2(2.0f, 0.18f);
-    public Vector3 offset = new Vector3(0f, 0.8f, 0f);
-    public float bgPadding = 0.06f;
-    public float pixelSnap = 0f;
+    [Header("look")]
+    public Color fillColor = Color.red;
+    public Color backColor = Color.black;
+    [Tooltip("drawn on this layer, above every effect in the world")]
+    public string barSortingLayer = "HUD";
+    public int backOrder = 300;
+    [Tooltip("hidden while at full health")]
+    public bool hideWhenFull;
 
     private void Start()
     {
@@ -27,27 +40,25 @@ public class HealthBarAutoAttach : MonoBehaviour
         var existing = transform.Find("HealthBar");
         if (existing != null) Destroy(existing.gameObject);
 
-        // create new
         var barRoot = new GameObject("HealthBar");
         barRoot.layer = gameObject.layer;
         barRoot.transform.SetParent(transform, false);
         barRoot.transform.localPosition = Vector3.zero;
-        barRoot.SetActive(true);
 
         var hb = barRoot.AddComponent<HealthBarSprite>();
-        hb.enabled = true;
-
-        // visuals
-        hb.barSprite = barSprite;        // can be null, HealthBarSprite will auto-gen
-        hb.sortingLayer = sortingLayer;
-        hb.bgOrder = bgOrder;
-        hb.fgOrder = fgOrder;
-        hb.size = size;
-        hb.offset = offset;
-        hb.bgPadding = bgPadding;
-        hb.pixelSnap = pixelSnap;
-
-        // bind
+        float ppu = artPixelsPerUnit > 0f ? artPixelsPerUnit
+            : TryGetComponent(out SpriteRenderer sr) && sr.sprite != null ? sr.sprite.pixelsPerUnit : 33.88956f;
+        float px = 1f / ppu;
+        hb.size = new Vector2(barPixels.x, barPixels.y) * px;
+        hb.bgPadding = 2 * borderPixels * px;
+        hb.offset = new Vector3(0f, -(artBottomPixels + gapPixels + barPixels.y * 0.5f + borderPixels) * px, 0f);
+        hb.pixelWidth = px;
+        hb.fillColor = fillColor;
+        hb.backColor = backColor;
+        hb.hideWhenFull = hideWhenFull;
+        hb.sortingLayer = barSortingLayer;
+        hb.bgOrder = backOrder;
+        hb.fgOrder = backOrder + 1;
         hb.Bind(transform, health);
     }
 }

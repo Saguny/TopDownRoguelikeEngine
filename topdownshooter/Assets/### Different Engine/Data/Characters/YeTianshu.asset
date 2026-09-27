@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab628df514adbccec8462137d14276dd, type: 3}
+  m_Name: YeTianshu
+  m_EditorClassIdentifier: 
+  displayName: Ye Tianshu
+  portrait: {fileID: -8523244034810443853, guid: 2ca5d73417cbcf948aabfa3365d8a1a3, type: 3}
+  description: A sword immortal of the Dipper.
+  animations: {fileID: 22100000, guid: 40ff804e4882bf74380190cbfb098959, type: 2}
+  startingWeapon: {fileID: 11400000, guid: 42d6a117291763fd41ad22cd1ff7247e, type: 2}
+  signatureDamage: 1
+  signatureSlow: 0.3
+  signatureSlowSeconds: 2
+  startsUnlocked: 0
+  bonuses: []

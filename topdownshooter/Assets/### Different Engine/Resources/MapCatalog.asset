@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca95b65b55db4043b5f3b1a5b066caae, type: 3}
+  m_Name: MapCatalog
+  m_EditorClassIdentifier: 
+  maps:
+  - title: The Desecrated Courtyard
+    subtitle: A Taoist temple's courtyard, its bells fallen and its incense cold.
+      The restless dead have made it theirs.
+    playfield: {fileID: 3697419212547432894, guid: 4117a351fdd5b5443a6e99f4f674699a, type: 3}
+    preview: {fileID: 21300000, guid: fb6576762aa13e14e8d13cad8db87184, type: 3}
+  - title: Huangquan Road
+    subtitle: The road of the dead to the Yellow Springs, through fields of red spider
+      lilies to Naihe Bridge. The bridge is sealed; nobody leaves.
+    playfield: {fileID: 6413545675640949427, guid: e7cc4daca7bd59e46bdf4dd5ec6faad2, type: 3}
+    preview: {fileID: 21300000, guid: 9cc2d1e58dc323e4aae5354f3c91b59f, type: 3}

@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75aa0900d9d144bc980799a30153bac6, type: 3}
+  m_Name: Electrical Aura
+  m_EditorClassIdentifier: 
+  title: Electrical Aura
+  type: 24
+  icon: {fileID: -4913274911228283370, guid: e4b7a817a56d58d4982902a3f1a0551c, type: 3}
+  iconFrames:
+  - {fileID: -4913274911228283370, guid: e4b7a817a56d58d4982902a3f1a0551c, type: 3}
+  - {fileID: -6524825354858202488, guid: e4b7a817a56d58d4982902a3f1a0551c, type: 3}
+  - {fileID: -6227441324034083658, guid: e4b7a817a56d58d4982902a3f1a0551c, type: 3}
+  - {fileID: -1477595985121774445, guid: e4b7a817a56d58d4982902a3f1a0551c, type: 3}
+  iconFps: 6
+  includeInPool: 1
+  value: 0
+  additive: 0
+  description: 
+  level: 0
+  maxLevel: 1
+  overcharge: 0
+  overchargeCeiling: 1
+  overchargeHalfStacks: 8
+  evolutionPartner: {fileID: 0}
+  evolvedIcon: {fileID: 0}
+  evolvedIconFrames: []
+  levels:
+  - damage: 10
+    radius: 1.65
+    interval: 0.5
+  - damage: 12
+    radius: 1.65
+    interval: 0.5
+  - damage: 12
+    radius: 1.9
+    interval: 0.5
+  - damage: 15
+    radius: 1.9
+    interval: 0.5
+  - damage: 15
+    radius: 2.2
+    interval: 0.5
+  - damage: 15
+    radius: 2.2
+    interval: 0.42
+  - damage: 19
+    radius: 2.5
+    interval: 0.42
+  - damage: 24
+    radius: 2.8
+    interval: 0.4

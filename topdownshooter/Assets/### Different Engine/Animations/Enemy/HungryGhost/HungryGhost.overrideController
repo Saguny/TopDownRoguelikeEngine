@@ -1,0 +1,15 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: HungryGhost
+  m_Controller: {fileID: 9100000, guid: f8fe77fcacf19e04fbea10d993886918, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 37a159cf3a5942f4d992b9e07ab4826a, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: f7abb12b223d8e54eb9dd63c23616c0b, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: a232e26def7d8bd49a0f03af88594277, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: ed07f880d51cc3845be53eceb1eb01f6, type: 2}

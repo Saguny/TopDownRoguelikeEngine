@@ -50,7 +50,7 @@ public class FinalRushArenaController : MonoBehaviour
 
         if (playerTransform == null)
         {
-            var player = FindObjectOfType<PlayerMovement>(); // or your player controller type
+            var player = FindFirstObjectByType<PlayerMovement>(); // or your player controller type
             if (player != null)
                 playerTransform = player.transform;
         }

@@ -1,0 +1,230 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff6940457412ffdc65feb9d61ad2f93d, type: 3}
+  m_Name: StatCatalog
+  m_EditorClassIdentifier: 
+  groupLabels:
+  - Body
+  - Martial
+  - Fortune
+  - Strategy
+  stats:
+  - id: 0
+    label: Max Health
+    icon: {fileID: 0}
+    group: 0
+    format: 0
+    baseValue: 100
+    decimals: 0
+    higherIsBetter: 1
+    showInPanel: 1
+    tooltip: Health you start the run with.
+  - id: 1
+    label: Recovery
+    icon: {fileID: 0}
+    group: 0
+    format: 0
+    baseValue: 0
+    decimals: 2
+    higherIsBetter: 1
+    showInPanel: 1
+    tooltip: Health regained every second.
+  - id: 2
+    label: Armor
+    icon: {fileID: 0}
+    group: 0
+    format: 0
+    baseValue: 0
+    decimals: 0
+    higherIsBetter: 1
+    showInPanel: 1
+    tooltip: Damage removed from every hit you take. A hit always does at least 1.
+  - id: 3
+    label: Move Speed
+    icon: {fileID: 0}
+    group: 0
+    format: 1
+    baseValue: 0
+    decimals: 0
+    higherIsBetter: 1
+    showInPanel: 1
+    tooltip: How fast you walk.
+  - id: 4
+    label: Might
+    icon: {fileID: 0}
+    group: 1
+    format: 1
+    baseValue: 0
+    decimals: 0
+    higherIsBetter: 1
+    showInPanel: 1
+    tooltip: Damage of every weapon.
+  - id: 5
+    label: Cooldown
+    icon: {fileID: 0}
+    group: 1
+    format: 2
+    baseValue: 0
+    decimals: 0
+    higherIsBetter: 1
+    showInPanel: 1
+    tooltip: Less time between attacks, for every weapon.
+  - id: 6
+    label: Area
+    icon: {fileID: 0}
+    group: 1
+    format: 1
+    baseValue: 0
+    decimals: 0
+    higherIsBetter: 1
+    showInPanel: 1
+    tooltip: Size of the aura and the meteor blasts.
+  - id: 7
+    label: Weapon Speed
+    icon: {fileID: 0}
+    group: 1
+    format: 1
+    baseValue: 0
+    decimals: 0
+    higherIsBetter: 1
+    showInPanel: 1
+    tooltip: Speed of arrows and falling meteors.
+  - id: 8
+    label: Arrow Count
+    icon: {fileID: 0}
+    group: 1
+    format: 4
+    baseValue: 0
+    decimals: 0
+    higherIsBetter: 1
+    showInPanel: 1
+    tooltip: Extra arrows in every volley.
+  - id: 9
+    label: Pierce
+    icon: {fileID: 0}
+    group: 1
+    format: 4
+    baseValue: 0
+    decimals: 0
+    higherIsBetter: 1
+    showInPanel: 1
+    tooltip: Extra enemies each arrow passes through.
+  - id: 10
+    label: Crit Chance
+    icon: {fileID: 0}
+    group: 1
+    format: 1
+    baseValue: 0
+    decimals: 0
+    higherIsBetter: 1
+    showInPanel: 1
+    tooltip: Chance for an arrow to deal critical damage.
+  - id: 11
+    label: Crit Damage
+    icon: {fileID: 0}
+    group: 1
+    format: 3
+    baseValue: 2
+    decimals: 1
+    higherIsBetter: 1
+    showInPanel: 1
+    tooltip: Damage multiplier of a critical hit.
+  - id: 12
+    label: Magnet
+    icon: {fileID: 0}
+    group: 2
+    format: 1
+    baseValue: 0
+    decimals: 0
+    higherIsBetter: 1
+    showInPanel: 1
+    tooltip: Range for pulling in wen and pickups.
+  - id: 13
+    label: Growth
+    icon: {fileID: 0}
+    group: 2
+    format: 1
+    baseValue: 0
+    decimals: 0
+    higherIsBetter: 1
+    showInPanel: 1
+    tooltip: Extra wen from kills and pickups.
+  - id: 14
+    label: Greed
+    icon: {fileID: 0}
+    group: 2
+    format: 1
+    baseValue: 0
+    decimals: 0
+    higherIsBetter: 1
+    showInPanel: 0
+    tooltip: Extra shop currency from each run. Turn on once the currency exists.
+  - id: 15
+    label: Revival
+    icon: {fileID: 0}
+    group: 2
+    format: 4
+    baseValue: 0
+    decimals: 0
+    higherIsBetter: 1
+    showInPanel: 1
+    tooltip: Times you get back up at half health instead of dying.
+  - id: 16
+    label: Reroll
+    icon: {fileID: 0}
+    group: 3
+    format: 4
+    baseValue: 0
+    decimals: 0
+    higherIsBetter: 1
+    showInPanel: 0
+    tooltip: Redraw the level-up choices. Turn on once the upgrade menu has the button.
+  - id: 17
+    label: Skip
+    icon: {fileID: 0}
+    group: 3
+    format: 4
+    baseValue: 0
+    decimals: 0
+    higherIsBetter: 1
+    showInPanel: 0
+    tooltip: Pass on a level-up. Turn on once the upgrade menu has the button.
+  - id: 18
+    label: Banish
+    icon: {fileID: 0}
+    group: 3
+    format: 4
+    baseValue: 0
+    decimals: 0
+    higherIsBetter: 1
+    showInPanel: 0
+    tooltip: Remove an upgrade from the pool for this run. Turn on once the upgrade
+      menu has the button.
+  characters:
+  - {fileID: 11400000, guid: 3a2dcd765e484214fdbba8f11abc4412, type: 2}
+  - {fileID: 11400000, guid: 3b27c879a9d655a428894d17c3654dff, type: 2}
+  - {fileID: 11400000, guid: 167c916169bcee044ac1e36bd6ccecf7, type: 2}
+  globalUpgrades:
+  - {fileID: 11400000, guid: 1fbc1d07e70606d6b6f2ebbc7ade3890, type: 2}
+  - {fileID: 11400000, guid: d374e9e306e5218bd7305517629f14fd, type: 2}
+  - {fileID: 11400000, guid: 57159e24d0ea8216dc7bdc2feae0a7d0, type: 2}
+  - {fileID: 11400000, guid: 0f48fb088f8d295c1eba783a8048c4ef, type: 2}
+  - {fileID: 11400000, guid: bdaf3bd751173850854ee336daee87ab, type: 2}
+  - {fileID: 11400000, guid: 9452d2227a7cda3939586be598ba553c, type: 2}
+  - {fileID: 11400000, guid: dff23033c1ade3440bdf79e892f30393, type: 2}
+  - {fileID: 11400000, guid: 8557fcbcdedaf08541e6aeeea1b4c2ae, type: 2}
+  - {fileID: 11400000, guid: 8d0c060354a0ffeead5e2796736913bf, type: 2}
+  - {fileID: 11400000, guid: 57c6bfa484c3bbe2f20bc7c43f8db016, type: 2}
+  - {fileID: 11400000, guid: d0f4cf2ed8fbab65b072a9a3b900ea58, type: 2}
+  - {fileID: 11400000, guid: 43b7ecaff4a4d03993004d1434a62b5e, type: 2}
+  - {fileID: 11400000, guid: 5dcd29e2cbaa6be9608f4e0cdc6dd9f1, type: 2}
+  - {fileID: 11400000, guid: 3a3ec0590b13e379c08cbf2c672633e8, type: 2}

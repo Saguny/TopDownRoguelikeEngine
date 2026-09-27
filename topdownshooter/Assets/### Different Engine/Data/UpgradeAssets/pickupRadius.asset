@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Pickup Radius
   type: 3
-  icon: {fileID: 21300000, guid: 733fc9660f9ced04ba6c0a082c11c9cb, type: 3}
+  icon: {fileID: 21300000, guid: 3dba7b96eb08b3848a47a5eb570d3894, type: 3}
   value: 1.05
   additive: 0
   description: Increases Pick up Radius by 5%

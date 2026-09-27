@@ -1,37 +1,46 @@
 using UnityEngine;
 
+// whether an enemy knows where the player is, and which way that is. worked out when asked
+// instead of every frame on every enemy; EnemySwarm reads the player's position directly
 public class PlayerAwareness : MonoBehaviour
 {
-
-    public bool AwareOfPlayer { get; private set; }
-
-    public Vector2 DirectionToPlayer { get; private set; }
-
     [SerializeField]
     private float _playerAwarenessDistance;
 
-    private Transform _player;
+    // found once and shared by every enemy, instead of a scene search per spawn
+    private static Transform s_player;
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics() => s_player = null;
 
-    private void Awake()
+    public static Transform Player
     {
-        _player = FindObjectOfType<PlayerMovement>().transform;
+        get
+        {
+            if (s_player == null)
+            {
+                var player = FindFirstObjectByType<PlayerMovement>();
+                if (player != null) s_player = player.transform;
+            }
+            return s_player;
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public bool AwareOfPlayer
     {
-        Vector2 enemyToPlayerVector = _player.position - transform.position;
-        DirectionToPlayer = enemyToPlayerVector.normalized;
-
-        if (enemyToPlayerVector.magnitude <= _playerAwarenessDistance)
+        get
         {
-            AwareOfPlayer = true;
+            var p = Player;
+            return p != null && ((Vector2)(p.position - transform.position)).sqrMagnitude <= _playerAwarenessDistance * _playerAwarenessDistance;
         }
-        else
-        {
-            AwareOfPlayer = false;
-        }
+    }
 
+    public Vector2 DirectionToPlayer
+    {
+        get
+        {
+            var p = Player;
+            return p != null ? ((Vector2)(p.position - transform.position)).normalized : Vector2.zero;
+        }
     }
 }

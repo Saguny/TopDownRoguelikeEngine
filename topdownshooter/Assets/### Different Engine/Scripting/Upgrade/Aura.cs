@@ -8,6 +8,8 @@ public class Aura : MonoBehaviour
     public float radius = 2.5f;
     public float damage = 10f;
     public float damageInterval = 0.5f;
+    // the Electrical Aura it's the field of, for the run's damage stats
+    [System.NonSerialized] public Weapon source;
     [SerializeField] private LayerMask enemyMask;
 
     [Header("Animation")]
@@ -17,16 +19,31 @@ public class Aura : MonoBehaviour
 
     [SerializeField] private float _visualScaleBase = 2.5f;
 
+    [Tooltip("the pixel art ring and strikes. when set, the animator above is left alone")]
+    [SerializeField] private AuraVisual visual;
+    private readonly List<Vector2> _hitPoints = new List<Vector2>(16);
+
+    // every pulse hits everything in the radius, so the floor sits well above one frame
+    private const float MinInterval = 0.1f;
+
+    // radius is the aura's own level; the global Area stat multiplies on top
+    private float EffectiveRadius => radius * (_stats ? _stats.AreaMul : 1f);
+
     private CircleCollider2D _collider;
+    private StatContext _stats;
     private float _nextDamageTime;
-    private readonly Collider2D[] _hits = new Collider2D[16];
+    private readonly List<Collider2D> _hits = new List<Collider2D>(16);
+    private ContactFilter2D _filter;
+    private bool _filterReady;
     private readonly HashSet<int> _hitThisPulse = new HashSet<int>();
 
     private void Awake()
     {
         _collider = GetComponent<CircleCollider2D>();
         _collider.isTrigger = true;
-        if (!animator) animator = GetComponentInChildren<Animator>(true);
+        _stats = GetComponentInParent<StatContext>();
+        if (!visual) visual = GetComponent<AuraVisual>();
+        if (!animator && !visual) animator = GetComponentInChildren<Animator>(true);
 
         if (_visualScaleBase <= 0f)
             _visualScaleBase = radius;
@@ -40,15 +57,22 @@ public class Aura : MonoBehaviour
 
     private void Update()
     {
-        _collider.radius = radius;
+        _collider.radius = EffectiveRadius;
 
         if (Time.time >= _nextDamageTime)
         {
             DamageWithinRadius();
-            _nextDamageTime = Time.time + damageInterval;
+            float interval = _stats ? _stats.CooldownFor(UpgradeType.AuraCooldown, damageInterval) : damageInterval;
+            _nextDamageTime = Time.time + Mathf.Max(MinInterval, interval);
         }
 
-        float scaleFactor = radius / _visualScaleBase;
+        if (visual)
+        {
+            visual.Show(EffectiveRadius);
+            return;
+        }
+
+        float scaleFactor = EffectiveRadius / _visualScaleBase;
         if (animator == null || animator.runtimeAnimatorController == null)
             transform.localScale = Vector3.one * scaleFactor;
         else
@@ -57,20 +81,33 @@ public class Aura : MonoBehaviour
 
     public void OnRadiusUpgraded()
     {
+        if (visual) return;
         if (animator && !string.IsNullOrEmpty(loopAnimName))
             animator.Play(loopAnimName, 0, 0f);
+    }
+
+    // built once and reused so the pulse query stays allocation free
+    private ContactFilter2D Filter()
+    {
+        if (_filterReady) return _filter;
+
+        _filter = new ContactFilter2D();
+        _filter.SetLayerMask(enemyMask);
+        _filter.useTriggers = Physics2D.queriesHitTriggers;
+        _filterReady = true;
+        return _filter;
     }
 
     private bool DamageWithinRadius()
     {
         _hitThisPulse.Clear();
-        int n = Physics2D.OverlapCircleNonAlloc(transform.position, radius, _hits, enemyMask);
+        _hitPoints.Clear();
+        Physics2D.OverlapCircle(transform.position, EffectiveRadius, Filter(), _hits);
         bool hitSomething = false;
 
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < _hits.Count; i++)
         {
             var c = _hits[i];
-            _hits[i] = null;
             if (!c) continue;
 
             int id = c.GetInstanceID();
@@ -79,17 +116,23 @@ public class Aura : MonoBehaviour
             var eh = c.GetComponent<EnemyHealth>();
             if (eh != null)
             {
-                eh.TakeDamage(damage);
+                float dealt = damage * (_stats ? _stats.OC(UpgradeType.AuraDamage) * _stats.MightMul : 1f);
+                bool crit = false;
+                if (_stats) dealt = _stats.WithCrit(dealt, out crit);
+                eh.TakeDamage(dealt, DamageKind.Aura, crit, false, source);
                 _hitThisPulse.Add(id);
+                if (visual) _hitPoints.Add(c.transform.position);
                 hitSomething = true;
             }
         }
 
+        if (visual) visual.Strike(_hitPoints);
         return hitSomething;
     }
 
     private void PlaySpawnOnce()
     {
+        if (visual) return;
         if (animator && !string.IsNullOrEmpty(spawnAnimName))
             animator.Play(spawnAnimName, 0, 0f);
     }

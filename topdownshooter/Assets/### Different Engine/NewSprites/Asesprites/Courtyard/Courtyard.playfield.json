@@ -1,0 +1,1913 @@
+{
+ "name": "Courtyard",
+ "ppu": 28.46153846153846,
+ "prefabPath": "Assets/### Different Engine/Prefabs/Playfields/Courtyard.prefab",
+ "timeline": "Assets/### Different Engine/Data/Spawning/CourtyardTimeline.asset",
+ "sources": [
+  {
+   "key": "floor",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Courtyard/floor.aseprite",
+   "tile": true
+  },
+  {
+   "key": "path",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Courtyard/path.aseprite",
+   "tile": true
+  },
+  {
+   "key": "backdrop",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Courtyard/backdrop.aseprite",
+   "tile": true
+  },
+  {
+   "key": "bagua",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Courtyard/bagua.aseprite",
+   "tile": false
+  },
+  {
+   "key": "moss_0",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Courtyard/moss_0.aseprite",
+   "tile": false
+  },
+  {
+   "key": "moss_1",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Courtyard/moss_1.aseprite",
+   "tile": false
+  },
+  {
+   "key": "moss_2",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Courtyard/moss_2.aseprite",
+   "tile": false
+  },
+  {
+   "key": "crack_0",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Courtyard/crack_0.aseprite",
+   "tile": false
+  },
+  {
+   "key": "crack_1",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Courtyard/crack_1.aseprite",
+   "tile": false
+  },
+  {
+   "key": "crack_2",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Courtyard/crack_2.aseprite",
+   "tile": false
+  },
+  {
+   "key": "stain_0",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Courtyard/stain_0.aseprite",
+   "tile": false
+  },
+  {
+   "key": "stain_1",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Courtyard/stain_1.aseprite",
+   "tile": false
+  },
+  {
+   "key": "rubble",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Courtyard/rubble.aseprite",
+   "tile": false
+  },
+  {
+   "key": "talisman",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Courtyard/talisman.aseprite",
+   "tile": false
+  },
+  {
+   "key": "ding",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Courtyard/ding.aseprite",
+   "tile": false
+  },
+  {
+   "key": "pillar",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Courtyard/pillar.aseprite",
+   "tile": false
+  },
+  {
+   "key": "pillar_broken",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Courtyard/pillar_broken.aseprite",
+   "tile": false
+  },
+  {
+   "key": "dragon",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Courtyard/dragon.aseprite",
+   "tile": false
+  },
+  {
+   "key": "bell",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Courtyard/bell.aseprite",
+   "tile": false
+  },
+  {
+   "key": "lantern",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Courtyard/lantern.aseprite",
+   "tile": false
+  },
+  {
+   "key": "wall_face",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Courtyard/wall_face.aseprite",
+   "tile": true
+  },
+  {
+   "key": "wall_low",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Courtyard/wall_low.aseprite",
+   "tile": true
+  },
+  {
+   "key": "wall_top",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Courtyard/wall_top.aseprite",
+   "tile": true
+  },
+  {
+   "key": "temple",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Courtyard/temple.aseprite",
+   "tile": false
+  }
+ ],
+ "objects": [
+  {
+   "name": "Backdrop",
+   "group": "Ground",
+   "sprite": "backdrop",
+   "x": 0,
+   "y": 0,
+   "tiled": true,
+   "w": 180,
+   "h": 130,
+   "layer": "Background",
+   "order": -10,
+   "frames": 1
+  },
+  {
+   "name": "Floor",
+   "group": "Ground",
+   "sprite": "floor",
+   "x": 0,
+   "y": 2,
+   "tiled": true,
+   "w": 81,
+   "h": 60,
+   "layer": "Background",
+   "order": 0,
+   "frames": 1
+  },
+  {
+   "name": "Processional Way",
+   "group": "Ground",
+   "sprite": "path",
+   "x": 0,
+   "y": -2,
+   "tiled": true,
+   "w": 5.621621621621622,
+   "h": 48,
+   "layer": "Background",
+   "order": 1,
+   "frames": 1
+  },
+  {
+   "name": "Bagua",
+   "group": "Ground",
+   "sprite": "bagua",
+   "x": 0,
+   "y": -4,
+   "layer": "Background",
+   "order": 2,
+   "frames": 1
+  },
+  {
+   "name": "Wall North",
+   "group": "Walls",
+   "sprite": "wall_face",
+   "x": 0,
+   "y": 27.124324324324323,
+   "tiled": true,
+   "w": 82,
+   "h": 2.2486486486486488,
+   "layer": "Background",
+   "order": 10,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": 0,
+    "w": 82,
+    "h": 2.2486486486486488
+   },
+   "bound": "north",
+   "frames": 1
+  },
+  {
+   "name": "Wall South",
+   "group": "Walls",
+   "sprite": "wall_low",
+   "x": 0,
+   "y": -26.772972972972973,
+   "tiled": true,
+   "w": 82,
+   "h": 1.5459459459459461,
+   "layer": "Background",
+   "order": 10,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": 0,
+    "w": 82,
+    "h": 1.5459459459459461
+   },
+   "bound": "south",
+   "frames": 1
+  },
+  {
+   "name": "Wall West",
+   "group": "Walls",
+   "sprite": "wall_top",
+   "x": -38.7027027027027,
+   "y": 1,
+   "tiled": true,
+   "w": 1.4054054054054055,
+   "h": 60,
+   "layer": "Background",
+   "order": 11,
+   "flipX": false,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": 0,
+    "w": 1.4054054054054055,
+    "h": 60
+   },
+   "bound": "west",
+   "frames": 1
+  },
+  {
+   "name": "Wall East",
+   "group": "Walls",
+   "sprite": "wall_top",
+   "x": 38.7027027027027,
+   "y": 1,
+   "tiled": true,
+   "w": 1.4054054054054055,
+   "h": 60,
+   "layer": "Background",
+   "order": 11,
+   "flipX": true,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": 0,
+    "w": 1.4054054054054055,
+    "h": 60
+   },
+   "bound": "east",
+   "frames": 1
+  },
+  {
+   "name": "Temple Hall",
+   "group": "Walls",
+   "sprite": "temple",
+   "x": 0,
+   "y": 26.002702702702702,
+   "layer": "Background",
+   "order": 12,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": 0.1756756756756772,
+    "w": 13.491891891891893,
+    "h": 8.854054054054057
+   },
+   "frames": 1
+  },
+  {
+   "name": "Great Ding",
+   "group": "Props",
+   "sprite": "ding",
+   "x": 0,
+   "y": 18.8,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 6,
+   "collider": {
+    "type": "circle",
+    "x": 0,
+    "y": -0.72,
+    "r": 0.75
+   }
+  },
+  {
+   "name": "Ding",
+   "group": "Props",
+   "sprite": "ding",
+   "x": -16,
+   "y": 8,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 6,
+   "collider": {
+    "type": "circle",
+    "x": 0,
+    "y": -0.72,
+    "r": 0.75
+   }
+  },
+  {
+   "name": "Ding",
+   "group": "Props",
+   "sprite": "ding",
+   "x": 16,
+   "y": 8,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 6,
+   "collider": {
+    "type": "circle",
+    "x": 0,
+    "y": -0.72,
+    "r": 0.75
+   }
+  },
+  {
+   "name": "Ding",
+   "group": "Props",
+   "sprite": "ding",
+   "x": -16,
+   "y": -14,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 6,
+   "collider": {
+    "type": "circle",
+    "x": 0,
+    "y": -0.72,
+    "r": 0.75
+   }
+  },
+  {
+   "name": "Ding",
+   "group": "Props",
+   "sprite": "ding",
+   "x": 16,
+   "y": -14,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 6,
+   "collider": {
+    "type": "circle",
+    "x": 0,
+    "y": -0.72,
+    "r": 0.75
+   }
+  },
+  {
+   "name": "Pillar",
+   "group": "Props",
+   "sprite": "pillar",
+   "x": -6.6,
+   "y": -20,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 6,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -1.22,
+    "w": 0.62,
+    "h": 0.4
+   }
+  },
+  {
+   "name": "Pillar Broken",
+   "group": "Props",
+   "sprite": "pillar_broken",
+   "x": 6.6,
+   "y": -20,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.6,
+    "w": 0.62,
+    "h": 0.4
+   }
+  },
+  {
+   "name": "Pillar Broken",
+   "group": "Props",
+   "sprite": "pillar_broken",
+   "x": -6.6,
+   "y": -13,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.6,
+    "w": 0.62,
+    "h": 0.4
+   }
+  },
+  {
+   "name": "Pillar",
+   "group": "Props",
+   "sprite": "pillar",
+   "x": 6.6,
+   "y": -13,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 6,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -1.22,
+    "w": 0.62,
+    "h": 0.4
+   }
+  },
+  {
+   "name": "Pillar",
+   "group": "Props",
+   "sprite": "pillar",
+   "x": -6.6,
+   "y": -6,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 6,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -1.22,
+    "w": 0.62,
+    "h": 0.4
+   }
+  },
+  {
+   "name": "Pillar",
+   "group": "Props",
+   "sprite": "pillar",
+   "x": 6.6,
+   "y": -6,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 6,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -1.22,
+    "w": 0.62,
+    "h": 0.4
+   }
+  },
+  {
+   "name": "Pillar",
+   "group": "Props",
+   "sprite": "pillar",
+   "x": -6.6,
+   "y": 1,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 6,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -1.22,
+    "w": 0.62,
+    "h": 0.4
+   }
+  },
+  {
+   "name": "Pillar Broken",
+   "group": "Props",
+   "sprite": "pillar_broken",
+   "x": 6.6,
+   "y": 1,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.6,
+    "w": 0.62,
+    "h": 0.4
+   }
+  },
+  {
+   "name": "Pillar Broken",
+   "group": "Props",
+   "sprite": "pillar_broken",
+   "x": -6.6,
+   "y": 8,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.6,
+    "w": 0.62,
+    "h": 0.4
+   }
+  },
+  {
+   "name": "Pillar",
+   "group": "Props",
+   "sprite": "pillar",
+   "x": 6.6,
+   "y": 8,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 6,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -1.22,
+    "w": 0.62,
+    "h": 0.4
+   }
+  },
+  {
+   "name": "Pillar",
+   "group": "Props",
+   "sprite": "pillar",
+   "x": -6.6,
+   "y": 15,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 6,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -1.22,
+    "w": 0.62,
+    "h": 0.4
+   }
+  },
+  {
+   "name": "Pillar",
+   "group": "Props",
+   "sprite": "pillar",
+   "x": 6.6,
+   "y": 15,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 6,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -1.22,
+    "w": 0.62,
+    "h": 0.4
+   }
+  },
+  {
+   "name": "Dragon",
+   "group": "Props",
+   "sprite": "dragon",
+   "x": -26,
+   "y": 14,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0.1,
+    "y": -0.62,
+    "w": 2.4,
+    "h": 0.55
+   }
+  },
+  {
+   "name": "Dragon",
+   "group": "Props",
+   "sprite": "dragon",
+   "x": 26.5,
+   "y": -17,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0.1,
+    "y": -0.62,
+    "w": 2.4,
+    "h": 0.55
+   }
+  },
+  {
+   "name": "Bell",
+   "group": "Props",
+   "sprite": "bell",
+   "x": 27,
+   "y": 13,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.62,
+    "w": 1.45,
+    "h": 0.55
+   }
+  },
+  {
+   "name": "Bell",
+   "group": "Props",
+   "sprite": "bell",
+   "x": -29,
+   "y": -4,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.62,
+    "w": 1.45,
+    "h": 0.55
+   }
+  },
+  {
+   "name": "Lantern",
+   "group": "Props",
+   "sprite": "lantern",
+   "x": -4.8,
+   "y": 20.5,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 8,
+   "collider": {
+    "type": "circle",
+    "x": -0.18,
+    "y": -0.8,
+    "r": 0.22
+   }
+  },
+  {
+   "name": "Lantern",
+   "group": "Props",
+   "sprite": "lantern",
+   "x": 4.8,
+   "y": 20.5,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 8,
+   "collider": {
+    "type": "circle",
+    "x": -0.18,
+    "y": -0.8,
+    "r": 0.22
+   }
+  },
+  {
+   "name": "Lantern",
+   "group": "Props",
+   "sprite": "lantern",
+   "x": -34,
+   "y": 22.5,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 8,
+   "collider": {
+    "type": "circle",
+    "x": -0.18,
+    "y": -0.8,
+    "r": 0.22
+   }
+  },
+  {
+   "name": "Lantern",
+   "group": "Props",
+   "sprite": "lantern",
+   "x": 34,
+   "y": 22.5,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 8,
+   "collider": {
+    "type": "circle",
+    "x": -0.18,
+    "y": -0.8,
+    "r": 0.22
+   }
+  },
+  {
+   "name": "Lantern",
+   "group": "Props",
+   "sprite": "lantern",
+   "x": -34,
+   "y": -22,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 8,
+   "collider": {
+    "type": "circle",
+    "x": -0.18,
+    "y": -0.8,
+    "r": 0.22
+   }
+  },
+  {
+   "name": "Lantern",
+   "group": "Props",
+   "sprite": "lantern",
+   "x": 34,
+   "y": -22,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 8,
+   "collider": {
+    "type": "circle",
+    "x": -0.18,
+    "y": -0.8,
+    "r": 0.22
+   }
+  },
+  {
+   "name": "Lantern",
+   "group": "Props",
+   "sprite": "lantern",
+   "x": -20,
+   "y": -23.5,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 8,
+   "collider": {
+    "type": "circle",
+    "x": -0.18,
+    "y": -0.8,
+    "r": 0.22
+   }
+  },
+  {
+   "name": "Lantern",
+   "group": "Props",
+   "sprite": "lantern",
+   "x": 20,
+   "y": -23.5,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 8,
+   "collider": {
+    "type": "circle",
+    "x": -0.18,
+    "y": -0.8,
+    "r": 0.22
+   }
+  },
+  {
+   "name": "Lantern",
+   "group": "Props",
+   "sprite": "lantern",
+   "x": -20,
+   "y": 23.5,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 8,
+   "collider": {
+    "type": "circle",
+    "x": -0.18,
+    "y": -0.8,
+    "r": 0.22
+   }
+  },
+  {
+   "name": "Lantern",
+   "group": "Props",
+   "sprite": "lantern",
+   "x": 20,
+   "y": 23.5,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 8,
+   "collider": {
+    "type": "circle",
+    "x": -0.18,
+    "y": -0.8,
+    "r": 0.22
+   }
+  },
+  {
+   "name": "Lantern",
+   "group": "Props",
+   "sprite": "lantern",
+   "x": -33,
+   "y": 2,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 8,
+   "collider": {
+    "type": "circle",
+    "x": -0.18,
+    "y": -0.8,
+    "r": 0.22
+   }
+  },
+  {
+   "name": "Lantern",
+   "group": "Props",
+   "sprite": "lantern",
+   "x": 33,
+   "y": 2,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 8,
+   "collider": {
+    "type": "circle",
+    "x": -0.18,
+    "y": -0.8,
+    "r": 0.22
+   }
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_0",
+   "x": -12.88,
+   "y": -13.94,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_1",
+   "x": -33.61,
+   "y": -24.57,
+   "layer": "Background",
+   "order": 4,
+   "flipX": true,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_2",
+   "x": -24.22,
+   "y": 12.41,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_0",
+   "x": -23.47,
+   "y": -10.21,
+   "layer": "Background",
+   "order": 4,
+   "flipX": true,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_1",
+   "x": 2.51,
+   "y": -15.57,
+   "layer": "Background",
+   "order": 4,
+   "flipX": true,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_2",
+   "x": -4.61,
+   "y": -21.42,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_0",
+   "x": -21.31,
+   "y": -9.87,
+   "layer": "Background",
+   "order": 4,
+   "flipX": true,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_1",
+   "x": 24.22,
+   "y": 17.18,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_2",
+   "x": -16.88,
+   "y": 3.85,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_0",
+   "x": -11.0,
+   "y": -0.63,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_1",
+   "x": -7.1,
+   "y": 1.8,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_2",
+   "x": -7.2,
+   "y": 11.98,
+   "layer": "Background",
+   "order": 4,
+   "flipX": true,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_0",
+   "x": -33.13,
+   "y": 4.09,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_1",
+   "x": -4.97,
+   "y": -13.22,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_2",
+   "x": -26.09,
+   "y": -0.57,
+   "layer": "Background",
+   "order": 4,
+   "flipX": true,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_0",
+   "x": 35.42,
+   "y": -2.85,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_1",
+   "x": -35.02,
+   "y": -24.62,
+   "layer": "Background",
+   "order": 4,
+   "flipX": true,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_2",
+   "x": -28.6,
+   "y": -7.05,
+   "layer": "Background",
+   "order": 4,
+   "flipX": true,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_0",
+   "x": -26.96,
+   "y": -12.97,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_1",
+   "x": -33.21,
+   "y": 25.06,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_2",
+   "x": -6.12,
+   "y": -1.71,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_0",
+   "x": -35.65,
+   "y": -23.36,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_1",
+   "x": -28.91,
+   "y": -21.18,
+   "layer": "Background",
+   "order": 4,
+   "flipX": true,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_2",
+   "x": -16.0,
+   "y": 21.81,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_0",
+   "x": -36.6,
+   "y": 17.04,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_1",
+   "x": 18.86,
+   "y": 20.99,
+   "layer": "Background",
+   "order": 4,
+   "flipX": true,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_2",
+   "x": 20.81,
+   "y": -0.88,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_0",
+   "x": -8.99,
+   "y": 24.88,
+   "layer": "Background",
+   "order": 4,
+   "flipX": true,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_1",
+   "x": -33.89,
+   "y": -23.22,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_2",
+   "x": -28.13,
+   "y": 6.82,
+   "layer": "Background",
+   "order": 4,
+   "flipX": true,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_0",
+   "x": 11.3,
+   "y": -9.22,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_1",
+   "x": 6.13,
+   "y": -7.66,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_2",
+   "x": -33.2,
+   "y": -23.08,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_0",
+   "x": -5.19,
+   "y": -7.71,
+   "layer": "Background",
+   "order": 4,
+   "flipX": true,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_1",
+   "x": 10.12,
+   "y": -12.96,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_2",
+   "x": -24.09,
+   "y": -21.29,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_0",
+   "x": -8.28,
+   "y": 7.88,
+   "layer": "Background",
+   "order": 4,
+   "flipX": true,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_1",
+   "x": 19.94,
+   "y": -3.44,
+   "layer": "Background",
+   "order": 4,
+   "flipX": true,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_2",
+   "x": 32.54,
+   "y": -7.21,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_0",
+   "x": -22.52,
+   "y": 7.03,
+   "layer": "Background",
+   "order": 4,
+   "flipX": true,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_1",
+   "x": 36.56,
+   "y": -10.89,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_2",
+   "x": -22.84,
+   "y": -22.07,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_0",
+   "x": -11.49,
+   "y": -18.31,
+   "layer": "Background",
+   "order": 4,
+   "flipX": true,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_1",
+   "x": -15.36,
+   "y": -2.34,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_2",
+   "x": -31.97,
+   "y": 19.38,
+   "layer": "Background",
+   "order": 4,
+   "flipX": false,
+   "frames": 1
+  },
+  {
+   "name": "Moss",
+   "group": "Decals",
+   "sprite": "moss_0",
+   "x": -5.03,
+   "y": -0.85,
+   "layer": "Background",
+   "order": 4,
+   "flipX": true,
+   "frames": 1
+  },
+  {
+   "name": "Worn Paving",
+   "group": "Decals",
+   "sprite": "stain_0",
+   "x": -24,
+   "y": 10,
+   "layer": "Background",
+   "order": 2,
+   "flipX": false,
+   "flipY": true,
+   "frames": 1
+  },
+  {
+   "name": "Worn Paving",
+   "group": "Decals",
+   "sprite": "stain_1",
+   "x": 22,
+   "y": -8,
+   "layer": "Background",
+   "order": 2,
+   "flipX": true,
+   "flipY": false,
+   "frames": 1
+  },
+  {
+   "name": "Worn Paving",
+   "group": "Decals",
+   "sprite": "stain_0",
+   "x": -8,
+   "y": -18,
+   "layer": "Background",
+   "order": 2,
+   "flipX": false,
+   "flipY": false,
+   "frames": 1
+  },
+  {
+   "name": "Worn Paving",
+   "group": "Decals",
+   "sprite": "stain_1",
+   "x": 28,
+   "y": 18,
+   "layer": "Background",
+   "order": 2,
+   "flipX": true,
+   "flipY": true,
+   "frames": 1
+  },
+  {
+   "name": "Worn Paving",
+   "group": "Decals",
+   "sprite": "stain_0",
+   "x": -30,
+   "y": -16,
+   "layer": "Background",
+   "order": 2,
+   "flipX": false,
+   "flipY": false,
+   "frames": 1
+  },
+  {
+   "name": "Worn Paving",
+   "group": "Decals",
+   "sprite": "stain_1",
+   "x": 10,
+   "y": 20,
+   "layer": "Background",
+   "order": 2,
+   "flipX": true,
+   "flipY": false,
+   "frames": 1
+  },
+  {
+   "name": "Worn Paving",
+   "group": "Decals",
+   "sprite": "stain_0",
+   "x": -18,
+   "y": 22,
+   "layer": "Background",
+   "order": 2,
+   "flipX": false,
+   "flipY": true,
+   "frames": 1
+  },
+  {
+   "name": "Worn Paving",
+   "group": "Decals",
+   "sprite": "stain_1",
+   "x": 30,
+   "y": -2,
+   "layer": "Background",
+   "order": 2,
+   "flipX": true,
+   "flipY": false,
+   "frames": 1
+  },
+  {
+   "name": "Worn Paving",
+   "group": "Decals",
+   "sprite": "stain_0",
+   "x": -4,
+   "y": 6,
+   "layer": "Background",
+   "order": 2,
+   "flipX": false,
+   "flipY": false,
+   "frames": 1
+  },
+  {
+   "name": "Missing Slabs",
+   "group": "Decals",
+   "sprite": "rubble",
+   "x": -13,
+   "y": 18,
+   "layer": "Background",
+   "order": 3,
+   "frames": 1
+  },
+  {
+   "name": "Missing Slabs",
+   "group": "Decals",
+   "sprite": "rubble",
+   "x": 24,
+   "y": -21,
+   "layer": "Background",
+   "order": 3,
+   "frames": 1
+  },
+  {
+   "name": "Missing Slabs",
+   "group": "Decals",
+   "sprite": "rubble",
+   "x": -33,
+   "y": 8,
+   "layer": "Background",
+   "order": 3,
+   "frames": 1
+  },
+  {
+   "name": "Missing Slabs",
+   "group": "Decals",
+   "sprite": "rubble",
+   "x": 12,
+   "y": -9,
+   "layer": "Background",
+   "order": 3,
+   "frames": 1
+  },
+  {
+   "name": "Crack",
+   "group": "Decals",
+   "sprite": "crack_0",
+   "x": 0,
+   "y": 19.5,
+   "layer": "Background",
+   "order": 3,
+   "flipX": false,
+   "flipY": false,
+   "rot": 0,
+   "frames": 1
+  },
+  {
+   "name": "Crack",
+   "group": "Decals",
+   "sprite": "crack_1",
+   "x": -1.5,
+   "y": 16,
+   "layer": "Background",
+   "order": 3,
+   "flipX": true,
+   "flipY": false,
+   "rot": 90,
+   "frames": 1
+  },
+  {
+   "name": "Crack",
+   "group": "Decals",
+   "sprite": "crack_2",
+   "x": 1.2,
+   "y": 12,
+   "layer": "Background",
+   "order": 3,
+   "flipX": false,
+   "flipY": true,
+   "rot": 0,
+   "frames": 1
+  },
+  {
+   "name": "Crack",
+   "group": "Decals",
+   "sprite": "crack_0",
+   "x": -0.6,
+   "y": 8,
+   "layer": "Background",
+   "order": 3,
+   "flipX": true,
+   "flipY": true,
+   "rot": 90,
+   "frames": 1
+  },
+  {
+   "name": "Crack",
+   "group": "Decals",
+   "sprite": "crack_1",
+   "x": 1.4,
+   "y": 4,
+   "layer": "Background",
+   "order": 3,
+   "flipX": false,
+   "flipY": false,
+   "rot": 0,
+   "frames": 1
+  },
+  {
+   "name": "Crack",
+   "group": "Decals",
+   "sprite": "crack_2",
+   "x": -9,
+   "y": 0,
+   "layer": "Background",
+   "order": 3,
+   "flipX": true,
+   "flipY": false,
+   "rot": 90,
+   "frames": 1
+  },
+  {
+   "name": "Crack",
+   "group": "Decals",
+   "sprite": "crack_0",
+   "x": 9,
+   "y": -6,
+   "layer": "Background",
+   "order": 3,
+   "flipX": false,
+   "flipY": true,
+   "rot": 0,
+   "frames": 1
+  },
+  {
+   "name": "Crack",
+   "group": "Decals",
+   "sprite": "crack_1",
+   "x": -4,
+   "y": -12,
+   "layer": "Background",
+   "order": 3,
+   "flipX": true,
+   "flipY": true,
+   "rot": 0,
+   "frames": 1
+  },
+  {
+   "name": "Crack",
+   "group": "Decals",
+   "sprite": "crack_2",
+   "x": 6,
+   "y": -20,
+   "layer": "Background",
+   "order": 3,
+   "flipX": false,
+   "flipY": false,
+   "rot": 0,
+   "frames": 1
+  },
+  {
+   "name": "Crack",
+   "group": "Decals",
+   "sprite": "crack_0",
+   "x": -22,
+   "y": 20,
+   "layer": "Background",
+   "order": 3,
+   "flipX": true,
+   "flipY": false,
+   "rot": 0,
+   "frames": 1
+  },
+  {
+   "name": "Crack",
+   "group": "Decals",
+   "sprite": "crack_1",
+   "x": 22,
+   "y": 18,
+   "layer": "Background",
+   "order": 3,
+   "flipX": false,
+   "flipY": true,
+   "rot": 90,
+   "frames": 1
+  },
+  {
+   "name": "Crack",
+   "group": "Decals",
+   "sprite": "crack_2",
+   "x": -24,
+   "y": -8,
+   "layer": "Background",
+   "order": 3,
+   "flipX": true,
+   "flipY": true,
+   "rot": 0,
+   "frames": 1
+  },
+  {
+   "name": "Crack",
+   "group": "Decals",
+   "sprite": "crack_0",
+   "x": 24,
+   "y": 4,
+   "layer": "Background",
+   "order": 3,
+   "flipX": false,
+   "flipY": false,
+   "rot": 0,
+   "frames": 1
+  },
+  {
+   "name": "Crack",
+   "group": "Decals",
+   "sprite": "crack_1",
+   "x": -12,
+   "y": -22,
+   "layer": "Background",
+   "order": 3,
+   "flipX": true,
+   "flipY": false,
+   "rot": 0,
+   "frames": 1
+  },
+  {
+   "name": "Crack",
+   "group": "Decals",
+   "sprite": "crack_2",
+   "x": 14,
+   "y": 12,
+   "layer": "Background",
+   "order": 3,
+   "flipX": false,
+   "flipY": true,
+   "rot": 0,
+   "frames": 1
+  },
+  {
+   "name": "Crack",
+   "group": "Decals",
+   "sprite": "crack_0",
+   "x": -30,
+   "y": 10,
+   "layer": "Background",
+   "order": 3,
+   "flipX": true,
+   "flipY": true,
+   "rot": 0,
+   "frames": 1
+  },
+  {
+   "name": "Fallen Talisman",
+   "group": "Decals",
+   "sprite": "talisman",
+   "x": -7.2,
+   "y": 12.13,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 5,
+   "flipX": true
+  },
+  {
+   "name": "Fallen Talisman",
+   "group": "Decals",
+   "sprite": "talisman",
+   "x": -4.3,
+   "y": 13.92,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 5,
+   "flipX": true
+  },
+  {
+   "name": "Fallen Talisman",
+   "group": "Decals",
+   "sprite": "talisman",
+   "x": -0.71,
+   "y": -7.16,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 5,
+   "flipX": true
+  },
+  {
+   "name": "Fallen Talisman",
+   "group": "Decals",
+   "sprite": "talisman",
+   "x": -8.04,
+   "y": 0.38,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 5,
+   "flipX": false
+  },
+  {
+   "name": "Fallen Talisman",
+   "group": "Decals",
+   "sprite": "talisman",
+   "x": -17.2,
+   "y": 18.56,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 5,
+   "flipX": true
+  },
+  {
+   "name": "Fallen Talisman",
+   "group": "Decals",
+   "sprite": "talisman",
+   "x": -15.54,
+   "y": -1.51,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 5,
+   "flipX": true
+  },
+  {
+   "name": "Fallen Talisman",
+   "group": "Decals",
+   "sprite": "talisman",
+   "x": 4.85,
+   "y": 1.36,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 5,
+   "flipX": true
+  },
+  {
+   "name": "Fallen Talisman",
+   "group": "Decals",
+   "sprite": "talisman",
+   "x": 29.26,
+   "y": -7.58,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 5,
+   "flipX": true
+  },
+  {
+   "name": "Fallen Talisman",
+   "group": "Decals",
+   "sprite": "talisman",
+   "x": 35.79,
+   "y": -19.16,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 5,
+   "flipX": true
+  },
+  {
+   "name": "Fallen Talisman",
+   "group": "Decals",
+   "sprite": "talisman",
+   "x": -27.13,
+   "y": 6.74,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 5,
+   "flipX": true
+  },
+  {
+   "name": "Fallen Talisman",
+   "group": "Decals",
+   "sprite": "talisman",
+   "x": -11.27,
+   "y": 17.7,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 5,
+   "flipX": false
+  },
+  {
+   "name": "Fallen Talisman",
+   "group": "Decals",
+   "sprite": "talisman",
+   "x": 11.75,
+   "y": 10.0,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 5,
+   "flipX": true
+  },
+  {
+   "name": "Fallen Talisman",
+   "group": "Decals",
+   "sprite": "talisman",
+   "x": -12.3,
+   "y": 6.67,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 5,
+   "flipX": true
+  },
+  {
+   "name": "Fallen Talisman",
+   "group": "Decals",
+   "sprite": "talisman",
+   "x": -28.74,
+   "y": 3.85,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 5,
+   "flipX": true
+  },
+  {
+   "name": "Fallen Talisman",
+   "group": "Decals",
+   "sprite": "talisman",
+   "x": 15.82,
+   "y": 1.79,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 5,
+   "flipX": false
+  },
+  {
+   "name": "Fallen Talisman",
+   "group": "Decals",
+   "sprite": "talisman",
+   "x": 31.09,
+   "y": -19.28,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 5,
+   "flipX": false
+  }
+ ]
+}

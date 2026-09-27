@@ -1,0 +1,1509 @@
+{
+ "name": "Huangquan Road",
+ "ppu": 28.46153846153846,
+ "prefabPath": "Assets/### Different Engine/Prefabs/Playfields/Huangquan Road.prefab",
+ "timeline": "Assets/### Different Engine/Data/Spawning/HuangquanTimeline.asset",
+ "start": [
+  0.0,
+  -4.0
+ ],
+ "sources": [
+  {
+   "key": "ground_00",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Huangquan/ground_00.aseprite",
+   "tile": false
+  },
+  {
+   "key": "ground_01",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Huangquan/ground_01.aseprite",
+   "tile": false
+  },
+  {
+   "key": "ground_10",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Huangquan/ground_10.aseprite",
+   "tile": false
+  },
+  {
+   "key": "ground_11",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Huangquan/ground_11.aseprite",
+   "tile": false
+  },
+  {
+   "key": "abyss",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Huangquan/abyss.aseprite",
+   "tile": true
+  },
+  {
+   "key": "rim_south",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Huangquan/rim_south.aseprite",
+   "tile": true
+  },
+  {
+   "key": "rim_side",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Huangquan/rim_side.aseprite",
+   "tile": true
+  },
+  {
+   "key": "river",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Huangquan/river.aseprite",
+   "tile": true
+  },
+  {
+   "key": "bridge",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Huangquan/bridge.aseprite",
+   "tile": false
+  },
+  {
+   "key": "seal",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Huangquan/seal.aseprite",
+   "tile": false
+  },
+  {
+   "key": "ox_head",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Huangquan/ox_head.aseprite",
+   "tile": false
+  },
+  {
+   "key": "horse_face",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Huangquan/horse_face.aseprite",
+   "tile": false
+  },
+  {
+   "key": "pavilion",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Huangquan/pavilion.aseprite",
+   "tile": false
+  },
+  {
+   "key": "grave_0",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Huangquan/grave_0.aseprite",
+   "tile": false
+  },
+  {
+   "key": "grave_1",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Huangquan/grave_1.aseprite",
+   "tile": false
+  },
+  {
+   "key": "tablet_0",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Huangquan/tablet_0.aseprite",
+   "tile": false
+  },
+  {
+   "key": "tablet_1",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Huangquan/tablet_1.aseprite",
+   "tile": false
+  },
+  {
+   "key": "tablet_2",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Huangquan/tablet_2.aseprite",
+   "tile": false
+  },
+  {
+   "key": "lantern",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Huangquan/lantern.aseprite",
+   "tile": false
+  },
+  {
+   "key": "tree_0",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Huangquan/tree_0.aseprite",
+   "tile": false
+  },
+  {
+   "key": "tree_1",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Huangquan/tree_1.aseprite",
+   "tile": false
+  },
+  {
+   "key": "boulder_0",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Huangquan/boulder_0.aseprite",
+   "tile": false
+  },
+  {
+   "key": "boulder_1",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Huangquan/boulder_1.aseprite",
+   "tile": false
+  },
+  {
+   "key": "wisp",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Huangquan/wisp.aseprite",
+   "tile": false
+  },
+  {
+   "key": "joss",
+   "path": "Assets/### Different Engine/NewSprites/Asesprites/Huangquan/joss.aseprite",
+   "tile": false
+  }
+ ],
+ "objects": [
+  {
+   "name": "Abyss",
+   "group": "Ground",
+   "sprite": "abyss",
+   "x": 0,
+   "y": 0,
+   "tiled": true,
+   "w": 190,
+   "h": 140,
+   "layer": "Background",
+   "order": -10,
+   "frames": 1
+  },
+  {
+   "name": "Ground 00",
+   "group": "Ground",
+   "sprite": "ground_00",
+   "x": -18.8149,
+   "y": 11.7554,
+   "layer": "Background",
+   "order": 0,
+   "frames": 1
+  },
+  {
+   "name": "Ground 01",
+   "group": "Ground",
+   "sprite": "ground_01",
+   "x": 18.8324,
+   "y": 11.7554,
+   "layer": "Background",
+   "order": 0,
+   "frames": 1
+  },
+  {
+   "name": "Ground 10",
+   "group": "Ground",
+   "sprite": "ground_10",
+   "x": -18.8149,
+   "y": -15.773,
+   "layer": "Background",
+   "order": 0,
+   "frames": 1
+  },
+  {
+   "name": "Ground 11",
+   "group": "Ground",
+   "sprite": "ground_11",
+   "x": 18.8324,
+   "y": -15.773,
+   "layer": "Background",
+   "order": 0,
+   "frames": 1
+  },
+  {
+   "name": "Rim South",
+   "group": "Walls",
+   "sprite": "rim_south",
+   "x": 0,
+   "y": -28.7027027027027,
+   "tiled": true,
+   "w": 74.8108108108108,
+   "h": 2.1081081081081083,
+   "layer": "Background",
+   "order": 8,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -1.2972972972972971,
+    "w": 80.0,
+    "h": 4
+   },
+   "bound": "south",
+   "frames": 1
+  },
+  {
+   "name": "Rim West",
+   "group": "Walls",
+   "sprite": "rim_side",
+   "x": -36.28108108108108,
+   "y": -2.0,
+   "tiled": true,
+   "w": 1.4054054054054055,
+   "h": 54.108108108108105,
+   "layer": "Background",
+   "order": 9,
+   "flipX": false,
+   "collider": {
+    "type": "box",
+    "x": -1.718918918918919,
+    "y": 0,
+    "w": 4,
+    "h": 60.0
+   },
+   "bound": "west",
+   "frames": 1
+  },
+  {
+   "name": "Rim East",
+   "group": "Walls",
+   "sprite": "rim_side",
+   "x": 36.28108108108108,
+   "y": -2.0,
+   "tiled": true,
+   "w": 1.4054054054054055,
+   "h": 54.108108108108105,
+   "layer": "Background",
+   "order": 9,
+   "flipX": true,
+   "collider": {
+    "type": "box",
+    "x": 1.718918918918919,
+    "y": 0,
+    "w": 4,
+    "h": 60.0
+   },
+   "bound": "east",
+   "frames": 1
+  },
+  {
+   "name": "River of Forgetting",
+   "group": "Walls",
+   "sprite": "river",
+   "x": 0,
+   "y": 26.24864864864865,
+   "tiled": true,
+   "w": 78.8108108108108,
+   "h": 5.05945945945946,
+   "layer": "Background",
+   "order": 10,
+   "frames": 4,
+   "fps": 5,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.24864864864864922,
+    "w": 80.0,
+    "h": 4
+   },
+   "bound": "north"
+  },
+  {
+   "name": "Naihe Bridge",
+   "group": "Walls",
+   "sprite": "bridge",
+   "x": 0,
+   "y": 27.232432432432436,
+   "layer": "Background",
+   "order": 12,
+   "frames": 1
+  },
+  {
+   "name": "Seal",
+   "group": "Walls",
+   "sprite": "seal",
+   "x": 0,
+   "y": 24.28108108108108,
+   "layer": "Background",
+   "order": 13,
+   "frames": 4,
+   "fps": 6
+  },
+  {
+   "name": "Ox-Head",
+   "group": "Props",
+   "sprite": "ox_head",
+   "x": -4.6,
+   "y": 21.8,
+   "layer": "Player",
+   "order": 0,
+   "frames": 2,
+   "fps": 3,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -1.1945945945945946,
+    "w": 1.1945945945945946,
+    "h": 0.5621621621621622
+   },
+   "flipX": false
+  },
+  {
+   "name": "Horse-Face",
+   "group": "Props",
+   "sprite": "horse_face",
+   "x": 4.6,
+   "y": 21.8,
+   "layer": "Player",
+   "order": 0,
+   "frames": 2,
+   "fps": 3,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -1.1945945945945946,
+    "w": 1.1945945945945946,
+    "h": 0.5621621621621622
+   },
+   "flipX": false
+  },
+  {
+   "name": "Meng Po's Stall",
+   "group": "Props",
+   "sprite": "pavilion",
+   "x": -13.5,
+   "y": 19.2,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 6,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -1.1594594594594596,
+    "w": 4.145945945945946,
+    "h": 1.1945945945945946
+   },
+   "flipX": false
+  },
+  {
+   "name": "Grave",
+   "group": "Props",
+   "sprite": "grave_0",
+   "x": 20,
+   "y": -20,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.4567567567567568,
+    "w": 1.8270270270270272,
+    "h": 0.5621621621621622
+   },
+   "flipX": false
+  },
+  {
+   "name": "Grave",
+   "group": "Props",
+   "sprite": "grave_1",
+   "x": 25.5,
+   "y": -22,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.4567567567567568,
+    "w": 1.8270270270270272,
+    "h": 0.5621621621621622
+   },
+   "flipX": true
+  },
+  {
+   "name": "Grave",
+   "group": "Props",
+   "sprite": "grave_0",
+   "x": 30,
+   "y": -17.5,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.4567567567567568,
+    "w": 1.8270270270270272,
+    "h": 0.5621621621621622
+   },
+   "flipX": false
+  },
+  {
+   "name": "Grave",
+   "group": "Props",
+   "sprite": "grave_1",
+   "x": 22,
+   "y": -14,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.4567567567567568,
+    "w": 1.8270270270270272,
+    "h": 0.5621621621621622
+   },
+   "flipX": true
+  },
+  {
+   "name": "Grave",
+   "group": "Props",
+   "sprite": "grave_0",
+   "x": 28,
+   "y": -11,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.4567567567567568,
+    "w": 1.8270270270270272,
+    "h": 0.5621621621621622
+   },
+   "flipX": false
+  },
+  {
+   "name": "Grave",
+   "group": "Props",
+   "sprite": "grave_1",
+   "x": -27,
+   "y": 12,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.4567567567567568,
+    "w": 1.8270270270270272,
+    "h": 0.5621621621621622
+   },
+   "flipX": true
+  },
+  {
+   "name": "Grave",
+   "group": "Props",
+   "sprite": "grave_0",
+   "x": -22,
+   "y": 17,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.4567567567567568,
+    "w": 1.8270270270270272,
+    "h": 0.5621621621621622
+   },
+   "flipX": false
+  },
+  {
+   "name": "Grave",
+   "group": "Props",
+   "sprite": "grave_0",
+   "x": -31,
+   "y": 18,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.4567567567567568,
+    "w": 1.8270270270270272,
+    "h": 0.5621621621621622
+   },
+   "flipX": true
+  },
+  {
+   "name": "Tablet",
+   "group": "Props",
+   "sprite": "tablet_0",
+   "x": 17,
+   "y": -17,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.5270270270270271,
+    "w": 0.5621621621621622,
+    "h": 0.21081081081081082
+   },
+   "flipX": true
+  },
+  {
+   "name": "Tablet",
+   "group": "Props",
+   "sprite": "tablet_2",
+   "x": 24,
+   "y": -17,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.5270270270270271,
+    "w": 0.5621621621621622,
+    "h": 0.21081081081081082
+   },
+   "flipX": false
+  },
+  {
+   "name": "Tablet",
+   "group": "Props",
+   "sprite": "tablet_1",
+   "x": 31.5,
+   "y": -21,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.5270270270270271,
+    "w": 0.5621621621621622,
+    "h": 0.21081081081081082
+   },
+   "flipX": true
+  },
+  {
+   "name": "Tablet",
+   "group": "Props",
+   "sprite": "tablet_0",
+   "x": 18.5,
+   "y": -10.5,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.5270270270270271,
+    "w": 0.5621621621621622,
+    "h": 0.21081081081081082
+   },
+   "flipX": false
+  },
+  {
+   "name": "Tablet",
+   "group": "Props",
+   "sprite": "tablet_2",
+   "x": 26,
+   "y": -7.5,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.5270270270270271,
+    "w": 0.5621621621621622,
+    "h": 0.21081081081081082
+   },
+   "flipX": true
+  },
+  {
+   "name": "Tablet",
+   "group": "Props",
+   "sprite": "tablet_0",
+   "x": -24.5,
+   "y": 9,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.5270270270270271,
+    "w": 0.5621621621621622,
+    "h": 0.21081081081081082
+   },
+   "flipX": false
+  },
+  {
+   "name": "Tablet",
+   "group": "Props",
+   "sprite": "tablet_1",
+   "x": -19,
+   "y": 13.5,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.5270270270270271,
+    "w": 0.5621621621621622,
+    "h": 0.21081081081081082
+   },
+   "flipX": true
+  },
+  {
+   "name": "Tablet",
+   "group": "Props",
+   "sprite": "tablet_2",
+   "x": -33,
+   "y": 14,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.5270270270270271,
+    "w": 0.5621621621621622,
+    "h": 0.21081081081081082
+   },
+   "flipX": false
+  },
+  {
+   "name": "Tablet",
+   "group": "Props",
+   "sprite": "tablet_0",
+   "x": 9,
+   "y": 13,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.5270270270270271,
+    "w": 0.5621621621621622,
+    "h": 0.21081081081081082
+   },
+   "flipX": true
+  },
+  {
+   "name": "Tablet",
+   "group": "Props",
+   "sprite": "tablet_1",
+   "x": -10,
+   "y": -16,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.5270270270270271,
+    "w": 0.5621621621621622,
+    "h": 0.21081081081081082
+   },
+   "flipX": false
+  },
+  {
+   "name": "Tablet",
+   "group": "Props",
+   "sprite": "tablet_0",
+   "x": 33,
+   "y": 6,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.5270270270270271,
+    "w": 0.5621621621621622,
+    "h": 0.21081081081081082
+   },
+   "flipX": true
+  },
+  {
+   "name": "Tablet",
+   "group": "Props",
+   "sprite": "tablet_2",
+   "x": -6,
+   "y": 21,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.5270270270270271,
+    "w": 0.5621621621621622,
+    "h": 0.21081081081081082
+   },
+   "flipX": false
+  },
+  {
+   "name": "Ghost Lantern",
+   "group": "Props",
+   "sprite": "lantern",
+   "x": 4.99,
+   "y": -24.68,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 7,
+   "collider": {
+    "type": "circle",
+    "x": 0.14054054054054055,
+    "y": -0.9486486486486487,
+    "r": 0.2
+   },
+   "flipX": true
+  },
+  {
+   "name": "Ghost Lantern",
+   "group": "Props",
+   "sprite": "lantern",
+   "x": -0.18,
+   "y": -19.79,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 7,
+   "collider": {
+    "type": "circle",
+    "x": -0.14054054054054055,
+    "y": -0.9486486486486487,
+    "r": 0.2
+   },
+   "flipX": false
+  },
+  {
+   "name": "Ghost Lantern",
+   "group": "Props",
+   "sprite": "lantern",
+   "x": 4.36,
+   "y": -14.34,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 7,
+   "collider": {
+    "type": "circle",
+    "x": 0.14054054054054055,
+    "y": -0.9486486486486487,
+    "r": 0.2
+   },
+   "flipX": true
+  },
+  {
+   "name": "Ghost Lantern",
+   "group": "Props",
+   "sprite": "lantern",
+   "x": -1.62,
+   "y": -10.51,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 7,
+   "collider": {
+    "type": "circle",
+    "x": -0.14054054054054055,
+    "y": -0.9486486486486487,
+    "r": 0.2
+   },
+   "flipX": false
+  },
+  {
+   "name": "Ghost Lantern",
+   "group": "Props",
+   "sprite": "lantern",
+   "x": -0.71,
+   "y": 3.94,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 7,
+   "collider": {
+    "type": "circle",
+    "x": 0.14054054054054055,
+    "y": -0.9486486486486487,
+    "r": 0.2
+   },
+   "flipX": true
+  },
+  {
+   "name": "Ghost Lantern",
+   "group": "Props",
+   "sprite": "lantern",
+   "x": -7.0,
+   "y": 7.09,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 7,
+   "collider": {
+    "type": "circle",
+    "x": -0.14054054054054055,
+    "y": -0.9486486486486487,
+    "r": 0.2
+   },
+   "flipX": false
+  },
+  {
+   "name": "Ghost Lantern",
+   "group": "Props",
+   "sprite": "lantern",
+   "x": -1.3,
+   "y": 10.86,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 7,
+   "collider": {
+    "type": "circle",
+    "x": 0.14054054054054055,
+    "y": -0.9486486486486487,
+    "r": 0.2
+   },
+   "flipX": true
+  },
+  {
+   "name": "Ghost Lantern",
+   "group": "Props",
+   "sprite": "lantern",
+   "x": -4.21,
+   "y": 17.24,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 7,
+   "collider": {
+    "type": "circle",
+    "x": -0.14054054054054055,
+    "y": -0.9486486486486487,
+    "r": 0.2
+   },
+   "flipX": false
+  },
+  {
+   "name": "Withered Tree",
+   "group": "Props",
+   "sprite": "tree_0",
+   "x": -26,
+   "y": -6,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 3,
+   "collider": {
+    "type": "circle",
+    "x": -0.03513513513513514,
+    "y": -1.7216216216216218,
+    "r": 0.38
+   },
+   "flipX": false
+  },
+  {
+   "name": "Withered Tree",
+   "group": "Props",
+   "sprite": "tree_1",
+   "x": 24,
+   "y": 4,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 3,
+   "collider": {
+    "type": "circle",
+    "x": 0.03513513513513514,
+    "y": -1.7216216216216218,
+    "r": 0.38
+   },
+   "flipX": true
+  },
+  {
+   "name": "Withered Tree",
+   "group": "Props",
+   "sprite": "tree_0",
+   "x": -31,
+   "y": 21.5,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 3,
+   "collider": {
+    "type": "circle",
+    "x": -0.03513513513513514,
+    "y": -1.7216216216216218,
+    "r": 0.38
+   },
+   "flipX": false
+  },
+  {
+   "name": "Withered Tree",
+   "group": "Props",
+   "sprite": "tree_1",
+   "x": 12,
+   "y": -24,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 3,
+   "collider": {
+    "type": "circle",
+    "x": -0.03513513513513514,
+    "y": -1.7216216216216218,
+    "r": 0.38
+   },
+   "flipX": false
+  },
+  {
+   "name": "Withered Tree",
+   "group": "Props",
+   "sprite": "tree_0",
+   "x": 31,
+   "y": -1,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 3,
+   "collider": {
+    "type": "circle",
+    "x": 0.03513513513513514,
+    "y": -1.7216216216216218,
+    "r": 0.38
+   },
+   "flipX": true
+  },
+  {
+   "name": "Withered Tree",
+   "group": "Props",
+   "sprite": "tree_1",
+   "x": -16,
+   "y": -24,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 3,
+   "collider": {
+    "type": "circle",
+    "x": -0.03513513513513514,
+    "y": -1.7216216216216218,
+    "r": 0.38
+   },
+   "flipX": false
+  },
+  {
+   "name": "Withered Tree",
+   "group": "Props",
+   "sprite": "tree_0",
+   "x": 15,
+   "y": 19,
+   "layer": "Player",
+   "order": 0,
+   "frames": 4,
+   "fps": 3,
+   "collider": {
+    "type": "circle",
+    "x": -0.03513513513513514,
+    "y": -1.7216216216216218,
+    "r": 0.38
+   },
+   "flipX": false
+  },
+  {
+   "name": "Boulder",
+   "group": "Props",
+   "sprite": "boulder_0",
+   "x": -20,
+   "y": 2,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.2810810810810811,
+    "w": 1.3351351351351353,
+    "h": 0.42162162162162165
+   },
+   "flipX": false
+  },
+  {
+   "name": "Boulder",
+   "group": "Props",
+   "sprite": "boulder_1",
+   "x": 18,
+   "y": 10,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.21081081081081082,
+    "w": 0.9135135135135136,
+    "h": 0.35135135135135137
+   },
+   "flipX": true
+  },
+  {
+   "name": "Boulder",
+   "group": "Props",
+   "sprite": "boulder_0",
+   "x": -8,
+   "y": -10,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.2810810810810811,
+    "w": 1.3351351351351353,
+    "h": 0.42162162162162165
+   },
+   "flipX": false
+  },
+  {
+   "name": "Boulder",
+   "group": "Props",
+   "sprite": "boulder_1",
+   "x": 8,
+   "y": -2,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.21081081081081082,
+    "w": 0.9135135135135136,
+    "h": 0.35135135135135137
+   },
+   "flipX": true
+  },
+  {
+   "name": "Boulder",
+   "group": "Props",
+   "sprite": "boulder_0",
+   "x": -30,
+   "y": -25,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.2810810810810811,
+    "w": 1.3351351351351353,
+    "h": 0.42162162162162165
+   },
+   "flipX": false
+  },
+  {
+   "name": "Boulder",
+   "group": "Props",
+   "sprite": "boulder_1",
+   "x": 32,
+   "y": 22,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.21081081081081082,
+    "w": 0.9135135135135136,
+    "h": 0.35135135135135137
+   },
+   "flipX": true
+  },
+  {
+   "name": "Boulder",
+   "group": "Props",
+   "sprite": "boulder_0",
+   "x": -14,
+   "y": 8,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.2810810810810811,
+    "w": 1.3351351351351353,
+    "h": 0.42162162162162165
+   },
+   "flipX": false
+  },
+  {
+   "name": "Boulder",
+   "group": "Props",
+   "sprite": "boulder_1",
+   "x": 6.5,
+   "y": -26,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.21081081081081082,
+    "w": 0.9135135135135136,
+    "h": 0.35135135135135137
+   },
+   "flipX": true
+  },
+  {
+   "name": "Boulder",
+   "group": "Props",
+   "sprite": "boulder_0",
+   "x": -34,
+   "y": -10,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.2810810810810811,
+    "w": 1.3351351351351353,
+    "h": 0.42162162162162165
+   },
+   "flipX": false
+  },
+  {
+   "name": "Boulder",
+   "group": "Props",
+   "sprite": "boulder_1",
+   "x": 13,
+   "y": -8,
+   "layer": "Player",
+   "order": 0,
+   "frames": 1,
+   "fps": 0,
+   "collider": {
+    "type": "box",
+    "x": 0,
+    "y": -0.21081081081081082,
+    "w": 0.9135135135135136,
+    "h": 0.35135135135135137
+   },
+   "flipX": true
+  },
+  {
+   "name": "Lost Soul",
+   "group": "Decals",
+   "sprite": "wisp",
+   "x": 17.93,
+   "y": -20.72,
+   "layer": "Background",
+   "order": 20,
+   "frames": 6,
+   "fps": 6
+  },
+  {
+   "name": "Lost Soul",
+   "group": "Decals",
+   "sprite": "wisp",
+   "x": -15.39,
+   "y": -1.07,
+   "layer": "Background",
+   "order": 20,
+   "frames": 6,
+   "fps": 6
+  },
+  {
+   "name": "Lost Soul",
+   "group": "Decals",
+   "sprite": "wisp",
+   "x": -29.49,
+   "y": 7.51,
+   "layer": "Background",
+   "order": 20,
+   "frames": 6,
+   "fps": 6
+  },
+  {
+   "name": "Lost Soul",
+   "group": "Decals",
+   "sprite": "wisp",
+   "x": -32.01,
+   "y": -16.47,
+   "layer": "Background",
+   "order": 20,
+   "frames": 6,
+   "fps": 6
+  },
+  {
+   "name": "Lost Soul",
+   "group": "Decals",
+   "sprite": "wisp",
+   "x": 13.64,
+   "y": 12.73,
+   "layer": "Background",
+   "order": 20,
+   "frames": 6,
+   "fps": 6
+  },
+  {
+   "name": "Lost Soul",
+   "group": "Decals",
+   "sprite": "wisp",
+   "x": -7.39,
+   "y": 19.26,
+   "layer": "Background",
+   "order": 20,
+   "frames": 6,
+   "fps": 6
+  },
+  {
+   "name": "Lost Soul",
+   "group": "Decals",
+   "sprite": "wisp",
+   "x": 25.96,
+   "y": -14.65,
+   "layer": "Background",
+   "order": 20,
+   "frames": 6,
+   "fps": 6
+  },
+  {
+   "name": "Lost Soul",
+   "group": "Decals",
+   "sprite": "wisp",
+   "x": -20.49,
+   "y": 12.78,
+   "layer": "Background",
+   "order": 20,
+   "frames": 6,
+   "fps": 6
+  },
+  {
+   "name": "Lost Soul",
+   "group": "Decals",
+   "sprite": "wisp",
+   "x": 12.84,
+   "y": 16.46,
+   "layer": "Background",
+   "order": 20,
+   "frames": 6,
+   "fps": 6
+  },
+  {
+   "name": "Lost Soul",
+   "group": "Decals",
+   "sprite": "wisp",
+   "x": -29.3,
+   "y": -0.1,
+   "layer": "Background",
+   "order": 20,
+   "frames": 6,
+   "fps": 6
+  },
+  {
+   "name": "Lost Soul",
+   "group": "Decals",
+   "sprite": "wisp",
+   "x": -6.88,
+   "y": -2.89,
+   "layer": "Background",
+   "order": 20,
+   "frames": 6,
+   "fps": 6
+  },
+  {
+   "name": "Lost Soul",
+   "group": "Decals",
+   "sprite": "wisp",
+   "x": 13.75,
+   "y": 4.54,
+   "layer": "Background",
+   "order": 20,
+   "frames": 6,
+   "fps": 6
+  },
+  {
+   "name": "Spirit Money",
+   "group": "Decals",
+   "sprite": "joss",
+   "x": 0.87,
+   "y": -25.64,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 4,
+   "flipX": false
+  },
+  {
+   "name": "Spirit Money",
+   "group": "Decals",
+   "sprite": "joss",
+   "x": 1.92,
+   "y": -22.18,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 4,
+   "flipX": false
+  },
+  {
+   "name": "Spirit Money",
+   "group": "Decals",
+   "sprite": "joss",
+   "x": 1.97,
+   "y": -18.93,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 4,
+   "flipX": false
+  },
+  {
+   "name": "Spirit Money",
+   "group": "Decals",
+   "sprite": "joss",
+   "x": 0.96,
+   "y": -15.54,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 4,
+   "flipX": true
+  },
+  {
+   "name": "Spirit Money",
+   "group": "Decals",
+   "sprite": "joss",
+   "x": 2.05,
+   "y": -11.84,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 4,
+   "flipX": true
+  },
+  {
+   "name": "Spirit Money",
+   "group": "Decals",
+   "sprite": "joss",
+   "x": 1.85,
+   "y": -8.33,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 4,
+   "flipX": false
+  },
+  {
+   "name": "Spirit Money",
+   "group": "Decals",
+   "sprite": "joss",
+   "x": 1.43,
+   "y": -4.82,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 4,
+   "flipX": true
+  },
+  {
+   "name": "Spirit Money",
+   "group": "Decals",
+   "sprite": "joss",
+   "x": 0.04,
+   "y": -1.36,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 4,
+   "flipX": false
+  },
+  {
+   "name": "Spirit Money",
+   "group": "Decals",
+   "sprite": "joss",
+   "x": -2.19,
+   "y": 1.56,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 4,
+   "flipX": false
+  },
+  {
+   "name": "Spirit Money",
+   "group": "Decals",
+   "sprite": "joss",
+   "x": -4.72,
+   "y": 4.17,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 4,
+   "flipX": false
+  },
+  {
+   "name": "Spirit Money",
+   "group": "Decals",
+   "sprite": "joss",
+   "x": -5.66,
+   "y": 7.82,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 4,
+   "flipX": true
+  },
+  {
+   "name": "Spirit Money",
+   "group": "Decals",
+   "sprite": "joss",
+   "x": -4.51,
+   "y": 11.36,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 4,
+   "flipX": false
+  },
+  {
+   "name": "Spirit Money",
+   "group": "Decals",
+   "sprite": "joss",
+   "x": -3.65,
+   "y": 14.98,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 4,
+   "flipX": true
+  },
+  {
+   "name": "Spirit Money",
+   "group": "Decals",
+   "sprite": "joss",
+   "x": -1.56,
+   "y": 17.72,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 4,
+   "flipX": false
+  },
+  {
+   "name": "Spirit Money",
+   "group": "Decals",
+   "sprite": "joss",
+   "x": -0.84,
+   "y": 21.54,
+   "layer": "Background",
+   "order": 5,
+   "frames": 4,
+   "fps": 4,
+   "flipX": false
+  }
+ ]
+}

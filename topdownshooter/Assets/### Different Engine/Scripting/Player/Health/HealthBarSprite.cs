@@ -46,8 +46,12 @@ public class HealthBarSprite : MonoBehaviour
 
    
     [Header("Color")]
-    [Tooltip("Full -> mid -> low color. If empty, falls back to red/green lerp.")]
-    public Gradient gradient;
+    public Color fillColor = Color.red;
+    public Color backColor = Color.black;
+    [Tooltip("hidden while at full health")]
+    public bool hideWhenFull = true;
+    [Tooltip("the fill shrinks in whole steps of this size, e.g. one pixel of the art. 0 = smoothly")]
+    public float pixelWidth = 0f;
 
     
     private Transform _bgT, _fgT;
@@ -57,24 +61,6 @@ public class HealthBarSprite : MonoBehaviour
     private bool _needsValue;    // hp percent/color changes
 
     // ---------- Unity ----------
-    private void Reset()
-    {
-        // default gradient: green (full) → yellow → red (low)
-        gradient = new Gradient
-        {
-            colorKeys = new[]
-            {
-                new GradientColorKey(new Color(0.18f,0.78f,0.20f), 1f),
-                new GradientColorKey(new Color(0.95f,0.85f,0.20f), 0.5f),
-                new GradientColorKey(new Color(0.90f,0.15f,0.15f), 0f)
-            },
-            alphaKeys = new[]
-            {
-                new GradientAlphaKey(1f,0f), new GradientAlphaKey(1f,1f)
-            }
-        };
-    }
-
     private void Awake()
     {
         if (!enabled) enabled = true; // ensure component is on
@@ -120,6 +106,14 @@ public class HealthBarSprite : MonoBehaviour
                 );
             }
             transform.position = pos;
+
+            // the bar keeps its own shape: a flip or squash of whatever it hangs under doesn't reach it
+            var parent = transform.parent;
+            if (parent != null)
+            {
+                var ls = parent.lossyScale;
+                transform.localScale = new Vector3(Inverse(ls.x), Inverse(ls.y), 1f);
+            }
         }
 
         // apply deferred ops (safe time to touch SpriteRenderer.size)
@@ -212,10 +206,17 @@ public class HealthBarSprite : MonoBehaviour
         _needsValue = true;
     }
 
-    // width/height/padding (touches SpriteRenderer.size)
+    private static float Inverse(float v) => Mathf.Abs(v) < 0.0001f ? 1f : 1f / v;
+
+    // width/height/padding (touches SpriteRenderer.size), and where it's drawn: set here rather
+    // than when the renderers are made, which is before whoever added the bar has set it up
     private void ApplyLayout()
     {
         if (_bg == null || _fg == null) return;
+
+        _bg.sortingLayerName = _fg.sortingLayerName = sortingLayer;
+        _bg.sortingOrder = bgOrder;
+        _fg.sortingOrder = fgOrder;
 
         _bg.size = new Vector2(size.x + bgPadding, size.y + bgPadding);
         // keep initial FG size (full) so ApplyValue can narrow it
@@ -240,18 +241,20 @@ public class HealthBarSprite : MonoBehaviour
         float t = Mathf.Clamp01(cur / max);
 
         float w = Mathf.Max(0f, size.x * t);
+        // in whole pixels, rounded up so a sliver of health still shows one
+        if (pixelWidth > 0f) w = Mathf.Min(size.x, Mathf.Ceil(w / pixelWidth - 0.001f) * pixelWidth);
         if (_fg.size.x != w) _fg.size = new Vector2(w, size.y);
 
         // keep left edge fixed after width change
         _fgT.localPosition = new Vector3(-size.x * 0.5f + w * 0.5f, 0f, 0f);
 
-        _fg.color = (gradient != null && gradient.colorKeys != null && gradient.colorKeys.Length > 0)
-            ? gradient.Evaluate(t)
-            : Color.Lerp(Color.red, Color.green, t);
+        _fg.color = fillColor;
+        _bg.color = backColor;
 
         
-        bool show = t < 0.999f;
-        _bg.enabled = show; _fg.enabled = show;
+        bool show = !hideWhenFull || t < 0.999f;
+        _bg.enabled = show;
+        _fg.enabled = show && w > 0f;
     }
 
     

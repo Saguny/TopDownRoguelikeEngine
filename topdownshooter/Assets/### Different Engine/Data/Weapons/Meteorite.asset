@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f31bc557859f457c897e6ca7c329fae0, type: 3}
+  m_Name: Meteorite
+  m_EditorClassIdentifier: 
+  title: Meteorite
+  type: 24
+  icon: {fileID: -7875587649269872112, guid: e30d256c724157842a19fbb77bae0c63, type: 3}
+  iconFrames:
+  - {fileID: -7875587649269872112, guid: e30d256c724157842a19fbb77bae0c63, type: 3}
+  - {fileID: 5652657087152402619, guid: e30d256c724157842a19fbb77bae0c63, type: 3}
+  - {fileID: 8342277790028353467, guid: e30d256c724157842a19fbb77bae0c63, type: 3}
+  - {fileID: 8432336579438783875, guid: e30d256c724157842a19fbb77bae0c63, type: 3}
+  iconFps: 6
+  includeInPool: 1
+  value: 0
+  additive: 0
+  description: 
+  level: 0
+  maxLevel: 1
+  overcharge: 0
+  overchargeCeiling: 1
+  overchargeHalfStacks: 8
+  evolutionPartner: {fileID: 0}
+  evolvedIcon: {fileID: 0}
+  evolvedIconFrames: []
+  levels:
+  - meteors: 1
+    damage: 20
+    radius: 2
+    cooldown: 5
+    smart: 0
+  - meteors: 2
+    damage: 20
+    radius: 2
+    cooldown: 5
+    smart: 0
+  - meteors: 2
+    damage: 24
+    radius: 2.3
+    cooldown: 5
+    smart: 0
+  - meteors: 2
+    damage: 24
+    radius: 2.3
+    cooldown: 4.5
+    smart: 0
+  - meteors: 2
+    damage: 24
+    radius: 2.3
+    cooldown: 4.5
+    smart: 1
+  - meteors: 3
+    damage: 28
+    radius: 2.3
+    cooldown: 4.5
+    smart: 1
+  - meteors: 3
+    damage: 28
+    radius: 2.6
+    cooldown: 4
+    smart: 1
+  - meteors: 4
+    damage: 32
+    radius: 2.6
+    cooldown: 4
+    smart: 1

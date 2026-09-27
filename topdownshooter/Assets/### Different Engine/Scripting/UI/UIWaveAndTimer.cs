@@ -50,6 +50,8 @@ public class UIWaveAndTimer : MonoBehaviour
         GameEvents.OnWaveStarted += HandleWaveStarted;
         GameEvents.OnFinalRushStarted += HandleRushStart;
         GameEvents.OnFinalRushEnded += HandleRushEnd;
+        GameEvents.OnFinalBossStarted += HandleFinalBoss;
+        GameEvents.OnFinalBossDefeated += HandleExitOpen;
     }
 
     private void OnDisable()
@@ -58,6 +60,20 @@ public class UIWaveAndTimer : MonoBehaviour
         GameEvents.OnWaveStarted -= HandleWaveStarted;
         GameEvents.OnFinalRushStarted -= HandleRushStart;
         GameEvents.OnFinalRushEnded -= HandleRushEnd;
+        GameEvents.OnFinalBossStarted -= HandleFinalBoss;
+        GameEvents.OnFinalBossDefeated -= HandleExitOpen;
+    }
+
+    private void HandleFinalBoss()
+    {
+        if (waveText) waveText.text = "final boss";
+        if (runTimerText) runTimerText.color = rushColor;
+    }
+
+    private void HandleExitOpen(Vector3 _)
+    {
+        if (waveText) waveText.text = "reach the exit";
+        if (runTimerText) runTimerText.color = normalColor;
     }
 
     private void HandleRunTimeChanged(float seconds)
