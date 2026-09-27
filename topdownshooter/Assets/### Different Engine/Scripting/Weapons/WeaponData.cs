@@ -19,6 +19,11 @@ public abstract class WeaponData : UpgradeData
     [Tooltip("the evolution's name in the run's stats. empty = \"Evolved\" and the weapon's name")]
     public string evolvedTitle;
 
+    [Header("Worn on the back (the starting weapon of whoever carries it; see BackWeapon)")]
+    [Tooltip("the weapon slung across a character's back, at the characters' pixel size, looping. Tools > VFX > Build Weapon FX sets these")]
+    public Sprite[] backFrames = System.Array.Empty<Sprite>();
+    [Min(0.1f)] public float backFps = 6f;
+
     public abstract int LevelCount { get; }
     public override UpgradeCategory Category => UpgradeCategory.Weapon;
 

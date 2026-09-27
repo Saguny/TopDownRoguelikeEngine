@@ -224,8 +224,11 @@ public class FlyingSword : Weapon<FlyingSwordData>
     private void Place(Blade b)
     {
         float angle = Mathf.Atan2(b.dir.y, b.dir.x) * Mathf.Rad2Deg;
-        b.sr.transform.SetPositionAndRotation(b.pos, Quaternion.Euler(0f, 0f, angle));
-        var frames = b.embedded && Data.embedFrames != null && Data.embedFrames.Length > 0 && Data.embedFrames[0] != null ? Data.embedFrames : Data.bladeFrames;
+        bool stuck = b.embedded && Data.embedFrames != null && Data.embedFrames.Length > 0 && Data.embedFrames[0] != null;
+        // stuck, its tip is what sits on the edge, not its middle
+        Vector2 at = stuck ? b.pos - b.dir * (Data.embedTipPixels / (37f / 1.3f) * AreaMul) : b.pos;
+        b.sr.transform.SetPositionAndRotation(at, Quaternion.Euler(0f, 0f, angle));
+        var frames = stuck ? Data.embedFrames : Data.bladeFrames;
         if (frames != null && frames.Length > 0 && frames[0] != null)
         {
             b.sr.sprite = frames[(int)((Time.time + b.age) * Data.bladeFps) % frames.Length];

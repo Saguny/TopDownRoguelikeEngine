@@ -21,3 +21,23 @@ its flames, the evolution's seal and blast, the icons). `node brush/brush.js` al
 `brush/out/preview_trail.png`, a stroke painted the way the game paints it. Then
 `node weapons/make-lua.js brush/out`, the same Aseprite step, and **Tools > VFX > Build Cinnabar
 Ink Brush** in Unity.
+
+## The newer weapons, the arena's seals and the back weapons
+
+`weapons2/weapons2.js` draws the Dragon Line, the Ice Cloud and the Flying Sword (their sprites,
+attack effects and level up icons), the Final Rush arena's spirit seals, and the weapons the
+characters wear on their backs (`back_*`, at the characters' pixel size; nobody holds a weapon in
+their hands any more, see `characters/characters.js`). It also writes `out/preview_dragon.png`
+(the whole dragon assembled the way the game lays it out) and `out/preview_backs.png` (the cast
+wearing their weapons).
+
+Without Aseprite, `write-ase.js` writes the layered `.aseprite` files straight from any
+generator's `out/`, the same files `assemble.lua` would have Aseprite build:
+
+    node weapons2/weapons2.js
+    node write-ase.js weapons2/out "../../Assets/### Different Engine/NewSprites/Asesprites/VFX/Weapons"
+    node characters/characters.js
+    node write-ase.js characters/out "../../Assets/### Different Engine/NewSprites/Asesprites"
+
+Then **Tools > VFX > Build Weapon FX** in Unity points everything at the new art (it also runs
+once by itself the first time the new art is in the project).

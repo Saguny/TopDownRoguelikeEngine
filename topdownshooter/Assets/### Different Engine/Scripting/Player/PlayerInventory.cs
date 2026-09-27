@@ -243,6 +243,9 @@ public class PlayerInventory : MonoBehaviour
         if (starting == null) starting = (allUpgrades ?? new List<UpgradeData>()).Find(u => u is BowData);
         if (!(starting is WeaponData weapon)) return;
 
+        // nobody holds their weapon in their hands: it's worn on their back
+        BackWeapon.Wear(gameObject, weapon);
+
         if (runtimeFor.TryGetValue(starting, out var runtime) && runtime != null)
         {
             // ApplyUpgrade resumes time for the level up menu; spawn shouldn't unpause anything

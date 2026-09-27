@@ -82,6 +82,10 @@ public class DragonLineData : WeaponData<DragonLine>
     public Sprite[] headFrames = Array.Empty<Sprite>();
     [Tooltip("a body segment, facing right, looping")]
     public Sprite[] bodyFrames = Array.Empty<Sprite>();
+    [Tooltip("a body segment with a clawed leg under it, facing right, looping; used for the segments in Leg Segments")]
+    public Sprite[] legFrames = Array.Empty<Sprite>();
+    [Tooltip("which body segments (0 is the one behind the head) have legs: the shoulders and the hips")]
+    public int[] legSegments = { 1, 5 };
     [Tooltip("the tail's end, facing right, looping")]
     public Sprite[] tailFrames = Array.Empty<Sprite>();
     [Min(0.01f)] public float bodyFps = 10f;

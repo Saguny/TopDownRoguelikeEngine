@@ -242,13 +242,18 @@ public class DragonLine : Weapon<DragonLineData>
         int frame = (int)((Time.time + d.phase) * Data.bodyFps);
 
         Put(d.head, d, head, Frame(Data.headFrames, frame), scale, spacing * 1.8f);
+        float behind = 0f;
         for (int i = 0; i < d.body.Count; i++)
         {
             // a little thinner toward the tail, and each a frame behind the one before, so the ripple runs down it
-            float taper = Mathf.Lerp(1f, 0.65f, (float)i / Mathf.Max(1, d.body.Count));
-            Put(d.body[i], d, head - spacing * (i + 1), Frame(Data.bodyFrames, frame - i - 1), scale * taper, spacing * 1.3f * taper);
+            // the gaps close up with it, so the thinner segments still overlap into one body
+            float taper = Mathf.Lerp(1f, 0.7f, (float)i / Mathf.Max(1, d.body.Count));
+            behind += spacing * taper;
+            var art = HasLeg(i) ? Frame(Data.legFrames, frame - i - 1) : null;
+            Put(d.body[i], d, head - behind, art != null ? art : Frame(Data.bodyFrames, frame - i - 1), scale * taper, spacing * 1.3f * taper);
         }
-        Put(d.tail, d, head - spacing * (d.body.Count + 1), Frame(Data.tailFrames, frame - d.body.Count), scale * 0.65f, spacing * 1.2f);
+        behind += spacing * 0.7f;
+        Put(d.tail, d, head - behind, Frame(Data.tailFrames, frame - d.body.Count), scale * 0.7f, spacing * 1.2f);
     }
 
     private void Put(SpriteRenderer sr, Dragon d, float s, Sprite art, float scale, float plainSize)
@@ -272,6 +277,13 @@ public class DragonLine : Weapon<DragonLineData>
             sr.transform.localScale = new Vector3(scale, left ? -scale : scale, 1f);
         }
         else WeaponFx.Resize(sr, plainSize);
+    }
+
+    private bool HasLeg(int segment)
+    {
+        if (Data.legSegments == null) return false;
+        foreach (int s in Data.legSegments) if (s == segment) return true;
+        return false;
     }
 
     private static Sprite Frame(Sprite[] frames, int i) =>

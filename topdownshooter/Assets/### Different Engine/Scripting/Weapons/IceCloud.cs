@@ -140,7 +140,9 @@ public class IceCloud : Weapon<IceCloudData>
             if (Data.Animated)
             {
                 c.cloud.sprite = Pick(Data.cloudFrames, frame + (int)c.wobble);
-                c.cloud.transform.localScale = Vector3.one * Mathf.Max(0.5f, AreaMul);
+                // a little wider than the snow it drops
+                float cloudWidth = c.cloud.sprite.bounds.size.x;
+                c.cloud.transform.localScale = Vector3.one * (radius * 2.1f / Mathf.Max(0.01f, cloudWidth));
                 var snow = Pick(Data.snowFrames, frame + (int)c.wobble);
                 c.snow.sprite = snow;
                 c.snow.color = snow != null ? Color.white : new Color(1f, 1f, 1f, 0.35f);

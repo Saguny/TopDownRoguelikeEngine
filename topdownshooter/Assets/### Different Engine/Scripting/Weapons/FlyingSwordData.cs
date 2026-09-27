@@ -77,6 +77,8 @@ public class FlyingSwordData : WeaponData<FlyingSword>
     [Min(0.01f)] public float bladeFps = 16f;
     [Tooltip("a sword embedded in the screen's edge, pointing right (into the wall), looping")]
     public Sprite[] embedFrames = Array.Empty<Sprite>();
+    [Tooltip("art pixels from the Embed Frames' centre to the sword's tip, which sits on the screen's edge")]
+    public float embedTipPixels = 14.5f;
     [Tooltip("the laser: one tile repeated along it")]
     public Sprite[] laserFrames = Array.Empty<Sprite>();
     [Min(0.01f)] public float laserFps = 20f;

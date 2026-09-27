@@ -4,9 +4,11 @@
 // breath and whatever they wear stirring) and a four-frame walk (contact, pass, contact, pass).
 // 48x48 canvases with the feet on row 45, the same as the Zhuo Lan they replace, so the world
 // scale and every clip made for him still fit.
-//   Zhuo Lan    a Qing bannerman archer: studded gold armour, red-tasselled helmet, red cape, bow
-//   Yun Xi      a Maoshan exorcist: white Taoist robe, red trim, peach-wood sword, yellow talismans
-//   Ye Tianshu  a sword immortal of the Northern Dipper: azure robes, silver crown, a straight jian
+//   Zhuo Lan    a Qing bannerman archer: studded gold armour, red-tasselled helmet, red cape, quiver
+//   Yun Xi      a Maoshan exorcist: white Taoist robe, red trim, a peach blossom hairpin
+//   Ye Tianshu  a sword immortal of the Northern Dipper: azure robes, silver crown, a Dipper belt
+// nobody holds a weapon: each character's weapon is worn on their back, drawn by the game from the
+// weapon's own back art (Tools/VFX/weapons2, back_*), so it follows whatever weapon they start with
 // node characters.js [names...]
 const fs = require("fs");
 const path = require("path");
@@ -177,24 +179,15 @@ function zhuoLan({ bob = 0, sway = 0, walk = null, f = 0 }) {
   shade(im, braid, [P.HR0, P.HR1, P.HR2], { spec: false });
   put(im, 20 - blow, U(25), P.R2); put(im, 19 - blow, U(26), P.R1);
 
-  // arms. the far arm draws the string back; the near arm holds the bow out front
-  const reach = walk ? [0, 1, 0, 1][f] : 0;
-  const farArm = limb(mask(), [[21, U(23)], [22, U(27)], [26, U(28)]], 3);
+  // arms at his sides, swinging a little as he walks. his bow rides on his back (the game draws
+  // it there from the Bow's own art, like every character's weapon)
+  const swingZ = walk ? [1, 0, -1, 0][f] : 0;
+  const farArm = limb(mask(), [[21, U(23)], [21 - swingZ, U(27)], [22 - swingZ, U(30)]], 3);
   shade(im, farArm, [P.G0, P.G0, P.G1], { spec: false });
-  const nearArm = limb(mask(), [[26, U(23)], [29, U(26)], [31 + reach, U(26)]], 3);
+  const nearArm = limb(mask(), [[26, U(23)], [27 + swingZ, U(27)], [27 + swingZ, U(30)]], 3);
   shade(im, nearArm, [P.G0, P.G1, P.G2, P.G3]);
-  px(im, [[32 + reach, U(25)], [32 + reach, U(26)], [33 + reach, U(26)]], P.SK1);               // hand on the grip
-
-  // the bow: a recurved stave from above his head to his knees, the string straight behind it
-  const bx = 33 + reach, top = U(14), bot = U(38);
-  for (let y = top; y <= bot; y++) {
-    const t = (y - top) / (bot - top), bend = Math.round(Math.sin(t * Math.PI) * 3);
-    const c = y === top || y === bot ? P.G2 : t < 0.5 ? P.WD2 : P.WD1;
-    put(im, bx + bend, y, c);
-    if (Math.abs(t - 0.5) < 0.12) put(im, bx + bend + 1, y, P.WD0);                               // the grip
-    put(im, bx, y, y === top || y === bot ? P.G2 : bx + bend === bx ? c : P.CR1);                 // string
-  }
-  put(im, bx - 1, top, P.G3); put(im, bx - 1, bot, P.G3);                                          // recurved tips
+  px(im, [[27 + swingZ, U(31)], [28 + swingZ, U(31)], [27 + swingZ, U(32)]], P.SK1);               // his hand
+  put(im, 28 + swingZ, U(30), P.A1);                                                               // the cuff
   return withOutline(im, OUTLINE);
 }
 
@@ -250,33 +243,18 @@ function yunXi({ bob = 0, sway = 0, walk = null, f = 0 }) {
   px(im, [[21, U(7)], [22, U(7)], [26, U(6)], [27, U(6)]], P.WD2);                       // the pin through it
   px(im, [[28, U(5)], [27, U(5)]], P.K2); put(im, 28, U(4), P.K3);                         // a peach blossom on its end
 
-  // wide sleeves. the far hand holds the peach-wood sword pointing back and down, the near hand a
-  // fan of yellow talismans held up in front
+  // wide sleeves hanging at her sides, stirring as she walks. her peach-wood sword and talismans
+  // ride on her back (the game draws them there from the weapon's own art)
   const hold = walk ? [0, 1, 0, 1][f] : sway;
   const farSleeve = mask();
-  poly(farSleeve, [[21, U(20)], [24, U(21)], [23, U(28)], [18, U(29)], [18, U(26)]]);
+  poly(farSleeve, [[21, U(20)], [24, U(21)], [23, U(28)], [18 - hold, U(30)], [18, U(26)]]);
   shade(im, farSleeve, [P.CR0, P.CR0, P.CR1], { spec: false });
-  for (let x = 18; x <= 23; x++) if (has(farSleeve, x, U(29))) put(im, x, U(29), P.R1);
-  // the sword: a reddish blade with a darker spine, a round guard and a tasselled pommel
-  const blade = limb(mask(), [[17, U(30)], [10, U(40)]], 1);
-  const bladeW = limb(mask(), [[18, U(30)], [11, U(40)]], 1);
-  flat(im, blade, P.WD1); flat(im, bladeW, P.WD3); put(im, 10, U(41), P.WD2);
-  for (let k = 0; k < 3; k++) put(im, 15 - k * 2, U(33 + k * 3), P.R2);   // red script down the blade
-  px(im, [[17, U(28)], [18, U(28)], [19, U(29)], [16, U(29)], [17, U(29)]], P.G2);   // guard
-  px(im, [[18, U(27)], [19, U(27)]], P.G3);
-  px(im, [[21, U(26)], [22, U(25)], [22, U(26)]], P.R2);                  // tassel
+  for (let x = 17; x <= 23; x++) if (has(farSleeve, x, U(30)) || has(farSleeve, x, U(29))) { put(im, x, U(30), P.R1); break; }
   const nearSleeve = mask();
-  poly(nearSleeve, [[25, U(20)], [28, U(21)], [32, U(24)], [33, U(28)], [28, U(29)], [26, U(25)]]);
+  poly(nearSleeve, [[25, U(20)], [28, U(21)], [30, U(25)], [31 + hold, U(31)], [26 + hold, U(31)], [25, U(26)]]);
   shade(im, nearSleeve, [P.CR0, P.CR1, P.CR2, P.CR3]);
-  for (let x = 27; x <= 33; x++) if (has(nearSleeve, x, U(28))) put(im, x, U(28), P.R2);
-  px(im, [[33, U(25)], [34, U(25)], [34, U(26)]], P.SK2);                 // fingers
-  // three talismans fanned between the fingers, red glyph strokes on the yellow
-  for (let k = 0; k < 3; k++) {
-    const tx = 33 + k * 2 - hold, ty = U(18) + k;
-    for (let y = ty; y <= ty + 6; y++) for (let x = tx; x <= tx + 1; x++) put(im, x, y, x === tx ? P.TL1 : P.TL2);
-    put(im, tx, ty + 6, P.TL0);
-    put(im, tx, ty + 2, P.R2); put(im, tx + 1, ty + 3, P.R2); put(im, tx, ty + 4, P.R1);
-  }
+  for (let x = 25; x <= 32; x++) if (has(nearSleeve, x, U(31))) put(im, x, U(31), P.R2);
+  px(im, [[30 + hold, U(32)], [31 + hold, U(32)]], P.SK2);                // fingertips under the cuff
   return withOutline(im, OUTLINE);
 }
 
@@ -332,17 +310,13 @@ function yeTianshu({ bob = 0, sway = 0, walk = null, f = 0 }) {
   // its silver blade lit, a gold guard and a blue tassel
   const farArm = limb(mask(), [[21, U(21)], [20, U(26)]], 3);
   shade(im, farArm, [P.AZ0, P.AZ0, P.AZ1], { spec: false });
+  // the near arm at his side. his jian rides on his back (the game draws it there from the
+  // weapon's own art)
   const lean = walk ? [0, 1, 0, 1][f] : 0;
-  const nearArm = limb(mask(), [[26, U(21)], [28, U(25)], [30 + lean, U(27)]], 3);
+  const nearArm = limb(mask(), [[26, U(21)], [27, U(25)], [27 + lean, U(29)]], 3);
   shade(im, nearArm, [P.AZ0, P.AZ1, P.AZ2, P.AZ3]);
-  px(im, [[31 + lean, U(26)], [31 + lean, U(27)], [32 + lean, U(27)]], P.SK1);
-  const hx = 32 + lean, hy = U(27);
-  const blade = limb(mask(), [[hx + 1, hy + 1], [hx + 8, hy + 12]], 1);
-  const edge = limb(mask(), [[hx + 2, hy + 1], [hx + 9, hy + 12]], 1);
-  flat(im, blade, P.SL1); flat(im, edge, P.SL3); put(im, hx + 9, hy + 13, P.SL2);
-  px(im, [[hx, hy], [hx + 1, hy - 1], [hx + 2, hy], [hx - 1, hy + 1]], P.G2);                        // guard
-  px(im, [[hx - 1, hy - 1], [hx - 2, hy - 2]], P.WD1);                                               // grip
-  px(im, [[hx - 3, hy - 2], [hx - 3, hy - 1], [hx - 4, hy], [hx - 4, hy + 1]], P.A2);                // tassel
+  px(im, [[27 + lean, U(30)], [28 + lean, U(30)], [27 + lean, U(31)]], P.SK1);
+  for (let x = 26 + lean; x <= 28 + lean; x++) put(im, x, U(29), P.SL1);                           // a silver cuff
   return withOutline(im, OUTLINE);
 }
 

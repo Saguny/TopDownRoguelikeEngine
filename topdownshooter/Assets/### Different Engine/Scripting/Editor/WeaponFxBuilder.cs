@@ -176,6 +176,7 @@ public static class WeaponFxBuilder
 
         BuildBoss(unlit, mark, zap);
         BuildPickupsAndDeaths(unlit);
+        NewWeaponFxBuilder.Build(unlit);
 
         AssetDatabase.SaveAssets();
         Debug.Log("WEAPONFX built: 9 effect prefabs, Arrow, AOEProjectile, Player and the Peach Talismans and Seven Star Swords assets");
@@ -193,7 +194,10 @@ public static class WeaponFxBuilder
         {
             if (!(AssetImporter.GetAtPath(path) is AsepriteImporter importer)) continue;
             string name = Path.GetFileNameWithoutExtension(path);
-            bool beam = name == "sss_beam";
+            // the tiles a renderer repeats along a line: pivot on the left edge, full rectangles
+            bool beam = TiledArt.Contains(name);
+            // weapons worn on a character's back come at the characters' pixel size
+            float ppu = name.StartsWith("back_") ? CharacterPpu() : WorldPpu;
 
             bool changed = false;
             void Set<T>(T current, T wanted, Action<T> apply)
@@ -204,7 +208,7 @@ public static class WeaponFxBuilder
             }
             Set(importer.importMode, FileImportModes.AnimatedSprite, v => importer.importMode = v);
             Set(importer.layerImportMode, LayerImportModes.MergeFrame, v => importer.layerImportMode = v);
-            Set(importer.spritePixelsPerUnit, WorldPpu, v => importer.spritePixelsPerUnit = v);
+            Set(importer.spritePixelsPerUnit, ppu, v => importer.spritePixelsPerUnit = v);
             Set(importer.pivotSpace, PivotSpaces.Canvas, v => importer.pivotSpace = v);
             Set(importer.pivotAlignment, beam ? SpriteAlignment.LeftCenter : SpriteAlignment.Center, v => importer.pivotAlignment = v);
             Set(importer.spriteMeshType, beam ? SpriteMeshType.FullRect : SpriteMeshType.Tight, v => importer.spriteMeshType = v);
@@ -268,8 +272,14 @@ public static class WeaponFxBuilder
         }
     }
 
+    private static readonly HashSet<string> TiledArt = new HashSet<string> { "sss_beam", "dl_line", "fs_laser" };
+
+    // Zhuo Lan's pixel size, which every character is drawn at
+    internal static float CharacterPpu() =>
+        AssetImporter.GetAtPath(ZhuoLanArt) is AsepriteImporter zhuo ? zhuo.spritePixelsPerUnit : 33.88956f;
+
     // merged frames come in as Frame_0, Frame_1...; a file with a single frame is named after itself
-    private static Sprite[] Frames(string file) => FramesAt(Art + file + ".aseprite");
+    internal static Sprite[] Frames(string file) => FramesAt(Art + file + ".aseprite");
 
     internal static Sprite[] FramesAt(string path)
     {
@@ -444,7 +454,7 @@ public static class WeaponFxBuilder
     // ------------------------------------------------------------------ prefabs
 
     // a pooled one-shot: the flipbook and FxOneShot on one object, its lifetime the animation's
-    private static GameObject OneShot(string name, Sprite[] frames, float fps, string layer, int order, Material material, float fadeOut = 0f)
+    internal static GameObject OneShot(string name, Sprite[] frames, float fps, string layer, int order, Material material, float fadeOut = 0f)
     {
         var go = new GameObject(name);
         try
@@ -465,7 +475,7 @@ public static class WeaponFxBuilder
         finally { UnityEngine.Object.DestroyImmediate(go); }
     }
 
-    private static void EditPrefab(string path, Action<GameObject> edit)
+    internal static void EditPrefab(string path, Action<GameObject> edit)
     {
         var root = PrefabUtility.LoadPrefabContents(path);
         try
