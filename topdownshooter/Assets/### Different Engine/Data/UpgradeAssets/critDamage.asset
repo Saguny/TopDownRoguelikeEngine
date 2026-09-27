@@ -15,9 +15,9 @@ MonoBehaviour:
   title: Executioner
   type: 15
   icon: {fileID: 3900664481318930320, guid: 3bfe47a9a0d3d3748b86daa5b4212581, type: 3}
-  value: 0.5
+  value: 0.3
   additive: 1
-  description: Critical hits deal an extra 50% damage
+  description: Critical hits deal an extra 30% damage
   level: 0
   maxLevel: 4
   overcharge: 1

@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: pierce
   m_EditorClassIdentifier: 
   title: Armour Piercing
-  type: 16
+  type: 27
   icon: {fileID: 21300000, guid: 3576092de5223794d982244180a71955, type: 3}
-  value: 1
+  value: 0.25
   additive: 1
-  description: 'Arrows and Seven Star stars pass through one more enemy'
+  description: Every hit ignores 25% more of an enemy's armour
   level: 0
-  maxLevel: 3
+  maxLevel: 4

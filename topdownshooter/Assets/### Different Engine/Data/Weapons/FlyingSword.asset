@@ -30,7 +30,7 @@ MonoBehaviour:
   overcharge: 0
   overchargeCeiling: 1
   overchargeHalfStacks: 8
-  evolutionPartner: {fileID: 11400000, guid: 42d6a117291763fd41ad22cd1ff7247e, type: 2}
+  evolutionPartner: {fileID: 0}
   evolvedIcon: {fileID: -531932204172203488, guid: a20920cbd5fc47dc8a780c18c670f942, type: 3}
   evolvedIconFrames:
   - {fileID: -531932204172203488, guid: a20920cbd5fc47dc8a780c18c670f942, type: 3}

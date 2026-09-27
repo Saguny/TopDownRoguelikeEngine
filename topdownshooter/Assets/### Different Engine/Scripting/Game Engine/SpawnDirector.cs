@@ -79,6 +79,8 @@ public class SpawnDirector : MonoBehaviour
     [SerializeField, Min(1f)] private float eliteHealth = EliteOutline.Health;
     [Tooltip("wen an elite always bursts into, and it always drops a heal")]
     [SerializeField, Min(0)] private int eliteWenDrops = 12;
+    [Tooltip("armour an elite has on top of its kind's")]
+    [SerializeField, Range(0f, 0.5f)] private float eliteArmour = 0.15f;
 
     [Header("Packs (small enemies come in groups)")]
     [Tooltip("enemies costing this much or less (wisps) arrive in a pack instead of one at a time")]
@@ -124,10 +126,11 @@ public class SpawnDirector : MonoBehaviour
 
     private int finalRushQuota;
     private int finalRushKills;
-    private bool finalRushEndTriggered;
 
     private bool spawningStopped;
     private bool finalBossDown;
+    private bool timeUp;
+    private bool devSkipped;
 
     private static bool secretBossSpawnedThisRun;
     private float nextSecretBossCheck;
@@ -230,8 +233,10 @@ public class SpawnDirector : MonoBehaviour
     // the run's time is up (RunTimeLimit): nothing more spawns and the horde goes, inside out
     public void EndOfTime()
     {
-        if (spawningStopped) return;
+        if (timeUp) return;
+        timeUp = true;
         spawningStopped = true;
+        // everything goes, bosses too; nothing it sweeps away counts as the player's kill
         StartCoroutine(PurgeInsideOut(null));
     }
     public Rect PlayRect => GetPlayRectFromBorders();
@@ -241,7 +246,7 @@ public class SpawnDirector : MonoBehaviour
         var arch = finalBossArchetype != null ? finalBossArchetype : bossArchetype;
         if (arch == null || arch.prefab == null)
         {
-            // nothing to fight: open the exit anyway rather than softlock the run
+            // nothing to fight: count it as beaten rather than hold the night up
             var p = GameObject.FindGameObjectWithTag("Player");
             FinalBossDown(p != null ? p.transform.position : Vector3.zero);
             return;
@@ -255,20 +260,26 @@ public class SpawnDirector : MonoBehaviour
 
         boss.transform.localScale *= finalBossScale;
         activeBosses.Add(boss);
+        // it always carries an envelope, and a good one
+        EnvelopeCarrier.Attach(boss, EnvelopeSource.FinalBoss);
 
         if (boss.TryGetComponent(out EnemyHealth health))
         {
             health.SetScaled(health.Max * finalBossHealthMul);
             health.OnHealthChanged += (current, max) =>
             {
-                if (current <= 0f) FinalBossDown(boss.transform.position);
+                // swept away when the time runs out isn't beaten
+                if (current <= 0f && !timeUp) FinalBossDown(boss.transform.position);
             };
         }
 
     }
 
-    // the boss clears the path: the horde goes with it and nothing else spawns, so the walk to
-    // the exit is the victory lap rather than one more fight
+    [Tooltip("seconds of quiet after the final boss falls before the horde comes back for the rest of the run")]
+    [SerializeField, Min(0f)] private float quietAfterFinalBoss = 4f;
+
+    // the boss falls and takes the horde with it: a moment's quiet to pick up its envelope and the
+    // wen, then the night goes on until the Wuchang come for the player (RunTimeLimit)
     private void FinalBossDown(Vector3 position)
     {
         if (finalBossDown) return;
@@ -286,6 +297,10 @@ public class SpawnDirector : MonoBehaviour
         yield return null;
         yield return PurgeInsideOut(null);
         GameEvents.OnCollectAllWen?.Invoke();
+        yield return new WaitForSeconds(quietAfterFinalBoss);
+        if (timeUp) yield break;
+        bossFight = false;
+        spawningStopped = false;
     }
 
     private void Update()
@@ -311,7 +326,9 @@ public class SpawnDirector : MonoBehaviour
         }
 
         // random chance to start preparing a fast phase
-        if (!preparingFastPhase &&
+        // (the old budget spawner's surprise: a timeline has its own surges, so not with one)
+        if (activeTimeline == null &&
+            !preparingFastPhase &&
             !inFastPhase &&
             runTime >= fastPhaseMinRunTime &&
             Time.time >= nextFastPhaseCheck)
@@ -414,23 +431,14 @@ public class SpawnDirector : MonoBehaviour
             {
                 activeBosses.Add(go);
                 bossesSpawnedThisRush++;
+                EnvelopeCarrier.Attach(go, EnvelopeSource.Boss);
             }
 
             float cd = Random.Range(minCd, maxCd) / spawnrateMul;
             spawnCooldown = cd;
         }
 
-        if (finalRush && !finalRushEndTriggered && finalRushQuota > 0)
-        {
-            bool bossAlive = IsBossAlive();
-            bool quotaReached = finalRushKills >= finalRushQuota;
-
-            if (!bossAlive && quotaReached)
-            {
-                finalRushEndTriggered = true;
-                GameEvents.OnFinalRushEnded?.Invoke(currentWave);
-            }
-        }
+        // the Final Rush ends when GameLoopController says so: its quota met and its bosses down
     }
 
     public void StartFastPhase(float duration)
@@ -501,6 +509,9 @@ public class SpawnDirector : MonoBehaviour
             if (rush) hpMul *= finalRushHealthMul;
             // the opening: anything ordinary goes down to one hit while the build is still bare
             h.SetScaled(OneShotOpening && !rush && !IsBoss(arch) ? 1f : arch.baseHealth * hpMul);
+            h.armour = arch.armour;
+            h.physicalTaken = arch.physicalTaken;
+            h.magicalTaken = arch.magicalTaken;
         }
 
         if (go.TryGetComponent(out EnemyMovement m))
@@ -860,13 +871,16 @@ public class SpawnDirector : MonoBehaviour
         if (eventDue == null || bossFight || Time.time < nextEventAllowed) return;
 
         var events = activeTimeline.events;
+        bool skipped = devSkipped;
+        devSkipped = false;
         for (int i = 0; i < eventDue.Length && i < events.Count; i++)
         {
             if (minute < eventDue[i]) continue;
 
             var e = events[i];
-            // more than a minute late means the clock was skipped past it: don't fire a backlog
-            bool missed = minute - eventDue[i] > 1f;
+            // the dev tools skipped the clock past it: don't fire a backlog. one that came due
+            // during a Final Rush (the timeline waits through those) still comes, a little late
+            bool missed = skipped && minute - eventDue[i] > 1f;
             eventDue[i] = e != null && e.repeatEveryMinutes > 0f ? eventDue[i] + e.repeatEveryMinutes : float.PositiveInfinity;
             if (e == null || missed) continue;
 
@@ -1018,6 +1032,8 @@ public class SpawnDirector : MonoBehaviour
             if (go == null) continue;
 
             EliteOutline.Promote(go, eliteSize, eliteHealth, eliteWenDrops);
+            EnvelopeCarrier.Attach(go, EnvelopeSource.Elite);
+            if (go.TryGetComponent(out EnemyHealth eh)) eh.armour = Mathf.Min(0.6f, eh.armour + eliteArmour);
             placed++;
         }
         return placed > 0;
@@ -1163,7 +1179,11 @@ public class SpawnDirector : MonoBehaviour
     }
 
     // keeps enemy toughness in step when the dev tools skip the run clock ahead
-    public void SkipTime(float seconds) => timeElapsed += Mathf.Max(0f, seconds);
+    public void SkipTime(float seconds)
+    {
+        timeElapsed += Mathf.Max(0f, seconds);
+        devSkipped = true;
+    }
 
     private void HandleFinalRushStart(int wave, int quota)
     {
@@ -1173,7 +1193,6 @@ public class SpawnDirector : MonoBehaviour
         activeBosses.Clear();
 
         finalRushQuota = Mathf.Max(1, quota);
-        finalRushEndTriggered = false;
         ResetFinalRushProgress();
 
         TrySpawnInitialBoss();
@@ -1186,7 +1205,6 @@ public class SpawnDirector : MonoBehaviour
         activeBosses.Clear();
 
         finalRushQuota = 0;
-        finalRushEndTriggered = true;
         UpdateFinalRushProgressBar();
     }
 
@@ -1202,6 +1220,7 @@ public class SpawnDirector : MonoBehaviour
         {
             activeBosses.Add(go);
             bossesSpawnedThisRush++;
+            EnvelopeCarrier.Attach(go, EnvelopeSource.Boss);
             budget = Mathf.Max(0f, budget - bossArchetype.cost);
         }
     }

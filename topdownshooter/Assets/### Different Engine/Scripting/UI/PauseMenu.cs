@@ -81,8 +81,11 @@ public class PauseMenu : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape) && !SceneLoader.Busy)
         {
-            // if upgrade menu is open, ignore pause toggle completely
+            // not over the level up, an envelope opening, the Wuchang's taking or the end screen:
+            // each owns the game's clock while it's up, and unpausing under it would start the game
             if (upgradeMenu != null && upgradeMenu.IsOpen)
+                return;
+            if (EnvelopeOpening.Busy || SoulTaking.Running || RunEnded)
                 return;
 
             TogglePause();
@@ -93,11 +96,24 @@ public class PauseMenu : MonoBehaviour
             ResetVolumesToDefault();
     }
 
+    // something opened under the pause (a level up landing the same frame): resuming leaves it stopped
+    private bool ClockHeld => (upgradeMenu != null && upgradeMenu.IsOpen) || EnvelopeOpening.Busy || RunEnded;
+
+    private GameOverScreen endScreen;
+    private bool RunEnded
+    {
+        get
+        {
+            if (endScreen == null) endScreen = FindFirstObjectByType<GameOverScreen>(FindObjectsInactive.Include);
+            return endScreen != null && endScreen.Shown;
+        }
+    }
+
     public void TogglePause()
     {
         paused = !paused;
         if (paused) Juice.Yield();
-        Time.timeScale = paused ? 0f : 1f;
+        Time.timeScale = paused || ClockHeld ? 0f : 1f;
         pausePanel.SetActive(paused);
 
         Cursor.visible = true;
@@ -111,7 +127,7 @@ public class PauseMenu : MonoBehaviour
     {
         if (!paused) return;
         paused = false;
-        Time.timeScale = 1f;
+        Time.timeScale = ClockHeld ? 0f : 1f;
         pausePanel.SetActive(false);
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;

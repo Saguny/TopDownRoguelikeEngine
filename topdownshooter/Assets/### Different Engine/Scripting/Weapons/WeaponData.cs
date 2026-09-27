@@ -67,14 +67,17 @@ public abstract class WeaponData : UpgradeData
     // card text for a level, 1 being the pick that unlocks the weapon
     public abstract string Describe(int level);
 
-    // the last card before the evolution says what it evolves with, so the partner can be planned for
+    // the last card before the evolution says how it evolves, so it can be planned for
     public override string GetDisplayDescription()
     {
         string text = Describe(Level + 1);
         if (EvolutionLevel > 0 && Level + 2 == EvolutionLevel)
-            text += evolutionPartner != null
-                ? $"\nEvolves while you hold {evolutionPartner.GetBaseTitle()}."
-                : "\nEvolves while you hold another weapon.";
+        {
+            string partner = evolutionPartner != null ? evolutionPartner.GetBaseTitle() : "another weapon";
+            text += PlayerInventory.EvolvesFromEnvelopes
+                ? $"\nMaxed, it evolves from a fortune envelope while you hold {partner}."
+                : $"\nEvolves while you hold {partner}.";
+        }
         return text;
     }
 

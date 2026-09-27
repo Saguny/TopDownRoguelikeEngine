@@ -18,4 +18,7 @@ MonoBehaviour:
   baseHealth: 12
   baseSpeed: 0.7
   baseDamage: 20
+  armour: 0.25
   contactTickInterval: 0.5
+  physicalTaken: 1.0
+  magicalTaken: 1.3

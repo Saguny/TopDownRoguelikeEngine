@@ -13,7 +13,8 @@ public static class GameEvents
     public static Action OnCollectAllWen;
     public static Action<SecretBossBehavior> OnSecretBossSpawned;
 
-    // normal mode ending: the last wave clears, the final boss spawns, killing it opens the exit
+    // normal mode ending: the last wave clears and the final boss spawns; the run is won when the
+    // Wuchang take the player at the time limit (SoulTaking)
     public static Action OnFinalBossStarted;
     public static Action<Vector3> OnFinalBossDefeated;
     public static Action OnRunWon;

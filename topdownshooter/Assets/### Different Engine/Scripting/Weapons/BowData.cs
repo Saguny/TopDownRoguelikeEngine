@@ -36,6 +36,8 @@ public class BowData : WeaponData<BowWeapon>
     [Header("Evolution (one more pick after the last level)")]
     [Tooltip("seconds between volleys once evolved. it ignores Cooldown: the bow simply never stops")]
     [Min(0.03f)] public float evolvedInterval = 0.1f;
+    [Tooltip("the stream's arrows hit for this share of the last level's damage: a stream of lighter arrows, about three times the bow before it rather than seven")]
+    [Range(0.1f, 1f)] public float evolvedDamageMul = 0.4f;
     [Tooltip("the shimmer the evolved arrows' outline runs through")]
     public Color[] outlineColors =
     {
@@ -60,7 +62,7 @@ public class BowData : WeaponData<BowWeapon>
     {
         var s = At(level);
         int extra = st != null ? st.ArrowCountTotal : 0;
-        float dmg = s.damage * (st != null ? st.arrowDamageMul : 1f);
+        float dmg = s.damage * (IsEvolved(level) ? evolvedDamageMul : 1f) * (st != null ? st.arrowDamageMul : 1f);
         Add(into, "Arrows", (s.arrows + extra).ToString());
         Add(into, "Damage", N(Hurt(st, dmg, AttackClass)));
         Add(into, "Cooldown", IsEvolved(level) ? Sec(evolvedInterval) + " (none)" : Sec(Every(st, s.cooldown, UpgradeType.ArrowCooldown)));

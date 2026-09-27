@@ -1,7 +1,7 @@
 using UnityEngine;
 
-// which maps have been cleared, saved between runs. clearing is winning a normal run there (the
-// final boss down and out through the exit). the first map is always open; every other one opens
+// which maps have been cleared, saved between runs. clearing is winning a normal run there (lasting
+// until the Wuchang come for the player at the time limit). the first map is always open; every other one opens
 // once the map before it has been cleared
 public static class MapProgress
 {

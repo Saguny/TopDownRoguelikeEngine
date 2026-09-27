@@ -55,7 +55,7 @@ public class Juice : MonoBehaviour
         }
     }
 
-    public static void Number(Vector3 position, float amount, DamageKind kind, bool crit = false)
+    public static void Number(Vector3 position, float amount, DamageKind kind, bool crit = false, bool armoured = false)
     {
         if (kind == DamageKind.Silent) return;
 
@@ -76,7 +76,7 @@ public class Juice : MonoBehaviour
 
         // crits get their own colour, size and a "!" so the variance is legible at a glance.
         // the numbers are a pixel font drawn in one mesh (PixelNumbers)
-        PixelNumbers.Show(position, shown, crit, crit ? CritColor : ColorFor(kind), crit ? 2 : SizeFor(kind));
+        PixelNumbers.Show(position, shown, crit, crit ? CritColor : armoured ? ArmourColor : ColorFor(kind), crit ? 2 : SizeFor(kind));
     }
 
     private const int NumbersPerFrame = 24;
@@ -84,6 +84,8 @@ public class Juice : MonoBehaviour
     private int numbersThisFrame;
 
     private static readonly Color CritColor = new Color(1f, 0.82f, 0.2f);
+    // a hit its armour blunted: cold steel, so it's clear why the number's small
+    private static readonly Color ArmourColor = new Color(0.68f, 0.74f, 0.86f);
 
     // each source gets its own colour so a glance tells you which weapon is doing the work
     private static Color ColorFor(DamageKind kind)

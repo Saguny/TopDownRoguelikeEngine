@@ -1,10 +1,11 @@
 using UnityEngine;
 
-// a normal run's time limit, like Vampire Survivors' Reaper: a normal run lasts 30 minutes at most.
-// the final boss comes after the sixth 3 minute wave, by 25 minutes at the latest (GameLoopController), and if it's still standing when the
-// clock reaches the limit, the horde is swept away and the Wuchang come for the player, the white
-// one first, then one more every minute, white and black in turn. they can't be hurt and one touch kills. endless
-// runs have no limit. GameLoopController adds it; the Wuchang prefabs come from the VfxLibrary
+// a normal run's time limit, like Vampire Survivors' Reaper: a normal run lasts 30 minutes. the final
+// boss comes after the sixth 3 minute wave, by 25 minutes at the latest (GameLoopController); beaten
+// or not, when the clock reaches the limit the horde is swept away and the Wuchang come for the
+// player, the white one first, then one more every minute, white and black in turn. they can't be
+// hurt, and the first to reach the player takes them (SoulTaking): the run is over, survived.
+// endless runs have no limit. GameLoopController adds it; the Wuchang prefabs come from the VfxLibrary
 public class RunTimeLimit : MonoBehaviour
 {
     [Tooltip("on the run clock, which counts the real time played. the final boss comes by 25:00; this is how long it gets")]
@@ -35,12 +36,16 @@ public class RunTimeLimit : MonoBehaviour
     {
         var director = FindFirstObjectByType<SpawnDirector>();
         if (director != null) director.EndOfTime();
+        // the run is decided: the sweep's kills don't open level ups
+        var p = GameObject.FindGameObjectWithTag("Player");
+        if (p != null && p.TryGetComponent(out PlayerInventory inventory)) inventory.LockLeveling();
         Juice.Shake(0.6f);
         Send();
     }
 
     private void Send()
     {
+        if (SoulTaking.Running) return;
         nextAt = runTime + every;
         var lib = VfxLibrary.Get;
         var prefab = lib == null ? null : sent % 2 == 0 ? lib.wuchangBai : lib.wuchangHei != null ? lib.wuchangHei : lib.wuchangBai;

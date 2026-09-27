@@ -13,6 +13,8 @@ public class RunStatText : MonoBehaviour
         DistanceWalked, LevelReached, WavesCleared, TimePlayed, RunClock,
         Kills, EliteKills, BossKills, Dps, PeakDps, BiggestHit, Crits,
         HitsTaken, LowestHealth, RevivalsUsed, WenPickedUp,
+        // only ever add at the end: texts store these as numbers
+        CoinsEarned,
     }
 
     [SerializeField] private Stat stat;
@@ -54,6 +56,7 @@ public class RunStatText : MonoBehaviour
             case Stat.LowestHealth: return $"{RunStats.LowestHealth * 100f:0}%";
             case Stat.RevivalsUsed: return RunStats.RevivalsUsed.ToString();
             case Stat.WenPickedUp: return RunStats.Short(RunStats.WenPickedUp);
+            case Stat.CoinsEarned: return Coins.EarnedThisRun.ToString();       // wen, envelopes and gifts, after Greed
         }
         return string.Empty;
     }
@@ -82,5 +85,6 @@ public class RunStatText : MonoBehaviour
         else if (n.Contains("lowest")) stat = Stat.LowestHealth;
         else if (n.Contains("reviv")) stat = Stat.RevivalsUsed;
         else if (n.Contains("wen")) stat = Stat.WenPickedUp;
+        else if (n.Contains("coin")) { stat = Stat.CoinsEarned; prefix = "+"; }
     }
 }

@@ -4,7 +4,10 @@ using UnityEngine;
 public class GameLoopController : MonoBehaviour
 {
     [SerializeField] private float waveDuration = 180f;
-    [SerializeField] private int baseKillsToClear = 25;
+    [Tooltip("kills the first Final Rush asks for")]
+    [SerializeField] private int baseKillsToClear = 150;
+    [Tooltip("how much more each Final Rush asks for than the one before: 1.3 = 30% more")]
+    [SerializeField, Min(1f)] private float quotaGrowth = 1.25f;
     [SerializeField] private float breakAfterWave = 2f;
     [SerializeField] private GameObject subjectiveDeathFx;
 
@@ -79,11 +82,13 @@ public class GameLoopController : MonoBehaviour
             finalRush = true;
             waveKills = 0;
 
-            int quota = baseKillsToClear * (int)Mathf.Pow(1.4f, waveIndex);
+            // 150, 188, 234, 293, 366, 458 by default: every rush a little more than the last
+            int quota = Mathf.Max(1, Mathf.RoundToInt(baseKillsToClear * Mathf.Pow(quotaGrowth, waveIndex)));
             GameEvents.OnFinalRushStarted?.Invoke(waveIndex + 1, quota);
 
-            // a rush still going when the final boss is due ends there, so the boss gets its time
-            while (waveKills < quota && !BossIsDue)
+            // a rush ends with its quota met and its bosses down (they carry fortune envelopes); one
+            // still going when the final boss is due ends there, so the boss gets its time
+            while ((waveKills < quota || RushBossesUp) && !BossIsDue)
             {
                 Tick();
                 yield return null;
@@ -128,6 +133,8 @@ public class GameLoopController : MonoBehaviour
         totalRun += Time.deltaTime;
         GameEvents.OnRunTimeChanged?.Invoke(totalRun);
     }
+
+    private static bool RushBossesUp => SpawnDirector.Active != null && SpawnDirector.Active.HasAliveBosses();
 
     private bool BossIsDue => !GameMode.IsEndless && totalRun >= finalBossByMinute * 60f;
 

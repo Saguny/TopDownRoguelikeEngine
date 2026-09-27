@@ -16,6 +16,15 @@ public class EnemyHealth : MonoBehaviour, IHealth
 
     [Tooltip("flat damage reduced from each hit")]
     [Min(0f)] public float armor = 0f;
+    [Tooltip("share of every hit its armour turns aside: 0.3 = 30% less damage. the spawner sets it from the enemy's archetype; Armour Piercing cuts through it")]
+    [Range(0f, 0.9f)] public float armour = 0f;
+
+    // what the two attack classes do to it, from its archetype: the dead fear talismans, blades
+    // pass through ghost fire, a fox spirit shrugs off spells
+    [NonSerialized] public float physicalTaken = 1f, magicalTaken = 1f;
+
+    // how much of an enemy's armour (both kinds) the player's hits ignore: the Armour Piercing passive
+    public static float ArmourPierce;
 
     [Header("death & drops")]
     [SerializeField, FormerlySerializedAs("gearDropPrefab")] private GameObject wenDropPrefab;
@@ -87,7 +96,11 @@ public class EnemyHealth : MonoBehaviour, IHealth
 
     // statics survive play sessions when domain reload is off
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    private static void ResetStatics() => _cachedInventory = null;
+    private static void ResetStatics()
+    {
+        _cachedInventory = null;
+        ArmourPierce = 0f;
+    }
 
     // this used to run a scene wide tag search on every single enemy death
     private static PlayerInventory GetPlayerInventory()
@@ -130,6 +143,9 @@ public class EnemyHealth : MonoBehaviour, IHealth
     {
         // back from the pool: forget the last life (an elite's gold, size and bonus drops)
         _dead = false;
+        _silentDeath = false;
+        physicalTaken = magicalTaken = 1f;
+        armour = 0f;
         currentHealth = Mathf.Max(1f, baseMaxHealth);
         bonusWenDrops = 0;
         alwaysDropHeal = false;
@@ -185,10 +201,16 @@ public class EnemyHealth : MonoBehaviour, IHealth
     {
         if (_dead) return false;
 
-        float dmg = ignoreArmor ? rawDamage : Mathf.Max(0f, rawDamage - armor);
+        // armour: a flat amount off each hit (not for damage over time) and a share of every hit,
+        // both cut by Armour Piercing. a hit that armour blunted shows its number in steel
+        float pierce = kind == DamageKind.Silent ? 1f : 1f - Mathf.Clamp01(ArmourPierce);
+        float dmg = ignoreArmor ? rawDamage : Mathf.Max(0f, rawDamage - armor * pierce);
+        dmg *= 1f - armour * pierce;
+        if (source != null) dmg *= source.AttackClass == AttackClass.Magical ? magicalTaken : physicalTaken;
         if (dmg <= 0f) return false;
+        _silentDeath = kind == DamageKind.Silent;
 
-        Juice.Number(transform.position, dmg, kind, crit);
+        Juice.Number(transform.position, dmg, kind, crit, armour * pierce >= 0.15f);
 
         currentHealth -= dmg;
         if (source != null) RunStats.Dealt(source, dmg, crit, currentHealth <= 0f, this);
@@ -277,10 +299,16 @@ public class EnemyHealth : MonoBehaviour, IHealth
         _flashRoutine = null;
     }
 
+    // killed by a purge (a wave's end, the time running out) rather than by the player
+    private bool _silentDeath;
+
     private void Die()
     {
         if (_dead) return;
         _dead = true;
+
+        // a fortune envelope it carried falls out of it, if the player brought it down
+        if (TryGetComponent(out EnvelopeCarrier carrier) && !_silentDeath) carrier.Drop();
 
         try { OnEnemyDied?.Invoke(); } catch { }
         try { GameEvents.OnEnemyKilled?.Invoke(1); } catch { }

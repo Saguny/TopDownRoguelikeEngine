@@ -14,6 +14,9 @@ public class StatContext : MonoBehaviour
     public float critChance = 0f;
     public float critMultiplier = 2f;
     public int pierceAdd = 0;
+    // share of enemies' armour ignored (the Armour Piercing passive); EnemyHealth reads it
+    public float armourPierce = 0f;
+    public float ArmourPierceTotal => Mathf.Clamp01(armourPierce + SheetBonus(StatId.ArmourPierce));
     public float moveSpeedMul = 1f;
 
     // damage multipliers per attack class (WeaponData.AttackClass). nothing in the run changes
@@ -120,6 +123,7 @@ public class StatContext : MonoBehaviour
             case StatId.WeaponSpeed: value = GlobalBonus(UpgradeType.WeaponSpeed) + Add(UpgradeType.WeaponSpeed) + SheetBonus(StatId.WeaponSpeed); return true;
             case StatId.ArrowCount: value = ArrowCountTotal; return true;
             case StatId.Pierce: value = PierceTotal + Mathf.RoundToInt(Add(UpgradeType.Pierce)); return true;
+            case StatId.ArmourPierce: value = Mathf.Clamp01(ArmourPierceTotal + Add(UpgradeType.ArmourPierce)); return true;
             case StatId.CritChance: value = Mathf.Clamp01(CritChanceTotal + Add(UpgradeType.CritChance)); return true;
             case StatId.CritDamage:
                 value = critMultiplier + Add(UpgradeType.CritDamage) + SheetBonus(StatId.CritDamage)
@@ -142,6 +146,7 @@ public class StatContext : MonoBehaviour
     public void ApplySheet(StatSheet sheet)
     {
         for (int i = 0; i < sheetBonus.Length; i++) sheetBonus[i] = sheet.Bonus((StatId)i);
+        EnemyHealth.ArmourPierce = ArmourPierceTotal;
 
         var health = GetComponent<PlayerHealth>();
         if (health != null)
@@ -187,6 +192,8 @@ public class StatContext : MonoBehaviour
         critChance = 0f;
         critMultiplier = 2f;
         pierceAdd = 0;
+        armourPierce = 0f;
+        EnemyHealth.ArmourPierce = ArmourPierceTotal;
         moveSpeedMul = 1f;
         physicalDamageMul = 1f;
         magicalDamageMul = 1f;
@@ -238,6 +245,10 @@ public class StatContext : MonoBehaviour
                 break;
             case UpgradeType.Pierce:
                 pierceAdd += Mathf.RoundToInt(u.value);
+                break;
+            case UpgradeType.ArmourPierce:
+                armourPierce += u.value;
+                EnemyHealth.ArmourPierce = ArmourPierceTotal;
                 break;
             case UpgradeType.MoveSpeed:
                 moveSpeedMul *= u.additive ? (1f + u.value) : u.value;

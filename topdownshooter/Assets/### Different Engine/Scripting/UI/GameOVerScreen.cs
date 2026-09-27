@@ -7,7 +7,7 @@ using UnityEngine.Serialization;
 // (ScaleIn), counts the run towards Endless and stops the game behind it. what's on
 // the panel fills itself as it opens: the numbers (RunStatText), the weapons (WeaponStatsList)
 // and what the run unlocked (UnlockList). the player's death opens it once the body has lain
-// there a moment (PlayerHealth); walking out through the exit opens it as a win (ExitTunnel)
+// there a moment (PlayerHealth); the Wuchang taking them at the time limit opens it as a win (SoulTaking)
 public class GameOverScreen : MonoBehaviour
 {
     [Tooltip("the whole screen, switched on when the run ends")]

@@ -19,3 +19,5 @@ MonoBehaviour:
   baseSpeed: 1.9
   baseDamage: 12
   contactTickInterval: 0.5
+  physicalTaken: 1.2
+  magicalTaken: 0.7

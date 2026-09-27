@@ -209,6 +209,16 @@ MonoBehaviour:
     showInPanel: 0
     tooltip: Remove an upgrade from the pool for this run. Turn on once the upgrade
       menu has the button.
+  - id: 19
+    label: Armour Piercing
+    icon: {fileID: 0}
+    group: 1
+    format: 1
+    baseValue: 0
+    decimals: 0
+    higherIsBetter: 1
+    showInPanel: 1
+    tooltip: How much of an enemy's armour your hits ignore. Jiangshi, Nian beasts, elites and bosses wear it.
   characters:
   - {fileID: 11400000, guid: 3a2dcd765e484214fdbba8f11abc4412, type: 2}
   - {fileID: 11400000, guid: 3b27c879a9d655a428894d17c3654dff, type: 2}

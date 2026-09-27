@@ -27,5 +27,6 @@
     BowUnlock,
     Weapon,
     AOEAttackSmart,
-    Might
+    Might,
+    ArmourPierce
 }

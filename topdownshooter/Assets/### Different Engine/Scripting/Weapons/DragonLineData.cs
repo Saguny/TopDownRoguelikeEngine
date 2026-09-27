@@ -56,7 +56,7 @@ public class DragonLineData : WeaponData<DragonLine>
 
     [Header("Evolution: the coiling dragon (it flies no more lines, only this)")]
     [Tooltip("seconds between spirals, before Cooldown")]
-    public float evolvedCooldown = 15f;
+    public float evolvedCooldown = 8f;
     [Tooltip("damage of the fire it spits, before Might. the head hits for Evolved Head Multiplier times this")]
     public float fireDamage = 50f;
     [Min(1f)] public float evolvedHeadMultiplier = 1.5f;

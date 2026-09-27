@@ -51,7 +51,7 @@ public class UIWaveAndTimer : MonoBehaviour
         GameEvents.OnFinalRushStarted += HandleRushStart;
         GameEvents.OnFinalRushEnded += HandleRushEnd;
         GameEvents.OnFinalBossStarted += HandleFinalBoss;
-        GameEvents.OnFinalBossDefeated += HandleExitOpen;
+        GameEvents.OnFinalBossDefeated += HandleBossDown;
     }
 
     private void OnDisable()
@@ -61,7 +61,7 @@ public class UIWaveAndTimer : MonoBehaviour
         GameEvents.OnFinalRushStarted -= HandleRushStart;
         GameEvents.OnFinalRushEnded -= HandleRushEnd;
         GameEvents.OnFinalBossStarted -= HandleFinalBoss;
-        GameEvents.OnFinalBossDefeated -= HandleExitOpen;
+        GameEvents.OnFinalBossDefeated -= HandleBossDown;
     }
 
     private void HandleFinalBoss()
@@ -70,9 +70,10 @@ public class UIWaveAndTimer : MonoBehaviour
         if (runTimerText) runTimerText.color = rushColor;
     }
 
-    private void HandleExitOpen(Vector3 _)
+    // the boss is down; the night goes on until the Wuchang come (RunTimeLimit)
+    private void HandleBossDown(Vector3 _)
     {
-        if (waveText) waveText.text = "reach the exit";
+        if (waveText) waveText.text = "survive the night";
         if (runTimerText) runTimerText.color = normalColor;
     }
 

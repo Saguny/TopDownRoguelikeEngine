@@ -23,7 +23,8 @@ public enum StatId
     Revival,
     Reroll,
     Skip,
-    Banish
+    Banish,
+    ArmourPierce
 }
 
 public enum StatGroup

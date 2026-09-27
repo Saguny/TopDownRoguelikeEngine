@@ -265,6 +265,19 @@ public class PlayerHealth : MonoBehaviour, IHealth
         return false;
     }
 
+    // taken by the Wuchang at the end of a run (SoulTaking): out of the game, but not dead. nothing
+    // hurts or heals any more, nothing moves or fires, and no game over is shown for it; the
+    // taking ends the run as it wants to
+    public void Seize()
+    {
+        if (_dead) return;
+        _dead = true;
+        _invulnTimer = 0f;
+        _blinking = false;
+        RunStats.EndRun();
+        Freeze();
+    }
+
     // a Revival from the stat sheet: back up at part health with a moment to get clear
     private void Revive()
     {

@@ -42,6 +42,61 @@ public class VfxLibrary : ScriptableObject
     public Sprite[] wenSpinBronze = new Sprite[0];
     public Sprite[] wenSpinJade = new Sprite[0];
 
+    [Header("The fortune envelope on the ground (FortuneEnvelope, EnvelopeCarrier)")]
+    public Sprite[] envelope = new Sprite[0];
+    public Sprite[] envelopeGlow = new Sprite[0];
+    [Tooltip("its beam of light; the sprite's foot is the bottom of its canvas")]
+    public Sprite[] envelopePillar = new Sprite[0];
+    public Sprite[] envelopeMarker = new Sprite[0];
+    [Tooltip("over an elite or boss that carries one")]
+    public Sprite[] envelopeCarry = new Sprite[0];
+    public Sprite[] envelopePickup = new Sprite[0];
+
+    [Header("Opening it (EnvelopeOpening)")]
+    [Tooltip("closed, its seal charging up")]
+    public Sprite[] envelopeBig = new Sprite[0];
+    [Tooltip("its flap lifting and the light pouring out")]
+    public Sprite[] envelopeFlap = new Sprite[0];
+    [Tooltip("its front, laid over the scroll as it rises out")]
+    public Sprite envelopeFront;
+    [Tooltip("greyscale light, tinted by rarity")]
+    public Sprite aura;
+    public Sprite rays;
+    public Sprite[] mote = new Sprite[0];
+    public Sprite[] burstCommon = new Sprite[0];
+    public Sprite[] burstRare = new Sprite[0];
+    public Sprite[] burstLegendary = new Sprite[0];
+    public Sprite scrollRoller;
+    public Sprite scroll;
+    public Sprite rewardSlot;
+    public Sprite[] rewardSlotEvolution = new Sprite[0];
+    [Tooltip("greyscale ribbon, tinted by rarity")]
+    public Sprite banner;
+    public Sprite[] coinIcon = new Sprite[0];
+    public Sprite[] peachIcon = new Sprite[0];
+
+    [Header("Opening it: sound (optional)")]
+    public AudioClip envelopePickupSound;
+    public AudioClip envelopeShake;
+    [Tooltip("the light turning up a rarity, pitched up for legendary")]
+    public AudioClip envelopeTier;
+    public AudioClip envelopeOpen;
+    public AudioClip revealCommon;
+    public AudioClip revealRare;
+    public AudioClip revealLegendary;
+    public AudioClip rewardPop;
+
+    [Header("The Wuchang taking the player at the end of a normal run (Wuchang)")]
+    [Tooltip("a chain link lying flat, then one edge on")]
+    public Sprite[] chainLink = new Sprite[0];
+    public Sprite chainHook;
+    public Sprite[] soul = new Sprite[0];
+    public Sprite[] maw = new Sprite[0];
+    [Tooltip("ink flooding the screen before the results, the screen's shape")]
+    public Sprite[] inkWipe = new Sprite[0];
+    public AudioClip chainSound;
+    public AudioClip swallowSound;
+
     private static VfxLibrary cached;
     private static bool looked;
 

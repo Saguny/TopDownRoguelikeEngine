@@ -32,6 +32,17 @@ public class PlayerInventory : MonoBehaviour
     [Tooltip("how much likelier an upgrade the player already took this run (a weapon or a passive) is to be offered: 0.1 = 10%")]
     [SerializeField, Min(0f)] private float heldWeaponBonus = 0.1f;
 
+    [Header("Evolutions and gifts")]
+    [Tooltip("a weapon at its top level evolves only out of a fortune envelope (while another weapon is held), like Vampire Survivors' chests. off: the evolution is a level up card")]
+    [SerializeField] private bool evolveFromEnvelopesOnly = true;
+    [Tooltip("offered when nothing is left to level: coins. empty makes one")]
+    [SerializeField] private GiftUpgrade coinsGift;
+    [Tooltip("offered when nothing is left to level: a heal. empty makes one")]
+    [SerializeField] private GiftUpgrade healGift;
+
+    // the run's rule, for the weapon cards' text
+    public static bool EvolvesFromEnvelopes { get; private set; } = true;
+
     // how many weapons and passives the run can hold; 0 = no limit (Endless)
     public int WeaponSlots => GameMode.IsEndless ? 0 : weaponSlots;
     public int PassiveSlots => GameMode.IsEndless ? 0 : passiveSlots;
@@ -71,29 +82,29 @@ public class PlayerInventory : MonoBehaviour
         RefreshWenRequirement();
         UpdateProgress();
         GameEvents.OnEnemyKilled += HandleEnemyKilled;
-        GameEvents.OnFinalBossDefeated += LockLeveling;
-        PlayerHealth.OnPlayerDied += LockOnDeath;
+        PlayerHealth.OnPlayerDied += LockLeveling;
     }
 
-    // once the final boss is down the run is decided, so the purge's kills shouldn't pop
-    // upgrade menus on the walk to the exit
-    private void LockLeveling(Vector3 _) => levelingLocked = true;
-
-    // nor for the kills of meteors still falling after the player is down
-    private void LockOnDeath() => levelingLocked = true;
+    // no level ups once the run is decided: meteors still falling after the player is down, or
+    // the Wuchang come (RunTimeLimit), when the purge's kills mustn't open menus
+    public void LockLeveling()
+    {
+        levelingLocked = true;
+        pendingLevelUps = 0;
+    }
 
     private void OnDisable()
     {
         foreach (var u in allUpgrades) if (u != null) u.ResetLevel();
         runtimeUpgrades.Clear();
         GameEvents.OnEnemyKilled -= HandleEnemyKilled;
-        GameEvents.OnFinalBossDefeated -= LockLeveling;
-        PlayerHealth.OnPlayerDied -= LockOnDeath;
+        PlayerHealth.OnPlayerDied -= LockLeveling;
     }
 
     private void Awake()
     {
         stats = GetComponent<StatContext>();
+        EvolvesFromEnvelopes = evolveFromEnvelopesOnly;
     }
 
     private void Start() => RefreshWenRequirement();
@@ -119,48 +130,151 @@ public class PlayerInventory : MonoBehaviour
 
         wenCount += whole;
         progressDirty = true;   // the bar is redrawn once per frame, not per wen
-        if (wenCount >= wenForUpgrade)
+        // a big pickup or a mass kill can be worth several levels: each one waits its turn
+        while (wenCount >= wenForUpgrade && wenForUpgrade > 0)
         {
             wenCount -= wenForUpgrade;
             LevelUp();
         }
     }
 
+    // level ups not yet chosen. a kill that levels up while a menu (or an envelope) is open, or
+    // several levels at once, open one menu each, one after another
+    private int pendingLevelUps;
+    public int PendingLevelUps => pendingLevelUps;
+
     private void LevelUp()
     {
         currentLevel++;
         RunStats.ReachedLevel(currentLevel);
         RefreshWenRequirement();
-        if (progressBarGradient) progressBarGradient.Celebrate();
-        OpenUpgradeMenu();
+        pendingLevelUps++;
     }
+
+    // a level up menu opens when nothing else has the game stopped: not paused, no other menu or
+    // envelope up, the run not over
+    private bool CanOpenMenu =>
+        pendingLevelUps > 0 && !levelingLocked && Time.timeScale > 0f && upgradeMenuUI != null &&
+        !upgradeMenuUI.IsOpen && !EnvelopeOpening.Busy && !SceneLoader.Busy &&
+        !(TryGetComponent(out PlayerHealth h) && h.IsDead);
 
     private void OpenUpgradeMenu()
     {
+        pendingLevelUps--;
         Juice.Yield();
         Time.timeScale = 0f;
+        if (progressBarGradient) progressBarGradient.Celebrate();
 
-        List<UpgradeData> pool = new List<UpgradeData>(runtimeUpgrades);
-        pool.RemoveAll(u => u == null || !u.CanOffer);
+        var offers = RollOffers();
+        // nothing left to level: the two gifts
+        if (offers.Count == 0) offers.AddRange(GiftsOffered());
 
-        // an evolution waits until its partner weapon is held too
-        pool.RemoveAll(u => u is WeaponData w && w.NextPickEvolves && !CanEvolve(w));
+        upgradeMenuUI.Open(offers, ChooseFromMenu, CurrentLevel - pendingLevelUps, Tools());
+    }
+
+    // the cards the pool can offer right now, weighted, without repeats
+    private List<UpgradeData> RollOffers(int count = 3)
+    {
+        var pool = OfferPool();
+        var picked = new List<UpgradeData>();
+        for (int i = 0; i < count && pool.Count > 0; i++)
+        {
+            int index = PickWeighted(pool);
+            picked.Add(pool[index]);
+            pool.RemoveAt(index);
+        }
+        return picked;
+    }
+
+    private List<UpgradeData> OfferPool()
+    {
+        var pool = new List<UpgradeData>(runtimeUpgrades);
+        pool.RemoveAll(u => u == null || !u.CanOffer || banished.Contains(u));
+
+        // an evolution comes out of a fortune envelope; or, with that off, waits until its partner
+        // weapon is held too
+        pool.RemoveAll(u => u is WeaponData w && w.NextPickEvolves && (evolveFromEnvelopesOnly || !CanEvolve(w)));
 
         // a full row takes nothing new: what's held can still level up
         if (WeaponSlots > 0 && WeaponsHeld >= WeaponSlots) pool.RemoveAll(u => u.Category == UpgradeCategory.Weapon && u.Level == 0);
         if (PassiveSlots > 0 && PassivesHeld >= PassiveSlots) pool.RemoveAll(u => u.Category == UpgradeCategory.Passive && u.Level == 0);
+        return pool;
+    }
 
-        List<UpgradeData> randomUpgrades = new List<UpgradeData>();
-        for (int i = 0; i < 3 && pool.Count > 0; i++)
+    private List<UpgradeData> GiftsOffered()
+    {
+        if (coinsGift == null) coinsGift = FindGift(GiftKind.Coins);
+        if (healGift == null) healGift = FindGift(GiftKind.Heal);
+        return new List<UpgradeData> { coinsGift, healGift };
+    }
+
+    private GiftUpgrade FindGift(GiftKind kind)
+    {
+        if (allUpgrades != null)
+            foreach (var u in allUpgrades)
+                if (u is GiftUpgrade g && g.kind == kind) return g;
+        return GiftUpgrade.Make(kind);
+    }
+
+    // ---------------------------------------------------------------- reroll, skip, banish
+
+    // bought in the shop (the Reroll, Skip and Banish global upgrades): a few a run
+    private int rerollsLeft = -1, skipsLeft, banishesLeft;
+    private bool ownsReroll, ownsSkip, ownsBanish;
+    private readonly HashSet<UpgradeData> banished = new HashSet<UpgradeData>();
+
+    private void ReadCharges()
+    {
+        if (rerollsLeft >= 0) return;
+        var sheet = StatSheet.ForRun();
+        rerollsLeft = Mathf.Max(0, Mathf.RoundToInt(sheet[StatId.Reroll]));
+        skipsLeft = Mathf.Max(0, Mathf.RoundToInt(sheet[StatId.Skip]));
+        banishesLeft = Mathf.Max(0, Mathf.RoundToInt(sheet[StatId.Banish]));
+        ownsReroll = rerollsLeft > 0;
+        ownsSkip = skipsLeft > 0;
+        ownsBanish = banishesLeft > 0;
+    }
+
+    private UpgradeMenuUI.Tools Tools()
+    {
+        ReadCharges();
+        return new UpgradeMenuUI.Tools
         {
-            int index = PickWeighted(pool);
-            randomUpgrades.Add(pool[index]);
-            pool.RemoveAt(index);
-        }
+            ownsReroll = ownsReroll, ownsSkip = ownsSkip, ownsBanish = ownsBanish,
+            rerolls = rerollsLeft, skips = skipsLeft, banishes = banishesLeft,
+            reroll = Reroll, skip = Skip, banish = Banish,
+        };
+    }
 
-        randomUpgrades.RemoveAll(u => u == null || !u.CanOffer);
+    // three new cards; the ones showing may come back
+    private List<UpgradeData> Reroll()
+    {
+        if (rerollsLeft <= 0) return null;
+        rerollsLeft--;
+        var offers = RollOffers();
+        if (offers.Count == 0) offers.AddRange(GiftsOffered());
+        upgradeMenuUI.SetCharges(rerollsLeft, skipsLeft, banishesLeft);
+        return offers;
+    }
 
-        upgradeMenuUI.Open(randomUpgrades, ChooseFromMenu, CurrentLevel);
+    // no pick this level
+    private void Skip()
+    {
+        if (skipsLeft <= 0) return;
+        skipsLeft--;
+        ChooseFromMenu(null);
+    }
+
+    // that card never comes up again this run; a new one takes its place (null: none left)
+    private UpgradeData Banish(UpgradeData card, List<UpgradeData> showing)
+    {
+        if (banishesLeft <= 0 || card == null || card is GiftUpgrade) return card;
+        banishesLeft--;
+        banished.Add(card);
+        var pool = OfferPool();
+        pool.RemoveAll(showing.Contains);
+        upgradeMenuUI.SetCharges(rerollsLeft, skipsLeft, banishesLeft);
+        return pool.Count > 0 ? pool[PickWeighted(pool)] : null;
     }
 
     [Tooltip("seconds the player can't be hurt after the level up menu closes, to get their bearings")]
@@ -179,6 +293,14 @@ public class PlayerInventory : MonoBehaviour
         if (progressBarGradient) progressBarGradient.EndCelebrate();
         if (upgrade == null)
         {
+            Time.timeScale = 1f;
+            return;
+        }
+
+        // a gift pays out and is gone: nothing is held or levelled
+        if (upgrade is GiftUpgrade gift)
+        {
+            gift.Give(gameObject);
             Time.timeScale = 1f;
             return;
         }
@@ -212,6 +334,46 @@ public class PlayerInventory : MonoBehaviour
             weapons[data] = weapon = data.AddTo(gameObject);
         return weapon;
     }
+
+    // ---------------------------------------------------------------- fortune envelopes
+
+    // what an envelope gives: its evolution first, if a weapon is ready for one (at its top level,
+    // another weapon held), then levels of whatever is held, drawn from the pool the level up uses
+    // (the same one more than once when it's worth it), each taken as it's drawn. with nothing left
+    // to level, the rest is coins. returns what was given, in order, for the scroll
+    public List<EnvelopeReward> OpenEnvelope(int upgrades)
+    {
+        var given = new List<EnvelopeReward>();
+        for (int i = 0; i < upgrades; i++)
+        {
+            UpgradeData pick = null;
+            bool evolution = false;
+            foreach (var u in runtimeUpgrades)
+                if (u is WeaponData w && w.Level > 0 && w.NextPickEvolves && CanEvolve(w) && !banished.Contains(u)) { pick = u; evolution = true; break; }
+            if (pick == null)
+            {
+                // levels of what's held only: an envelope doesn't fill a slot
+                var pool = OfferPool();
+                pool.RemoveAll(u => u.Level == 0);
+                if (pool.Count > 0) pick = pool[PickWeighted(pool)];
+            }
+            if (pick == null)
+            {
+                Coins.Gift(EnvelopeCoinsPerUpgrade);
+                given.Add(EnvelopeReward.Coins(Coins.WithGreed(EnvelopeCoinsPerUpgrade)));
+                continue;
+            }
+
+            float timeScale = Time.timeScale;
+            ApplyUpgrade(pick);
+            Time.timeScale = timeScale;
+            given.Add(new EnvelopeReward { item = pick, evolution = evolution, level = pick.Level });
+        }
+        return given;
+    }
+
+    // coins in place of an upgrade an envelope couldn't give, before Greed
+    public const int EnvelopeCoinsPerUpgrade = 20;
 
     private bool CanEvolve(WeaponData weapon)
     {
@@ -273,6 +435,9 @@ public class PlayerInventory : MonoBehaviour
 
         foreach (var u in runtimeUpgrades) if (u != null) u.ResetLevel();
         taken.Clear();
+        pendingLevelUps = 0;
+        banished.Clear();
+        rerollsLeft = -1;
         UpdateProgress();
         if (stats != null) stats.ResetStats();
     }
@@ -281,6 +446,8 @@ public class PlayerInventory : MonoBehaviour
 
     private void LateUpdate()
     {
+        // the next level up waiting, once nothing else has the game stopped
+        if (CanOpenMenu) OpenUpgradeMenu();
         if (!progressDirty) return;
         progressDirty = false;
         UpdateProgress();

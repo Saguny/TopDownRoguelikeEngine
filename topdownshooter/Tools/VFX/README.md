@@ -41,3 +41,18 @@ generator's `out/`, the same files `assemble.lua` would have Aseprite build:
 
 Then **Tools > VFX > Build Weapon FX** in Unity points everything at the new art (it also runs
 once by itself the first time the new art is in the project).
+
+## The fortune envelope and the end of a run
+
+`fortune/fortune.js` draws the fortune envelope that elites and bosses drop (on the ground, its beam,
+its markers, and everything its opening shows: the charging seal, the flap, the light, the rarity
+bursts, the scroll, the reward frames, the coin and peach icons) and the Wuchang's taking of the
+player (the chain, the shackle, the soul, the ink whirl, the ink wipe):
+
+    node fortune/fortune.js
+    node write-ase.js fortune/out "../../Assets/### Different Engine/NewSprites/Asesprites/VFX"
+
+Their sounds are synthesised by `../SFX/fortune.py` (into `Sounds/Fortune`). **Tools > VFX > Build
+Weapon FX** points the VfxLibrary at both (it also runs once by itself the first time the art is in
+the project). `fortune/preview.py <common|rare|legendary> <out.gif>` renders an opening outside Unity
+from the art and the sounds, as a GIF and an MP4 with sound.

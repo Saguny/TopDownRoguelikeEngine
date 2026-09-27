@@ -25,8 +25,8 @@ public static class WeaponFxBuilder
     // Zhuo Lan's file sits on its own at the top of the art folder
     internal const string ZhuoLanArt = Root + "NewSprites/Asesprites/qing_warrior_vs.aseprite";
     // set up and built here; the enemies' and characters' own files are only kept from coming in cut wrong
-    private static readonly string[] ArtFolders = { Art, BossArt, VfxEnemies, VfxPickups };
-    private static readonly string[] FreshFolders = { Art, EnemyArt, VfxEnemies, VfxPickups, CharacterArt, VfxUi };
+    private static readonly string[] ArtFolders = { Art, BossArt, VfxEnemies, VfxPickups, FortuneFxBuilder.FortuneArt, FortuneFxBuilder.WuchangArt };
+    private static readonly string[] FreshFolders = { Art, EnemyArt, VfxEnemies, VfxPickups, CharacterArt, VfxUi, FortuneFxBuilder.FortuneArt, FortuneFxBuilder.WuchangArt };
     private static bool Fresh(string path) => FreshFolders.Any(path.StartsWith) || path == ZhuoLanArt;
     private const string FxFolder = Root + "Prefabs/VFX/Weapons";
     private const string UnlitMaterial = "Packages/com.unity.render-pipelines.universal/Runtime/Materials/Sprite-Unlit-Default.mat";
@@ -177,6 +177,7 @@ public static class WeaponFxBuilder
         BuildBoss(unlit, mark, zap);
         BuildPickupsAndDeaths(unlit);
         NewWeaponFxBuilder.Build(unlit);
+        FortuneFxBuilder.Build();
 
         AssetDatabase.SaveAssets();
         Debug.Log("WEAPONFX built: 9 effect prefabs, Arrow, AOEProjectile, Player and the Peach Talismans and Seven Star Swords assets");

@@ -75,6 +75,9 @@ public static class Coins
     public const float FalloffPower = 1.5f;
     private static float runSeconds;
 
+    // coins this run has paid so far, for the end screen (RunStatText's Coins Earned)
+    public static int EarnedThisRun { get; private set; }
+
     // coins one wen pays right now, before Greed
     public static float RateAt(float seconds) => StartRate / Mathf.Pow(1f + Mathf.Max(0f, seconds) / 60f / FalloffMinutes, FalloffPower);
     public static float RateNow => RateAt(runSeconds);
@@ -86,6 +89,7 @@ public static class Coins
         carry = 0f;
         greedMultiplier = 1f;
         runSeconds = 0f;
+        EarnedThisRun = 0;
         balance = -1;
         unsaved = false;
     }
@@ -108,6 +112,7 @@ public static class Coins
     {
         greedMultiplier = 1f + Mathf.Max(0f, StatSheet.ForRun()[StatId.Greed]);
         runSeconds = 0f;
+        EarnedThisRun = 0;
         Save();
     }
 
@@ -120,6 +125,19 @@ public static class Coins
         if (whole <= 0) return;
         carry -= whole;
         Add(whole);
+        EarnedThisRun += whole;
+    }
+
+    // a set amount, as a fortune envelope or a level up's gift pays it: times Greed, whenever in
+    // the run it comes
+    public static int WithGreed(int amount) => Mathf.Max(0, Mathf.RoundToInt(amount * greedMultiplier));
+
+    public static void Gift(int amount)
+    {
+        int paid = WithGreed(amount);
+        if (paid <= 0) return;
+        Add(paid);
+        EarnedThisRun += paid;
     }
 
 #if UNITY_EDITOR

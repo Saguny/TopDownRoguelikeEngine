@@ -124,5 +124,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 8.4
-  reach: 0.8
-  damage: 65535
+  reach: 3.2
