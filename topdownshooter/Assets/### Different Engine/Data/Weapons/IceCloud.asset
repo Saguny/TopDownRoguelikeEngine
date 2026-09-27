@@ -14,9 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Ice Cloud
   type: 24
-  icon: {fileID: 0}
-  iconFrames: []
-  iconFps: 6
+  icon: {fileID: 1851390280890884012, guid: d69fbe90e0db4dcb8ad20fe10f302b2b, type: 3}
+  iconFrames:
+  - {fileID: 1851390280890884012, guid: d69fbe90e0db4dcb8ad20fe10f302b2b, type: 3}
+  - {fileID: 2496154670073542997, guid: d69fbe90e0db4dcb8ad20fe10f302b2b, type: 3}
+  - {fileID: -7484568532959744412, guid: d69fbe90e0db4dcb8ad20fe10f302b2b, type: 3}
+  - {fileID: 4382139555683823463, guid: d69fbe90e0db4dcb8ad20fe10f302b2b, type: 3}
+  iconFps: 8
   includeInPool: 1
   value: 0
   additive: 0
@@ -27,6 +31,114 @@ MonoBehaviour:
   overchargeCeiling: 1
   overchargeHalfStacks: 8
   evolutionPartner: {fileID: 11400000, guid: 9949200c23b69924191e4aca011072ce, type: 2}
-  evolvedIcon: {fileID: 0}
-  evolvedIconFrames: []
+  evolvedIcon: {fileID: -8062838099269601742, guid: 416f9188382f44d4b467f05e67cf614c, type: 3}
+  evolvedIconFrames:
+  - {fileID: -8062838099269601742, guid: 416f9188382f44d4b467f05e67cf614c, type: 3}
+  - {fileID: 570157365203888944, guid: 416f9188382f44d4b467f05e67cf614c, type: 3}
+  - {fileID: -8665375161951956326, guid: 416f9188382f44d4b467f05e67cf614c, type: 3}
+  - {fileID: -8428650203984655094, guid: 416f9188382f44d4b467f05e67cf614c, type: 3}
   evolvedTitle: Frost Tornado
+  backFrames: []
+  backFps: 6
+  levels:
+  - damage: 6
+    clouds: 1
+    radius: 1.6
+    freezeSeconds: 1.5
+    cooldown: 10
+  - damage: 8
+    clouds: 1
+    radius: 1.6
+    freezeSeconds: 1.5
+    cooldown: 10
+  - damage: 8
+    clouds: 2
+    radius: 1.6
+    freezeSeconds: 1.5
+    cooldown: 10
+  - damage: 8
+    clouds: 2
+    radius: 2
+    freezeSeconds: 2
+    cooldown: 10
+  - damage: 11
+    clouds: 2
+    radius: 2
+    freezeSeconds: 2
+    cooldown: 8.5
+  - damage: 11
+    clouds: 3
+    radius: 2.2
+    freezeSeconds: 2
+    cooldown: 8.5
+  driftSeconds: 7
+  snowTick: 1
+  cloudHeight: 1.6
+  pileInterval: 0.7
+  pileSeconds: 5
+  pileFreezeSeconds: 3
+  pileRadius: 0.45
+  pileImmunity: 1
+  maxPiles: 60
+  tornadoCooldown: 20
+  tornadoSeconds: 6
+  tornadoMinDistance: 3.5
+  pullRadius: 5
+  pullSpeed: 3.5
+  sprayRadius: 7
+  sprayInterval: 1.2
+  sprayDamage: 15
+  sprayFreezeSeconds: 2
+  sprayPiles: 5
+  tornadoSpeed: 1.2
+  cloudFrames:
+  - {fileID: -7989700314395280071, guid: 7e536ec807454ebfa183cee456e6833b, type: 3}
+  - {fileID: -7037444345237963373, guid: 7e536ec807454ebfa183cee456e6833b, type: 3}
+  - {fileID: -5538524980415823029, guid: 7e536ec807454ebfa183cee456e6833b, type: 3}
+  - {fileID: 7273329672901499620, guid: 7e536ec807454ebfa183cee456e6833b, type: 3}
+  snowFrames:
+  - {fileID: -4194578189704259907, guid: 683f2a6d89954e7f92bca05294653b31, type: 3}
+  - {fileID: 5671132326800216724, guid: 683f2a6d89954e7f92bca05294653b31, type: 3}
+  - {fileID: 5077428437895707031, guid: 683f2a6d89954e7f92bca05294653b31, type: 3}
+  - {fileID: 7301127538053171440, guid: 683f2a6d89954e7f92bca05294653b31, type: 3}
+  - {fileID: 6320030726355825070, guid: 683f2a6d89954e7f92bca05294653b31, type: 3}
+  - {fileID: 498474154783533903, guid: 683f2a6d89954e7f92bca05294653b31, type: 3}
+  cloudFps: 7
+  snowArtRadius: 1.5986485
+  pileFrames:
+  - {fileID: -1536417978014897678, guid: 31c4c561dd3f4bda83e22820d13441c5, type: 3}
+  - {fileID: 159585804874836844, guid: 31c4c561dd3f4bda83e22820d13441c5, type: 3}
+  - {fileID: -5714156582896390220, guid: 31c4c561dd3f4bda83e22820d13441c5, type: 3}
+  - {fileID: 4403972204497581178, guid: 31c4c561dd3f4bda83e22820d13441c5, type: 3}
+  - {fileID: 5935676093442025659, guid: 31c4c561dd3f4bda83e22820d13441c5, type: 3}
+  - {fileID: -7935242624067894027, guid: 31c4c561dd3f4bda83e22820d13441c5, type: 3}
+  - {fileID: 5301459335624136780, guid: 31c4c561dd3f4bda83e22820d13441c5, type: 3}
+  - {fileID: 6706075614315047281, guid: 31c4c561dd3f4bda83e22820d13441c5, type: 3}
+  pileRestFrame: 3
+  pileFps: 12.5
+  iceFrames:
+  - {fileID: 6020660048177310604, guid: d79d7ef1fd10467f9cbb6a3ed22b3b9d, type: 3}
+  - {fileID: -2327687382318131031, guid: d79d7ef1fd10467f9cbb6a3ed22b3b9d, type: 3}
+  - {fileID: -5487891457514010578, guid: d79d7ef1fd10467f9cbb6a3ed22b3b9d, type: 3}
+  - {fileID: -6124063284035965922, guid: d79d7ef1fd10467f9cbb6a3ed22b3b9d, type: 3}
+  - {fileID: 9148629689227838851, guid: d79d7ef1fd10467f9cbb6a3ed22b3b9d, type: 3}
+  - {fileID: 660224941897230711, guid: d79d7ef1fd10467f9cbb6a3ed22b3b9d, type: 3}
+  iceFps: 16.7
+  tornadoFrames:
+  - {fileID: -3243134710380581492, guid: 273d47f79ef4441f80a8377ee740b2e7, type: 3}
+  - {fileID: 3707697637753992383, guid: 273d47f79ef4441f80a8377ee740b2e7, type: 3}
+  - {fileID: -7833735029420066610, guid: 273d47f79ef4441f80a8377ee740b2e7, type: 3}
+  - {fileID: -3614231966787230550, guid: 273d47f79ef4441f80a8377ee740b2e7, type: 3}
+  - {fileID: 5799873563644912906, guid: 273d47f79ef4441f80a8377ee740b2e7, type: 3}
+  - {fileID: 2783141445176839811, guid: 273d47f79ef4441f80a8377ee740b2e7, type: 3}
+  tornadoFps: 14.3
+  frostBurstFx: {fileID: 9063948996650428897, guid: 322f5a2581bd2c942a5c0efcec0b1822, type: 3}
+  cloudColor: {r: 0.85, g: 0.93, b: 1, a: 0.8}
+  pileColor: {r: 0.95, g: 0.98, b: 1, a: 0.9}
+  tornadoColor: {r: 0.7, g: 0.9, b: 1, a: 0.6}
+  cloudLayer: Default
+  cloudOrder: 40
+  pileLayer: Player
+  pileOrder: -5
+  tornadoLayer: Aura
+  tornadoOrder: 9

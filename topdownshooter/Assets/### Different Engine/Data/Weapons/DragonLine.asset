@@ -14,9 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Dragon Line
   type: 24
-  icon: {fileID: 0}
-  iconFrames: []
-  iconFps: 6
+  icon: {fileID: -8738415590053125993, guid: b18481adcd9a4925bf331d5714c1773d, type: 3}
+  iconFrames:
+  - {fileID: -8738415590053125993, guid: b18481adcd9a4925bf331d5714c1773d, type: 3}
+  - {fileID: 3202683295247079835, guid: b18481adcd9a4925bf331d5714c1773d, type: 3}
+  - {fileID: 3209378228883192346, guid: b18481adcd9a4925bf331d5714c1773d, type: 3}
+  - {fileID: 7754122859931656041, guid: b18481adcd9a4925bf331d5714c1773d, type: 3}
+  iconFps: 8
   includeInPool: 1
   value: 0
   additive: 0
@@ -27,6 +31,93 @@ MonoBehaviour:
   overchargeCeiling: 1
   overchargeHalfStacks: 8
   evolutionPartner: {fileID: 11400000, guid: 3507a1f6098e4e37a533cacec337109f, type: 2}
-  evolvedIcon: {fileID: 0}
-  evolvedIconFrames: []
+  evolvedIcon: {fileID: -8034143713404588421, guid: e3f14269466e4b5780fcc458f4ed5df6, type: 3}
+  evolvedIconFrames:
+  - {fileID: -8034143713404588421, guid: e3f14269466e4b5780fcc458f4ed5df6, type: 3}
+  - {fileID: 7228352803034071858, guid: e3f14269466e4b5780fcc458f4ed5df6, type: 3}
+  - {fileID: -4002128945753081156, guid: e3f14269466e4b5780fcc458f4ed5df6, type: 3}
+  - {fileID: -3697523443042945527, guid: e3f14269466e4b5780fcc458f4ed5df6, type: 3}
   evolvedTitle: Coiling Azure Dragon
+  backFrames: []
+  backFps: 6
+  levels:
+  - damage: 10
+    cooldown: 5
+    dragons: 1
+  - damage: 12
+    cooldown: 5
+    dragons: 1
+  - damage: 12
+    cooldown: 4.5
+    dragons: 1
+  - damage: 14
+    cooldown: 4.5
+    dragons: 2
+  - damage: 17
+    cooldown: 4.5
+    dragons: 2
+  - damage: 17
+    cooldown: 4
+    dragons: 2
+  - damage: 20
+    cooldown: 4
+    dragons: 3
+  - damage: 24
+    cooldown: 3.5
+    dragons: 3
+  headMultiplier: 3
+  segments: 10
+  lengthOfScreen: 0.4
+  telegraphSeconds: 0.45
+  crossSeconds: 1.1
+  weave: 0.35
+  weaveFrequency: 0.22
+  headRadius: 0.55
+  bodyRadius: 0.35
+  evolvedCooldown: 15
+  fireDamage: 50
+  evolvedHeadMultiplier: 1.5
+  coilDamage: 15
+  spiralTurns: 2.5
+  spiralSeconds: 3.5
+  evolvedLength: 1.5
+  pushSpeed: 9
+  pushSeconds: 0.3
+  fireInterval: 0.12
+  fireReach: 1.3
+  fireRadius: 0.9
+  evolvedRehit: 0.6
+  headFrames:
+  - {fileID: -884701638276679576, guid: e574642258f049eaa7b3f8ab14ddca20, type: 3}
+  - {fileID: -4133845772241713306, guid: e574642258f049eaa7b3f8ab14ddca20, type: 3}
+  - {fileID: -3688455581623364030, guid: e574642258f049eaa7b3f8ab14ddca20, type: 3}
+  - {fileID: 2544596370425626005, guid: e574642258f049eaa7b3f8ab14ddca20, type: 3}
+  bodyFrames:
+  - {fileID: 7579017673612666672, guid: e1cd667462dd4235bbc999fd0dd65f90, type: 3}
+  - {fileID: -5037507994931867835, guid: e1cd667462dd4235bbc999fd0dd65f90, type: 3}
+  - {fileID: -2017660988752578220, guid: e1cd667462dd4235bbc999fd0dd65f90, type: 3}
+  - {fileID: 5261695709037194752, guid: e1cd667462dd4235bbc999fd0dd65f90, type: 3}
+  legFrames:
+  - {fileID: -3997544492592459977, guid: 530ff4b9ab6442e0ab63bea7ab90f9d0, type: 3}
+  - {fileID: 8164474871922020374, guid: 530ff4b9ab6442e0ab63bea7ab90f9d0, type: 3}
+  - {fileID: -1298500930239092328, guid: 530ff4b9ab6442e0ab63bea7ab90f9d0, type: 3}
+  - {fileID: 2817276150984051445, guid: 530ff4b9ab6442e0ab63bea7ab90f9d0, type: 3}
+  legSegments: 0100000005000000
+  tailFrames:
+  - {fileID: 9195021924007930154, guid: 7dd7602f7f3c45ba8255c5c163030c5e, type: 3}
+  - {fileID: 8626705732996653916, guid: 7dd7602f7f3c45ba8255c5c163030c5e, type: 3}
+  - {fileID: 8771219652269569237, guid: 7dd7602f7f3c45ba8255c5c163030c5e, type: 3}
+  - {fileID: 314740221666407404, guid: 7dd7602f7f3c45ba8255c5c163030c5e, type: 3}
+  bodyFps: 10
+  lineFrames:
+  - {fileID: -8255563860217033960, guid: 8177481bd13a4eb793c1e61e495b81b7, type: 3}
+  - {fileID: 1362828592858977577, guid: 8177481bd13a4eb793c1e61e495b81b7, type: 3}
+  - {fileID: 7406540948825165817, guid: 8177481bd13a4eb793c1e61e495b81b7, type: 3}
+  - {fileID: -432566291400096748, guid: 8177481bd13a4eb793c1e61e495b81b7, type: 3}
+  lineFps: 14
+  fireFx: {fileID: 5290213517893351817, guid: b7b8cf98ab0c2af48b860c878d706fec, type: 3}
+  biteFx: {fileID: 3292780262733144750, guid: 0a42f1cce7f698143b0c13ea8acf6390, type: 3}
+  segmentArtPixels: 14
+  placeholderColor: {r: 0.3, g: 0.85, b: 0.7, a: 1}
+  sortingLayer: Aura
+  sortingOrder: 8

@@ -37,47 +37,35 @@ MonoBehaviour:
   - {fileID: 7082438064554017470, guid: d680d2dcfd6c28b429ccc2b7526bcac3, type: 3}
   - {fileID: -4957533784707596169, guid: d680d2dcfd6c28b429ccc2b7526bcac3, type: 3}
   - {fileID: 3960452110562786392, guid: d680d2dcfd6c28b429ccc2b7526bcac3, type: 3}
+  evolvedTitle: 
+  backFrames:
+  - {fileID: 1987415348231188576, guid: 0896ff4b285543e1b3d844b20d20d8f2, type: 3}
+  - {fileID: 548787629627291138, guid: 0896ff4b285543e1b3d844b20d20d8f2, type: 3}
+  - {fileID: 6897419768591363218, guid: 0896ff4b285543e1b3d844b20d20d8f2, type: 3}
+  - {fileID: 936305863721811945, guid: 0896ff4b285543e1b3d844b20d20d8f2, type: 3}
+  backFps: 6
   levels:
   - contactDamage: 5
-    starDamage: 5
-    cooldown: 2
   - contactDamage: 8
-    starDamage: 8
-    cooldown: 1.9
   - contactDamage: 10
-    starDamage: 9
-    cooldown: 1.8
   - contactDamage: 12
-    starDamage: 11
-    cooldown: 1.7
   - contactDamage: 15
-    starDamage: 15
-    cooldown: 1.6
   - contactDamage: 18
-    starDamage: 16
-    cooldown: 1.4
   - contactDamage: 20
-    starDamage: 18
-    cooldown: 1.3
   orbitRadius: 1.8
   orbitSpeed: 120
   swordSize: 0.7
   contactInterval: 0.5
+  starInterval: 1.3
   starDamage: 10
   starsPerSword: 8
   starSpeed: 7
+  starTurn: 240
+  starRange: 12
+  starLifetime: 3
   starSize: 0.3
   starTrailLength: 4
   starTrailSpacing: 0.14
-  laserInterval: 3
-  laserSeconds: 0.9
-  laserDamage: 14
-  laserTick: 0.15
-  laserWidth: 0.2777778
-  laserLength: 100
-  laserCore: {r: 1, g: 1, b: 1, a: 1}
-  laserInner: {r: 0.78431374, g: 0.9647059, b: 1, a: 1}
-  laserOuter: {r: 0.3529412, g: 0.78431374, b: 0.9411765, a: 1}
   swordSprite: {fileID: 21300000, guid: bd773a875898f244f8358fe1e639389d, type: 3}
   starSprite: {fileID: 21300000, guid: 2e4fe00b6e1267b47b9446033ce7e23f, type: 3}
   swordColor: {r: 0.55, g: 0.75, b: 1, a: 1}
@@ -102,14 +90,3 @@ MonoBehaviour:
   starFps: 20
   starHitFx: {fileID: 1766203950941741018, guid: 37f5628b20001044085d7ff51851d5db, type: 3}
   launchFx: {fileID: 5197691352094584668, guid: 09b8ba2bf8aecb44cb36b437e18f522d, type: 3}
-  beamFrames:
-  - {fileID: -9122133168965341018, guid: df7cbf0f5d4a36c408649a22d17cff8b, type: 3}
-  - {fileID: -3135649957012651288, guid: df7cbf0f5d4a36c408649a22d17cff8b, type: 3}
-  - {fileID: 2283321503995507034, guid: df7cbf0f5d4a36c408649a22d17cff8b, type: 3}
-  - {fileID: -4572239937079222586, guid: df7cbf0f5d4a36c408649a22d17cff8b, type: 3}
-  beamCapFrames:
-  - {fileID: 4364350262683516697, guid: 6e45a486763e3074d8a23defb7ceb437, type: 3}
-  - {fileID: -1331340389867397239, guid: 6e45a486763e3074d8a23defb7ceb437, type: 3}
-  - {fileID: -5707096657278388480, guid: 6e45a486763e3074d8a23defb7ceb437, type: 3}
-  - {fileID: -2476389541713184459, guid: 6e45a486763e3074d8a23defb7ceb437, type: 3}
-  beamFps: 22

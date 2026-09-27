@@ -5922,8 +5922,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 25, y: 30}
-  m_SizeDelta: {x: 21, y: 37}
+  m_AnchoredPosition: {x: 23.9541, y: 30}
+  m_SizeDelta: {x: 20, y: 37}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &305743827
 MonoBehaviour:
@@ -13497,8 +13497,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 27.8733, y: 30}
-  m_SizeDelta: {x: 26.7467, y: 37}
+  m_AnchoredPosition: {x: 25.5805, y: 30}
+  m_SizeDelta: {x: 20, y: 37}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &774423108
 MonoBehaviour:
@@ -14121,8 +14121,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 26.5257, y: 30}
-  m_SizeDelta: {x: 24.0515, y: 37}
+  m_AnchoredPosition: {x: 23.0211, y: 30}
+  m_SizeDelta: {x: 20, y: 37}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &820342839
 MonoBehaviour:
@@ -25652,6 +25652,8 @@ MonoBehaviour:
   creditsSceneName: CreditsScene
   endlessButton: {fileID: 0}
   endlessLockText: {fileID: 0}
+  playerNameText: {fileID: 0}
+  lowerCaseName: 1
   loadingPanel: {fileID: 0}
   openingLoadSeconds: 2
 --- !u!114 &1576269131

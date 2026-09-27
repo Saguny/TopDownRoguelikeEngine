@@ -34,6 +34,12 @@ MonoBehaviour:
   evolvedIcon: {fileID: 0}
   evolvedIconFrames: []
   evolvedTitle: Heaven-Piercing Bow
+  backFrames:
+  - {fileID: -6025918656516946900, guid: 427aa8b4ea054c93b7854f75fcbb7b0b, type: 3}
+  - {fileID: -6945930569592078282, guid: 427aa8b4ea054c93b7854f75fcbb7b0b, type: 3}
+  - {fileID: -6916874973708564509, guid: 427aa8b4ea054c93b7854f75fcbb7b0b, type: 3}
+  - {fileID: 8781259562901918591, guid: 427aa8b4ea054c93b7854f75fcbb7b0b, type: 3}
+  backFps: 6
   levels:
   - arrows: 1
     damage: 10.5
@@ -67,3 +73,10 @@ MonoBehaviour:
     damage: 26
     cooldown: 0.7
     speed: 16
+  evolvedInterval: 0.1
+  outlineColors:
+  - {r: 1, g: 0.93, b: 0.55, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 0.6, g: 0.95, b: 1, a: 1}
+  - {r: 1, g: 0.75, b: 0.3, a: 1}
+  outlineShimmerSpeed: 10

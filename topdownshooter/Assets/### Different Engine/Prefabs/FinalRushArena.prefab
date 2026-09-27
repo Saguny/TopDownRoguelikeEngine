@@ -74,7 +74,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -609959781
-  m_SortingLayer: -2
+  m_SortingLayer: 1
   m_SortingOrder: 1
   m_Sprite: {fileID: 5966046677081390652, guid: 6a7a64f613151654689ac2ede2db3aee, type: 3}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
@@ -209,3 +209,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   radius: 14.85
+  playerInset: 0.45
+  sealFrames:
+  - {fileID: 7599556393551026734, guid: c78346c2e44c4ac4ad27bdb31794e3b2, type: 3}
+  - {fileID: -4879097127449664415, guid: c78346c2e44c4ac4ad27bdb31794e3b2, type: 3}
+  - {fileID: 6059925917197653617, guid: c78346c2e44c4ac4ad27bdb31794e3b2, type: 3}
+  - {fileID: -2510646306278327858, guid: c78346c2e44c4ac4ad27bdb31794e3b2, type: 3}
+  - {fileID: -7254593750283720592, guid: c78346c2e44c4ac4ad27bdb31794e3b2, type: 3}
+  - {fileID: 2990800197421657558, guid: c78346c2e44c4ac4ad27bdb31794e3b2, type: 3}
+  sealFps: 9
+  riseFrames:
+  - {fileID: 3919786890369495702, guid: 9c223e816b07407fb66cee60db250606, type: 3}
+  - {fileID: 2886531885059300708, guid: 9c223e816b07407fb66cee60db250606, type: 3}
+  - {fileID: -4086815956337286845, guid: 9c223e816b07407fb66cee60db250606, type: 3}
+  - {fileID: -4039426632395307231, guid: 9c223e816b07407fb66cee60db250606, type: 3}
+  - {fileID: 6556918445472395688, guid: 9c223e816b07407fb66cee60db250606, type: 3}
+  - {fileID: 2854866974930054019, guid: 9c223e816b07407fb66cee60db250606, type: 3}
+  - {fileID: -3096285358977025384, guid: 9c223e816b07407fb66cee60db250606, type: 3}
+  - {fileID: -7236881134188697989, guid: 9c223e816b07407fb66cee60db250606, type: 3}
+  riseFps: 20
+  spacing: 1.05
+  riseSweepSeconds: 0.8
+  sortingLayer: Player
+  sortingOrder: 2
+  hideHandDrawnBoundary: 1

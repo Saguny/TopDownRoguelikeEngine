@@ -244,6 +244,7 @@ MonoBehaviour:
   weaponSlots: 6
   passiveSlots: 6
   heldWeaponBonus: 0.1
+  menuGraceSeconds: 2
 --- !u!114 &4463241459436760605
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -422,6 +423,8 @@ MonoBehaviour:
   critMultiplier: 2
   pierceAdd: 0
   moveSpeedMul: 1
+  physicalDamageMul: 1
+  magicalDamageMul: 1
 --- !u!114 &1985262566681461458
 MonoBehaviour:
   m_ObjectHideFlags: 0

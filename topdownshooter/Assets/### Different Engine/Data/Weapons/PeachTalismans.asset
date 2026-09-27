@@ -37,6 +37,13 @@ MonoBehaviour:
   - {fileID: -3347205369998945957, guid: 8377c8cc154a77a4fbf861c85f03051c, type: 3}
   - {fileID: -6207680446711719938, guid: 8377c8cc154a77a4fbf861c85f03051c, type: 3}
   - {fileID: -7480436786197472063, guid: 8377c8cc154a77a4fbf861c85f03051c, type: 3}
+  evolvedTitle: 
+  backFrames:
+  - {fileID: 7276569123164373790, guid: b03a4007f1394c2fb69126852330c6fe, type: 3}
+  - {fileID: 1582166265704749774, guid: b03a4007f1394c2fb69126852330c6fe, type: 3}
+  - {fileID: 8277535674264221372, guid: b03a4007f1394c2fb69126852330c6fe, type: 3}
+  - {fileID: -9174462371401480718, guid: b03a4007f1394c2fb69126852330c6fe, type: 3}
+  backFps: 6
   levels:
   - impactDamage: 6
     damagePerSecond: 4

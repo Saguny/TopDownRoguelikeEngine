@@ -4,7 +4,7 @@ ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
   serializedVersion: 2
-  userData: 8d3f090dfc132e0e5d9fab2e41ef3d3b
+  userData: 215477bad84d2573f2640781f458667c
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 62a9f0aa5b59740cfbadc7e5f9823bb0, type: 3}
@@ -125,15 +125,15 @@ ScriptedImporter:
   animatedSpriteImportData:
   - name: Frame_0
     originalName: 
-    pivot: {x: 0.47222227, y: 0.53333336}
+    pivot: {x: 0.6538462, y: 0.53333336}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 52
+      x: 41
       y: 109
-      width: 36
+      width: 26
       height: 45
     spriteID: ffaab1086a60bbc4ab19233b3aab0bad
     spriteBone: []
@@ -143,18 +143,18 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 45, y: 109}
+    uvTransform: {x: 34, y: 109}
   - name: Frame_1
     originalName: 
-    pivot: {x: 0.48648646, y: 0.53333336}
+    pivot: {x: 0.6666667, y: 0.53333336}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 52
+      x: 41
       y: 4
-      width: 37
+      width: 27
       height: 45
     spriteID: 1eacf8694744c4d4b890595496337979
     spriteBone: []
@@ -164,18 +164,18 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 46, y: 4}
+    uvTransform: {x: 35, y: 4}
   - name: Frame_2
     originalName: 
-    pivot: {x: 0.48648646, y: 0.54545456}
+    pivot: {x: 0.6666667, y: 0.54545456}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 52
+      x: 41
       y: 57
-      width: 37
+      width: 27
       height: 44
     spriteID: dc05295ea45d72d4293b36e056cb5952
     spriteBone: []
@@ -185,18 +185,18 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 46, y: 57}
+    uvTransform: {x: 35, y: 57}
   - name: Frame_3
     originalName: 
-    pivot: {x: 0.47222227, y: 0.54545456}
+    pivot: {x: 0.6538462, y: 0.54545456}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 52
+      x: 41
       y: 162
-      width: 36
+      width: 26
       height: 44
     spriteID: 12c77bf97681c6041be07333a7c36e81
     spriteBone: []
@@ -206,10 +206,10 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 45, y: 162}
+    uvTransform: {x: 34, y: 162}
   - name: Frame_4
     originalName: 
-    pivot: {x: 0.5, y: 0.53333336}
+    pivot: {x: 0.65517247, y: 0.53333336}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -217,7 +217,7 @@ ScriptedImporter:
       serializedVersion: 2
       x: 4
       y: 112
-      width: 38
+      width: 29
       height: 45
     spriteID: 91a5373a4c494584295cdcc6a74c1006
     spriteBone: []
@@ -230,7 +230,7 @@ ScriptedImporter:
     uvTransform: {x: -1, y: 112}
   - name: Frame_5
     originalName: 
-    pivot: {x: 0.5, y: 0.5217391}
+    pivot: {x: 0.6896552, y: 0.5217391}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -238,7 +238,7 @@ ScriptedImporter:
       serializedVersion: 2
       x: 4
       y: 4
-      width: 40
+      width: 29
       height: 46
     spriteID: d9192057cd16d8b4caecf50e2ee2c1d4
     spriteBone: []
@@ -251,7 +251,7 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 4}
   - name: Frame_6
     originalName: 
-    pivot: {x: 0.5, y: 0.53333336}
+    pivot: {x: 0.67857146, y: 0.53333336}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -259,7 +259,7 @@ ScriptedImporter:
       serializedVersion: 2
       x: 4
       y: 165
-      width: 38
+      width: 28
       height: 45
     spriteID: 4b51bc9a77c24554480ef09b5c4586c9
     spriteBone: []
@@ -272,7 +272,7 @@ ScriptedImporter:
     uvTransform: {x: -1, y: 165}
   - name: Frame_7
     originalName: 
-    pivot: {x: 0.5, y: 0.5217391}
+    pivot: {x: 0.6896552, y: 0.5217391}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -280,7 +280,7 @@ ScriptedImporter:
       serializedVersion: 2
       x: 4
       y: 58
-      width: 40
+      width: 29
       height: 46
     spriteID: 21a6d3f0106c8f94f9ebff48b699a644
     spriteBone: []
