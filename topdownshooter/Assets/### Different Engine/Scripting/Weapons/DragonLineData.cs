@@ -39,6 +39,8 @@ public class DragonLineData : WeaponData<DragonLine>
     [Min(2)] public int segments = 10;
     [Tooltip("the dragon's length as a share of the screen's height")]
     [Range(0.1f, 1f)] public float lengthOfScreen = 0.4f;
+    [Tooltip("how far the line runs past the screen's edges, in screen half-diagonals, so walking never shows its end")]
+    [Min(0f)] public float lineOverhang = 1f;
     [Tooltip("seconds the line shows before the dragon comes")]
     [Min(0f)] public float telegraphSeconds = 0.45f;
     [Tooltip("seconds the head takes to cross the screen, before Weapon Speed")]

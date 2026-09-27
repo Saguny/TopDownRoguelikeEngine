@@ -102,8 +102,13 @@ public class DragonLine : Weapon<DragonLineData>
         Vector2 through = centre + new Vector2(Random.Range(-0.4f, 0.4f) * halfW, Random.Range(-0.4f, 0.4f) * halfH);
         float a = Random.Range(0f, Mathf.PI * 2f);
         Vector2 dir = new Vector2(Mathf.Cos(a), Mathf.Sin(a));
-        ClipToRect(through, dir, centre, halfW + 0.5f, halfH + 0.5f, out Vector2 from, out Vector2 to);
+        // the line runs far past the screen's edges, so walking toward either end never shows it cut off
+        float over = Mathf.Sqrt(halfW * halfW + halfH * halfH) * Data.lineOverhang;
+        ClipToRect(through, dir, centre, halfW + over, halfH + over, out Vector2 from, out Vector2 to);
         float length = Vector2.Distance(from, to);
+        // the pace is set by the part on screen, however long the line runs past it
+        ClipToRect(through, dir, centre, halfW, halfH, out Vector2 seenFrom, out Vector2 seenTo);
+        float seen = Mathf.Max(1f, Vector2.Distance(seenFrom, seenTo));
 
         // the path: the line, with the dragon's weave about it
         Vector2 side = new Vector2(-dir.y, dir.x);
@@ -131,7 +136,7 @@ public class DragonLine : Weapon<DragonLineData>
         // then the dragon flies it, head first, until its tail has left
         d.headHit.Clear();
         d.bodyHit.Clear();
-        float speed = length / Mathf.Max(0.1f, Data.crossSeconds) * SpeedMul;
+        float speed = seen / Mathf.Max(0.1f, Data.crossSeconds) * SpeedMul;
         float damage = lv.damage * Might;
         for (float head = 0f; head < length + bodyLength + spacing; head += speed * Time.deltaTime)
         {
