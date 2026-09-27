@@ -573,6 +573,11 @@ MonoBehaviour:
   eliteSize: 1.25
   eliteHealth: 25
   eliteWenDrops: 12
+  packMaxCost: 1
+  packSizeEarly: {x: 3, y: 5}
+  packSizeLate: {x: 5, y: 9}
+  packSpread: 0.9
+  oneShotThroughLevel: 5
 --- !u!114 &5356734906009019570
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8140,7 +8145,7 @@ PrefabInstance:
       objectReference: {fileID: 3560786718057372961}
     - target: {fileID: 5138785705691985010, guid: 7f5a0da687fa1b8499aa31f236632248, type: 3}
       propertyPath: allUpgrades.Array.size
-      value: 28
+      value: 31
       objectReference: {fileID: 0}
     - target: {fileID: 5138785705691985010, guid: 7f5a0da687fa1b8499aa31f236632248, type: 3}
       propertyPath: 'allUpgrades.Array.data[0]'
@@ -8221,19 +8226,19 @@ PrefabInstance:
     - target: {fileID: 5138785705691985010, guid: 7f5a0da687fa1b8499aa31f236632248, type: 3}
       propertyPath: 'allUpgrades.Array.data[24]'
       value: 
-      objectReference: {fileID: 11400000, guid: 9949200c23b69924191e4aca011072ce, type: 2}
+      objectReference: {fileID: 11400000, guid: df54d5af811c4ca8be11e35d9f51f18a, type: 2}
     - target: {fileID: 5138785705691985010, guid: 7f5a0da687fa1b8499aa31f236632248, type: 3}
       propertyPath: 'allUpgrades.Array.data[25]'
       value: 
-      objectReference: {fileID: 11400000, guid: 3d5022850414a664ab4a37a90360610a, type: 2}
+      objectReference: {fileID: 11400000, guid: 9949200c23b69924191e4aca011072ce, type: 2}
     - target: {fileID: 5138785705691985010, guid: 7f5a0da687fa1b8499aa31f236632248, type: 3}
       propertyPath: 'allUpgrades.Array.data[26]'
       value: 
-      objectReference: {fileID: 11400000, guid: 407e451e68b2c389bbe6374fa1944a04, type: 2}
+      objectReference: {fileID: 11400000, guid: ecb8420b0740441da41d79f91e133bf3, type: 2}
     - target: {fileID: 5138785705691985010, guid: 7f5a0da687fa1b8499aa31f236632248, type: 3}
       propertyPath: 'allUpgrades.Array.data[27]'
       value: 
-      objectReference: {fileID: 11400000, guid: 42d6a117291763fd41ad22cd1ff7247e, type: 2}
+      objectReference: {fileID: 11400000, guid: 3507a1f6098e4e37a533cacec337109f, type: 2}
     - target: {fileID: 6236575731635123124, guid: 7f5a0da687fa1b8499aa31f236632248, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
