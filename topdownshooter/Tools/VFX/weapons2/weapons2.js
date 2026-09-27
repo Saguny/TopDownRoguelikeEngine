@@ -8,7 +8,7 @@
 // then Tools > VFX > Build Weapon FX in Unity points the weapons at them
 //   Dragon Line       dl_head, dl_body, dl_tail, dl_line, dl_bite, dl_fire, dl_icon, dl_icon_evolved
 //   Ice Cloud         ic_cloud, ic_snow, ic_pile, ic_ice, ic_tornado, ic_burst, ic_icon, ic_icon_evolved
-//   Flying Sword      fs_blade, fs_embed, fs_laser, fs_spark, fs_icon, fs_icon_evolved
+//   Flying Sword      fs_blade, fs_embed, fs_laser, fs_launch, fs_shatter, fs_spark, fs_icon, fs_icon_evolved
 //   Arena             arena_seal, arena_rise (the Final Rush's ring of spirit seals)
 //   Backs             back_bow, back_peach, back_jian (a weapon worn on a character's back)
 const fs = require("fs");
@@ -816,27 +816,104 @@ function makeEmbed() {
   return el("fs_embed", "FlyingSword", Wd, H, [{ name: "embed", frames }], Array(N).fill(70), [["quiver", 0, N - 1]]);
 }
 
-// the cage's laser, one 32x11 tile repeated along it: a white core in jade bands, bright pulses
-// running along, sparks on the edges. seamless in x
+// the array's tripwire, one 32x17 tile repeated along it: a white-hot core in jade bands, and
+// round it jagged lightning filaments that re-strike every frame, so the line reads as high
+// voltage, a hazard, not a light. bright pulses run along it. seamless in x
 function makeLaser() {
-  const Wd = 32, H = 11, N = 4, frames = [];
-  const bands = [P.J1, P.J2, P.J3, P.J4, P.J5, P.W, P.J5, P.J4, P.J3, P.J2, P.J1];
-  const lit = [P.J2, P.J3, P.J4, P.J5, P.W, P.W, P.W, P.J5, P.J4, P.J3, P.J2];
+  const Wd = 32, H = 17, cy = 8, N = 4, frames = [];
+  const core = { 0: P.W, 1: P.J5, 2: P.J4, 3: P.J3 };
   for (let f = 0; f < N; f++) {
-    const im = img(Wd, H), r = D.rng(3100 + f);
+    const im = img(Wd, H), r = D.rng(3100 + f * 7);
+    // the beam itself, pulses running along it
     for (let x = 0; x < Wd; x++) {
-      let node = 99;
-      for (let n = 0; n < 2; n++) { const xn = (n * 16 + f * 4) % Wd; node = Math.min(node, Math.abs(((x - xn + 16 + Wd * 2) % Wd) - 16)); }
-      for (let y = 0; y < H; y++) {
-        const edge = y === 0 || y === H - 1;
-        if (edge && node > 1 && bayer(x + f, y) > 0.5) continue;
-        put(im, x, y, node <= 1 ? lit[y] : bands[y]);
+      const pulse = ((x - f * 8 + Wd * 4) % 16) < 3;
+      for (let d = -3; d <= 3; d++) {
+        const k = Math.abs(d);
+        if (k === 3 && !pulse && bayer(x + f, cy + d) > 0.5) continue;
+        put(im, x, cy + d, pulse ? (k <= 1 ? P.W : P.J5) : core[k]);
       }
     }
-    for (let k = 0; k < 3; k++) put(im, Math.floor(r() * Wd), r() < 0.5 ? 0 : H - 1, P.W);
+    // lightning filaments crackling round it, re-struck every frame, over the beam's edge and out
+    // to either side; they meet the core at the tile's ends so the tiles join up
+    for (const [side, seed] of [[-1, 1], [1, 2], [-1, 3], [1, 4]]) {
+      const rr = D.rng(900 + f * 13 + seed * 101);
+      let off = 3;
+      for (let x = 0; x < Wd; x++) {
+        const edge = Math.min(x, Wd - 1 - x);
+        off += Math.round((rr() - 0.45) * 2.4);
+        off = Math.max(2, Math.min(Math.min(8, 2 + edge), off));
+        const y = cy + side * off;
+        put(im, x, y, off > 5 ? P.J3 : off > 3 ? P.J5 : P.W);
+        if (rr() < 0.12 && off > 3) put(im, x, y + side, P.J2);
+      }
+    }
+    for (let k = 0; k < 4; k++) twinkle(im, Math.floor(r() * Wd), r() < 0.5 ? 1 : H - 2, 0, [P.W]);
     frames.push(im);
   }
   return el("fs_laser", "FlyingSword", Wd, H, [{ name: "laser", frames }], Array(N).fill(40), [["burn", 0, N - 1]], { pivot: "left", fullRect: true });
+}
+
+// the telekinetic snap where a blade appears, 32x24, pointing right (the way it leaves): a
+// white pinpoint flash that pops out into a thin jade ring, speed lines shooting forward, gone
+// in a blink. no wind up: it's all over in five frames
+function makeLaunch() {
+  const Wd = 32, H = 24, cx = 10, cy = 12, N = 5, frames = [];
+  for (let f = 0; f < N; f++) {
+    const im = img(Wd, H), F = D.field(Wd, H);
+    if (f === 0) {
+      D.flare(F, cx, cy, 8, 3, 3, 1, 1, 0.45);
+      D.each(F, (x, y) => Math.hypot(x - cx, y - cy) < 2.2 ? 1 : 0);
+    } else {
+      const R = [0, 3, 5.5, 7.5, 9][f];
+      ringField(F, cx, cy, R, [0, 1.6, 1.3, 1.1, 1][f], [0, 0.95, 0.7, 0.5, 0.32][f], f >= 3 ? breakup(R, f, 0.55) : null);
+    }
+    D.shade(im, F, JADE);
+    // speed lines streaking ahead
+    if (f >= 1 && f <= 3) for (const [dy, len] of [[-3, 10], [0, 16], [3, 10]]) {
+      const x0 = cx + 2 + f * 4, x1 = x0 + len - f * 2;
+      for (let x = x0; x <= x1 && x < Wd; x++) if (!(f === 3 && bayer(x, cy + dy) > 0.5)) put(im, x, cy + dy, x > x1 - 3 ? P.J3 : dy === 0 ? P.W : P.J4);
+    }
+    frames.push(im);
+  }
+  return el("fs_launch", "FlyingSword", Wd, H, [{ name: "snap", frames }], Array(N).fill(35), [["snap", 0, N - 1]]);
+}
+
+// an anchored blade shattering once its tripwire is done, 40x40, the blade pointing right into
+// the edge as it was stuck: a flash, the blade cracking, then shards of jade blown back off the
+// edge, spinning and dithering away, with a last spark of qi
+function makeShatter() {
+  const S = 40, cx = 20, cy = 20, N = 8, frames = [];
+  const r = D.rng(4242);
+  const shards = Array.from({ length: 10 }, (_, i) => ({ x: 8 + i * 2.2, y: cy + (r() - 0.5) * 3, vx: -0.6 - r() * 2.2, vy: (r() - 0.5) * 3.2, big: r() < 0.7, spin: r() * 4 }));
+  for (let f = 0; f < N; f++) {
+    const im = img(S, S);
+    if (f === 0) {
+      const blade = sword(30, 9, 4, -1, 0);
+      D.blit(im, blade, 5, cy - 4);
+      const F = D.field(S, S);
+      D.flare(F, 33, cy, 9, 3, 4, 1, 1, 0.45);
+      D.over(im, D.shade(img(S, S), F, JADE));
+    } else if (f === 1) {
+      const blade = sword(30, 9, 4, -1, 0);
+      D.blit(im, blade, 5, cy - 4);
+      // cracks running down the blade
+      for (const x of [12, 17, 22, 27]) { put(im, x, cy - 1, P.W); put(im, x + 1, cy, P.W); put(im, x, cy + 1, P.J5); }
+    } else {
+      const t = f - 1;
+      for (const sh of shards) {
+        const x = sh.x + sh.vx * t * 1.6, y = sh.y + sh.vy * t + 0.15 * t * t;
+        if (f >= 5 && bayer(Math.round(x), Math.round(y)) > 1.5 - f * 0.17) continue;
+        const turn = Math.floor(sh.spin + t) % 2;
+        if (sh.big) px(im, turn ? [[x, y], [x + 1, y], [x + 2, y], [x + 1, y + 1], [x + 1, y - 1]] : [[x, y], [x, y + 1], [x + 1, y + 1], [x - 1, y], [x, y - 1]], P.J3);
+        put(im, x, y, turn ? P.J5 : P.W);
+        if (!sh.big) put(im, x + 1, y, P.J2);
+      }
+      if (f <= 4) { const F = D.field(S, S); ringField(F, 33, cy, 3 + f * 2.2, 1.2, 0.6 - f * 0.1, breakup(3 + f * 2.2, f, 0.6)); D.over(im, D.shade(img(S, S), F, JADE)); }
+      if (f === 3 || f === 5 || f === 7) twinkle(im, 30 - f * 2, cy - f, f === 7 ? 0 : 1, [P.W, P.J4]);
+    }
+    frames.push(im);
+  }
+  return el("fs_shatter", "FlyingSword", S, S, [{ name: "shatter", frames }], Array(N).fill(45), [["shatter", 0, N - 1]]);
 }
 
 // a ricochet, 24x24: a white flare, a jade ring breaking up and hot metal sparks flying off
@@ -1091,7 +1168,7 @@ function previewBacks() {
 // ================================================================ write everything
 const BUILDERS = {
   dragon: () => [...makeDragon(), makeLine(), makeBite(), makeFire(), ...makeDragonIcons()],
-  sword: () => [makeBlade(), makeEmbed(), makeLaser(), makeSpark(), ...makeSwordIcons()],
+  sword: () => [makeBlade(), makeEmbed(), makeLaser(), makeLaunch(), makeShatter(), makeSpark(), ...makeSwordIcons()],
   arena: () => [makeSeal(), makeRise()],
   backs: () => makeBacks(),
   ice: () => [makeCloud(), makeSnow(), makePile(), makeIce(), makeIceBurst(), makeTornado(), ...makeIceIcons()],

@@ -20,6 +20,8 @@ public static class NewWeaponFxBuilder
         var fire = WeaponFxBuilder.OneShot("FX Dragon Fire", WeaponFxBuilder.Frames("DragonLine/dl_fire"), 22f, "Aura", 10, unlit);
         var frost = WeaponFxBuilder.OneShot("FX Frost Burst", WeaponFxBuilder.Frames("IceCloud/ic_burst"), 25f, "Aura", 9, unlit);
         var spark = WeaponFxBuilder.OneShot("FX Sword Spark", WeaponFxBuilder.Frames("FlyingSword/fs_spark"), 25f, "Aura", 9, unlit);
+        var snap = WeaponFxBuilder.OneShot("FX Sword Launch", WeaponFxBuilder.Frames("FlyingSword/fs_launch"), 28f, "Aura", 9, unlit);
+        var shatter = WeaponFxBuilder.OneShot("FX Sword Shatter", WeaponFxBuilder.Frames("FlyingSword/fs_shatter"), 22f, "Aura", 9, unlit);
 
         Edit<DragonLineData>("DragonLine", d =>
         {
@@ -63,6 +65,10 @@ public static class NewWeaponFxBuilder
             d.laserFrames = WeaponFxBuilder.Frames("FlyingSword/fs_laser");
             d.laserFps = 25f;
             d.sparkFx = spark;
+            d.launchFx = snap;
+            d.shatterFx = shatter;
+            // the streak glows the same on any floor
+            d.trailMaterial = unlit;
             Icons(d, "FlyingSword/fs_icon", "FlyingSword/fs_icon_evolved");
         });
 

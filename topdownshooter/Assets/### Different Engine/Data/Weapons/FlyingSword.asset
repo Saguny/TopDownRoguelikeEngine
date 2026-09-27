@@ -37,62 +37,71 @@ MonoBehaviour:
   - {fileID: -6617042486549027149, guid: a20920cbd5fc47dc8a780c18c670f942, type: 3}
   - {fileID: -4953100216962679029, guid: a20920cbd5fc47dc8a780c18c670f942, type: 3}
   - {fileID: -1791526547721663895, guid: a20920cbd5fc47dc8a780c18c670f942, type: 3}
-  evolvedTitle: Imperial Sword Cage
+  evolvedTitle: Sovereign Blade Array
   backFrames: []
   backFps: 6
   levels:
   - damage: 12
     blades: 1
-    bounces: 4
-    wallAcceleration: 0
-    cooldown: 1.6
+    bounces: 2
+    cooldown: 2
   - damage: 12
     blades: 1
-    bounces: 5
-    wallAcceleration: 0
-    cooldown: 1.6
-  - damage: 12
+    bounces: 3
+    cooldown: 2
+  - damage: 13
     blades: 2
-    bounces: 5
-    wallAcceleration: 0
-    cooldown: 1.6
-  - damage: 15
+    bounces: 3
+    cooldown: 2
+  - damage: 14
     blades: 2
-    bounces: 5
-    wallAcceleration: 0.1
-    cooldown: 1.5
-  - damage: 15
-    blades: 2
-    bounces: 7
-    wallAcceleration: 0.1
-    cooldown: 1.5
+    bounces: 4
+    cooldown: 2
   - damage: 15
     blades: 3
-    bounces: 7
-    wallAcceleration: 0.15
-    cooldown: 1.4
-  - damage: 19
+    bounces: 4
+    cooldown: 2
+  - damage: 16
     blades: 3
-    bounces: 8
-    wallAcceleration: 0.15
-    cooldown: 1.3
-  speed: 13
-  maxSpeed: 30
-  bonusPerBounce: 0.15
-  hitRadius: 0.35
-  bounceRange: 7
-  range: 12
-  rehit: 0.35
-  trailLength: 4
-  trailSpacing: 0.2
+    bounces: 5
+    cooldown: 2
+  - damage: 18
+    blades: 4
+    bounces: 5
+    cooldown: 2
+  - damage: 20
+    blades: 5
+    bounces: 5
+    cooldown: 2
+  launchRing: 0.8
+  speed: 18
+  launchSwing: 55
+  turnRate: 300
+  clusterRadius: 2.2
+  range: 14
+  bounceAcceleration: 0.22
+  maxSpeed: 48
+  bonusPerBounce: 0.12
+  hitRadius: 0.4
+  bounceOffStrong: 1
+  rehit: 0.3
+  trailSeconds: 0.28
+  trailWidth: 0.22
+  trailHead: {r: 1, g: 1, b: 1, a: 1}
+  trailBody: {r: 0.33, g: 0.85, b: 0.6, a: 0.85}
+  trailMaterial: {fileID: 0}
+  trailLength: 2
+  trailSpacing: 0.35
   cageCooldown: 4.5
   pairs: 1
-  cageBounces: 6
+  cageBounces: 3
+  evolvedKeepsBlades: 1
   laserSeconds: 3
   laserDamage: 30
-  laserTick: 0.25
-  laserWidth: 0.7
+  laserTick: 0.2
+  laserWidth: 0.8
   partnerWait: 4
+  arcsPerSecond: 14
   bladeFrames:
   - {fileID: 8054257599298103625, guid: ecaa6cc9129d4cadaab87cc3bfadb4f4, type: 3}
   - {fileID: 5720096790265022638, guid: ecaa6cc9129d4cadaab87cc3bfadb4f4, type: 3}
@@ -111,7 +120,9 @@ MonoBehaviour:
   - {fileID: 7218401177135492589, guid: 4f4db55e6c9c4e399c104e3532a7a965, type: 3}
   - {fileID: 4608781800997395629, guid: 4f4db55e6c9c4e399c104e3532a7a965, type: 3}
   laserFps: 25
+  launchFx: {fileID: 0}
   sparkFx: {fileID: 8108429308236238804, guid: 634f4468c9b696e49a2c496fc31513e3, type: 3}
+  shatterFx: {fileID: 0}
   bladeColor: {r: 0.45, g: 1, b: 0.7, a: 1}
   sortingLayer: Aura
   sortingOrder: 6
