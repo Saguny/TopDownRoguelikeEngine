@@ -27,11 +27,18 @@ public class ItemTooltip : MonoBehaviour
     [SerializeField] private Color runColor = new Color(1f, 0.82f, 0.35f);
     [Tooltip("screen pixels between the tooltip and what it's for")]
     [SerializeField] private float gap = 12f;
+    [Tooltip("where the numbers start in a row, as a share of the body's width")]
+    [Range(0.3f, 0.9f)]
+    [SerializeField] private float valueColumn = 0.62f;
+    [Tooltip("with no layout group on the box: the body grows or shrinks to its text and the box with it, keeping the gap below the body as designed")]
+    [SerializeField] private bool fitToText = true;
 
     private static ItemTooltip instance;
     private Object owner;
     private RectTransform anchor;
     private Canvas canvas;
+    private bool adopted;
+    private float boxDesignHeight, bodyDesignHeight;
     private readonly List<WeaponData.Attribute> now = new List<WeaponData.Attribute>();
     private readonly List<WeaponData.Attribute> next = new List<WeaponData.Attribute>();
     private static readonly Vector3[] corners = new Vector3[4];
@@ -48,9 +55,10 @@ public class ItemTooltip : MonoBehaviour
         if (tip == null) return;
         tip.owner = who;
         tip.anchor = near;
-        tip.Fill(item, compare);
         tip.gameObject.SetActive(true);
         tip.box.gameObject.SetActive(true);
+        tip.Fill(item, compare);
+        tip.Fit();
         tip.Place();
     }
 
@@ -69,16 +77,85 @@ public class ItemTooltip : MonoBehaviour
         if (instance != null) return instance;
         instance = FindAnyObjectByType<ItemTooltip>(FindObjectsInactive.Include);
         if (instance == null) instance = BuildDefault();
+        else instance.Adopt();
         return instance;
     }
 
     private void Awake()
     {
         if (instance == null) instance = this;
-        canvas = GetComponentInParent<Canvas>();
+        Adopt();
+    }
+
+    // a tooltip designed in the scene can sit anywhere, even inside a screen that's hidden while
+    // another one is up (the level up panel while paused): it's moved onto a canvas of its own over
+    // every menu, scaled like the canvas it was designed on, so one panel serves every screen
+    private void Adopt()
+    {
+        if (adopted) return;
+        adopted = true;
         if (box == null) box = transform as RectTransform;
+
+        var parents = GetComponentsInParent<Canvas>(true);
+        var designed = parents.Length > 0 ? parents[parents.Length - 1] : null;
+        if (designed != null && transform is RectTransform rt)
+        {
+            var go = new GameObject("Item Tooltip", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler));
+            var c = go.GetComponent<Canvas>();
+            c.renderMode = RenderMode.ScreenSpaceOverlay;
+            c.sortingOrder = 500;                               // over the level up and pause screens
+            var scaler = go.GetComponent<CanvasScaler>();
+            if (designed.TryGetComponent(out CanvasScaler from))
+            {
+                scaler.uiScaleMode = from.uiScaleMode;
+                scaler.referenceResolution = from.referenceResolution;
+                scaler.screenMatchMode = from.screenMatchMode;
+                scaler.matchWidthOrHeight = from.matchWidthOrHeight;
+                scaler.scaleFactor = from.scaleFactor;
+                scaler.referencePixelsPerUnit = from.referencePixelsPerUnit;
+            }
+            go.transform.SetParent(designed.transform.parent, false);
+            rt.SetParent(go.transform, false);
+            canvas = c;
+        }
+        else canvas = GetComponentInParent<Canvas>(true);
+
+        // the design's own size is the starting point for fitting it to its text; its parts are
+        // pinned to the box's top so the box can grow downward under them
+        boxDesignHeight = box.rect.height;
+        if (body != null) bodyDesignHeight = body.rectTransform.rect.height;
+        if (box.GetComponent<LayoutGroup>() == null)
+        {
+            foreach (Transform t in box)
+            {
+                if (!(t is RectTransform child) || child.anchorMin.y != child.anchorMax.y) continue;
+                float y = child.localPosition.y - box.rect.yMax;
+                child.anchorMin = new Vector2(child.anchorMin.x, 1f);
+                child.anchorMax = new Vector2(child.anchorMax.x, 1f);
+                child.anchoredPosition = new Vector2(child.anchoredPosition.x, y);
+            }
+            if (body != null)
+            {
+                var b = body.rectTransform;
+                b.anchoredPosition += new Vector2(0f, (1f - b.pivot.y) * b.rect.height);
+                b.pivot = new Vector2(b.pivot.x, 1f);
+            }
+        }
+
         // it must never catch the pointer itself, or it would flicker as it covers what it's for
         foreach (var g in GetComponentsInChildren<Graphic>(true)) g.raycastTarget = false;
+        if (owner == null) box.gameObject.SetActive(false);   // not the placeholder text until it's asked for
+    }
+
+    // the body as tall as its text, and the box as much taller or shorter as that makes it
+    private void Fit()
+    {
+        if (!fitToText || body == null || box.GetComponent<LayoutGroup>() != null) return;
+        var b = body.rectTransform;
+        float lineHeight = body.fontSize * 1.2f;
+        float h = Mathf.Max(lineHeight, body.GetPreferredValues(body.text, b.rect.width, 0f).y);
+        if (b.anchorMin.y == b.anchorMax.y) b.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, h);
+        box.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Mathf.Max(lineHeight, boxDesignHeight + h - bodyDesignHeight));
     }
 
     private void OnDestroy()
@@ -155,7 +232,7 @@ public class ItemTooltip : MonoBehaviour
 
     private void Row(StringBuilder sb, string label, string value, string after)
     {
-        sb.Append($"<color=#{Hex(labelColor)}>{label}</color><pos=62%><color=#{Hex(valueColor)}>{value}</color>");
+        sb.Append($"<color=#{Hex(labelColor)}>{label}</color><pos={valueColumn * 100f:0}%><color=#{Hex(valueColor)}>{value}</color>");
         if (after != null) sb.Append($" <color=#{Hex(betterColor)}>> {after}</color>");
         sb.Append('\n');
     }
@@ -211,6 +288,7 @@ public class ItemTooltip : MonoBehaviour
     private static ItemTooltip BuildDefault()
     {
         var canvasGo = new GameObject("Item Tooltip", typeof(Canvas), typeof(CanvasScaler));
+        canvasGo.SetActive(false);                              // built whole before its Awake
         var c = canvasGo.GetComponent<Canvas>();
         c.renderMode = RenderMode.ScreenSpaceOverlay;
         c.sortingOrder = 500;                                   // over the level up and pause screens
@@ -261,8 +339,10 @@ public class ItemTooltip : MonoBehaviour
         tip.subtitle = Text("Subtitle", 19f, FontStyles.Normal, new Color(0.72f, 0.68f, 0.8f));
         tip.body = Text("Body", 21f, FontStyles.Normal, Color.white);
         tip.canvas = c;
+        tip.adopted = true;
         foreach (var g in canvasGo.GetComponentsInChildren<Graphic>(true)) g.raycastTarget = false;
         box.gameObject.SetActive(false);
+        canvasGo.SetActive(true);
         return tip;
     }
 }
