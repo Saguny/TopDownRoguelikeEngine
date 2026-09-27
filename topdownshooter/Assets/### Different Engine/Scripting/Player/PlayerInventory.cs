@@ -258,21 +258,6 @@ public class PlayerInventory : MonoBehaviour
             // switched off in the pool: the weapon still works, it just never levels
             WeaponFor(weapon).SetLevel(1);
         }
-
-        GrantCommandToken();
-    }
-
-    // every character carries the Command Token from the start and sets it off with its key; the
-    // pool only offers its later levels. it doesn't take a weapon slot
-    private void GrantCommandToken()
-    {
-        var token = (allUpgrades ?? new List<UpgradeData>()).Find(u => u is CommandTokenData);
-        if (token == null || Holds(token)) return;
-
-        float timeScale = Time.timeScale;
-        if (runtimeFor.TryGetValue(token, out var runtime) && runtime != null) ApplyUpgrade(runtime);
-        else WeaponFor((WeaponData)token).SetLevel(1);
-        Time.timeScale = timeScale;
     }
 
     public void ResetRun()

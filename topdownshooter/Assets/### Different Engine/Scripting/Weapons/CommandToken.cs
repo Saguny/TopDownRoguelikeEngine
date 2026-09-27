@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// an ability every character carries: once it has charged, its key (E) stamps seals onto the
-// screen one at a time, big to small, then they explode into a shockwave that hits every enemy
+// an ability taken from a level up like a weapon (it doesn't fill a weapon slot): once it has
+// charged, its key (E) stamps seals onto the screen one at a time, big to small, then they explode into a shockwave that hits every enemy
 // on screen, and nothing new spawns for a moment after. with a Cast Animation prefab set, that
 // prefab plays instead and says when the hit lands. CommandTokenHUD shows the charge
 public class CommandToken : Weapon<CommandTokenData>
@@ -46,7 +46,7 @@ public class CommandToken : Weapon<CommandTokenData>
         Current = this;
         CommandTokenHUD.Ensure();
 
-        // it's ready shortly after the run starts, not a whole cooldown later
+        // it's ready shortly after it's picked, not a whole cooldown later
         if (primed || Data == null) return;
         primed = true;
         timer = Mathf.Max(0f, Cooldown(Data.At(Level).cooldown) - Data.firstShotDelay);

@@ -31,7 +31,7 @@ public class CommandTokenData : WeaponData<CommandToken>
         new LevelStats { damage = 40, cooldown = 50f, stunSeconds = 1.5f, pullsWen = true },
     };
 
-    [Tooltip("seconds into the run before it's first ready")]
+    [Tooltip("seconds after it's picked before it's first ready")]
     public float firstShotDelay = 2f;
 
     [Header("Use")]
@@ -86,7 +86,7 @@ public class CommandTokenData : WeaponData<CommandToken>
 
     public override int LevelCount => levels.Length;
 
-    // every character carries it (see PlayerInventory), so it never fills a weapon slot
+    // an ability rather than a weapon: taking it from a level up doesn't fill a weapon slot
     public override bool TakesSlot => false;
 
     public LevelStats At(int level) =>

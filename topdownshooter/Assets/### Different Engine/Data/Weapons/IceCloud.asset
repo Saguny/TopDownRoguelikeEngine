@@ -21,7 +21,7 @@ MonoBehaviour:
   - {fileID: -7484568532959744412, guid: d69fbe90e0db4dcb8ad20fe10f302b2b, type: 3}
   - {fileID: 4382139555683823463, guid: d69fbe90e0db4dcb8ad20fe10f302b2b, type: 3}
   iconFps: 8
-  includeInPool: 1
+  includeInPool: 0
   value: 0
   additive: 0
   description: Snow clouds wander over the screen, freezing the horde.

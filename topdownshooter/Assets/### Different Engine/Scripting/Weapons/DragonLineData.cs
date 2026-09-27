@@ -52,7 +52,7 @@ public class DragonLineData : WeaponData<DragonLine>
     [Tooltip("radius a body segment hits in, before Area")]
     public float bodyRadius = 0.35f;
 
-    [Header("Evolution: the coiling dragon")]
+    [Header("Evolution: the coiling dragon (it flies no more lines, only this)")]
     [Tooltip("seconds between spirals, before Cooldown")]
     public float evolvedCooldown = 15f;
     [Tooltip("damage of the fire it spits, before Might. the head hits for Evolved Head Multiplier times this")]
@@ -60,12 +60,14 @@ public class DragonLineData : WeaponData<DragonLine>
     [Min(1f)] public float evolvedHeadMultiplier = 1.5f;
     [Tooltip("damage of its coils as they shove enemies back, before Might")]
     public float coilDamage = 15f;
-    [Tooltip("turns the spiral makes from the middle of the screen to its edge")]
-    [Min(0.5f)] public float spiralTurns = 2.5f;
-    [Tooltip("seconds the head takes from the middle to the edge, before Weapon Speed")]
-    [Min(0.5f)] public float spiralSeconds = 3.5f;
-    [Tooltip("the evolved dragon is this much longer")]
-    [Min(1f)] public float evolvedLength = 1.5f;
+    [Tooltip("turns the spiral makes from the middle of the screen to its edge: more turns, a tighter coil")]
+    [Min(0.5f)] public float spiralTurns = 4f;
+    [Tooltip("world units a second the head travels along the spiral, before Weapon Speed")]
+    [Min(1f)] public float spiralSpeed = 20f;
+    [Tooltip("segments in the coiling dragon, head to tail: it's much longer than the line dragons")]
+    [Min(2)] public int evolvedSegments = 24;
+    [Tooltip("how much bigger each of its segments is than a line dragon's")]
+    [Min(0.5f)] public float evolvedScale = 1.3f;
     [Tooltip("speed enemies are shoved outward at by the coils")]
     public float pushSpeed = 9f;
     public float pushSeconds = 0.3f;
@@ -116,7 +118,7 @@ public class DragonLineData : WeaponData<DragonLine>
     public override string Describe(int level)
     {
         if (IsEvolved(level))
-            return $"Evolution: every {evolvedCooldown:0}s the dragon coils out from the middle of the screen, shoving enemies back and spitting fire for {fireDamage:0}. Its head hits for {fireDamage * evolvedHeadMultiplier:0}.";
+            return $"Evolution: no more lines. Every {evolvedCooldown:0}s a great dragon coils out from the middle of the screen, shoving enemies back and spitting fire for {fireDamage:0}. Its head hits for {fireDamage * evolvedHeadMultiplier:0}.";
 
         var s = At(level);
         if (level <= 1)

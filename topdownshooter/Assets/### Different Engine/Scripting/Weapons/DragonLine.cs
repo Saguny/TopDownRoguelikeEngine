@@ -4,9 +4,9 @@ using UnityEngine;
 
 // Qing Long Xian: every cooldown a line is cast across the screen at random and an azure dragon,
 // ten segments long, flies along it, weaving about the line. whatever a segment passes through is
-// hit once; whatever is in the way of its head is hit three times as hard. evolved, every few
-// casts the dragon coils out of the middle of the screen in a spiral to its edge, shoving the
-// horde back with its coils and spitting fire ahead of its head
+// hit once; whatever is in the way of its head is hit three times as hard. evolved, it flies no
+// more lines: every so often a much longer dragon coils out of the middle of the screen in a tight
+// spiral to its edge, shoving the horde back with its coils and spitting fire ahead of its head
 public class DragonLine : Weapon<DragonLineData>
 {
     private const float WorldPpu = 37f / 1.3f;
@@ -36,14 +36,23 @@ public class DragonLine : Weapon<DragonLineData>
     private readonly List<EnemyHealth> touching = new List<EnemyHealth>();
     private Camera cam;
     private float timer, spiralTimer;
-    private bool primed;
+    private bool primed, spiralPrimed;
 
     protected override void OnLevelChanged()
     {
-        // the first dragon comes soon after the pick, not a whole cooldown later
-        if (primed || Data == null) return;
-        primed = true;
-        timer = Mathf.Max(0f, Cooldown(Data.At(Level).cooldown) - 0.75f);
+        if (Data == null) return;
+        // the first dragon comes soon after the pick, not a whole cooldown later; the same for
+        // the first coil after the evolution
+        if (!primed)
+        {
+            primed = true;
+            timer = Mathf.Max(0f, Cooldown(Data.At(Level).cooldown) - 0.75f);
+        }
+        if (Data.IsEvolved(Level) && !spiralPrimed)
+        {
+            spiralPrimed = true;
+            spiralTimer = Mathf.Max(0f, Cooldown(Data.evolvedCooldown) - 1f);
+        }
     }
 
     private void Update()
@@ -55,14 +64,16 @@ public class DragonLine : Weapon<DragonLineData>
         if (cam == null) return;
 
         var lv = Data.At(Level);
-        timer += dt;
-        if (timer >= Cooldown(lv.cooldown))
+        if (!Data.IsEvolved(Level))
         {
-            timer = 0f;
-            for (int i = 0; i < lv.dragons; i++) StartCoroutine(Cross(lv, i * 0.25f));
+            timer += dt;
+            if (timer >= Cooldown(lv.cooldown))
+            {
+                timer = 0f;
+                for (int i = 0; i < lv.dragons; i++) StartCoroutine(Cross(lv, i * 0.25f));
+            }
         }
-
-        if (Data.IsEvolved(Level))
+        else
         {
             spiralTimer += dt;
             if (spiralTimer >= Cooldown(Data.evolvedCooldown))
@@ -80,7 +91,8 @@ public class DragonLine : Weapon<DragonLineData>
         if (delay > 0f) yield return new WaitForSeconds(delay);
         if (cam == null) yield break;
 
-        var d = Take();
+        int count = Mathf.Max(1, Data.segments - 1);
+        var d = Take(count);
         float spacing = Spacing(1f);
         float bodyLength = spacing * Data.segments;
 
@@ -123,7 +135,7 @@ public class DragonLine : Weapon<DragonLineData>
         float damage = lv.damage * Might;
         for (float head = 0f; head < length + bodyLength + spacing; head += speed * Time.deltaTime)
         {
-            Place(d, head, spacing, 1f);
+            Place(d, head, spacing, count);
             // the line is used up behind the tail
             float behind = Mathf.Clamp(head - bodyLength, 0f, length);
             if (d.line != null) ShowLine(d, from + dir * behind, dir, length - behind);
@@ -154,9 +166,11 @@ public class DragonLine : Weapon<DragonLineData>
     private IEnumerator Coil()
     {
         if (cam == null) yield break;
-        var d = Take();
-        float spacing = Spacing(Data.evolvedLength);
-        float bodyLength = spacing * Data.segments;
+        // a much longer dragon, and bigger: more segments, each scaled up, spaced to overlap
+        int count = Mathf.Max(1, Data.evolvedSegments - 1);
+        var d = Take(count);
+        float spacing = Spacing(Data.evolvedScale);
+        float bodyLength = spacing * Data.evolvedSegments;
 
         // an Archimedean spiral from the middle of the screen out past its corners
         Vector2 centre = cam.transform.position;
@@ -177,13 +191,13 @@ public class DragonLine : Weapon<DragonLineData>
         d.nextHead.Clear();
         d.nextCoil.Clear();
         d.nextFire.Clear();
-        float speed = length / Mathf.Max(0.5f, Data.spiralSeconds) * SpeedMul;
+        float speed = Data.spiralSpeed * SpeedMul;
         float fire = Data.fireDamage * Might, coil = Data.coilDamage * Might, fireTimer = 0f;
         Juice.Shake(0.15f);
 
         for (float head = 0f; head < length + bodyLength + spacing; head += speed * Time.deltaTime)
         {
-            Place(d, head, spacing, Data.evolvedLength);
+            Place(d, head, spacing, count);
             float now = Time.time;
             Vector2 h = d.head.transform.position;
             Vector2 forward = d.head.transform.right;
@@ -227,16 +241,17 @@ public class DragonLine : Weapon<DragonLineData>
 
     // ---------------------------------------------------------------- the body
 
-    // world distance between two segments: the whole dragon is Length Of Screen of the screen's height
-    private float Spacing(float longer)
+    // world distance between two segments: a line dragon is Length Of Screen of the screen's
+    // height; bigger segments are spaced wider so they still overlap the same
+    private float Spacing(float bigger)
     {
         float screen = cam != null ? cam.orthographicSize * 2f : 10f;
-        return screen * Data.lengthOfScreen * longer / Mathf.Max(2, Data.segments);
+        return screen * Data.lengthOfScreen * bigger / Mathf.Max(2, Data.segments);
     }
 
     // the head at `head` along the path and every segment Spacing behind the one before; a part
     // not on the path yet (still coming out) is hidden
-    private void Place(Dragon d, float head, float spacing, float longer)
+    private void Place(Dragon d, float head, float spacing, int count)
     {
         float scale = spacing / Mathf.Max(0.01f, Data.segmentArtPixels / WorldPpu);
         int frame = (int)((Time.time + d.phase) * Data.bodyFps);
@@ -245,15 +260,21 @@ public class DragonLine : Weapon<DragonLineData>
         float behind = 0f;
         for (int i = 0; i < d.body.Count; i++)
         {
+            // a pooled dragon can have more segments than this one uses
+            if (i >= count)
+            {
+                d.body[i].enabled = false;
+                continue;
+            }
             // a little thinner toward the tail, and each a frame behind the one before, so the ripple runs down it
             // the gaps close up with it, so the thinner segments still overlap into one body
-            float taper = Mathf.Lerp(1f, 0.7f, (float)i / Mathf.Max(1, d.body.Count));
+            float taper = Mathf.Lerp(1f, 0.7f, (float)i / Mathf.Max(1, count));
             behind += spacing * taper;
-            var art = HasLeg(i) ? Frame(Data.legFrames, frame - i - 1) : null;
+            var art = HasLeg(i, count) ? Frame(Data.legFrames, frame - i - 1) : null;
             Put(d.body[i], d, head - behind, art != null ? art : Frame(Data.bodyFrames, frame - i - 1), scale * taper, spacing * 1.3f * taper);
         }
         behind += spacing * 0.7f;
-        Put(d.tail, d, head - behind, Frame(Data.tailFrames, frame - d.body.Count), scale * 0.7f, spacing * 1.2f);
+        Put(d.tail, d, head - behind, Frame(Data.tailFrames, frame - count), scale * 0.7f, spacing * 1.2f);
     }
 
     private void Put(SpriteRenderer sr, Dragon d, float s, Sprite art, float scale, float plainSize)
@@ -279,10 +300,13 @@ public class DragonLine : Weapon<DragonLineData>
         else WeaponFx.Resize(sr, plainSize);
     }
 
-    private bool HasLeg(int segment)
+    // Leg Segments are for a line dragon's body; a longer one has its legs at the same places
+    // along it
+    private bool HasLeg(int segment, int count)
     {
         if (Data.legSegments == null) return false;
-        foreach (int s in Data.legSegments) if (s == segment) return true;
+        float stretch = count / (float)Mathf.Max(1, Data.segments - 1);
+        foreach (int s in Data.legSegments) if (Mathf.RoundToInt(s * stretch) == segment) return true;
         return false;
     }
 
@@ -358,10 +382,10 @@ public class DragonLine : Weapon<DragonLineData>
 
     // ---------------------------------------------------------------- pooling
 
-    private Dragon Take()
+    private Dragon Take(int count)
     {
         var d = spare.Count > 0 ? spare.Pop() : Build();
-        while (d.body.Count < Data.segments - 1)
+        while (d.body.Count < count)
             d.body.Add(Part("Body", Data.sortingOrder - 1));
         d.phase = Random.value * 10f;
         d.head.sortingOrder = Data.sortingOrder + 1;

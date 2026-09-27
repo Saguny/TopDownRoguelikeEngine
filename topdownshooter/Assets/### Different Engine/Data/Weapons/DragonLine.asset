@@ -30,7 +30,7 @@ MonoBehaviour:
   overcharge: 0
   overchargeCeiling: 1
   overchargeHalfStacks: 8
-  evolutionPartner: {fileID: 11400000, guid: 3507a1f6098e4e37a533cacec337109f, type: 2}
+  evolutionPartner: {fileID: 11400000, guid: 3d5022850414a664ab4a37a90360610a, type: 2}
   evolvedIcon: {fileID: -8034143713404588421, guid: e3f14269466e4b5780fcc458f4ed5df6, type: 3}
   evolvedIconFrames:
   - {fileID: -8034143713404588421, guid: e3f14269466e4b5780fcc458f4ed5df6, type: 3}
@@ -78,9 +78,10 @@ MonoBehaviour:
   fireDamage: 50
   evolvedHeadMultiplier: 1.5
   coilDamage: 15
-  spiralTurns: 2.5
-  spiralSeconds: 3.5
-  evolvedLength: 1.5
+  spiralTurns: 4
+  spiralSpeed: 20
+  evolvedSegments: 24
+  evolvedScale: 1.3
   pushSpeed: 9
   pushSeconds: 0.3
   fireInterval: 0.12
