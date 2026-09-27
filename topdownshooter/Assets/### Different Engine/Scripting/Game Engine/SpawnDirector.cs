@@ -182,8 +182,8 @@ public class SpawnDirector : MonoBehaviour
     }
 
     // how far into the run the difficulty curve is read: the run clock on screen, so a curve's
-    // minutes are the minutes the player sees and the boss meets its last keys. it stands still
-    // through a Final Rush like the clock does. without a GameLoopController, time played
+    // minutes are the minutes the player sees. the clock counts the Final Rushes too, so it's the
+    // real time played. without a GameLoopController, time played
     private bool hasRunClock;
     private float DifficultyTime => hasRunClock ? runTime : timeElapsed;
 

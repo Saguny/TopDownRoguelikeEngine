@@ -1,14 +1,14 @@
 using UnityEngine;
 
-// a normal run's time limit, like Vampire Survivors' Reaper: the final boss comes at 45 minutes, and
-// if it's still standing when the clock reaches the limit, the horde is swept away and the Wuchang
-// come for the player, the white one first, then one
-// more every minute, white and black in turn. they can't be hurt and one touch kills. endless
+// a normal run's time limit, like Vampire Survivors' Reaper: a normal run lasts 30 minutes at most.
+// the final boss comes after the sixth 3 minute wave, by 25 minutes at the latest (GameLoopController), and if it's still standing when the
+// clock reaches the limit, the horde is swept away and the Wuchang come for the player, the white
+// one first, then one more every minute, white and black in turn. they can't be hurt and one touch kills. endless
 // runs have no limit. GameLoopController adds it; the Wuchang prefabs come from the VfxLibrary
 public class RunTimeLimit : MonoBehaviour
 {
-    [Tooltip("on the run clock. the final boss comes at 45:00; this is how long it gets")]
-    [Min(1f)] public float limitMinutes = 55f;
+    [Tooltip("on the run clock, which counts the real time played. the final boss comes by 25:00; this is how long it gets")]
+    [Min(1f)] public float limitMinutes = 30f;
     [Tooltip("another one comes every this many seconds after the first")]
     [Min(5f)] public float every = 60f;
     [Tooltip("how far from the player they appear")]

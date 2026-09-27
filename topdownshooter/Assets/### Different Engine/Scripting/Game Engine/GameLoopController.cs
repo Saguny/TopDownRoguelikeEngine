@@ -10,7 +10,9 @@ public class GameLoopController : MonoBehaviour
 
     [Header("normal mode ending")]
     [Tooltip("in normal mode, clearing this wave starts the final boss instead of the next wave")]
-    [SerializeField, Min(1)] private int finalWave = 10;
+    [SerializeField, Min(1)] private int finalWave = 6;
+    [Tooltip("in normal mode the final boss comes by this run minute at the latest, even mid wave, so it's up well before the time limit (RunTimeLimit, 30:00)")]
+    [SerializeField, Min(1f)] private float finalBossByMinute = 25f;
 
     // new: scene ui reference
     [Header("secret boss ui")]
@@ -61,22 +63,31 @@ public class GameLoopController : MonoBehaviour
             while (elapsed < waveDuration)
             {
                 elapsed += Time.deltaTime;
-                totalRun += Time.deltaTime;
-                GameEvents.OnRunTimeChanged?.Invoke(totalRun);
+                Tick();
+                // out of time for waves: straight to the final boss
+                if (BossIsDue)
+                {
+                    GameEvents.OnFinalBossStarted?.Invoke();
+                    yield return BossClock();
+                    yield break;
+                }
                 yield return null;
             }
 
+            // the run clock keeps counting through the Final Rush, so it's the real time played
+            // and a normal run can't outlast its 30 minutes however long the rushes take
             finalRush = true;
             waveKills = 0;
-            float snap = (waveIndex + 1) * waveDuration;
-            totalRun = snap;
-            GameEvents.OnRunTimeChanged?.Invoke(totalRun);
 
             int quota = baseKillsToClear * (int)Mathf.Pow(1.4f, waveIndex);
             GameEvents.OnFinalRushStarted?.Invoke(waveIndex + 1, quota);
 
-            while (waveKills < quota)
+            // a rush still going when the final boss is due ends there, so the boss gets its time
+            while (waveKills < quota && !BossIsDue)
+            {
+                Tick();
                 yield return null;
+            }
 
             GameEvents.OnPurgeEnemiesWithFx?.Invoke(subjectiveDeathFx);
             GameEvents.OnCollectAllWen?.Invoke();
@@ -84,9 +95,13 @@ public class GameLoopController : MonoBehaviour
             GameEvents.OnFinalRushEnded?.Invoke(waveIndex + 1);
             GameEvents.OnWaveCleared?.Invoke(waveIndex + 1);
 
-            yield return new WaitForSeconds(breakAfterWave);
+            for (float t = 0f; t < breakAfterWave; t += Time.deltaTime)
+            {
+                Tick();
+                yield return null;
+            }
 
-            if (!GameMode.IsEndless && waveIndex + 1 >= finalWave)
+            if (!GameMode.IsEndless && (waveIndex + 1 >= finalWave || BossIsDue))
             {
                 GameEvents.OnFinalBossStarted?.Invoke();
                 yield return BossClock();
@@ -98,16 +113,23 @@ public class GameLoopController : MonoBehaviour
     }
 
     // no more waves once the final boss is up, but the run clock keeps counting so the end
-    // screen reports the real time the run took
+    // screen reports the real time the run took, and the time limit still comes
     private IEnumerator BossClock()
     {
         while (true)
         {
-            totalRun += Time.deltaTime;
-            GameEvents.OnRunTimeChanged?.Invoke(totalRun);
+            Tick();
             yield return null;
         }
     }
+
+    private void Tick()
+    {
+        totalRun += Time.deltaTime;
+        GameEvents.OnRunTimeChanged?.Invoke(totalRun);
+    }
+
+    private bool BossIsDue => !GameMode.IsEndless && totalRun >= finalBossByMinute * 60f;
 
     private void OnEnemyKilled(int _) { if (finalRush) waveKills++; }
 

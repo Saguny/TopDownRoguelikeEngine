@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   crowdScale: 1
   hardCap: 250
-  waveMinutes: 4.5
+  waveMinutes: 3
   beats:
   - label: 'Restless dead'
     fromMinute: 0

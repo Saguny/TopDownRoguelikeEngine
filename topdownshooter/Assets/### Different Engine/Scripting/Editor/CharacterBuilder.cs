@@ -221,7 +221,9 @@ public static class CharacterBuilder
 
     // ------------------------------------------------------------------ difficulty by map
 
-    // both run 45 minutes, where the Wuchang come. the courtyard is the first map, so it starts
+    // a normal run lasts 30 minutes at most, where the Wuchang come (the keys past that are for
+    // endless). the numbers are the softened ones the game shipped with, so building again doesn't
+    // undo them. the courtyard is the first map, so it starts
     // gentle and climbs steadily; Huangquan Road opens only once it's cleared, when the shop has
     // made the player stronger, so everything there starts tougher, climbs higher and crowds more.
     // speed stays well under 3x: enemies faster than the player make a run unwinnable, not hard.
@@ -231,14 +233,14 @@ public static class CharacterBuilder
         var scene = AssetDatabase.LoadAssetAtPath<DifficultyCurve>(Curves + "FixedCurve.asset");
 
         var courtyard = Curve(scene, "CourtyardDifficulty",
-            health: new[] { (0f, 1f), (300f, 1.6f), (600f, 2.6f), (900f, 3.8f), (1200f, 5.2f), (1500f, 6.6f), (1800f, 8.2f), (2100f, 10f), (2400f, 12f), (2700f, 14f) },
+            health: new[] { (0f, 1f), (300f, 1.25f), (600f, 2f), (900f, 3.1f), (1200f, 4.4f), (1500f, 5.9f), (1800f, 7.6f), (2100f, 9.5f), (2400f, 11.6f), (2700f, 13.8f) },
             speed: new[] { (0f, 1f), (1200f, 1.5f), (2400f, 2f), (2700f, 2.2f) },
-            damage: new[] { (0f, 1f), (600f, 1.4f), (1200f, 2f), (1800f, 2.8f), (2400f, 3.6f), (2700f, 4f) },
+            damage: new[] { (0f, 0.8f), (600f, 1.3f), (1200f, 2f), (1800f, 2.8f), (2400f, 3.6f), (2700f, 4f) },
             densityMax: 9f, plateau: 2100f, sharpness: 2.4f);
         var huangquan = Curve(scene, "HuangquanDifficulty",
-            health: new[] { (0f, 1.3f), (300f, 2.2f), (600f, 3.6f), (900f, 5.2f), (1200f, 7.2f), (1500f, 9.2f), (1800f, 11.5f), (2100f, 14f), (2400f, 17f), (2700f, 20f) },
+            health: new[] { (0f, 1.1f), (300f, 1.6f), (600f, 2.8f), (900f, 4.2f), (1200f, 6f), (1500f, 8f), (1800f, 10.3f), (2100f, 12.8f), (2400f, 15.8f), (2700f, 19f) },
             speed: new[] { (0f, 1.1f), (1200f, 1.7f), (2400f, 2.3f), (2700f, 2.4f) },
-            damage: new[] { (0f, 1.25f), (600f, 1.8f), (1200f, 2.6f), (1800f, 3.6f), (2400f, 4.6f), (2700f, 5.2f) },
+            damage: new[] { (0f, 1f), (600f, 1.6f), (1200f, 2.6f), (1800f, 3.6f), (2400f, 4.6f), (2700f, 5.2f) },
             densityMax: 11f, plateau: 1800f, sharpness: 2.8f);
         touched.Add(courtyard);
         touched.Add(huangquan);

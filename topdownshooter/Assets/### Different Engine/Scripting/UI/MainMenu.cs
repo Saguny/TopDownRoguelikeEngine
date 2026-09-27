@@ -16,6 +16,12 @@ public class MainMenu : MonoBehaviour
     [Tooltip("optional. says how many more runs until endless unlocks")]
     public TMP_Text endlessLockText;
 
+    [Header("player")]
+    [Tooltip("the top bar's name. empty: the scene's PlayerName text. shows the player's user folder's name (C:/Users/<name>)")]
+    public TMP_Text playerNameText;
+    [Tooltip("written in lower case, like the rest of the top bar")]
+    public bool lowerCaseName = true;
+
     [Header("opening")]
     [Tooltip("empty: the scene's LoadingPanel")]
     public GameObject loadingPanel;
@@ -40,6 +46,21 @@ public class MainMenu : MonoBehaviour
             StartCoroutine(Opening());
 
         RefreshEndlessLock();
+        ShowPlayerName();
+    }
+
+    // whoever's computer this is, not whoever made the build
+    private void ShowPlayerName()
+    {
+        var label = playerNameText;
+        if (label == null)
+        {
+            var go = FindInScene("PlayerName");
+            if (go != null) go.TryGetComponent(out label);
+        }
+        if (label == null) return;
+        string name = PlayerIdentity.Name;
+        label.text = lowerCaseName ? name.ToLowerInvariant() : name;
     }
 
     private void RefreshEndlessLock()

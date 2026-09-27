@@ -1666,7 +1666,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: sagun
+  m_text: player
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: cc01a762994923a42b344729c5ce8c08, type: 2}
   m_sharedMaterial: {fileID: -7545229027319612540, guid: cc01a762994923a42b344729c5ce8c08, type: 2}

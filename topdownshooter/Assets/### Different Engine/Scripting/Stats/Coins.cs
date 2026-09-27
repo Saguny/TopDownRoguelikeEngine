@@ -2,9 +2,11 @@ using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-// the coin wallet the upgrade shop spends from, saved between runs. every wen the player picks
-// up in a run pays a coin, scaled by the run's Greed; fractions carry over so small bonuses
-// still add up (see RunStats.PickedUpWen)
+// the coin wallet the upgrade shop spends from, saved between runs. wen the player picks up in a
+// run pays coins, scaled by the run's Greed and by how far into the run it is: the further in,
+// the less each wen is worth, because late wen come in far greater numbers and worth (a single
+// 30 minute run used to pay out 40k). fractions carry over so small amounts still add up (see
+// RunStats.PickedUpWen)
 public static class Coins
 {
     private const string Key = "coins";
@@ -65,12 +67,25 @@ public static class Coins
     private static float greedMultiplier = 1f;
     private static float carry;
 
+    // coins per wen at the start of a run, and how that falls off: at Falloff Minutes in it's
+    // down to about a third, at 10 minutes to a fifth, at 30 about a twentieth. a full normal run
+    // pays about 2.5-3k before Greed, a short one a few hundred
+    public const float StartRate = 0.6f;
+    public const float FalloffMinutes = 5f;
+    public const float FalloffPower = 1.5f;
+    private static float runSeconds;
+
+    // coins one wen pays right now, before Greed
+    public static float RateAt(float seconds) => StartRate / Mathf.Pow(1f + Mathf.Max(0f, seconds) / 60f / FalloffMinutes, FalloffPower);
+    public static float RateNow => RateAt(runSeconds);
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetStatics()
     {
         Changed = null;
         carry = 0f;
         greedMultiplier = 1f;
+        runSeconds = 0f;
         balance = -1;
         unsaved = false;
     }
@@ -82,20 +97,25 @@ public static class Coins
         SceneManager.sceneLoaded += OnSceneLoaded;
         Application.quitting -= Save;
         Application.quitting += Save;
+        GameEvents.OnRunTimeChanged -= OnRunTime;
+        GameEvents.OnRunTimeChanged += OnRunTime;
     }
+
+    private static void OnRunTime(float seconds) => runSeconds = seconds;
 
     // Greed is read as each scene loads, so a run earns at the rate it started with
     private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         greedMultiplier = 1f + Mathf.Max(0f, StatSheet.ForRun()[StatId.Greed]);
+        runSeconds = 0f;
         Save();
     }
 
-    // wen picked up pays one coin each, times Greed
+    // wen picked up pays the run's current rate each, times Greed
     public static void Earn(int wen)
     {
         if (wen <= 0) return;
-        carry += wen * greedMultiplier;
+        carry += wen * RateNow * greedMultiplier;
         int whole = Mathf.FloorToInt(carry);
         if (whole <= 0) return;
         carry -= whole;
