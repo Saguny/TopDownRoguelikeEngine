@@ -4,9 +4,13 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Rogue/Weapons/Peach Talismans", fileName = "PeachTalismans")]
 public class PeachTalismansData : WeaponData<PeachTalismans>
 {
+    public override AttackClass AttackClass => AttackClass.Magical;
+
     [Serializable]
     public struct LevelStats
     {
+        [Tooltip("damage the moment a talisman slaps into its enemy, before Might")]
+        public float impactDamage;
         [Tooltip("burn damage per second while stuck. it goes through armor")]
         public float damagePerSecond;
         [Tooltip("seconds between talismans, before Cooldown")]
@@ -16,12 +20,12 @@ public class PeachTalismansData : WeaponData<PeachTalismans>
     [Header("Levels (the first entry is the unlock; one more pick after the last is the evolution)")]
     public LevelStats[] levels =
     {
-        new LevelStats { damagePerSecond = 2, interval = 1.5f },
-        new LevelStats { damagePerSecond = 3, interval = 1.4f },
-        new LevelStats { damagePerSecond = 4, interval = 1.3f },
-        new LevelStats { damagePerSecond = 6, interval = 1.2f },
-        new LevelStats { damagePerSecond = 8, interval = 1.1f },
-        new LevelStats { damagePerSecond = 10, interval = 1f },
+        new LevelStats { impactDamage = 6, damagePerSecond = 4, interval = 1.5f },
+        new LevelStats { impactDamage = 7, damagePerSecond = 5, interval = 1.4f },
+        new LevelStats { impactDamage = 8, damagePerSecond = 6, interval = 1.3f },
+        new LevelStats { impactDamage = 10, damagePerSecond = 8, interval = 1.2f },
+        new LevelStats { impactDamage = 12, damagePerSecond = 10, interval = 1.1f },
+        new LevelStats { impactDamage = 15, damagePerSecond = 13, interval = 1f },
     };
 
     [Header("Flight")]
@@ -96,7 +100,7 @@ public class PeachTalismansData : WeaponData<PeachTalismans>
 
         var s = At(level);
         return level <= 1
-            ? $"Talismans fly to a random enemy and stick, burning {s.damagePerSecond:0.#} a second and slowing it by {(1f - stuckSlow) * 100f:0}%. One every {s.interval:0.#}s."
-            : $"Burns {s.damagePerSecond:0.#} a second, one every {s.interval:0.#}s.";
+            ? $"Talismans fly to a random enemy and stick, hitting for {s.impactDamage:0} then burning {s.damagePerSecond:0.#} a second and slowing it by {(1f - stuckSlow) * 100f:0}%. One every {s.interval:0.#}s."
+            : $"Hits for {s.impactDamage:0}, burns {s.damagePerSecond:0.#} a second, one every {s.interval:0.#}s.";
     }
 }

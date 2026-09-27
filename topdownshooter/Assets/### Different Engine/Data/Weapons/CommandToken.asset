@@ -35,22 +35,24 @@ MonoBehaviour:
   evolvedIconFrames: []
   levels:
   - damage: 40
-    cooldown: 90
+    cooldown: 60
     stunSeconds: 0
     pullsWen: 0
   - damage: 40
-    cooldown: 75
+    cooldown: 50
     stunSeconds: 0
     pullsWen: 0
   - damage: 40
-    cooldown: 75
+    cooldown: 50
     stunSeconds: 1.5
     pullsWen: 0
   - damage: 40
-    cooldown: 75
+    cooldown: 50
     stunSeconds: 1.5
     pullsWen: 1
   firstShotDelay: 2
+  activationKey: 101
+  spawnPauseSeconds: 1.5
   castAnimation: {fileID: 1882361935638995688, guid: 8afc62b5c4772ee438a2da0e3eca6ee0, type: 3}
   sealSprites:
   - {fileID: 0}

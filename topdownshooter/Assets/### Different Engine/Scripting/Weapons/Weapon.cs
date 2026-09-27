@@ -28,11 +28,17 @@ public abstract class Weapon : MonoBehaviour
     // how many more enemies a projectile goes through (the Armour Piercing passive)
     protected int Pierce => Stats ? Stats.PierceTotal : 0;
 
+    // Physical or Magical, from its settings asset
+    public AttackClass AttackClass => Asset != null ? Asset.AttackClass : AttackClass.Physical;
+
+    // its attack class's damage multiplier from the stats
+    protected float ClassMul => Stats ? Stats.ClassMul(AttackClass) : 1f;
+
     // every hit goes through here so it can crit (the Steady Hands and Executioner passives).
     // returns true when it killed
     protected bool Hit(EnemyHealth enemy, float damage, bool ignoreArmor = false)
     {
-        damage *= SignatureDamage;
+        damage *= SignatureDamage * ClassMul;
         bool crit = false;
         if (Stats) damage = Stats.WithCrit(damage, out crit);
         return enemy.TakeDamage(damage, DamageKind.Weapon, crit, ignoreArmor, this);

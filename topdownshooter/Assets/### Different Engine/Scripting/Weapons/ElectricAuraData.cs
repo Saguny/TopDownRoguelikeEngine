@@ -7,6 +7,8 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Rogue/Weapons/Electrical Aura", fileName = "Electrical Aura")]
 public class ElectricAuraData : WeaponData<ElectricAuraWeapon>
 {
+    public override AttackClass AttackClass => AttackClass.Magical;
+
     [Serializable]
     public struct LevelStats
     {

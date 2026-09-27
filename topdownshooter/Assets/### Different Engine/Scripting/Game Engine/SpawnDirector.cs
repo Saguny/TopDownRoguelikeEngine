@@ -80,6 +80,19 @@ public class SpawnDirector : MonoBehaviour
     [Tooltip("wen an elite always bursts into, and it always drops a heal")]
     [SerializeField, Min(0)] private int eliteWenDrops = 12;
 
+    [Header("Packs (small enemies come in groups)")]
+    [Tooltip("enemies costing this much or less (wisps) arrive in a pack instead of one at a time")]
+    [SerializeField, Min(0)] private int packMaxCost = 1;
+    [Tooltip("how many a pack holds, at the start of the run and once the spawn ramp is done")]
+    [SerializeField] private Vector2Int packSizeEarly = new Vector2Int(3, 5);
+    [SerializeField] private Vector2Int packSizeLate = new Vector2Int(5, 9);
+    [Tooltip("how far a pack's members spread from its middle")]
+    [SerializeField, Min(0f)] private float packSpread = 0.9f;
+
+    [Header("Opening")]
+    [Tooltip("ordinary enemies that spawn while the player is at or below this level die to any hit. 0 turns it off")]
+    [SerializeField, Min(0)] private int oneShotThroughLevel = 5;
+
     private SpawnTimeline activeTimeline;
     private float[] eventDue;               // run minute each event is next due; infinity once done
     private float nextEventAllowed;
@@ -121,6 +134,7 @@ public class SpawnDirector : MonoBehaviour
 
     private void OnEnable()
     {
+        Active = this;
         GameEvents.OnFinalRushStarted += HandleFinalRushStart;
         GameEvents.OnFinalRushEnded += HandleFinalRushEnd;
         GameEvents.OnWaveCleared += HandleWaveCleared;
@@ -133,6 +147,7 @@ public class SpawnDirector : MonoBehaviour
 
     private void OnDisable()
     {
+        if (Active == this) Active = null;
         GameEvents.OnFinalRushStarted -= HandleFinalRushStart;
         GameEvents.OnFinalRushEnded -= HandleFinalRushEnd;
         GameEvents.OnWaveCleared -= HandleWaveCleared;
@@ -198,6 +213,16 @@ public class SpawnDirector : MonoBehaviour
     }
 
     public BoxCollider2D[] MapBounds => mapBounds;
+
+    // nothing new spawns for a moment, e.g. after the Command Token wipes the screen, so the
+    // clear actually reads as a clear. a longer pause already running is kept
+    public void PauseSpawning(float seconds)
+    {
+        if (seconds <= 0f) return;
+        spawnPausedUntil = Mathf.Max(spawnPausedUntil, Time.time + seconds);
+    }
+
+    public static SpawnDirector Active { get; private set; }
 
     // the running map's difficulty, or this spawner's own when the map has none
     private DifficultyCurve Curve => DifficultyCurve.For(curve);
@@ -474,7 +499,8 @@ public class SpawnDirector : MonoBehaviour
         {
             float hpMul = Curve != null ? Curve.HealthAt(DifficultyTime) : 1f;
             if (rush) hpMul *= finalRushHealthMul;
-            h.SetScaled(arch.baseHealth * hpMul);
+            // the opening: anything ordinary goes down to one hit while the build is still bare
+            h.SetScaled(OneShotOpening && !rush && !IsBoss(arch) ? 1f : arch.baseHealth * hpMul);
         }
 
         if (go.TryGetComponent(out EnemyMovement m))
@@ -497,6 +523,23 @@ public class SpawnDirector : MonoBehaviour
         }
 
         return go;
+    }
+
+    private PlayerInventory inventory;
+
+    private bool OneShotOpening
+    {
+        get
+        {
+            if (oneShotThroughLevel <= 0) return false;
+            if (inventory == null)
+            {
+                var player = GameObject.FindGameObjectWithTag("Player");
+                if (player != null) player.TryGetComponent(out inventory);
+                if (inventory == null) return false;
+            }
+            return inventory.CurrentLevel <= oneShotThroughLevel;
+        }
     }
 
     private int CountAlive()
@@ -774,11 +817,36 @@ public class SpawnDirector : MonoBehaviour
             if (!refill && trickleOwed <= 0) break;
 
             var arch = SpawnTimeline.PickFrom(beat.enemies);
-            if (arch == null || Spawn(arch, false) == null) break;
+            if (arch == null) break;
 
-            alive++;
-            if (!refill) trickleOwed--;
+            int made = arch.cost <= packMaxCost ? SpawnPack(arch, cap - alive) : Spawn(arch, false) != null ? 1 : 0;
+            if (made == 0) break;
+
+            alive += made;
+            if (!refill) trickleOwed -= made;
         }
+    }
+
+    // small enemies (wisps) come as a pack: a handful bunched around one point off screen, the
+    // bunches growing as the run goes on. returns how many were made
+    private int SpawnPack(EnemyArchetype arch, int room)
+    {
+        float ramp = spawnCapRampDuration > 0f ? Mathf.Clamp01(timeElapsed / spawnCapRampDuration) : 1f;
+        int least = Mathf.RoundToInt(Mathf.Lerp(packSizeEarly.x, packSizeLate.x, ramp));
+        int most = Mathf.RoundToInt(Mathf.Lerp(packSizeEarly.y, packSizeLate.y, ramp));
+        int size = Mathf.Clamp(Random.Range(least, most + 1), 1, Mathf.Max(1, room));
+
+        Vector2 middle = GetSpawnPositionNearOffscreenInsideBounds();
+        Rect play = GetPlayRectFromBorders();
+        int made = 0;
+        for (int i = 0; i < size; i++)
+        {
+            Vector2 at = i == 0 ? middle : middle + Random.insideUnitCircle * packSpread;
+            at.x = Mathf.Clamp(at.x, play.xMin, play.xMax);
+            at.y = Mathf.Clamp(at.y, play.yMin, play.yMax);
+            if (Spawn(arch, false, at) != null) made++;
+        }
+        return made;
     }
 
     private int SpawnsPerFrame()

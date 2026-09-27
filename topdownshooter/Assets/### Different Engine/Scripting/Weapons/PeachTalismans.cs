@@ -45,7 +45,7 @@ public class PeachTalismans : Weapon<PeachTalismansData>
         timer += dt;
         if (timer >= Cooldown(lv.interval) && Fire(evolved)) timer = 0f;
 
-        Step(dt, lv.damagePerSecond * Might, evolved);
+        Step(dt, lv.damagePerSecond * Might, lv.impactDamage * Might, evolved);
     }
 
     private bool Fire(bool evolved)
@@ -97,20 +97,20 @@ public class PeachTalismans : Weapon<PeachTalismansData>
         return new Talisman { sr = sr, trail = new Afterimage(sr, Data.trailLength, Data.trailSpacing) };
     }
 
-    private void Step(float dt, float dps, bool evolved)
+    private void Step(float dt, float dps, float impact, bool evolved)
     {
         float speed = Data.flightSpeed * SpeedMul;
         for (int i = live.Count - 1; i >= 0; i--)
         {
             var t = live[i];
             bool wasStuck = t.stuck;
-            bool done = t.stuck ? Burn(t, dt, dps, evolved) : Fly(t, dt, speed);
+            bool done = t.stuck ? Burn(t, dt, dps, evolved) : Fly(t, dt, speed, impact, evolved);
             if (done) Release(i, wasStuck);
         }
     }
 
     // true once the talisman is finished
-    private bool Fly(Talisman t, float dt, float speed)
+    private bool Fly(Talisman t, float dt, float speed, float impact, bool evolved)
     {
         float step = speed * dt;
 
@@ -137,6 +137,13 @@ public class PeachTalismans : Weapon<PeachTalismansData>
             t.stuckOffset = Random.insideUnitCircle * 0.2f;
             t.sr.transform.SetPositionAndRotation(goal + t.stuckOffset, Quaternion.Euler(0f, 0f, Random.Range(-20f, 20f)));
             t.trail.Hide();
+
+            // it slaps into the enemy before it starts to burn. a kill on impact is a talisman kill too
+            if (impact > 0f && Hit(t.target, impact))
+            {
+                if (evolved) Blast(goal);
+                return true;
+            }
             return false;
         }
 

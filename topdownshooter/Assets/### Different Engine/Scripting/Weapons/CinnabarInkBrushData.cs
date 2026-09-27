@@ -8,6 +8,8 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Rogue/Weapons/Cinnabar Ink Brush", fileName = "CinnabarInkBrush")]
 public class CinnabarInkBrushData : WeaponData<CinnabarInkBrush>
 {
+    public override AttackClass AttackClass => AttackClass.Magical;
+
     [Serializable]
     public struct LevelStats
     {

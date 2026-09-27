@@ -124,7 +124,36 @@ public class PlayerHealth : MonoBehaviour, IHealth
         if (_flashUntil >= 0f && Time.unscaledTime >= _flashUntil && !_dead) EndFlash();
         if (_dead) return;
         if (_invulnTimer > 0f) _invulnTimer -= Time.deltaTime;
+        Blink();
         Regenerate(Time.deltaTime);
+    }
+
+    // a grace period, e.g. after the level up menu closes: nothing hurts for a moment, and the
+    // player blinks so it's clear why. a longer one already running is kept
+    public void GrantInvulnerability(float seconds)
+    {
+        if (_dead || seconds <= 0f) return;
+        _invulnTimer = Mathf.Max(_invulnTimer, seconds);
+        _blinking = true;
+    }
+
+    public bool IsInvulnerable => _invulnTimer > 0f;
+
+    private bool _blinking;
+    private const float BlinkHz = 10f;
+
+    private void Blink()
+    {
+        if (!_blinking || spriteRenderer == null) return;
+
+        var c = spriteRenderer.color;
+        if (_invulnTimer <= 0f)
+        {
+            _blinking = false;
+            c.a = _originalColor.a;
+        }
+        else c.a = (int)(Time.time * BlinkHz) % 2 == 0 ? _originalColor.a : _originalColor.a * 0.35f;
+        spriteRenderer.color = c;
     }
 
     // Recovery stays quiet on purpose: Heal flashes and plays a sound, which every frame would be noise

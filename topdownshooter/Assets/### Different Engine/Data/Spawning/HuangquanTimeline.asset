@@ -24,7 +24,7 @@ MonoBehaviour:
     cap: 20
     enemies:
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 3
+      weight: 5.25
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 1
   - label: 'Will-o-wisps'
@@ -35,7 +35,7 @@ MonoBehaviour:
     cap: 32
     enemies:
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 4
+      weight: 7
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 2
   - label: 'The hungry follow'
@@ -48,7 +48,7 @@ MonoBehaviour:
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 3
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 3
+      weight: 5.25
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 1
   - label: 'Lily fields'
@@ -63,7 +63,7 @@ MonoBehaviour:
     - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
       weight: 1
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 3
+      weight: 5.25
   - label: 'Fox fires'
     fromMinute: 7.5
     minimum: 40
@@ -74,7 +74,7 @@ MonoBehaviour:
     - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
       weight: 3
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 3
+      weight: 5.25
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 2
   - label: 'Coffin bearers'
@@ -89,7 +89,7 @@ MonoBehaviour:
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 2
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 2
+      weight: 3.5
   - label: 'Ghost festival'
     fromMinute: 12
     minimum: 55
@@ -100,7 +100,7 @@ MonoBehaviour:
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 4
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 4
+      weight: 7
     - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
       weight: 1
   - label: 'The river rises'
@@ -117,7 +117,7 @@ MonoBehaviour:
     - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
       weight: 2
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 3
+      weight: 5.25
     - archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
       weight: 0.3
   - label: 'The guardians stir'
@@ -145,7 +145,7 @@ MonoBehaviour:
     - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
       weight: 5
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 3
+      weight: 5.25
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 2
   - label: 'Endless procession'
@@ -160,7 +160,7 @@ MonoBehaviour:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 3
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 2
+      weight: 3.5
     - archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
       weight: 0.5
   - label: 'Forgetting'
@@ -175,7 +175,7 @@ MonoBehaviour:
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 3
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 3
+      weight: 5.25
     - archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
       weight: 0.8
   - label: 'The sealed bridge'
@@ -188,7 +188,7 @@ MonoBehaviour:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 2
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 2
+      weight: 3.5
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 3
     - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
@@ -205,7 +205,7 @@ MonoBehaviour:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 2
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 3
+      weight: 5.25
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 3
     - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
@@ -218,7 +218,7 @@ MonoBehaviour:
     repeatEveryMinutes: 0
     kind: 0
     archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-    count: 16
+    count: 24
     speed: 1.8
     health: 1
     crowd: 1.6
@@ -228,7 +228,7 @@ MonoBehaviour:
     repeatEveryMinutes: 0
     kind: 0
     archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-    count: 22
+    count: 33
     speed: 1.8
     health: 1
     crowd: 1.6
@@ -268,7 +268,7 @@ MonoBehaviour:
     repeatEveryMinutes: 0
     kind: 2
     archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-    count: 30
+    count: 45
     speed: 1.6
     health: 1
     crowd: 1.6
@@ -308,7 +308,7 @@ MonoBehaviour:
     repeatEveryMinutes: 0
     kind: 0
     archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-    count: 36
+    count: 54
     speed: 1.8
     health: 1
     crowd: 1.6
@@ -348,7 +348,7 @@ MonoBehaviour:
     repeatEveryMinutes: 0
     kind: 0
     archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-    count: 44
+    count: 66
     speed: 1.8
     health: 1
     crowd: 1.6
@@ -408,7 +408,7 @@ MonoBehaviour:
     repeatEveryMinutes: 9
     kind: 0
     archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-    count: 64
+    count: 96
     speed: 1.8
     health: 1
     crowd: 1.6

@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// every cooldown, seals stamp onto the screen one at a time, big to small, then explode into a
-// shockwave that hits every enemy on screen. with a Cast Animation prefab set, that prefab plays
-// instead and says when the hit lands
+// an ability every character carries: once it has charged, its key (E) stamps seals onto the
+// screen one at a time, big to small, then they explode into a shockwave that hits every enemy
+// on screen, and nothing new spawns for a moment after. with a Cast Animation prefab set, that
+// prefab plays instead and says when the hit lands. CommandTokenHUD shows the charge
 public class CommandToken : Weapon<CommandTokenData>
 {
     private readonly List<GameObject> snapshot = new List<GameObject>(256);
@@ -13,9 +14,39 @@ public class CommandToken : Weapon<CommandTokenData>
     private float timer;
     private bool primed, casting;
 
+    // the one the player holds, for the on-screen prompt
+    public static CommandToken Current { get; private set; }
+
+    public float CooldownSeconds => Data != null ? Cooldown(Data.At(Level).cooldown) : 1f;
+    // 0 just used, 1 charged
+    public float Charge => casting ? 0f : Mathf.Clamp01(timer / Mathf.Max(0.01f, CooldownSeconds));
+    public bool Ready => !casting && Level > 0 && Charge >= 1f;
+    public bool Casting => casting;
+    public float SecondsLeft => Mathf.Max(0f, CooldownSeconds - timer);
+    public KeyCode Key => Data != null ? Data.activationKey : KeyCode.E;
+    public Sprite Icon => Asset != null ? Asset.icon : null;
+
+    // fired as the key is pressed and the cast begins
+    public static System.Action OnUsed;
+
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        Current = this;
+    }
+
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+        if (Current == this) Current = null;
+    }
+
     protected override void OnLevelChanged()
     {
-        // the first shockwave comes shortly after the pickup, not a whole cooldown later
+        Current = this;
+        CommandTokenHUD.Ensure();
+
+        // it's ready shortly after the run starts, not a whole cooldown later
         if (primed || Data == null) return;
         primed = true;
         timer = Mathf.Max(0f, Cooldown(Data.At(Level).cooldown) - Data.firstShotDelay);
@@ -24,10 +55,11 @@ public class CommandToken : Weapon<CommandTokenData>
     private void Update()
     {
         if (Data == null || Level <= 0 || casting) return;
+        if (Time.timeScale <= 0f) return;   // paused, or the level up menu is open
 
         var lv = Data.At(Level);
-        timer += Time.deltaTime;
-        if (timer < Cooldown(lv.cooldown)) return;
+        timer = Mathf.Min(timer + Time.deltaTime, Cooldown(lv.cooldown));
+        if (timer < Cooldown(lv.cooldown) || !Input.GetKeyDown(Data.activationKey)) return;
 
         timer = 0f;
         StartCoroutine(Cast(lv));
@@ -36,6 +68,10 @@ public class CommandToken : Weapon<CommandTokenData>
     private IEnumerator Cast(CommandTokenData.LevelStats lv)
     {
         casting = true;
+        OnUsed?.Invoke();
+
+        // the horde stops arriving while the seals go down
+        if (SpawnDirector.Active != null) SpawnDirector.Active.PauseSpawning(Data.spawnPauseSeconds);
         var cam = Camera.main;
         row.Clear();
 
@@ -148,6 +184,9 @@ public class CommandToken : Weapon<CommandTokenData>
     private void HitEverythingOnScreen(Camera cam, CommandTokenData.LevelStats lv)
     {
         float damage = lv.damage * Might;
+
+        // and the screen stays clear for a moment after the hit
+        if (SpawnDirector.Active != null) SpawnDirector.Active.PauseSpawning(Data.spawnPauseSeconds);
 
         // a kill unregisters the enemy, so go through a copy of the list
         snapshot.Clear();

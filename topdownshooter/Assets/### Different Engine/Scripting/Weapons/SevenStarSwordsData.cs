@@ -4,6 +4,8 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Rogue/Weapons/Seven Star Swords", fileName = "SevenStarSwords")]
 public class SevenStarSwordsData : WeaponData<SevenStarSwords>
 {
+    public override AttackClass AttackClass => AttackClass.Physical;
+
     [Serializable]
     public struct LevelStats
     {

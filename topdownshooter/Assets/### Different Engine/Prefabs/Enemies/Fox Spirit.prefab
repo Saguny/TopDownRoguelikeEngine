@@ -194,7 +194,7 @@ MonoBehaviour:
   deathSound: {fileID: 8300000, guid: 5eec17cadaeab7b40a70810e685603bd, type: 3}
   deathVolume: 0.45
   healItemPrefab: {fileID: 1653245802588275055, guid: 9b80ca85b45a48f428cf70029f106a15, type: 3}
-  healDropChance: 0.0005
+  healDropChance: 0.003
   spriteRenderer: {fileID: 1622458979289876602}
   hitColor: {r: 1, g: 0, b: 0, a: 1}
   flashDuration: 0.1

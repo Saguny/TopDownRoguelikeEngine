@@ -5,6 +5,8 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Rogue/Weapons/Command Token", fileName = "CommandToken")]
 public class CommandTokenData : WeaponData<CommandToken>
 {
+    public override AttackClass AttackClass => AttackClass.Magical;
+
     [Serializable]
     public struct LevelStats
     {
@@ -23,14 +25,20 @@ public class CommandTokenData : WeaponData<CommandToken>
     [Header("Levels (the first entry is the unlock)")]
     public LevelStats[] levels =
     {
-        new LevelStats { damage = 40, cooldown = 90f },
-        new LevelStats { damage = 40, cooldown = 75f },
-        new LevelStats { damage = 40, cooldown = 75f, stunSeconds = 1.5f },
-        new LevelStats { damage = 40, cooldown = 75f, stunSeconds = 1.5f, pullsWen = true },
+        new LevelStats { damage = 40, cooldown = 60f },
+        new LevelStats { damage = 40, cooldown = 50f },
+        new LevelStats { damage = 40, cooldown = 50f, stunSeconds = 1.5f },
+        new LevelStats { damage = 40, cooldown = 50f, stunSeconds = 1.5f, pullsWen = true },
     };
 
-    [Tooltip("seconds after picking it up before the first shockwave")]
+    [Tooltip("seconds into the run before it's first ready")]
     public float firstShotDelay = 2f;
+
+    [Header("Use")]
+    [Tooltip("the key that sets it off once it has charged")]
+    public KeyCode activationKey = KeyCode.E;
+    [Tooltip("seconds nothing new spawns after the shockwave hits")]
+    [Min(0f)] public float spawnPauseSeconds = 1.5f;
 
     [Header("Your own animation (replaces everything below)")]
     [Tooltip("a prefab animating the whole cast, made with a CastAnimation on its root. it spawns at the centre of the screen and moves with the camera, and damage lands on its Hit event. empty = the built in seals and shockwave below")]
@@ -78,18 +86,21 @@ public class CommandTokenData : WeaponData<CommandToken>
 
     public override int LevelCount => levels.Length;
 
+    // every character carries it (see PlayerInventory), so it never fills a weapon slot
+    public override bool TakesSlot => false;
+
     public LevelStats At(int level) =>
         levels == null || levels.Length == 0 ? default : levels[Mathf.Clamp(level - 1, 0, levels.Length - 1)];
 
     public override string Describe(int level)
     {
         var s = At(level);
-        if (level <= 1) return $"Every {s.cooldown:0}s a shockwave hits every enemy on screen for {s.damage:0}.";
+        if (level <= 1) return $"Press {activationKey} to send a shockwave through every enemy on screen for {s.damage:0}. Recharges in {s.cooldown:0}s.";
 
         var was = At(level - 1);
         var changes = new List<string>();
         if (s.damage != was.damage) changes.Add($"The shockwave hits for {s.damage:0}.");
-        if (s.cooldown != was.cooldown) changes.Add($"It comes every {s.cooldown:0}s.");
+        if (s.cooldown != was.cooldown) changes.Add($"Recharges in {s.cooldown:0}s.");
         if (s.stunSeconds > was.stunSeconds) changes.Add($"Enemies it doesn't kill are stunned for {s.stunSeconds:0.#}s.");
         if (s.pullsWen && !was.pullsWen) changes.Add("It pulls every wen on the map to you.");
         return changes.Count > 0 ? string.Join(" ", changes) : "A stronger shockwave.";

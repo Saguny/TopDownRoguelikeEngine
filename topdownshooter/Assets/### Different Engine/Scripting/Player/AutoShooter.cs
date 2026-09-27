@@ -30,6 +30,10 @@ public class AutoShooter : MonoBehaviour
     public bool Armed { get; set; }
     // the Bow firing it, for the run's damage stats
     public Weapon Source { get; set; }
+    // the evolved Bow: volleys come at its own pace, not through the Cooldown stat
+    public bool Unbound { get; set; }
+    // the evolved Bow's outline colours, or null for plain arrows
+    public BowData Shine { get; set; }
     private int levelArrows = 1;
 
     // the Bow's level sets these outright; Might, Cooldown, Weapon Speed and the passives ride on top
@@ -53,7 +57,7 @@ public class AutoShooter : MonoBehaviour
     {
         if (!Armed) return;
 
-        float volleyCooldown = stats ? stats.CooldownFor(UpgradeType.ArrowCooldown, baseCooldown) : baseCooldown;
+        float volleyCooldown = stats && !Unbound ? stats.CooldownFor(UpgradeType.ArrowCooldown, baseCooldown) : baseCooldown;
         volleyCooldown = Mathf.Max(MinCooldown, volleyCooldown);
 
         cooldown -= Time.deltaTime;
@@ -86,9 +90,10 @@ public class AutoShooter : MonoBehaviour
         if (pool == null) return;
 
         var go = pool.Get(transform.position, Quaternion.identity);
+        ArrowShine.Set(go, Shine);
         if (looseFx != null) FxOneShot.Play(looseFx, transform.position + (Vector3)(dir * 0.35f), FxOneShot.Angle(dir));
         float speed = baseArrowSpeed * (stats ? stats.arrowSpeedMul * stats.WeaponSpeedMul : 1f);
-        float damage = baseArrowDamage * (stats ? stats.arrowDamageMul * stats.OC(UpgradeType.ArrowDamage) * stats.MightMul : 1f);
+        float damage = baseArrowDamage * (stats ? stats.arrowDamageMul * stats.OC(UpgradeType.ArrowDamage) * stats.MightMul * stats.ClassMul(AttackClass.Physical) : 1f);
 
         var arrow = go.GetComponent<Projectile>();
         if (arrow != null)

@@ -10,6 +10,11 @@ public class PixelNumbers : MonoBehaviour
     private const float WorldPixel = 1.3f / 37f;
     private const int Max = 320;
 
+    // the two colours a crit flips between, and how long it holds each
+    private const float CritFlashSeconds = 0.06f;
+    private static readonly Color32 CritYellow = new Color32(0xff, 0xe0, 0x3a, 0xff);
+    private static readonly Color32 CritRed = new Color32(0xff, 0x2a, 0x1e, 0xff);
+
     // 0-9 then !, bold: strokes two pixels wide, so they read at a glance over a busy screen
     private static readonly string[][] Glyphs =
     {
@@ -171,6 +176,13 @@ public class PixelNumbers : MonoBehaviour
         float px = WorldPixel * n.size * pop;
         byte alpha = (byte)(255f * Mathf.Clamp01((1f - k) / 0.4f));
         var col = new Color32(n.color.r, n.color.g, n.color.b, alpha);
+
+        // a crit flashes yellow and red for its whole life, so it reads apart from the ordinary hits
+        if (n.crit)
+        {
+            var flash = (int)(n.age / CritFlashSeconds) % 2 == 0 ? CritYellow : CritRed;
+            col = new Color32(flash.r, flash.g, flash.b, alpha);
+        }
 
         float width = (glyphs * Advance + 1) * px;
         float x0 = n.pos.x - width * 0.5f, y0 = n.pos.y - CellH * px * 0.5f;

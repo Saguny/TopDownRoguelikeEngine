@@ -111,10 +111,10 @@ public class UpgradeMenuUI : MonoBehaviour
 
             bool ownCategoryText = categoryTexts != null && i < categoryTexts.Length && categoryTexts[i] != null;
             if (ownCategoryText)
-                categoryTexts[i].text = data.Category.ToString();
+                categoryTexts[i].text = data.CategoryLabel;
 
             if (lvlText != null && i < lvlText.Length && lvlText[i] != null)
-                lvlText[i].text = ownCategoryText ? data.GetLevelProgress() : $"{data.Category}   {data.GetLevelProgress()}";
+                lvlText[i].text = ownCategoryText ? data.GetLevelProgress() : $"{data.CategoryLabel}   {data.GetLevelProgress()}";
 
             if (descriptionTexts != null && i < descriptionTexts.Length && descriptionTexts[i] != null)
                 descriptionTexts[i].text = data.GetDisplayDescription();

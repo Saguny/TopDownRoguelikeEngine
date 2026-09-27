@@ -78,6 +78,8 @@ public class EnemyHealth : MonoBehaviour, IHealth
     // under constant fire still reads as enemies and not as white shapes
     private static readonly Color FlashColor = new Color(1f, 1f, 1f, 0.85f);
     private const float FlashSeconds = 0.07f, FlashRest = 0.22f;
+    private static readonly Color CritYellow = new Color(1f, 0.88f, 0.23f, 0.95f);
+    private static readonly Color CritRed = new Color(1f, 0.16f, 0.12f, 0.95f);
     private int _wenEach = -1;
     private float _prefabMaxHealth = -1f;
 
@@ -194,11 +196,17 @@ public class EnemyHealth : MonoBehaviour, IHealth
         // the killing blow skips the flash: the enemy is gone this frame anyway
         if (spriteRenderer != null && currentHealth > 0f)
         {
-            if (_flashRoutine == null && Time.time >= _nextFlash)
+            // a crit always flashes, yellow then red, cutting in over an ordinary flash
+            if (crit && _flashRoutine != null)
+            {
+                StopCoroutine(_flashRoutine);
+                EndFlash();
+            }
+            if (_flashRoutine == null && (crit || Time.time >= _nextFlash))
             {
                 _restScale = transform.localScale;   // not mid squash: this is its real size
                 _nextFlash = Time.time + FlashRest;
-                _flashRoutine = StartCoroutine(FlashRed());
+                _flashRoutine = StartCoroutine(crit ? FlashCrit() : FlashRed());
             }
         }
 
@@ -236,6 +244,33 @@ public class EnemyHealth : MonoBehaviour, IHealth
         else spriteRenderer.color = hitColor;
         transform.localScale = Vector3.Scale(_restScale, new Vector3(1.16f, 0.86f, 1f));
         yield return _flashWait;
+        EndFlash();
+    }
+
+    // a crit: the silhouette flashes yellow, then red, a beat each
+    private IEnumerator FlashCrit()
+    {
+        UseFlashMaterial();
+        transform.localScale = Vector3.Scale(_restScale, new Vector3(1.22f, 0.8f, 1f));
+        spriteRenderer.color = CritYellow;
+        yield return _flashWait;
+        spriteRenderer.color = CritRed;
+        yield return _flashWait;
+        EndFlash();
+    }
+
+    private void UseFlashMaterial()
+    {
+        if (_flashMaterial == null)
+        {
+            var shader = Shader.Find("Rogue/Silhouette");
+            if (shader != null) _flashMaterial = new Material(shader) { name = "Hit Flash" };
+        }
+        if (_flashMaterial != null) spriteRenderer.sharedMaterial = _flashMaterial;
+    }
+
+    private void EndFlash()
+    {
         if (_restMaterial != null) spriteRenderer.sharedMaterial = _restMaterial;
         spriteRenderer.color = _originalColor;
         transform.localScale = _restScale;

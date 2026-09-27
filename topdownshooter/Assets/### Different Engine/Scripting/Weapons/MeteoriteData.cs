@@ -8,6 +8,8 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Rogue/Weapons/Meteorite", fileName = "Meteorite")]
 public class MeteoriteData : WeaponData<MeteoriteWeapon>
 {
+    public override AttackClass AttackClass => AttackClass.Magical;
+
     [Serializable]
     public struct LevelStats
     {

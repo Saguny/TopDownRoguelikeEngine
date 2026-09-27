@@ -82,7 +82,7 @@ public class LoadoutPanel : MonoBehaviour
         {
             foreach (var u in inventory.Taken)
             {
-                if (u == null) continue;
+                if (u == null || !u.TakesSlot) continue;   // the Command Token has its own prompt on screen
                 if (u.Category == UpgradeCategory.Weapon) Show(weaponSlots, weaponsGrid, weapons++, u, false);
                 else Show(passiveSlots, passivesGrid, passives++, u, false);
             }

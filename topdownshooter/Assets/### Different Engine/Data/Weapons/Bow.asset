@@ -33,6 +33,7 @@ MonoBehaviour:
   evolutionPartner: {fileID: 0}
   evolvedIcon: {fileID: 0}
   evolvedIconFrames: []
+  evolvedTitle: Heaven-Piercing Bow
   levels:
   - arrows: 1
     damage: 10.5

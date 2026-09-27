@@ -29,7 +29,7 @@ public class PlayerInventory : MonoBehaviour
     [Header("Slots (a normal run; Endless holds everything)")]
     [SerializeField, Min(1)] private int weaponSlots = 6;
     [SerializeField, Min(1)] private int passiveSlots = 6;
-    [Tooltip("how much likelier an upgrade for a weapon already held is to be offered: 0.1 = 10%")]
+    [Tooltip("how much likelier an upgrade the player already took this run (a weapon or a passive) is to be offered: 0.1 = 10%")]
     [SerializeField, Min(0f)] private float heldWeaponBonus = 0.1f;
 
     // how many weapons and passives the run can hold; 0 = no limit (Endless)
@@ -41,7 +41,7 @@ public class PlayerInventory : MonoBehaviour
     private int CountTaken(UpgradeCategory category)
     {
         int n = 0;
-        foreach (var u in taken) if (u != null && u.Category == category) n++;
+        foreach (var u in taken) if (u != null && u.TakesSlot && u.Category == category) n++;
         return n;
     }
 
@@ -160,7 +160,18 @@ public class PlayerInventory : MonoBehaviour
 
         randomUpgrades.RemoveAll(u => u == null || !u.CanOffer);
 
-        upgradeMenuUI.Open(randomUpgrades, ApplyUpgrade, CurrentLevel);
+        upgradeMenuUI.Open(randomUpgrades, ChooseFromMenu, CurrentLevel);
+    }
+
+    [Tooltip("seconds the player can't be hurt after the level up menu closes, to get their bearings")]
+    [SerializeField, Min(0f)] private float menuGraceSeconds = 2f;
+
+    // the level up menu's pick: taken, then a moment of grace so the crowd that closed in while
+    // the game was paused can't land a free hit
+    private void ChooseFromMenu(UpgradeData upgrade)
+    {
+        ApplyUpgrade(upgrade);
+        if (TryGetComponent(out PlayerHealth health)) health.GrantInvulnerability(menuGraceSeconds);
     }
 
     private void ApplyUpgrade(UpgradeData upgrade)
@@ -208,7 +219,7 @@ public class PlayerInventory : MonoBehaviour
 
         // no partner set: any second weapon counts
         int held = 0;
-        foreach (var w in weapons.Values) if (w != null) held++;
+        foreach (var w in weapons.Values) if (w != null && (w.Asset == null || w.Asset.TakesSlot)) held++;
         return held >= 2;
     }
 
@@ -244,6 +255,21 @@ public class PlayerInventory : MonoBehaviour
             // switched off in the pool: the weapon still works, it just never levels
             WeaponFor(weapon).SetLevel(1);
         }
+
+        GrantCommandToken();
+    }
+
+    // every character carries the Command Token from the start and sets it off with its key; the
+    // pool only offers its later levels. it doesn't take a weapon slot
+    private void GrantCommandToken()
+    {
+        var token = (allUpgrades ?? new List<UpgradeData>()).Find(u => u is CommandTokenData);
+        if (token == null || Holds(token)) return;
+
+        float timeScale = Time.timeScale;
+        if (runtimeFor.TryGetValue(token, out var runtime) && runtime != null) ApplyUpgrade(runtime);
+        else WeaponFor((WeaponData)token).SetLevel(1);
+        Time.timeScale = timeScale;
     }
 
     public void ResetRun()
@@ -305,11 +331,11 @@ public class PlayerInventory : MonoBehaviour
         return pool.Count - 1;
     }
 
-    // and the next level of a weapon already held comes up a little more often than anything else
+    // and the next level of anything already picked this run comes up a little more often
     private float Weight(UpgradeData u)
     {
         float w = u.IsOvercharging ? OverchargeWeight : 1f;
-        if (u is WeaponData && u.Level > 0) w *= 1f + heldWeaponBonus;
+        if (u.Level > 0) w *= 1f + heldWeaponBonus;
         return w;
     }
 

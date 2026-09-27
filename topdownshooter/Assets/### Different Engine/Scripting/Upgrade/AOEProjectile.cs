@@ -90,7 +90,7 @@ public class AOEProjectile : MonoBehaviour
             if (hit.TryGetComponent(out EnemyHealth enemy))
             {
                 bool crit = false;
-                float dealt = stats ? stats.WithCrit(damage, out crit) : damage;
+                float dealt = stats ? stats.WithCrit(damage * stats.ClassMul(AttackClass.Magical), out crit) : damage;
                 enemy.TakeDamage(dealt, DamageKind.Meteor, crit, false, source);
             }
         }

@@ -26,7 +26,7 @@ MonoBehaviour:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 3
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 2
+      weight: 3.5
   - label: 'Wisps gather'
     fromMinute: 1.5
     minimum: 15
@@ -35,7 +35,7 @@ MonoBehaviour:
     cap: 30
     enemies:
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 4
+      weight: 7
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 2
   - label: 'The hungry wake'
@@ -48,7 +48,7 @@ MonoBehaviour:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 2
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 3
+      weight: 5.25
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 2
   - label: 'Hungry procession'
@@ -61,7 +61,7 @@ MonoBehaviour:
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 4
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 2
+      weight: 3.5
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 1
   - label: 'Foxes in the eaves'
@@ -76,7 +76,7 @@ MonoBehaviour:
     - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
       weight: 2
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 2
+      weight: 3.5
   - label: 'Coffin row'
     fromMinute: 9
     minimum: 45
@@ -100,7 +100,7 @@ MonoBehaviour:
     - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
       weight: 4
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 4
+      weight: 7
   - label: 'Temple overrun'
     fromMinute: 13.5
     minimum: 60
@@ -115,7 +115,7 @@ MonoBehaviour:
     - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
       weight: 2
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 2
+      weight: 3.5
     - archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
       weight: 0.4
   - label: 'Year of the Nian'
@@ -143,7 +143,7 @@ MonoBehaviour:
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 2
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 3
+      weight: 5.25
   - label: 'Hungry ghost festival'
     fromMinute: 27
     minimum: 105
@@ -154,7 +154,7 @@ MonoBehaviour:
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 5
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 3
+      weight: 5.25
     - archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
       weight: 0.5
   - label: 'The dead march'
@@ -182,7 +182,7 @@ MonoBehaviour:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 2
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 2
+      weight: 3.5
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 2
     - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
@@ -199,7 +199,7 @@ MonoBehaviour:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 2
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 3
+      weight: 5.25
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 2
     - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
@@ -212,7 +212,7 @@ MonoBehaviour:
     repeatEveryMinutes: 0
     kind: 0
     archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-    count: 18
+    count: 27
     speed: 1.8
     health: 1
     crowd: 1.6
@@ -242,7 +242,7 @@ MonoBehaviour:
     repeatEveryMinutes: 0
     kind: 0
     archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-    count: 26
+    count: 39
     speed: 1.8
     health: 1
     crowd: 1.6
@@ -332,7 +332,7 @@ MonoBehaviour:
     repeatEveryMinutes: 0
     kind: 0
     archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-    count: 40
+    count: 60
     speed: 1.8
     health: 1
     crowd: 1.6
@@ -422,7 +422,7 @@ MonoBehaviour:
     repeatEveryMinutes: 9
     kind: 0
     archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-    count: 60
+    count: 90
     speed: 1.8
     health: 1
     crowd: 1.6

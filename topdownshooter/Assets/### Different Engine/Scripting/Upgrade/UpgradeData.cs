@@ -44,6 +44,13 @@ public class UpgradeData : ScriptableObject
     public int Level => level;
     public virtual UpgradeCategory Category => UpgradeCategory.Passive;
 
+    // whether holding it fills one of the run's weapon or passive slots. an ability every
+    // character carries (the Command Token) doesn't
+    public virtual bool TakesSlot => true;
+
+    // what the level up card says it is, e.g. Passive, or Weapon (Magical)
+    public virtual string CategoryLabel => Category.ToString();
+
     // what the level up card shows for the next pick; weapons show their evolved art on the evolution
     public virtual Sprite CardIcon => icon;
     public virtual Sprite[] CardIconFrames => iconFrames;

@@ -1,5 +1,9 @@
 using UnityEngine;
 
+// what kind of harm a weapon does. every weapon is one or the other; StatContext keeps a damage
+// multiplier per class, the hook for class passives, characters and resistances later
+public enum AttackClass { Physical, Magical }
+
 // a weapon's level up card and all of its settings in one asset. because it's an UpgradeData,
 // the level up pool finds it on its own: the first pick adds the weapon to the player and every
 // pick after levels it up. the card text is written from the level table, so it can't drift.
@@ -17,6 +21,11 @@ public abstract class WeaponData : UpgradeData
 
     public abstract int LevelCount { get; }
     public override UpgradeCategory Category => UpgradeCategory.Weapon;
+
+    // its attack class, set by each weapon in code: arrows and blades are Physical, talismans,
+    // spells and summoned things Magical
+    public virtual AttackClass AttackClass => AttackClass.Physical;
+    public override string CategoryLabel => $"{Category} ({AttackClass})";
     public override Sprite CardIcon => NextPickEvolves && evolvedIcon != null ? evolvedIcon : icon;
     public override Sprite[] CardIconFrames => NextPickEvolves && evolvedIcon != null ? evolvedIconFrames : iconFrames;
     public override int MaxLevel => Mathf.Max(1, LevelCount);

@@ -16,6 +16,12 @@ public class StatContext : MonoBehaviour
     public int pierceAdd = 0;
     public float moveSpeedMul = 1f;
 
+    // damage multipliers per attack class (WeaponData.AttackClass). nothing in the run changes
+    // them yet: they're where class passives, characters and enemy resistances plug in
+    public float physicalDamageMul = 1f;
+    public float magicalDamageMul = 1f;
+    public float ClassMul(AttackClass attackClass) => attackClass == AttackClass.Magical ? magicalDamageMul : physicalDamageMul;
+
     // overcharge is kept apart from the level multipliers and recomputed from its stack count,
     // never compounded, which is what keeps it bounded
     private readonly Dictionary<UpgradeType, float> overcharge = new Dictionary<UpgradeType, float>();
@@ -182,6 +188,8 @@ public class StatContext : MonoBehaviour
         critMultiplier = 2f;
         pierceAdd = 0;
         moveSpeedMul = 1f;
+        physicalDamageMul = 1f;
+        magicalDamageMul = 1f;
         overcharge.Clear();
     }
 
