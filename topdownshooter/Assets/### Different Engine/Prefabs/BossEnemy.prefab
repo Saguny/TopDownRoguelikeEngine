@@ -185,6 +185,7 @@ MonoBehaviour:
   baseMaxHealth: 300
   currentHealth: 0
   armor: 5
+  armour: 0
   wenDropPrefab: {fileID: 6789325886152309237, guid: 42881677769281a46a72816921134c5f, type: 3}
   minWen: 10
   maxWen: 150
@@ -429,5 +430,8 @@ MonoBehaviour:
   minionHealthShare: 0.03
   raiseFx: {fileID: 7713488252734426900, guid: 6bf0707005c00594f81c25a96b71aa47, type: 3}
   raiseRadius: 3.2
+  raiseWarning: 0.9
+  raiseMarkRadius: 0.75
+  riseSeconds: 0.5
   barWidth: 2.2
   barHeight: 1.9324323

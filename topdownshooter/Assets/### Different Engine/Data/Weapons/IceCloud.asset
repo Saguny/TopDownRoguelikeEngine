@@ -90,6 +90,7 @@ MonoBehaviour:
   sprayDamage: 15
   sprayFreezeSeconds: 2
   sprayPiles: 5
+  sprayGusts: 10
   tornadoSpeed: 1.2
   cloudFrames:
   - {fileID: -7989700314395280071, guid: 7e536ec807454ebfa183cee456e6833b, type: 3}
@@ -131,6 +132,7 @@ MonoBehaviour:
   - {fileID: -3614231966787230550, guid: 273d47f79ef4441f80a8377ee740b2e7, type: 3}
   - {fileID: 5799873563644912906, guid: 273d47f79ef4441f80a8377ee740b2e7, type: 3}
   - {fileID: 2783141445176839811, guid: 273d47f79ef4441f80a8377ee740b2e7, type: 3}
+  tornadoBasePixels: 44
   tornadoFps: 14.3
   frostBurstFx: {fileID: 9063948996650428897, guid: 322f5a2581bd2c942a5c0efcec0b1822, type: 3}
   cloudColor: {r: 0.85, g: 0.93, b: 1, a: 0.8}

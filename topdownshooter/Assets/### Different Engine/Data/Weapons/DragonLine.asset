@@ -68,6 +68,7 @@ MonoBehaviour:
   headMultiplier: 3
   segments: 10
   lengthOfScreen: 0.4
+  lineOverhang: 1
   telegraphSeconds: 0.45
   crossSeconds: 1.1
   weave: 0.35

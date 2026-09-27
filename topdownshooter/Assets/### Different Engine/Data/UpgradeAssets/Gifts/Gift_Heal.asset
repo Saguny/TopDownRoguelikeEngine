@@ -13,9 +13,13 @@ MonoBehaviour:
   m_Name: Gift_Heal
   m_EditorClassIdentifier: 
   title: Peach of Immortality
-  type: 0
-  icon: {fileID: 0}
-  iconFrames: []
+  type: 23
+  icon: {fileID: 6440647166383665046, guid: 071b7f955ed48674085ab8158a91d3ba, type: 3}
+  iconFrames:
+  - {fileID: 6440647166383665046, guid: 071b7f955ed48674085ab8158a91d3ba, type: 3}
+  - {fileID: -5618124522825078196, guid: 071b7f955ed48674085ab8158a91d3ba, type: 3}
+  - {fileID: 982568288106974168, guid: 071b7f955ed48674085ab8158a91d3ba, type: 3}
+  - {fileID: 7143101463611644472, guid: 071b7f955ed48674085ab8158a91d3ba, type: 3}
   iconFps: 7
   includeInPool: 0
   value: 0

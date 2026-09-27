@@ -13,9 +13,13 @@ MonoBehaviour:
   m_Name: Gift_Coins
   m_EditorClassIdentifier: 
   title: String of Wen
-  type: 0
-  icon: {fileID: 0}
-  iconFrames: []
+  type: 23
+  icon: {fileID: 4665841651767693268, guid: 8ba640dcbad90434f9eebf530f1a7724, type: 3}
+  iconFrames:
+  - {fileID: 4665841651767693268, guid: 8ba640dcbad90434f9eebf530f1a7724, type: 3}
+  - {fileID: 5339655015169384722, guid: 8ba640dcbad90434f9eebf530f1a7724, type: 3}
+  - {fileID: 1738990510086846310, guid: 8ba640dcbad90434f9eebf530f1a7724, type: 3}
+  - {fileID: -1871778242280963027, guid: 8ba640dcbad90434f9eebf530f1a7724, type: 3}
   iconFps: 7
   includeInPool: 0
   value: 0

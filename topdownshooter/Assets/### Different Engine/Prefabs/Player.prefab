@@ -206,6 +206,8 @@ MonoBehaviour:
   wenForUpgrade: 5
   wenIncreaseMultiplier: 1.3
   allUpgrades:
+  - {fileID: 11400000, guid: 4818cc3bd0784bf6904f13f756a45296, type: 2}
+  - {fileID: 11400000, guid: 285b6c784cb74be8b67e661ec580ac3e, type: 2}
   - {fileID: 11400000, guid: 09adf57cc4790824cbce1fc2cd034da7, type: 2}
   - {fileID: 11400000, guid: c10186fdfe712d441af76ac343569e4b, type: 2}
   - {fileID: 11400000, guid: 173762e4a423cf3419586d3d31cd4e33, type: 2}
@@ -244,6 +246,9 @@ MonoBehaviour:
   weaponSlots: 6
   passiveSlots: 6
   heldWeaponBonus: 0.1
+  evolveFromEnvelopesOnly: 1
+  coinsGift: {fileID: 0}
+  healGift: {fileID: 0}
   menuGraceSeconds: 2
 --- !u!114 &4463241459436760605
 MonoBehaviour:
@@ -422,6 +427,7 @@ MonoBehaviour:
   critChance: 0
   critMultiplier: 2
   pierceAdd: 0
+  armourPierce: 0
   moveSpeedMul: 1
   physicalDamageMul: 1
   magicalDamageMul: 1
