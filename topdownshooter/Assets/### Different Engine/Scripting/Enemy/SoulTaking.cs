@@ -223,7 +223,7 @@ public class SoulTaking : MonoBehaviour
 
     private static void Play(AudioClip clip, Vector3 at)
     {
-        if (clip != null) SfxPlayer.PlayAt(clip, at, 1f);
+        if (clip != null) SfxPlayer.PlayAt(clip, at, VfxLibrary.Get != null ? VfxLibrary.Get.wuchangVolume : 0.45f);
     }
 
     // ---------------------------------------------------------------- the ink

@@ -74,13 +74,13 @@ MonoBehaviour:
     bounces: 5
     cooldown: 2
   launchRing: 0.8
-  speed: 18
+  speed: 9
   launchSwing: 55
   turnRate: 300
   clusterRadius: 2.2
   range: 14
-  bounceAcceleration: 0.22
-  maxSpeed: 48
+  bounceAcceleration: 0.15
+  maxSpeed: 22
   bonusPerBounce: 0.12
   hitRadius: 0.4
   bounceOffStrong: 1

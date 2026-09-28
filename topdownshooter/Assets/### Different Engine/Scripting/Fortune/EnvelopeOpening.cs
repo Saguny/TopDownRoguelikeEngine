@@ -274,12 +274,13 @@ public class EnvelopeOpening : MonoBehaviour
         prompt.rectTransform.anchoredPosition = new Vector2(0f, -72f * Big * 0.5f - 70f);
         prompt.gameObject.SetActive(true);
         if (lib != null && lib.envelopeIdle != null) { hum.clip = lib.envelopeIdle; hum.volume = 0f; hum.Play(); }
+        float mix = lib != null ? lib.envelopeVolume : 0.25f;
         float idle = 0f, nextTwitch = 0.9f, twitch = -1f;
         yield return null;
         while (!Pressed())
         {
             idle += Dt;
-            if (hum.isPlaying) hum.volume = Mathf.Clamp01(idle / 0.5f);
+            if (hum.isPlaying) hum.volume = Mathf.Clamp01(idle / 0.5f) * mix;
             float breathe = 0.5f + 0.5f * Mathf.Sin(idle * 2.4f);
             aura.color = WithAlpha(Unopened, 0.16f + 0.1f * breathe);
             aura.rectTransform.localScale = Vector3.one * (0.85f + 0.08f * breathe);
@@ -318,7 +319,7 @@ public class EnvelopeOpening : MonoBehaviour
         // hurries it
         float charge = ChargeSeconds(rarity);
         var riserClip = rarity == EnvelopeRarity.Legendary ? lib?.chargeLegendary : rarity == EnvelopeRarity.Rare ? lib?.chargeRare : lib?.chargeCommon;
-        if (riserClip != null) { riser.clip = riserClip; riser.Play(); }
+        if (riserClip != null) { riser.clip = riserClip; riser.volume = lib != null ? lib.envelopeVolume : 0.25f; riser.Play(); }
         bool rareShown = false, legendaryShown = false, hurried = false;
         float jitterClock = 0f;
         Vector2 jitter = Vector2.zero;
@@ -822,7 +823,7 @@ public class EnvelopeOpening : MonoBehaviour
         nextVoice = (nextVoice + 1) % voices.Length;
         v.Stop();
         v.pitch = pitch;
-        v.PlayOneShot(clip, volume);
+        v.PlayOneShot(clip, volume * (lib != null ? lib.envelopeVolume : 0.25f));
     }
 
     private static float EaseOut(float t) => 1f - (1f - t) * (1f - t);

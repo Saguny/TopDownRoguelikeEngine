@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // Feijian, flown the way Terraria's Empress of Light flies her prismatic bolts and lances: blades
-// appear in a ring round the player and snap away at full speed with no telegraph, swing round in
-// an arc onto the thickest part of the horde, cut straight through it and ricochet off the
-// screen's edges (and off elites and bosses), faster with every bounce, until their bounces are
-// spent. a luminous streak follows each one, so its arc and every ricochet can be read in a crowd.
+// appear in a ring round the player and snap away with no telegraph, each off in a direction of its
+// own, cut straight through whatever's in the way and ricochet off the screen's edges (and off
+// elites and bosses), faster with every bounce, until their bounces are spent. only once evolved do
+// they find the horde: they swing round in an arc onto its thickest part, and again off every bounce. a luminous streak follows each one, so its arc and every ricochet can be read in a crowd.
 // evolved (the Sovereign Blade Array), every so often a pair of master blades launches at top
 // speed; their bounces spent, they anchor in the screen's borders and a crackling tripwire laser
 // burns between the two for a few seconds, then both shatter. each blade only links to its own
@@ -33,7 +33,7 @@ public class FlyingSword : Weapon<FlyingSwordData>
         public float laserAge = -1f, waited, tick, arcs;
     }
 
-    private const float MaxLife = 8f;
+    private const float MaxLife = 14f;     // slow blades with five bounces to spend take a while
     private const float WorldPpu = 37f / 1.3f;
 
     private readonly List<Blade> live = new List<Blade>();
@@ -93,11 +93,23 @@ public class FlyingSword : Weapon<FlyingSwordData>
 
     // ---------------------------------------------------------------- launching
 
-    // the blades appear round the player, spread round the ring, and snap away. each leaves off to
-    // one side of the crowd it's after, so it swings onto it in an arc rather than a straight line
+    // the blades appear round the player, spread round the ring, and snap away. unevolved they fly
+    // straight out, each its own way, and it's the bounces that bring them through the horde.
+    // evolved, each leaves off to one side of the crowd it's after, so it swings onto it in an arc
     private bool Launch(FlyingSwordData.LevelStats lv)
     {
         Vector2 me = transform.position;
+        if (!Data.IsEvolved(Level))
+        {
+            int count = lv.blades;
+            float turn = Random.Range(0f, 360f);
+            for (int i = 0; i < count; i++)
+            {
+                Vector2 dir = Rotate(Vector2.right, turn + i * 360f / count + Random.Range(-20f, 20f));
+                Take(me + dir * Data.launchRing, dir, lv.bounces, false, null, Data.speed * SpeedMul);
+            }
+            return true;
+        }
         if (!FindCrowd(me, out Vector2 crowd)) return false;
 
         Vector2 toward = (crowd - me).normalized;
@@ -260,7 +272,8 @@ public class FlyingSword : Weapon<FlyingSwordData>
             return;
         }
 
-        b.hasTarget = FindCrowd(b.pos, out b.target) && Vector2.Dot(b.target - b.pos, b.dir) > -0.2f;
+        // unevolved it just carries on the way it bounced; evolved it looks for the next crowd
+        b.hasTarget = Data.IsEvolved(Level) && FindCrowd(b.pos, out b.target) && Vector2.Dot(b.target - b.pos, b.dir) > -0.2f;
     }
 
     // a spent blade reaching an edge: an ordinary one breaks off there, a master blade anchors

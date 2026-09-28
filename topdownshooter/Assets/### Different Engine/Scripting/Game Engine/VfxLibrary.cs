@@ -76,6 +76,8 @@ public class VfxLibrary : ScriptableObject
     public Sprite[] peachIcon = new Sprite[0];
 
     [Header("Opening it: sound (optional)")]
+    [Tooltip("the envelope's sounds are made at the game's reference loudness; this sets them in the mix, like the level up's 0.25")]
+    [Range(0f, 1f)] public float envelopeVolume = 0.25f;
     public AudioClip envelopePickupSound;
     [Tooltip("looped while it waits to be clicked open")]
     public AudioClip envelopeIdle;
@@ -101,6 +103,8 @@ public class VfxLibrary : ScriptableObject
     public Sprite[] maw = new Sprite[0];
     [Tooltip("ink flooding the screen before the results, the screen's shape")]
     public Sprite[] inkWipe = new Sprite[0];
+    [Tooltip("the Wuchang's chain and swallow in the mix")]
+    [Range(0f, 1f)] public float wuchangVolume = 0.45f;
     public AudioClip chainSound;
     public AudioClip swallowSound;
 

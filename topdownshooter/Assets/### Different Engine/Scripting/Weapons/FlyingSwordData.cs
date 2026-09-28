@@ -41,21 +41,21 @@ public class FlyingSwordData : WeaponData<FlyingSword>
     [Tooltip("how far from the player the blades appear, in a ring round them")]
     public float launchRing = 0.8f;
     [Tooltip("speed the instant it's launched, before Weapon Speed: no wind up, it snaps away")]
-    public float speed = 18f;
-    [Tooltip("degrees each blade leaves off to the side of its target, so it swings round onto it in an arc")]
+    public float speed = 9f;
+    [Tooltip("evolved: degrees each blade leaves off to the side of its target, so it swings round onto it in an arc")]
     public float launchSwing = 55f;
 
     [Header("Flight")]
-    [Tooltip("degrees a second a blade turns onto the crowd it's after: lower is a wider arc")]
+    [Tooltip("evolved: degrees a second a blade turns onto the crowd it's after: lower is a wider arc. unevolved blades don't seek")]
     public float turnRate = 300f;
     [Tooltip("how close together enemies have to be to count as a crowd worth curving onto")]
     public float clusterRadius = 2.2f;
     [Tooltip("how far a blade looks for a crowd")]
     public float range = 14f;
     [Tooltip("how much faster it gets off every bounce: 0.22 = 22%")]
-    [Min(0f)] public float bounceAcceleration = 0.22f;
-    [Tooltip("the fastest a blade gets, however many times it bounces, before Weapon Speed")]
-    public float maxSpeed = 48f;
+    [Min(0f)] public float bounceAcceleration = 0.15f;
+    [Tooltip("the fastest a blade gets, however many times it bounces, before Weapon Speed. the master blades fly at it")]
+    public float maxSpeed = 22f;
     [Tooltip("extra damage for every bounce it has done: 0.12 = +12% a bounce")]
     [Min(0f)] public float bonusPerBounce = 0.12f;
     [Tooltip("radius it hits in, before Area. it goes straight through ordinary enemies")]
@@ -150,11 +150,11 @@ public class FlyingSwordData : WeaponData<FlyingSword>
     public override string Describe(int level)
     {
         if (IsEvolved(level))
-            return $"Evolution: every {cageCooldown:0.#}s master blades launch at top speed and anchor in the screen's borders. A tripwire laser burns between each pair for {laserSeconds:0}s, then they shatter.";
+            return $"Evolution: the blades seek out the thickest crowds. Every {cageCooldown:0.#}s master blades launch at top speed and anchor in the screen's borders; a tripwire laser burns between each pair for {laserSeconds:0}s, then they shatter.";
 
         var s = At(level);
         if (level <= 1)
-            return $"Blades snap away from you, arc onto the crowd and ricochet off the screen's edges {s.bounces} times, faster every bounce. {s.damage:0} to everything they pass through.";
+            return $"Blades snap away from you in every direction and ricochet off the screen's edges {s.bounces} times, faster every bounce. {s.damage:0} to everything they pass through.";
 
         var was = At(level - 1);
         var changes = new List<string>();

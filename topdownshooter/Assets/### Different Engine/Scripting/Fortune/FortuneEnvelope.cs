@@ -183,7 +183,7 @@ public class FortuneEnvelope : MonoBehaviour
         if (lib != null)
         {
             if (Animated(lib.envelopePickup)) FxBatch.Play(lib.envelopePickup, 25f, transform.position + Vector3.up * 0.2f, 1.3f);
-            if (lib.envelopePickupSound != null) SfxPlayer.PlayAt(lib.envelopePickupSound, transform.position, 1f);
+            if (lib.envelopePickupSound != null) SfxPlayer.PlayAt(lib.envelopePickupSound, transform.position, lib.envelopeVolume * 1.6f);
         }
         EnvelopeOpening.Open(Rarity, Source);
         Destroy(gameObject);
