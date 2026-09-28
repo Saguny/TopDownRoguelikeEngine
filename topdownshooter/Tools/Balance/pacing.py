@@ -81,8 +81,9 @@ def old_cost(level):
 
 
 FITTED = {}         # level -> cost, from the schedule and the income model (main)
-GROWTH = 1.006      # the least each level costs over the one before (the income flattens late; a
-                    # level shouldn't feel cheaper for it, it just comes a little behind the schedule)
+GROWTH = 0.97       # the least each level costs next to the one before: the income flattens late
+                    # while the build has to be finished by FULL_BY, so late levels may get a little
+                    # cheaper, never suddenly
 # the clear times the playtest was played at (balance.py's CLEAR has changed since)
 OLD_CLEAR = [(0, 2.5), (5, 3.5), (10, 5.0), (15, 6.0), (20, 7.0), (25, 7.5), (30, 8.0)]
 
@@ -101,20 +102,72 @@ def vs_cost(level):
     return 455 + 16 * (level - 40)
 
 
+# the build maxed before the final boss: by FULL_BY every weapon and passive a typical run holds is
+# at its top level, and a level up only offers gold and a heal from then on (as Vampire Survivors
+# does once everything's maxed). the picks that takes are counted from the assets (picks_to_max);
+# the fortune envelopes give some of them, the level ups the rest
+FULL_BY = 25.0
+# the upgrades the envelopes give by then, each an upgrade a level up needn't: the nine Final
+# Rushes' one envelope each (a boss's: 1, 3 or 5 upgrades at 45/42/13%, 2.36 on average) and the
+# five elites' (70/25/5%, 1.7), less the evolutions they give instead (one each from 10:00, about
+# five in a run)
+ENVELOPE_UPGRADES = 9 * 2.36 + 5 * 1.7 - 5
+
+
+def picks_to_max():
+    """a typical run's build maxed: six weapons and six passives of the pool, each at its average
+    top level, and the Command Token. the evolutions aren't level ups (envelopes give them)"""
+    import glob
+    weapons, passives, token = [], [], 0
+    for path in glob.glob(os.path.join(B.GAME, "Data", "Weapons", "*.asset")):
+        text = open(path, encoding="utf-8").read()
+        pool = re.search(r"^  includeInPool: (\d)", text, re.M)
+        if pool and pool.group(1) == "0": continue
+        n = len(B.levels(text))
+        if "title: Command Token" in text: token = n
+        else: weapons.append(n)
+    for path in glob.glob(os.path.join(B.GAME, "Data", "UpgradeAssets", "*.asset")):
+        text = open(path, encoding="utf-8").read()
+        pool = re.search(r"^  includeInPool: (\d)", text, re.M)
+        if pool and pool.group(1) == "0": continue
+        top = re.search(r"^  maxLevel: (\d+)", text, re.M)
+        passives.append(int(top.group(1)) if top else 5)
+    return 6 * sum(weapons) / len(weapons) + 6 * sum(passives) / len(passives) + token
+
+
+def full_level():
+    """the level a run needs to have reached by FULL_BY: the picks to max, less the starting
+    weapon's first level (it's held from the start) and what the envelopes give"""
+    return round(1 + picks_to_max() - 1 - ENVELOPE_UPGRADES)
+
+
+def schedule():
+    """the balance schedule (balance.py's LEVEL) to 15:00, then on to the full build by FULL_BY and
+    a few levels past it by 30:00 (gold and heals by then). QUICKEN is on top of this, so these are
+    set a little lower; LATE_EASE says by how much"""
+    full = full_level() * LATE_EASE
+    early = [(m, l) for m, l in B.LEVEL if m <= 15]
+    m15 = early[-1][1]
+    return early + [(20, (m15 + full) / 2 + 2), (FULL_BY, full), (27, full + 2), (30, full + 5)]
+
+
+LATE_EASE = 0.94
+
+
 def minute_of(level):
     """when the schedule reaches `level`"""
-    table = [(l, m) for m, l in B.LEVEL]
+    table = [(l, m) for m, l in schedule()]
     return B.lerp_table(table, level)
 
 
 def fit(wen_by_minute):
     """each level's cost from BLEND_TO to the schedule's last, then Vampire Survivors' growth"""
-    last_level = B.LEVEL[-1][1]
+    last_level = int(schedule()[-1][1])
     prev = 0
     for level in range(BLEND_TO, 100):
         if level < last_level:
             c = wen_by_minute(minute_of(level + 1)) - wen_by_minute(minute_of(level))
-            prev = max(round(prev * GROWTH), round(c))     # never cheaper than the level before, a little dearer
+            prev = max(round(prev * GROWTH), round(c))
         else:
             prev = round(FITTED[last_level - 1] * vs_cost(level) / vs_cost(last_level - 1))
         FITTED[level] = prev
@@ -158,10 +211,11 @@ def main():
         return max(l for l in range(1, 100) if cumulative[l - 1] <= wen)
 
     print(f"measured: {observed:.0f} wen by {OBSERVED_SECONDS // 60}:{OBSERVED_SECONDS % 60:02d} -> K = {k:.4f}")
+    print(f"a build maxed: {picks_to_max():.0f} picks; {ENVELOPE_UPGRADES:.0f} from envelopes -> level {full_level()} by {FULL_BY:g}:00")
     print(f"{'minute':>6} {'schedule':>9} {'model wen':>10} {'level it buys':>14}")
     for m in (1, 3, 5, 7.5, 10, 15, 20, 25, 27, 30):
         wen = k * banked(cap_now, m * 60)
-        print(f"{m:>6} {B.lerp_table(B.LEVEL, m):>9.0f} {wen:>10.0f} {level_with(cumulative, wen):>14}")
+        print(f"{m:>6} {B.lerp_table(schedule(), m):>9.0f} {wen:>10.0f} {level_with(cumulative, wen):>14}")
     print("cost of each level: " + ", ".join(f"{l}: {cost[l]}" for l in (1, 2, 5, 10, 15, 20, 25, 30, 40, 50, 60, 80, 99)))
 
     if "--apply" in sys.argv:
