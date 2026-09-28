@@ -226,6 +226,11 @@ MonoBehaviour:
   - {fileID: 982568288106974168, guid: 071b7f955ed48674085ab8158a91d3ba, type: 3}
   - {fileID: 7143101463611644472, guid: 071b7f955ed48674085ab8158a91d3ba, type: 3}
   envelopePickupSound: {fileID: 8300000, guid: f874ea8147237424c8c08cab7bd9fddd, type: 3}
+  envelopeIdle: {fileID: 8300000, guid: 4c0e4b4afc14c1841b979820fee3a54e, type: 3}
+  envelopeClick: {fileID: 8300000, guid: f4cc5375b83ffe140aa9de68d98bd91e, type: 3}
+  chargeCommon: {fileID: 8300000, guid: 6b61c3320b1ae46449e0d4b70d2e6b62, type: 3}
+  chargeRare: {fileID: 8300000, guid: 1b468fd386aca774c8eb671cc28fed58, type: 3}
+  chargeLegendary: {fileID: 8300000, guid: 2f6d171f30a27b347a34bbc1204fe0a7, type: 3}
   envelopeShake: {fileID: 8300000, guid: f683ff9c9b9e4eb4f8649b33d07e7214, type: 3}
   envelopeTier: {fileID: 8300000, guid: 614e48563e3bf1b47947ef69d5ffc22b, type: 3}
   envelopeOpen: {fileID: 8300000, guid: 9057216b693ea4949af4ac830dc47c9a, type: 3}
