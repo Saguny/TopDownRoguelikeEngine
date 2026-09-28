@@ -12,10 +12,10 @@ public class GameLoopController : MonoBehaviour
     [SerializeField] private GameObject subjectiveDeathFx;
 
     [Header("normal mode ending")]
-    [Tooltip("in normal mode, clearing this wave starts the final boss instead of the next wave")]
-    [SerializeField, Min(1)] private int finalWave = 6;
-    [Tooltip("in normal mode the final boss comes by this run minute at the latest, even mid wave, so it's up well before the time limit (RunTimeLimit, 30:00)")]
-    [SerializeField, Min(1f)] private float finalBossByMinute = 25f;
+    [Tooltip("in normal mode, the last wave: the final boss comes as it starts, and it runs until the time limit (RunTimeLimit, 30:00). 10 waves of 3 minutes: it starts at 27:00")]
+    [SerializeField, Min(1)] private int finalWave = 10;
+    [Tooltip("in normal mode the final boss comes by this run minute at the latest, even mid wave. a fallback: the last wave brings it first")]
+    [SerializeField, Min(1f)] private float finalBossByMinute = 28f;
 
     // new: scene ui reference
     [Header("secret boss ui")]
@@ -58,6 +58,16 @@ public class GameLoopController : MonoBehaviour
     {
         while (true)
         {
+            // normal mode's last wave is the final boss's: it comes as the wave starts, the crowd
+            // keeps coming, and the night goes on until the time runs out (RunTimeLimit)
+            if (!GameMode.IsEndless && waveIndex + 1 >= finalWave)
+            {
+                GameEvents.OnWaveStarted?.Invoke(waveIndex + 1);
+                GameEvents.OnFinalBossStarted?.Invoke();
+                yield return BossClock();
+                yield break;
+            }
+
             GameEvents.OnWaveStarted?.Invoke(waveIndex + 1);
             elapsed = 0f;
             waveKills = 0;
@@ -111,7 +121,7 @@ public class GameLoopController : MonoBehaviour
             }
             AwaitingEnvelope = false;
 
-            if (!GameMode.IsEndless && (waveIndex + 1 >= finalWave || BossIsDue))
+            if (BossIsDue)
             {
                 GameEvents.OnFinalBossStarted?.Invoke();
                 yield return BossClock();
