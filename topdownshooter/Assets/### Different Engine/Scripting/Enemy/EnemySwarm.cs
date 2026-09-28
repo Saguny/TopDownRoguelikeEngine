@@ -22,6 +22,19 @@ public class EnemySwarm : MonoBehaviour
 
     public static int Count => members.Count;
 
+    // every walking enemy within `radius` of `centre` (a lantern's aura, a charging bull's path),
+    // added to `into`. a plain pass over the swarm: fine a few times a second
+    public static void Near(Vector2 centre, float radius, List<EnemyMovement> into)
+    {
+        float r2 = radius * radius;
+        for (int i = 0; i < members.Count; i++)
+        {
+            var m = members[i];
+            if (m == null) continue;
+            if (((Vector2)m.transform.position - centre).sqrMagnitude <= r2) into.Add(m);
+        }
+    }
+
     internal static void Join(EnemyMovement m)
     {
         if (!Application.isPlaying) return;

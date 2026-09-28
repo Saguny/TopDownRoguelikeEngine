@@ -75,6 +75,7 @@ public class EnemyMovement : MonoBehaviour
         _driveUntil = 0f;
         _hasteUntil = 0f;
         _haste = 1f;
+        _faceUntil = 0f;
         _smoothedDirection = Vector2.zero;
         _avoidanceSide = 0f;
         _radius = -1f;
@@ -147,9 +148,10 @@ public class EnemyMovement : MonoBehaviour
         _rigidbody.linearVelocity = velocity;
 
         // only touch the renderer and animator when something actually changes
-        if (_sr != null && Mathf.Abs(_smoothedDirection.x) >= 0.01f)
+        Vector2 facing = now < _faceUntil ? _face : _smoothedDirection;
+        if (_sr != null && Mathf.Abs(facing.x) >= 0.01f)
         {
-            bool right = _smoothedDirection.x > 0f;
+            bool right = facing.x > 0f;
             if (!_facingKnown || right != _facingRight)
             {
                 _facingRight = right;
@@ -275,6 +277,9 @@ public class EnemyMovement : MonoBehaviour
     // its walking speed right now (the run's curve and its kind's), for behaviours that move it themselves
     public float Speed => _speed;
 
+    // its walking speed set outright, units a second (a guardian's march at half the player's)
+    public void SetSpeed(float unitsPerSecond) => _speed = Mathf.Max(0f, unitsPerSecond);
+
     private Vector2 _drive;
     private float _driveUntil;
     private bool _driveGhost;
@@ -289,6 +294,16 @@ public class EnemyMovement : MonoBehaviour
     }
 
     public bool Driven => Time.time < _driveUntil;
+
+    private Vector2 _face;
+    private float _faceUntil;
+
+    // faces `direction` for `seconds` whichever way it's going (a dash, a charge, a lob)
+    public void Face(Vector2 direction, float seconds)
+    {
+        _face = direction;
+        _faceUntil = Time.time + seconds;
+    }
     public void StopDrive() => _driveUntil = 0f;
 
     private float _haste = 1f, _hasteUntil;

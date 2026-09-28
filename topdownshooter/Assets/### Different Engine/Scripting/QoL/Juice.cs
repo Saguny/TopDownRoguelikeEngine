@@ -95,6 +95,8 @@ public class Juice : MonoBehaviour
             case DamageKind.Aura: return new Color(0.55f, 0.85f, 1f);
             case DamageKind.Meteor: return new Color(1f, 0.55f, 0.2f);
             case DamageKind.Weapon: return new Color(1f, 0.82f, 0.45f);
+            // underworld red-violet, nothing like any of the player's, so it's plain it isn't theirs
+            case DamageKind.Hostile: return new Color(0.86f, 0.18f, 0.52f);
             default: return Color.white;
         }
     }
@@ -106,6 +108,7 @@ public class Juice : MonoBehaviour
         switch (kind)
         {
             case DamageKind.Meteor: return 2;
+            case DamageKind.Hostile: return 2;
             default: return 1;
         }
     }
@@ -193,5 +196,6 @@ public enum DamageKind
     Aura,
     Meteor,
     Silent,
-    Weapon // everything added through WeaponData
+    Weapon, // everything added through WeaponData
+    Hostile // one enemy hurting another (a charging Bull-Head trampling the horde): not the player's
 }

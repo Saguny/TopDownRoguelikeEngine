@@ -86,6 +86,15 @@ public class EnemyHealth : MonoBehaviour, IHealth
     public GameObject HealItemPrefab => healItemPrefab;
     public float Current => currentHealth;
     public event Action<float, float> OnHealthChanged;
+    // this one's death, as it happens (before it's pooled): an enemy with its own death to show
+    public event Action<EnemyHealth> Died;
+    // its own death animation in place of the usual one (a paper servant tearing, a lantern going
+    // out); set by the enemy's art
+    [NonSerialized] public Sprite[] deathFrames;
+    [NonSerialized] public float deathFps = 20f, deathScale = 1f;
+    public bool IsDead => _dead;
+    // killed by a purge rather than the player: no fanfare
+    public bool Purged => _silentDeath;
 
     private bool _dead;
     private IDamageGate _gate;
@@ -225,7 +234,8 @@ public class EnemyHealth : MonoBehaviour, IHealth
 
         // armour: a flat amount off each hit (not for damage over time) and a share of every hit,
         // both cut by Armour Piercing. a hit that armour blunted shows its number in steel
-        float pierce = kind == DamageKind.Silent ? 1f : 1f - Mathf.Clamp01(ArmourPierce);
+        // an enemy's own kind trampling it (DamageKind.Hostile) goes straight through its armour
+        float pierce = kind == DamageKind.Silent ? 1f : kind == DamageKind.Hostile ? 0f : 1f - Mathf.Clamp01(ArmourPierce);
         float dmg = ignoreArmor ? rawDamage : Mathf.Max(0f, rawDamage - armor * pierce);
         dmg *= 1f - armour * pierce;
         if (source != null) dmg *= source.AttackClass == AttackClass.Magical ? magicalTaken : physicalTaken;
@@ -338,11 +348,16 @@ public class EnemyHealth : MonoBehaviour, IHealth
         try { OnEnemyDied?.Invoke(); } catch { }
         try { GameEvents.OnEnemyKilled?.Invoke(1); } catch { }
 
-        // the death: a batched pixel animation, one mesh for every enemy dying at once. the Show
-        // Blood option swaps the blood for motes of qi. the old particle burst is the fallback
+        try { Died?.Invoke(this); } catch (Exception e) { Debug.LogException(e); }
+
+        // the death: a batched pixel animation, one mesh for every enemy dying at once, its own if
+        // it has one. the Show Blood option swaps the blood for motes of qi. the old particle burst
+        // is the fallback
         var library = VfxLibrary.Get;
         var dying = library != null ? (GameSettings.ShowBlood ? library.enemyDeath : library.enemyDeathBloodless) : null;
-        if (dying != null && dying.Length > 0)
+        if (deathFrames != null && deathFrames.Length > 0)
+            FxBatch.Play(deathFrames, deathFps, transform.position, deathScale * (TryGetComponent(out EliteOutline _) ? 1.4f : 1f));
+        else if (dying != null && dying.Length > 0)
             FxBatch.Play(dying, library.deathFps, transform.position, TryGetComponent(out EliteOutline _) ? 1.6f : TryGetComponent(out BossMarker _) ? 2.2f : 1f);
         else
         {

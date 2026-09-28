@@ -16,6 +16,8 @@ public struct Shot
     public float delay;             // seconds it hangs where it appears, flashing, harmless, before it flies
     public float life;
     public float damage;            // a share of the player's max health: bullets never scale with the run
+    public float home, homeFor;     // degrees/s it turns toward the player, for its first `homeFor` seconds
+    public bool silent;             // no firing sound: the enemy that fired it has its own
 
     public bool hasChange;
     public float changeAt, changeSpeed, changeAccel, changeTurn, changeAngle;
@@ -39,6 +41,12 @@ public struct Shot
     public Shot Turn(float degreesPerSecond) { turn = degreesPerSecond; return this; }
     public Shot Delay(float seconds) { delay = seconds; return this; }
     public Shot Life(float seconds) { life = seconds; return this; }
+    public Shot Hurts(float share) { damage = share; return this; }
+    public Shot Silent() { silent = true; return this; }
+
+    // steers toward the player, at most `degreesPerSecond`, for its first `seconds` of flight, then
+    // flies on straight: a wisp that follows, but can be shaken off
+    public Shot Home(float degreesPerSecond, float seconds = 999f) { home = degreesPerSecond; homeFor = seconds; return this; }
 
     // `at` seconds into its flight: new speed, acceleration and turn, and either aimed at the
     // player (plus `angle`) or turned by `angle`
@@ -168,7 +176,7 @@ public class Danmaku : MonoBehaviour
         if (d == null) return;
         if (d.count == d.bullets.Length) System.Array.Resize(ref d.bullets, d.count * 2);
         d.bullets[d.count++] = new B { s = s, pos = at, angle = angle, speed = s.speed, accel = s.accel, turn = s.turn };
-        d.Sound(s.type, at);
+        if (!s.silent) d.Sound(s.type, at);
     }
 
     public static void Ring(Vector2 at, int n, float angle0, Shot s)
@@ -314,6 +322,12 @@ public class Danmaku : MonoBehaviour
 
             b.speed = Mathf.Clamp(b.speed + b.accel * dt, b.s.minSpeed, b.s.maxSpeed);
             b.angle += b.turn * dt;
+            if (b.s.home > 0f && havePlayer && flying < b.s.homeFor)
+            {
+                Vector2 to = me - b.pos;
+                float want = Mathf.Atan2(to.y, to.x) * Mathf.Rad2Deg;
+                b.angle = Mathf.MoveTowardsAngle(b.angle, want, b.s.home * dt);
+            }
             float rad = b.angle * Mathf.Deg2Rad;
             b.pos += new Vector2(Mathf.Cos(rad), Mathf.Sin(rad)) * (b.speed * dt);
 

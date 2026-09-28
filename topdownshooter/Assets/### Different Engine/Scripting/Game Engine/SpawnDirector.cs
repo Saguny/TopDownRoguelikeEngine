@@ -1676,7 +1676,9 @@ public class SpawnDirector : MonoBehaviour
     // down from it instead
     private void SpawnMagistrate(Vector2 dir, int index = 0)
     {
-        var arch = RushBoss(index);
+        // a map with more than one takes turns by rush too: Huangquan's first rush is Ox-Head's,
+        // its second Horse-Face's, its fourth both
+        var arch = RushBoss(index + Mathf.Max(0, currentWave - 1));
         if (arch == null || arch.prefab == null) return;
         if (!TryEdgePoint(dir, 1.2f, out Vector2 at)) at = GetSpawnPositionNearOffscreenInsideBounds();
         if (GuardianStatue.Awaken(arch, playerTransform != null ? (Vector2)playerTransform.position : at, out Vector2 statue))
