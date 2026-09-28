@@ -192,9 +192,10 @@ function light(im, f, cast, rage) {
     // the stroke: a red crescent of ink swept from above his head down past his side
     const F = D.field(S, S);
     D.each(F, (x, y) => {
-      const d = Math.hypot(x - 30, y - 44), a = Math.atan2(y - 44, x - 30);
-      if (a < 1.2 || a > 3.3 || Math.abs(d - 34) > 3.5) return 0;
-      return 0.9 - Math.abs(d - 34) * 0.18 - (3.3 - a) * 0.1;
+      // kept inside the frame: its leftmost reach is a few pixels in from the edge
+      const d = Math.hypot(x - 40, y - 46), a = Math.atan2(y - 46, x - 40);
+      if (a < 1.25 || a > 3.25 || Math.abs(d - 30) > 3.5) return 0;
+      return 0.9 - Math.abs(d - 30) * 0.18 - (3.25 - a) * 0.1;
     });
     D.shade(im, F, RAGE);
   }
