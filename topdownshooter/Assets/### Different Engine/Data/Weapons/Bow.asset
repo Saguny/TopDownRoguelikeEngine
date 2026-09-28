@@ -74,7 +74,7 @@ MonoBehaviour:
     cooldown: 1
     speed: 16
   evolvedInterval: 0.1
-  evolvedDamageMul: 0.4
+  evolvedDamageMul: 0.8
   outlineColors:
   - {r: 1, g: 0.93, b: 0.55, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}

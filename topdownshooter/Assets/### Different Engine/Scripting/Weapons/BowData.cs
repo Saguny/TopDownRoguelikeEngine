@@ -37,7 +37,7 @@ public class BowData : WeaponData<BowWeapon>
     [Tooltip("seconds between volleys once evolved. it ignores Cooldown: the bow simply never stops")]
     [Min(0.03f)] public float evolvedInterval = 0.1f;
     [Tooltip("the stream is one arrow a shot, each hitting for this share of the last level's damage: lighter arrows, but never a pause between them")]
-    [Range(0.1f, 1f)] public float evolvedDamageMul = 0.4f;
+    [Range(0.1f, 1f)] public float evolvedDamageMul = 0.8f;
     [Tooltip("the shimmer the evolved arrows' outline runs through")]
     public Color[] outlineColors =
     {

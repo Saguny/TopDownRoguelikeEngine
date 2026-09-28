@@ -74,17 +74,17 @@ public class TreasureGourdData : WeaponData<TreasureGourd>
     [Tooltip("how fast bullets are drawn into the mouth, units a second")]
     public float bulletPullSpeed = 9f;
     [Tooltip("the sphere's damage with nothing swallowed, before Might")]
-    public float sphereDamage = 60f;
+    public float sphereDamage = 40f;
     [Tooltip("extra damage for every bullet it swallowed")]
     public float damagePerBullet = 25f;
     [Tooltip("extra damage for every enemy it had hold of while it pulled")]
-    public float damagePerEnemy = 8f;
+    public float damagePerEnemy = 3f;
     [Tooltip("the most swallowed things counted toward the sphere")]
     [Min(1)] public int maxCharge = 40;
     [Tooltip("the burst's radius with nothing swallowed, before Area")]
     public float blastRadius = 2.2f;
     [Tooltip("how much bigger the burst is at a full charge: 0.5 = half again")]
-    public float blastGrowth = 0.5f;
+    public float blastGrowth = 0.3f;
     [Tooltip("units a second, before Weapon Speed")]
     public float sphereSpeed = 7f;
     [Tooltip("how far it flies before it bursts on its own")]

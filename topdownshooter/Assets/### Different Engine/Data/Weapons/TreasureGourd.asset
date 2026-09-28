@@ -101,12 +101,12 @@ MonoBehaviour:
   maxBurnVisuals: 60
   evolvedSuctionSeconds: 2
   bulletPullSpeed: 9
-  sphereDamage: 60
+  sphereDamage: 40
   damagePerBullet: 25
-  damagePerEnemy: 8
+  damagePerEnemy: 3
   maxCharge: 40
   blastRadius: 2.2
-  blastGrowth: 0.5
+  blastGrowth: 0.3
   sphereSpeed: 7
   sphereRange: 9
   sphereScale: {x: 0.9, y: 1.8}

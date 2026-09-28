@@ -23,14 +23,14 @@ public class ElectricAuraData : WeaponData<ElectricAuraWeapon>
     [Header("Levels (the first entry is the unlock)")]
     public LevelStats[] levels =
     {
-        new LevelStats { damage = 10f, radius = 1.65f, interval = 0.5f },
-        new LevelStats { damage = 12f, radius = 1.65f, interval = 0.5f },
-        new LevelStats { damage = 12f, radius = 1.9f, interval = 0.5f },
-        new LevelStats { damage = 15f, radius = 1.9f, interval = 0.5f },
-        new LevelStats { damage = 15f, radius = 2.2f, interval = 0.5f },
-        new LevelStats { damage = 15f, radius = 2.2f, interval = 0.42f },
-        new LevelStats { damage = 19f, radius = 2.5f, interval = 0.42f },
-        new LevelStats { damage = 24f, radius = 2.8f, interval = 0.4f },
+        new LevelStats { damage = 3.5f, radius = 1.65f, interval = 0.5f },
+        new LevelStats { damage = 4.2f, radius = 1.65f, interval = 0.5f },
+        new LevelStats { damage = 4.2f, radius = 1.9f, interval = 0.5f },
+        new LevelStats { damage = 5.2f, radius = 1.9f, interval = 0.5f },
+        new LevelStats { damage = 5.2f, radius = 2.2f, interval = 0.5f },
+        new LevelStats { damage = 5.2f, radius = 2.2f, interval = 0.42f },
+        new LevelStats { damage = 6.6f, radius = 2.5f, interval = 0.42f },
+        new LevelStats { damage = 8.4f, radius = 2.8f, interval = 0.4f },
     };
 
     public override int LevelCount => levels.Length;
@@ -50,11 +50,11 @@ public class ElectricAuraData : WeaponData<ElectricAuraWeapon>
     {
         var s = At(level);
         if (level <= 1)
-            return $"A field around you shocks every enemy inside it for {s.damage:0} every {s.interval:0.##}s.";
+            return $"A field around you shocks every enemy inside it for {s.damage:0.#} every {s.interval:0.##}s.";
 
         var was = At(level - 1);
         var changes = new List<string>();
-        if (s.damage > was.damage) changes.Add($"Shocks for {s.damage:0}.");
+        if (s.damage > was.damage) changes.Add($"Shocks for {s.damage:0.#}.");
         if (s.radius > was.radius) changes.Add("Bigger field.");
         if (s.interval < was.interval) changes.Add($"Shocks every {s.interval:0.##}s.");
         return changes.Count > 0 ? string.Join(" ", changes) : "A stronger aura.";

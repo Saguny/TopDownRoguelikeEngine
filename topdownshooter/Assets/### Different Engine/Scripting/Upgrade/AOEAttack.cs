@@ -28,7 +28,7 @@ public class AOEAttack : MonoBehaviour
     [SerializeField] private float meteorTiltFromVerticalDeg = 16.786f;
 
     [Header("Smart Targeting")]
-    [Tooltip("aim at the densest on-screen groups from the start. off: meteors land on random spots until the Meteor Smartness upgrade is picked")]
+    [Tooltip("aim at the densest on-screen groups from the start. off: meteors land on enemies picked at random until the Meteor Smartness upgrade is picked")]
     [SerializeField] private bool smartFromStart;
     private bool smartTargeting;
 
@@ -134,13 +134,15 @@ public class AOEAttack : MonoBehaviour
         Vector2 dir = new Vector2(Mathf.Cos(worldAngleRad), Mathf.Sin(worldAngleRad)).normalized;
 
         Rect view = ViewRect();
-        if (smartTargeting) GatherTargets(view);
+        GatherTargets(view);
 
         for (int i = 0; i < projectileCount; i++)
         {
-            Vector3 impactPos = smartTargeting && _enemyPos.Count > 0
-                ? AimAtCluster(view, dir)
-                : RandomPoint(view);
+            // smart, on the thickest group it can catch; before that, on an enemy picked at random
+            // (a random spot on the screen mostly hit nothing); with nobody on screen, anywhere
+            Vector3 impactPos = _enemyPos.Count == 0 ? RandomPoint(view)
+                : smartTargeting ? AimAtCluster(view, dir)
+                : RandomEnemy(view, dir);
 
             float topY = targetCamera.transform.position.y + targetCamera.orthographicSize;
             float spawnY = topY + spawnYOffset;
@@ -186,6 +188,16 @@ public class AOEAttack : MonoBehaviour
             UnityEngine.Random.Range(view.xMin, view.xMax),
             UnityEngine.Random.Range(view.yMin, view.yMax),
             0f);
+    }
+
+    // an enemy on screen picked at random, led by where it'll be when the meteor lands
+    private Vector3 RandomEnemy(Rect view, Vector2 dir)
+    {
+        int i = UnityEngine.Random.Range(0, _enemyPos.Count);
+        float topY = targetCamera.transform.position.y + targetCamera.orthographicSize;
+        float flightTime = (topY + spawnYOffset - _enemyPos[i].y) / (-dir.y) / (_meteorSpeed * SpeedMul);
+        Vector2 aim = _enemyPos[i] + _enemyVel[i] * flightTime * leadFactor;
+        return new Vector3(Mathf.Clamp(aim.x, view.xMin, view.xMax), Mathf.Clamp(aim.y, view.yMin, view.yMax), 0f);
     }
 
     private void GatherTargets(Rect view)

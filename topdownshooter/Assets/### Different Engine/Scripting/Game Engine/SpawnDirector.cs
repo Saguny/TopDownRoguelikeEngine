@@ -95,11 +95,15 @@ public class SpawnDirector : MonoBehaviour
     [Tooltip("how long after the first flock the second sets off")]
     [SerializeField, Min(0f)] private float swarmSplitDelay = 1.2f;
 
+    // an evolution should feel like a spike of power, then the horde catches up and the run is on
+    // the edge again: the health curve (fitted to measured weapon damage, Tools/Balance) keeps the
+    // pressure steady, and this answers an evolution's extra damage (a nerfed evolution adds about
+    // 20-40% to a whole build), slowly enough to enjoy it first
     [Header("Evolutions (the horde answers an evolved weapon)")]
     [Tooltip("each evolved weapon the player holds adds this share to the crowd: more alive at once and more arriving")]
-    [SerializeField, Min(0f)] private float evoCrowd = 0.8f;
-    [Tooltip("each evolved weapon multiplies every enemy's health by 1 + this, compounding: 1.5 is x2.5 with one, x6.25 with two")]
-    [SerializeField, Min(0f)] private float evoHealth = 1.5f;
+    [SerializeField, Min(0f)] private float evoCrowd = 0.5f;
+    [Tooltip("each evolved weapon multiplies every enemy's health by 1 + this, compounding: 0.5 is x1.5 with one, x2.25 with two")]
+    [SerializeField, Min(0f)] private float evoHealth = 0.5f;
     [Tooltip("each evolved weapon raises the timeline's hard cap by this many, so the extra crowd has room")]
     [SerializeField, Min(0)] private int evoExtraCap = 200;
     [Tooltip("each evolved weapon cuts the wen an enemy is worth (and with it the coins) by this share, compounding: 0.45 leaves 55% with one, 30% with two")]
@@ -107,7 +111,7 @@ public class SpawnDirector : MonoBehaviour
     [Tooltip("and it keeps climbing: every minute an evolution is held counts as this much more of one")]
     [SerializeField, Min(0f)] private float evoGrowthPerMinute = 0.05f;
     [Tooltip("seconds the horde takes to grow into an evolution, so it swells rather than jumps")]
-    [SerializeField, Min(0.1f)] private float evoRampSeconds = 20f;
+    [SerializeField, Min(0.1f)] private float evoRampSeconds = 45f;
 
     [Header("Opening")]
     [Tooltip("ordinary enemies that spawn while the player is at or below this level die to any hit. 0 turns it off")]

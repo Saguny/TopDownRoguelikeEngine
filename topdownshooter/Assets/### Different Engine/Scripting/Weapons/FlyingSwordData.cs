@@ -90,7 +90,7 @@ public class FlyingSwordData : WeaponData<FlyingSword>
     [Tooltip("seconds the tripwire between an anchored pair lasts, before both blades shatter")]
     public float laserSeconds = 3f;
     [Tooltip("damage of the tripwire to each enemy in it, before Might, every Laser Tick")]
-    public float laserDamage = 30f;
+    public float laserDamage = 8f;
     public float laserTick = 0.2f;
     [Tooltip("the tripwire's width, before Area")]
     public float laserWidth = 0.8f;

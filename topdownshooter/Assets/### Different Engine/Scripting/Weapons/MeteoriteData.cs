@@ -21,21 +21,21 @@ public class MeteoriteData : WeaponData<MeteoriteWeapon>
         public float radius;
         [Tooltip("seconds between volleys, before Cooldown")]
         public float cooldown;
-        [Tooltip("aim where the most enemies will be, leading moving groups, instead of random spots")]
+        [Tooltip("aim where the most enemies will be, leading moving groups, instead of on enemies picked at random")]
         public bool smart;
     }
 
     [Header("Levels (the first entry is the unlock)")]
     public LevelStats[] levels =
     {
-        new LevelStats { meteors = 1, damage = 20f, radius = 2f, cooldown = 5f },
-        new LevelStats { meteors = 2, damage = 20f, radius = 2f, cooldown = 5f },
-        new LevelStats { meteors = 2, damage = 24f, radius = 2.3f, cooldown = 5f },
-        new LevelStats { meteors = 2, damage = 24f, radius = 2.3f, cooldown = 4.5f },
-        new LevelStats { meteors = 2, damage = 24f, radius = 2.3f, cooldown = 4.5f, smart = true },
-        new LevelStats { meteors = 3, damage = 28f, radius = 2.3f, cooldown = 4.5f, smart = true },
-        new LevelStats { meteors = 3, damage = 28f, radius = 2.6f, cooldown = 4f, smart = true },
-        new LevelStats { meteors = 4, damage = 32f, radius = 2.6f, cooldown = 4f, smart = true },
+        new LevelStats { meteors = 1, damage = 10f, radius = 2f, cooldown = 5f },
+        new LevelStats { meteors = 2, damage = 10f, radius = 2f, cooldown = 5f },
+        new LevelStats { meteors = 2, damage = 12f, radius = 2.3f, cooldown = 5f },
+        new LevelStats { meteors = 2, damage = 12f, radius = 2.3f, cooldown = 4.5f },
+        new LevelStats { meteors = 2, damage = 12f, radius = 2.3f, cooldown = 4.5f, smart = true },
+        new LevelStats { meteors = 3, damage = 14f, radius = 2.3f, cooldown = 4.5f, smart = true },
+        new LevelStats { meteors = 3, damage = 14f, radius = 2.6f, cooldown = 4f, smart = true },
+        new LevelStats { meteors = 4, damage = 16f, radius = 2.6f, cooldown = 4f, smart = true },
     };
 
     public override int LevelCount => levels.Length;
@@ -56,13 +56,13 @@ public class MeteoriteData : WeaponData<MeteoriteWeapon>
     {
         var s = At(level);
         if (level <= 1)
-            return $"Every {s.cooldown:0.#}s, {Meteors(s.meteors)} fall{(s.meteors == 1 ? "s" : "")} from the heavens for {s.damage:0} damage.";
+            return $"Every {s.cooldown:0.#}s, {Meteors(s.meteors)} fall{(s.meteors == 1 ? "s" : "")} from the heavens for {s.damage:0.#} damage.";
 
         var was = At(level - 1);
         var changes = new List<string>();
         int more = s.meteors - was.meteors;
         if (more > 0) changes.Add($"+{more} meteorite{(more == 1 ? "" : "s")}.");
-        if (s.damage > was.damage) changes.Add($"Blasts hit for {s.damage:0}.");
+        if (s.damage > was.damage) changes.Add($"Blasts hit for {s.damage:0.#}.");
         if (s.radius > was.radius) changes.Add("Bigger blasts.");
         if (s.cooldown < was.cooldown) changes.Add($"Falls every {s.cooldown:0.#}s.");
         if (s.smart && !was.smart) changes.Add("Meteors aim where they'll catch the most enemies.");

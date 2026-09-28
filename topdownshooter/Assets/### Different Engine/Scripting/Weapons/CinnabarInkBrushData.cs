@@ -24,13 +24,13 @@ public class CinnabarInkBrushData : WeaponData<CinnabarInkBrush>
     [Header("Levels (the first entry is the unlock; one more pick after the last is the evolution)")]
     public LevelStats[] levels =
     {
-        new LevelStats { seconds = 2f, width = 0.55f, damage = 3f },
-        new LevelStats { seconds = 2.5f, width = 0.55f, damage = 4f },
-        new LevelStats { seconds = 2.5f, width = 0.65f, damage = 5f },
-        new LevelStats { seconds = 3f, width = 0.65f, damage = 6f },
-        new LevelStats { seconds = 3f, width = 0.75f, damage = 8f },
-        new LevelStats { seconds = 3.5f, width = 0.8f, damage = 10f },
-        new LevelStats { seconds = 4f, width = 0.9f, damage = 12f },
+        new LevelStats { seconds = 2f, width = 0.55f, damage = 1.8f },
+        new LevelStats { seconds = 2.5f, width = 0.55f, damage = 2.4f },
+        new LevelStats { seconds = 2.5f, width = 0.65f, damage = 3f },
+        new LevelStats { seconds = 3f, width = 0.65f, damage = 3.6f },
+        new LevelStats { seconds = 3f, width = 0.75f, damage = 4.8f },
+        new LevelStats { seconds = 3.5f, width = 0.8f, damage = 6f },
+        new LevelStats { seconds = 4f, width = 0.9f, damage = 7.2f },
     };
 
     [Header("Ink")]
@@ -131,13 +131,13 @@ public class CinnabarInkBrushData : WeaponData<CinnabarInkBrush>
 
         var s = At(level);
         if (level <= 1)
-            return $"A brush paints burning cinnabar behind you. Enemies on the ink take {s.damage:0} every {tickSeconds:0.#}s. It lasts {s.seconds:0.#}s.";
+            return $"A brush paints burning cinnabar behind you. Enemies on the ink take {s.damage:0.#} every {tickSeconds:0.#}s. It lasts {s.seconds:0.#}s.";
 
         var was = At(level - 1);
         var changes = new List<string>();
         if (s.seconds > was.seconds) changes.Add($"Ink lasts {s.seconds:0.#}s.");
         if (s.width > was.width) changes.Add("A wider stroke.");
-        if (s.damage > was.damage) changes.Add($"Burns for {s.damage:0}.");
+        if (s.damage > was.damage) changes.Add($"Burns for {s.damage:0.#}.");
         return changes.Count > 0 ? string.Join(" ", changes) : "A stronger brush.";
     }
 }

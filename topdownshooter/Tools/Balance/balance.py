@@ -176,22 +176,48 @@ def paper(title, w, level):
     return 0.0
 
 
+# weapons changed since Benchmarks/weapon_dps.csv was measured: their measured damage times this,
+# until the benchmark is run again (then empty this)
+ADJUST = {
+    "Electrical Aura": 0.35,     # damage x0.35
+    "Meteorite": 0.5,            # damage x0.5 (its levels 1-4 measured 0: meteors fell on random spots)
+    "Cinnabar Ink Brush": 0.6,   # damage x0.6
+    "Peach Talismans": 2.0,      # impact and burn x2
+}
+
+
 def measured():
-    """weapon -> [(level, dps)] from the benchmark's crowd runs, without the player's stats"""
+    """weapon -> [(level, crowd dps, single dps)] from the benchmark (not evolved), without the
+    player's stats, with ADJUST applied. a measurement of nothing is taken as missing"""
     if not os.path.exists(BENCH): return {}
-    out = {}
+    rows = {}
     with open(BENCH, newline="", encoding="utf-8") as f:
         for r in csv.DictReader(f):
-            if r["scenario"] != "crowd" or r["evolved"] == "1": continue
-            out.setdefault(r["weapon"], []).append((int(r["level"]), float(r["normalised_dps"])))
+            if r["evolved"] == "1": continue
+            key = (r["weapon"], int(r["level"]))
+            rows.setdefault(key, {})[r["scenario"]] = float(r["normalised_dps"]) * ADJUST.get(r["weapon"], 1.0)
+    out = {}
+    for (weapon, level), sc in rows.items():
+        crowd = sc.get("crowd", 0.0)
+        if crowd <= 0: continue
+        out.setdefault(weapon, []).append((level, crowd, sc.get("single", 0.0)))
     return {k: sorted(v) for k, v in out.items()}
 
 
 def dps_at(title, w, level, bench):
+    """a weapon's DPS in play at a level: measured where there's a measurement. the benchmark's
+    crowd is 80 unkillable enemies pressed round the player, more than play keeps in reach, so the
+    part of its damage that comes from hitting many at once is scaled to the crowd in reach now"""
     if title in bench:
         pts = bench[title]
-        if level <= pts[0][0]: return pts[0][1] * level / pts[0][0]
-        return lerp_table(pts, level)
+        crowd = lerp_table([(l, c) for l, c, _ in pts], level)
+        singles = [(l, s1) for l, _, s1 in pts if s1 > 0]
+        single = lerp_table(singles, level) if singles else 0.0
+        if level < pts[0][0]:
+            crowd *= level / pts[0][0]
+            single *= level / pts[0][0]
+        share = min(1.0, _CAP[0] / CROWD_CAP)
+        return single + max(0.0, crowd - single) * share
     return paper(title, w, level)
 
 
@@ -291,7 +317,7 @@ def main():
     for title, w in ws.items():
         if w["pool"] and title != "Command Token": _TABLE[title] = (w, bench)
 
-    print("weapon DPS against the packed crowd, before the player's stats (M = measured, p = paper)")
+    print("weapon DPS against the benchmark's crowd of 80, before the player's stats (M = measured, p = paper)")
     _CAP[0] = CROWD_CAP
     print(f"{'weapon':22}{'L1':>8}{'mid':>8}{'max':>8}")
     for title, (w, b) in sorted(_TABLE.items()):

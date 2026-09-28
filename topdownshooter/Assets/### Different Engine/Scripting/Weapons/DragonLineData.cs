@@ -56,12 +56,12 @@ public class DragonLineData : WeaponData<DragonLine>
 
     [Header("Evolution: the coiling dragon (it flies no more lines, only this)")]
     [Tooltip("seconds between spirals, before Cooldown")]
-    public float evolvedCooldown = 8f;
+    public float evolvedCooldown = 6f;
     [Tooltip("damage of the fire it spits, before Might. the head hits for Evolved Head Multiplier times this")]
-    public float fireDamage = 50f;
+    public float fireDamage = 130f;
     [Min(1f)] public float evolvedHeadMultiplier = 1.5f;
     [Tooltip("damage of its coils as they shove enemies back, before Might")]
-    public float coilDamage = 15f;
+    public float coilDamage = 40f;
     [Tooltip("turns the spiral makes from the middle of the screen to its edge: more turns, a tighter coil")]
     [Min(0.5f)] public float spiralTurns = 4f;
     [Tooltip("world units a second the head travels along the spiral, before Weapon Speed")]

@@ -21,12 +21,12 @@ public class PeachTalismansData : WeaponData<PeachTalismans>
     [Header("Levels (the first entry is the unlock; one more pick after the last is the evolution)")]
     public LevelStats[] levels =
     {
-        new LevelStats { impactDamage = 6, damagePerSecond = 4, interval = 1.5f },
-        new LevelStats { impactDamage = 7, damagePerSecond = 5, interval = 1.4f },
-        new LevelStats { impactDamage = 8, damagePerSecond = 6, interval = 1.3f },
-        new LevelStats { impactDamage = 10, damagePerSecond = 8, interval = 1.2f },
-        new LevelStats { impactDamage = 12, damagePerSecond = 10, interval = 1.1f },
-        new LevelStats { impactDamage = 15, damagePerSecond = 13, interval = 1f },
+        new LevelStats { impactDamage = 12f, damagePerSecond = 8f, interval = 1.5f },
+        new LevelStats { impactDamage = 14f, damagePerSecond = 10f, interval = 1.4f },
+        new LevelStats { impactDamage = 16f, damagePerSecond = 12f, interval = 1.3f },
+        new LevelStats { impactDamage = 20f, damagePerSecond = 16f, interval = 1.2f },
+        new LevelStats { impactDamage = 24f, damagePerSecond = 20f, interval = 1.1f },
+        new LevelStats { impactDamage = 30f, damagePerSecond = 26f, interval = 1f },
     };
 
     [Header("Flight")]

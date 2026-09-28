@@ -97,7 +97,7 @@ MonoBehaviour:
   cageBounces: 3
   evolvedKeepsBlades: 1
   laserSeconds: 3
-  laserDamage: 30
+  laserDamage: 8
   laserTick: 0.2
   laserWidth: 0.8
   partnerWait: 4

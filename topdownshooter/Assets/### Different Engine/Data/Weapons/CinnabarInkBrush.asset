@@ -41,25 +41,25 @@ MonoBehaviour:
   levels:
   - seconds: 2
     width: 0.55
-    damage: 3
+    damage: 1.8
   - seconds: 2.5
     width: 0.55
-    damage: 4
+    damage: 2.4
   - seconds: 2.5
     width: 0.65
-    damage: 5
+    damage: 3
   - seconds: 3
     width: 0.65
-    damage: 6
+    damage: 3.6
   - seconds: 3
     width: 0.75
-    damage: 8
+    damage: 4.8
   - seconds: 3.5
     width: 0.8
-    damage: 10
+    damage: 6
   - seconds: 4
     width: 0.9
-    damage: 12
+    damage: 7.2
   tickSeconds: 0.3
   spacing: 0.2
   pressure: 0.24

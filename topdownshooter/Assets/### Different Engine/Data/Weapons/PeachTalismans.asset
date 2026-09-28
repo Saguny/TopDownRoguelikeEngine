@@ -45,23 +45,23 @@ MonoBehaviour:
   - {fileID: -9174462371401480718, guid: b03a4007f1394c2fb69126852330c6fe, type: 3}
   backFps: 6
   levels:
-  - impactDamage: 6
-    damagePerSecond: 4
-    interval: 1.5
-  - impactDamage: 7
-    damagePerSecond: 5
-    interval: 1.4
-  - impactDamage: 8
-    damagePerSecond: 6
-    interval: 1.3
-  - impactDamage: 10
-    damagePerSecond: 8
-    interval: 1.2
   - impactDamage: 12
+    damagePerSecond: 8
+    interval: 1.5
+  - impactDamage: 14
     damagePerSecond: 10
+    interval: 1.4
+  - impactDamage: 16
+    damagePerSecond: 12
+    interval: 1.3
+  - impactDamage: 20
+    damagePerSecond: 16
+    interval: 1.2
+  - impactDamage: 24
+    damagePerSecond: 20
     interval: 1.1
-  - impactDamage: 15
-    damagePerSecond: 13
+  - impactDamage: 30
+    damagePerSecond: 26
     interval: 1
   flightSpeed: 6
   waveAmplitude: 0.6

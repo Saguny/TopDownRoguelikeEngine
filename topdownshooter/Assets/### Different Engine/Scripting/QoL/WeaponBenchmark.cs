@@ -195,7 +195,9 @@ public class WeaponBenchmark : MonoBehaviour
         float start = Time.time;
         while (Time.time - start < seconds)
         {
-            float lap = (Time.time - start) * 0.9f;
+            // a lap every 3.3 seconds: quick enough that the ink brush closes its loops before
+            // the ink dries, which its evolution needs
+            float lap = (Time.time - start) * 1.9f;
             Vector2 at = home + new Vector2(Mathf.Cos(lap) - 1f, Mathf.Sin(lap)) * 2.4f;
             if (body != null) body.MovePosition(at);
             else inventory.transform.position = at;
