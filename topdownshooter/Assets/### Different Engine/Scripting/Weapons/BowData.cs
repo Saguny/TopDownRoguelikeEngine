@@ -36,8 +36,8 @@ public class BowData : WeaponData<BowWeapon>
     [Header("Evolution (one more pick after the last level)")]
     [Tooltip("seconds between volleys once evolved. it ignores Cooldown: the bow simply never stops")]
     [Min(0.03f)] public float evolvedInterval = 0.1f;
-    [Tooltip("the stream is one arrow a shot, each hitting for this times the last level's damage: 2 keeps it about three times the bow before it")]
-    [Range(0.1f, 5f)] public float evolvedDamageMul = 2f;
+    [Tooltip("the stream is one arrow a shot, each hitting for this share of the last level's damage: lighter arrows, but never a pause between them")]
+    [Range(0.1f, 1f)] public float evolvedDamageMul = 0.4f;
     [Tooltip("the shimmer the evolved arrows' outline runs through")]
     public Color[] outlineColors =
     {
@@ -73,7 +73,7 @@ public class BowData : WeaponData<BowWeapon>
     public override string Describe(int level)
     {
         if (IsEvolved(level))
-            return "Evolution: the bow never has to draw again. A single stream of heavy arrows pours out without a cooldown, each wrapped in a shining outline.";
+            return "Evolution: the bow never has to draw again. A single stream of light arrows pours out without a cooldown, each wrapped in a shining outline.";
 
         var s = At(level);
         if (level <= 1)
