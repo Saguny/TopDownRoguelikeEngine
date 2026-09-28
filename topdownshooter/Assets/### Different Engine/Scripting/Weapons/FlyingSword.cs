@@ -85,7 +85,8 @@ public class FlyingSword : Weapon<FlyingSwordData>
             }
         }
 
-        float damage = lv.damage * Might;
+        // evolved, the blades seek the crowds and hit far more often, so each hit is lighter
+        float damage = lv.damage * Might * (evolved ? Data.evolvedBladeDamage : 1f);
         for (int i = live.Count - 1; i >= 0; i--)
             if (Step(live[i], dt, damage)) Release(i);
         Lasers(dt);

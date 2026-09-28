@@ -87,6 +87,8 @@ public class FlyingSwordData : WeaponData<FlyingSword>
     [Min(0)] public int cageBounces = 3;
     [Tooltip("the ordinary blades keep flying once it has evolved")]
     public bool evolvedKeepsBlades = true;
+    [Tooltip("evolved, the blades hit for this share of their damage: they seek out the crowds now, so they hit about nine times as often")]
+    [Range(0.05f, 1f)] public float evolvedBladeDamage = 0.3f;
     [Tooltip("seconds the tripwire between an anchored pair lasts, before both blades shatter")]
     public float laserSeconds = 3f;
     [Tooltip("damage of the tripwire to each enemy in it, before Might, every Laser Tick")]
@@ -136,7 +138,7 @@ public class FlyingSwordData : WeaponData<FlyingSword>
         var s = At(level);
         Add(into, "Blades", s.blades.ToString());
         Add(into, "Bounces", s.bounces.ToString());
-        Add(into, "Damage", N(Hurt(st, s.damage, AttackClass)));
+        Add(into, "Damage", N(Hurt(st, s.damage * (IsEvolved(level) ? evolvedBladeDamage : 1f), AttackClass)));
         Add(into, "Faster per bounce", $"+{bounceAcceleration * 100f:0}%");
         Add(into, "Cooldown", Sec(Every(st, s.cooldown)));
         if (IsEvolved(level))

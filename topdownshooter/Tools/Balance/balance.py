@@ -179,10 +179,6 @@ def paper(title, w, level):
 # weapons changed since Benchmarks/weapon_dps.csv was measured: their measured damage times this,
 # until the benchmark is run again (then empty this)
 ADJUST = {
-    "Electrical Aura": 0.35,     # damage x0.35
-    "Meteorite": 0.5,            # damage x0.5 (its levels 1-4 measured 0: meteors fell on random spots)
-    "Cinnabar Ink Brush": 0.6,   # damage x0.6
-    "Peach Talismans": 2.0,      # impact and burn x2
 }
 
 

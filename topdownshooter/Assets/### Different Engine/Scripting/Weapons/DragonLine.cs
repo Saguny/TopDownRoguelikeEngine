@@ -96,10 +96,14 @@ public class DragonLine : Weapon<DragonLineData>
         float spacing = Spacing(1f);
         float bodyLength = spacing * Data.segments;
 
-        // a random line through the middle part of the screen, from edge to edge
+        // a line from edge to edge, in a random direction through an enemy on screen picked at
+        // random (a line through a random spot often missed everyone); with nobody on screen,
+        // through a random spot in the middle part of it
         Vector2 centre = cam.transform.position;
         float halfH = cam.orthographicSize, halfW = halfH * cam.aspect;
         Vector2 through = centre + new Vector2(Random.Range(-0.4f, 0.4f) * halfW, Random.Range(-0.4f, 0.4f) * halfH);
+        var target = RandomEnemy(centre, Mathf.Max(halfW, halfH));
+        if (target != null && OnScreen(target.transform.position, cam)) through = target.transform.position;
         float a = Random.Range(0f, Mathf.PI * 2f);
         Vector2 dir = new Vector2(Mathf.Cos(a), Mathf.Sin(a));
         // the line runs far past the screen's edges, so walking toward either end never shows it cut off

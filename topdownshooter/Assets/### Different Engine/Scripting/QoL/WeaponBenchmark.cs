@@ -26,8 +26,9 @@ public class WeaponBenchmark : MonoBehaviour
     public const string PendingKey = "WeaponBenchmark.Pending";
 
     // game seconds of warm up before measuring, and of measuring, per stage and scenario
-    private const float WarmUp = 2.5f;
-    private const float Measure = 12f;
+    private const float WarmUp = 3f;
+    // long enough for a weapon that fires every 4-5 seconds to fire several times
+    private const float Measure = 20f;
     private const int CrowdSize = 80;
     // time runs this much faster while it measures; the numbers are per game second either way
     private const float Speed = 2f;
@@ -246,11 +247,15 @@ public class WeaponBenchmark : MonoBehaviour
             var crowd = g.FirstOrDefault(r => r.scenario == "crowd");
             var one = g.FirstOrDefault(r => r.scenario == "single");
             table.AppendLine($"{g.Key.weapon + (crowd != null && crowd.signature ? " *" : ""),-22}{g.Key.stage,-9}{(crowd ?? one).level,4}" +
-                $"{(crowd != null ? crowd.dps.ToString("0") : "-"),12}{(one != null ? one.dps.ToString("0") : "-"),12}{(crowd != null ? crowd.normalised.ToString("0") : "-"),12}");
+                $"{Shown(crowd?.dps),12}{Shown(one?.dps),12}{Shown(crowd?.normalised),12}");
         }
         table.AppendLine("* the character's starting weapon: its signature damage is in the dps, not in the normalised");
+        table.AppendLine("execute: it kills outright (the ink brush's evolved seal does, to anything but elites and bosses), which against these unkillable enemies reads as their whole health; not a DPS");
         Debug.Log(table.ToString());
     }
+
+    // a DPS for the table; one past a million is a weapon killing outright, not damage
+    private static string Shown(float? dps) => dps == null ? "-" : dps.Value > 1e6f ? "execute" : dps.Value.ToString("0");
 
     private void Done(string error)
     {

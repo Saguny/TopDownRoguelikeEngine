@@ -1,60 +1,60 @@
 weapon,type,stage,level,evolved,scenario,dps,hits_per_second,normalised_dps,signature
-Bow,BowData,L1,1,0,crowd,31.49,3,31.49,1
+Bow,BowData,L1,1,0,crowd,18.37,1.75,18.37,1
 Bow,BowData,L1,1,0,single,15.75,1.5,15.75,1
-Bow,BowData,mid,4,0,crowd,83.98,6,83.98,1
-Bow,BowData,max,8,0,crowd,311.87,11.99,311.87,1
-Bow,BowData,max,8,0,single,156,6,156,1
-Bow,BowData,evolved,9,1,crowd,202.75,19.49,202.75,1
-Bow,BowData,evolved,9,1,single,102.25,9.83,102.25,1
-Cinnabar Ink Brush,CinnabarInkBrushData,L1,1,0,crowd,288.48,96.16,288.48,0
-Cinnabar Ink Brush,CinnabarInkBrushData,L1,1,0,single,5.5,1.83,5.5,0
-Cinnabar Ink Brush,CinnabarInkBrushData,mid,4,0,crowd,645.44,107.57,645.44,0
-Cinnabar Ink Brush,CinnabarInkBrushData,max,7,0,crowd,1676.56,139.71,1676.56,0
-Cinnabar Ink Brush,CinnabarInkBrushData,max,7,0,single,26,2.17,26,0
-Cinnabar Ink Brush,CinnabarInkBrushData,evolved,8,1,crowd,1679.89,139.99,1679.89,0
-Cinnabar Ink Brush,CinnabarInkBrushData,evolved,8,1,single,26,2.17,26,0
-Dragon Line,DragonLineData,L1,1,0,crowd,299.97,14.5,299.97,0
+Bow,BowData,mid,4,0,crowd,67.66,4.83,67.66,1
+Bow,BowData,max,8,0,crowd,244.8,9.42,244.8,1
+Bow,BowData,max,8,0,single,155.99,6,155.99,1
+Bow,BowData,evolved,9,1,crowd,334.43,16.08,334.43,1
+Bow,BowData,evolved,9,1,single,206.26,9.92,206.26,1
+Cinnabar Ink Brush,CinnabarInkBrushData,L1,1,0,crowd,121.17,67.31,121.17,0
+Cinnabar Ink Brush,CinnabarInkBrushData,L1,1,0,single,0.75,0.42,0.75,0
+Cinnabar Ink Brush,CinnabarInkBrushData,mid,4,0,crowd,298.15,82.82,298.15,0
+Cinnabar Ink Brush,CinnabarInkBrushData,max,7,0,crowd,838.55,116.47,838.55,0
+Cinnabar Ink Brush,CinnabarInkBrushData,max,7,0,single,5.4,0.75,5.4,0
+Cinnabar Ink Brush,CinnabarInkBrushData,evolved,8,1,crowd,1274572000,86.22,1274572000,0
+Cinnabar Ink Brush,CinnabarInkBrushData,evolved,8,1,single,8331265,0.58,8331265,0
+Dragon Line,DragonLineData,L1,1,0,crowd,4.17,0.42,4.17,0
 Dragon Line,DragonLineData,L1,1,0,single,3.33,0.17,3.33,0
-Dragon Line,DragonLineData,mid,4,0,crowd,325.49,11.42,325.49,0
-Dragon Line,DragonLineData,max,8,0,crowd,771.8,15.83,771.8,0
-Dragon Line,DragonLineData,max,8,0,single,8,0.17,8,0
-Dragon Line,DragonLineData,evolved,9,1,crowd,392.43,9.5,392.43,0
-Dragon Line,DragonLineData,evolved,9,1,single,12.92,0.33,12.92,0
-Electrical Aura,ElectricAuraData,L1,1,0,crowd,737.3,73.73,737.3,0
-Electrical Aura,ElectricAuraData,L1,1,0,single,18.33,1.83,18.33,0
-Electrical Aura,ElectricAuraData,mid,4,0,crowd,1324.63,88.31,1324.63,0
-Electrical Aura,ElectricAuraData,max,8,0,crowd,3805.15,158.55,3805.15,0
-Electrical Aura,ElectricAuraData,max,8,0,single,41.99,1.75,41.99,0
-Flying Sword,FlyingSwordData,L1,1,0,crowd,112.77,8.75,112.77,0
-Flying Sword,FlyingSwordData,L1,1,0,single,1,0.08,1,0
-Flying Sword,FlyingSwordData,mid,4,0,crowd,180.59,12,180.59,0
-Flying Sword,FlyingSwordData,max,8,0,crowd,978.03,44.33,978.03,0
-Flying Sword,FlyingSwordData,max,8,0,single,19.06,0.83,19.06,0
-Flying Sword,FlyingSwordData,evolved,9,1,crowd,6762.67,284.75,6762.67,0
-Flying Sword,FlyingSwordData,evolved,9,1,single,75.37,3.25,75.37,0
-Meteorite,MeteoriteData,L1,1,0,crowd,0,0,0,0
-Meteorite,MeteoriteData,L1,1,0,single,0,0,0,0
-Meteorite,MeteoriteData,mid,4,0,crowd,0,0,0,0
-Meteorite,MeteoriteData,max,8,0,crowd,2293,71.66,2293,0
-Meteorite,MeteoriteData,max,8,0,single,31.99,1,31.99,0
-Peach Talismans,PeachTalismansData,L1,1,0,crowd,15,6.17,15,0
-Peach Talismans,PeachTalismansData,L1,1,0,single,15.49,6.41,15.49,0
-Peach Talismans,PeachTalismansData,mid,3,0,crowd,26.5,7.58,26.5,0
-Peach Talismans,PeachTalismansData,max,6,0,crowd,71.16,9.75,71.16,0
-Peach Talismans,PeachTalismansData,max,6,0,single,72.03,9.66,72.03,0
-Peach Talismans,PeachTalismansData,evolved,7,1,crowd,566.72,76.73,566.72,0
-Peach Talismans,PeachTalismansData,evolved,7,1,single,572.29,77.58,572.29,0
-Seven Star Swords,SevenStarSwordsData,L1,1,0,crowd,39.16,7.83,39.16,0
-Seven Star Swords,SevenStarSwordsData,L1,1,0,single,1.67,0.33,1.67,0
-Seven Star Swords,SevenStarSwordsData,mid,4,0,crowd,400.91,33.41,400.91,0
-Seven Star Swords,SevenStarSwordsData,max,7,0,crowd,1094.81,54.74,1094.81,0
-Seven Star Swords,SevenStarSwordsData,max,7,0,single,31.66,1.58,31.66,0
-Seven Star Swords,SevenStarSwordsData,evolved,8,1,crowd,1544.51,99.14,1544.51,0
-Seven Star Swords,SevenStarSwordsData,evolved,8,1,single,466.51,44.82,466.51,0
-Treasure Gourd,TreasureGourdData,L1,1,0,crowd,201.13,39.83,201.13,0
+Dragon Line,DragonLineData,mid,4,0,crowd,235.6,8,235.6,0
+Dragon Line,DragonLineData,max,8,0,crowd,278,5.58,278,0
+Dragon Line,DragonLineData,max,8,0,single,14,0.25,14,0
+Dragon Line,DragonLineData,evolved,9,1,crowd,1953.95,16.91,1953.95,0
+Dragon Line,DragonLineData,evolved,9,1,single,0,0,0,0
+Electrical Aura,ElectricAuraData,L1,1,0,crowd,151.92,43.41,151.92,0
+Electrical Aura,ElectricAuraData,L1,1,0,single,0.58,0.17,0.58,0
+Electrical Aura,ElectricAuraData,mid,4,0,crowd,323.18,62.15,323.18,0
+Electrical Aura,ElectricAuraData,max,8,0,crowd,1154.97,137.5,1154.97,0
+Electrical Aura,ElectricAuraData,max,8,0,single,18.9,2.25,18.9,0
+Flying Sword,FlyingSwordData,L1,1,0,crowd,29.99,2.5,29.99,0
+Flying Sword,FlyingSwordData,L1,1,0,single,2.24,0.17,2.24,0
+Flying Sword,FlyingSwordData,mid,4,0,crowd,193.08,12.58,193.08,0
+Flying Sword,FlyingSwordData,max,8,0,crowd,851.58,37.33,851.58,0
+Flying Sword,FlyingSwordData,max,8,0,single,23.33,0.92,23.33,0
+Flying Sword,FlyingSwordData,evolved,9,1,crowd,6944.32,330.18,6944.32,0
+Flying Sword,FlyingSwordData,evolved,9,1,single,71.79,3.25,71.79,0
+Meteorite,MeteoriteData,L1,1,0,crowd,54.99,5.5,54.99,0
+Meteorite,MeteoriteData,L1,1,0,single,1.67,0.17,1.67,0
+Meteorite,MeteoriteData,mid,4,0,crowd,305,25.42,305,0
+Meteorite,MeteoriteData,max,8,0,crowd,1198.14,74.88,1198.14,0
+Meteorite,MeteoriteData,max,8,0,single,16,1,16,0
+Peach Talismans,PeachTalismansData,L1,1,0,crowd,29.66,6.08,29.66,0
+Peach Talismans,PeachTalismansData,L1,1,0,single,30.66,6.33,30.66,0
+Peach Talismans,PeachTalismansData,mid,3,0,crowd,53.82,7.58,53.82,0
+Peach Talismans,PeachTalismansData,max,6,0,crowd,145.9,9.92,145.9,0
+Peach Talismans,PeachTalismansData,max,6,0,single,142.66,9.67,142.66,0
+Peach Talismans,PeachTalismansData,evolved,7,1,crowd,1130.77,76.74,1130.77,0
+Peach Talismans,PeachTalismansData,evolved,7,1,single,1146.44,77.73,1146.44,0
+Seven Star Swords,SevenStarSwordsData,L1,1,0,crowd,5,1,5,0
+Seven Star Swords,SevenStarSwordsData,L1,1,0,single,0.42,0.08,0.42,0
+Seven Star Swords,SevenStarSwordsData,mid,4,0,crowd,328.93,27.41,328.93,0
+Seven Star Swords,SevenStarSwordsData,max,7,0,crowd,914.84,45.74,914.84,0
+Seven Star Swords,SevenStarSwordsData,max,7,0,single,15,0.75,15,0
+Seven Star Swords,SevenStarSwordsData,evolved,8,1,crowd,1400.46,91.89,1400.46,0
+Seven Star Swords,SevenStarSwordsData,evolved,8,1,single,439.99,43.42,439.99,0
+Treasure Gourd,TreasureGourdData,L1,1,0,crowd,218.39,43.25,218.39,0
 Treasure Gourd,TreasureGourdData,L1,1,0,single,2.92,0.58,2.92,0
-Treasure Gourd,TreasureGourdData,mid,4,0,crowd,302.1,49.66,302.1,0
-Treasure Gourd,TreasureGourdData,max,8,0,crowd,674.58,92.42,674.58,0
+Treasure Gourd,TreasureGourdData,mid,4,0,crowd,337.71,55.74,337.71,0
+Treasure Gourd,TreasureGourdData,max,8,0,crowd,654.88,89.65,654.88,0
 Treasure Gourd,TreasureGourdData,max,8,0,single,10.33,1.5,10.33,0
-Treasure Gourd,TreasureGourdData,evolved,9,1,crowd,5453.08,103.16,5453.08,0
-Treasure Gourd,TreasureGourdData,evolved,9,1,single,18,1.5,18,0
+Treasure Gourd,TreasureGourdData,evolved,9,1,crowd,2582.68,103.31,2582.68,0
+Treasure Gourd,TreasureGourdData,evolved,9,1,single,13.83,1.5,13.83,0
