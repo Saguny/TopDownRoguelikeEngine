@@ -46,12 +46,8 @@ public class EnemyHealth : MonoBehaviour, IHealth
     [Range(0f, 1f)][SerializeField] private float deathVolume = 1f;
 
     [Header("heal item drop")]
+    [Tooltip("the peach it drops when one is due (PeachDrops says when: 0 to 2 between Final Rushes)")]
     [SerializeField] private GameObject healItemPrefab;
-    [Range(0f, 1f)][SerializeField] private float healDropChance = 0.01f;
-
-    // no more than this many peaches drop in a run, elites' included, so healing stays scarce
-    public const int MaxPeachesPerRun = 5;
-    public static int PeachesDropped { get; private set; }
 
     [Header("damage feedback")]
     [SerializeField] private SpriteRenderer spriteRenderer;
@@ -117,20 +113,6 @@ public class EnemyHealth : MonoBehaviour, IHealth
     {
         _cachedInventory = null;
         ArmourPierce = 0f;
-        PeachesDropped = 0;
-    }
-
-    // every run is a scene load: the peach count starts over with it
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    private static void HookRunStart()
-    {
-        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
-        UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
-    }
-
-    private static void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
-    {
-        if (mode == UnityEngine.SceneManagement.LoadSceneMode.Single) PeachesDropped = 0;
     }
 
     // this used to run a scene wide tag search on every single enemy death
@@ -406,10 +388,8 @@ public class EnemyHealth : MonoBehaviour, IHealth
             }
         }
 
-        if (healItemPrefab != null && PeachesDropped < MaxPeachesPerRun &&
-            (alwaysDropHeal || UnityEngine.Random.value <= healDropChance))
+        if (healItemPrefab != null && PeachDrops.Take(alwaysDropHeal))
         {
-            PeachesDropped++;
             Vector3 dropPos = transform.position;
             dropPos.x += UnityEngine.Random.Range(-0.2f, 0.2f);
             dropPos.y += UnityEngine.Random.Range(-0.2f, 0.2f);
