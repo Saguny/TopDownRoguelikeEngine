@@ -1388,13 +1388,13 @@ public class SpawnDirector : MonoBehaviour
     [SerializeField, Min(1f)] private float rushCrowdGrowth = 1.3f;
     [Tooltip("seconds between formations in the first rush; each rush after is 10% quicker, to 3.5s")]
     [SerializeField, Min(1f)] private float formationEvery = 7f;
-    [Tooltip("seconds before another Magistrate joins, while the rush allows more than one")]
-    [SerializeField, Min(1f)] private float nextBossAfter = 25f;
+    [Tooltip("the Magistrates each Final Rush brings, all at once at its start, rush 1 first (there are nine: wave ten is the final boss's). a rush past the list uses its last")]
+    [SerializeField] private int[] rushMagistrates = { 1, 1, 2, 2, 4, 4, 4, 4, 4 };
     [Tooltip("how much tougher each rush's Magistrate is than the last's, on top of the run's health curve: 1.35 = 35% more. the first is a fight for a build of a few minutes, the ninth for a finished one")]
     [SerializeField, Min(1f)] private float rushBossGrowth = 1.35f;
 
     private enum Formation { Column, Pincer, Ring, Fire }
-    private float nextFormation, nextBoss, nextTrickle;
+    private float nextFormation, nextTrickle;
     private int rushBosses;             // how many Magistrates this rush brings; it's won when they're all down
 
     // the Final Rush is won when all its Magistrates have come and fallen (the procession). without
@@ -1416,11 +1416,14 @@ public class SpawnDirector : MonoBehaviour
     private void BeginProcession()
     {
         formationIndex = 0;
-        nextFormation = Time.time + 3.5f;           // the Magistrate and his retinue first, then the rest
-        nextBoss = Time.time + nextBossAfter;
-        rushBosses = GetMaxBossCountForWave(currentWave);
+        nextFormation = Time.time + 3.5f;           // the Magistrates and their retinues first, then the rest
         nextTrickle = Time.time + 1f;
-        SpawnMagistrate();
+        // the rush's whole set of Magistrates comes at once, from all round, each with his retinue
+        rushBosses = rushMagistrates != null && rushMagistrates.Length > 0
+            ? Mathf.Max(1, rushMagistrates[Mathf.Clamp(currentWave - 1, 0, rushMagistrates.Length - 1)])
+            : GetMaxBossCountForWave(currentWave);
+        float a0 = Random.value * 360f;
+        for (int i = 0; i < rushBosses; i++) SpawnMagistrate(Rotate(Vector2.right, a0 + 360f * i / rushBosses));
     }
 
     private void UpdateProcession()
@@ -1428,12 +1431,10 @@ public class SpawnDirector : MonoBehaviour
         int alive = CountAlive();
         int target = RushTarget;
 
-        // the rush's Magistrates come one after another, each with his own retinue: the next when
-        // the last falls, or after a while if he's still standing
-        if (bossesSpawnedThisRush < rushBosses && (GetAliveBossCount() == 0 || Time.time >= nextBoss))
+        // one who couldn't be placed at the start (walls all round) comes as soon as he can
+        if (bossesSpawnedThisRush < rushBosses)
         {
-            nextBoss = Time.time + nextBossAfter;
-            SpawnMagistrate();
+            SpawnMagistrate(RandomDirection());
             rushBarDirty = true;
         }
 
@@ -1527,11 +1528,10 @@ public class SpawnDirector : MonoBehaviour
         return made;
     }
 
-    // a Magistrate, and his retinue in file behind him
-    private void SpawnMagistrate()
+    // a Magistrate from `dir`, and his retinue in file behind him
+    private void SpawnMagistrate(Vector2 dir)
     {
         if (bossArchetype == null || bossArchetype.prefab == null) return;
-        Vector2 dir = RandomDirection();
         if (!TryEdgePoint(dir, 1.2f, out Vector2 at)) at = GetSpawnPositionNearOffscreenInsideBounds();
         var go = Spawn(bossArchetype, true, at);
         if (go == null) return;

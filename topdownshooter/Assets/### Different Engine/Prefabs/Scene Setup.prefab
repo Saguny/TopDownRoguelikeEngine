@@ -584,7 +584,6 @@ MonoBehaviour:
   rushCrowd: 30
   rushCrowdGrowth: 1.3
   formationEvery: 7
-  nextBossAfter: 25
   rushBossGrowth: 1.35
   oneShotThroughLevel: 5
   quietAfterFinalBoss: 4
