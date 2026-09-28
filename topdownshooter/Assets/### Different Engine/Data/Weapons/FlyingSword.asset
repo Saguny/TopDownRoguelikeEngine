@@ -41,37 +41,37 @@ MonoBehaviour:
   backFrames: []
   backFps: 6
   levels:
-  - damage: 12
+  - damage: 22
     blades: 1
-    bounces: 1
+    bounces: 2
     cooldown: 2
-  - damage: 14
+  - damage: 25
     blades: 1
-    bounces: 1
+    bounces: 2
     cooldown: 2
-  - damage: 13
+  - damage: 24
     blades: 2
-    bounces: 2
-    cooldown: 2
-  - damage: 14
-    blades: 2
-    bounces: 2
-    cooldown: 2
-  - damage: 15
-    blades: 3
-    bounces: 2
-    cooldown: 2
-  - damage: 16
-    blades: 3
     bounces: 3
     cooldown: 2
-  - damage: 18
+  - damage: 25
+    blades: 2
+    bounces: 3
+    cooldown: 2
+  - damage: 27
+    blades: 3
+    bounces: 4
+    cooldown: 2
+  - damage: 29
+    blades: 3
+    bounces: 4
+    cooldown: 2
+  - damage: 32
     blades: 4
-    bounces: 3
+    bounces: 5
     cooldown: 2
-  - damage: 20
+  - damage: 36
     blades: 5
-    bounces: 3
+    bounces: 6
     cooldown: 2
   launchRing: 0.8
   speed: 6.5

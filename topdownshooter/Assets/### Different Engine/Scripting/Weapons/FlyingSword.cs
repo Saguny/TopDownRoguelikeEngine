@@ -2,9 +2,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // Feijian, flown the way Terraria's Empress of Light flies her prismatic bolts and lances: blades
-// appear in a ring round the player and snap away with no telegraph, each off in a direction of its
-// own, cut straight through whatever's in the way and ricochet off the screen's edges (and off
-// elites and bosses), faster with every bounce, until their bounces are spent. only once evolved do
+// appear in a ring round the player and snap away with no telegraph, each at one of the nearest
+// enemies, and ricochet: off the enemy they strike (on to the next one near, if there is one) or
+// off the screen's edges, faster with every bounce, until their bounces are spent. a blade goes
+// through as many enemies as the Piercing passive allows before it bounces; a spent blade breaks
+// on the next enemy it meets or flies on to the edge. only once evolved do
 // they find the horde: they swing round in an arc onto its thickest part, and again off every bounce. a luminous streak follows each one, so its arc and every ricochet can be read in a crowd.
 // evolved (the Sovereign Blade Array), every so often a pair of master blades launches at top
 // speed; their bounces spent, they anchor in the screen's borders and a crackling tripwire laser
@@ -19,7 +21,7 @@ public class FlyingSword : Weapon<FlyingSwordData>
         public TrailRenderer streak;
         public Vector2 pos, dir, target;
         public float speed, age, pop;
-        public int bouncesLeft, bounced;
+        public int bouncesLeft, bounced, pierceLeft;
         public bool hasTarget, cage, spent, embedded;
         public Vector2 view;            // anchored: where on the screen, 0-1
         public Pair pair;
@@ -102,11 +104,15 @@ public class FlyingSword : Weapon<FlyingSwordData>
         Vector2 me = transform.position;
         if (!Data.IsEvolved(Level))
         {
-            int count = lv.blades;
-            float turn = Random.Range(0f, 360f);
-            for (int i = 0; i < count; i++)
+            // each blade at one of the nearest enemies (the nearest first, then the next nearest)
+            Nearest(me, Data.range, lv.blades);
+            if (nearestFound.Count == 0) return false;
+            for (int i = 0; i < lv.blades; i++)
             {
-                Vector2 dir = Rotate(Vector2.right, turn + i * 360f / count + Random.Range(-20f, 20f));
+                Vector2 at = nearestFound[i % nearestFound.Count];
+                Vector2 dir = at - me;
+                dir = dir.sqrMagnitude > 0.0001f ? dir.normalized : Vector2.right;
+                if (i >= nearestFound.Count) dir = Rotate(dir, Random.Range(-25f, 25f));
                 Take(me + dir * Data.launchRing, dir, lv.bounces, false, null, Data.speed * SpeedMul);
             }
             return true;
@@ -151,6 +157,7 @@ public class FlyingSword : Weapon<FlyingSwordData>
         b.pop = 1f;
         b.bouncesLeft = bounces;
         b.bounced = 0;
+        b.pierceLeft = Pierce;
         b.hasTarget = false;
         b.cage = cage;
         b.spent = bounces <= 0;
@@ -223,7 +230,8 @@ public class FlyingSword : Weapon<FlyingSwordData>
             Bounce(b, normal, b.pos);
         }
 
-        // through the crowd, and off anything strong
+        // an enemy struck: it goes through while it has pierce left, otherwise it ricochets off it
+        // (or, spent, breaks on it). the master blades still cut through everything
         EnemiesIn(b.pos, Data.hitRadius * AreaMul, touching);
         float now = Time.time;
         foreach (var e in touching)
@@ -231,15 +239,26 @@ public class FlyingSword : Weapon<FlyingSwordData>
             if (b.hitAt.TryGetValue(e, out float at) && now - at < Data.rehit) continue;
             b.hitAt[e] = now;
             Hit(e, damage * (1f + Data.bonusPerBounce * b.bounced));
+            if (b.cage) continue;
+            if (b.pierceLeft > 0) { b.pierceLeft--; continue; }
 
-            // only while it's heading into them: one already on its way out isn't turned again
-            Vector2 off = b.pos - (Vector2)e.transform.position;
-            if (Data.bounceOffStrong && !b.spent && Strong(e) && Vector2.Dot(b.dir, off) < 0f)
+            if (b.spent)
             {
-                Bounce(b, off.sqrMagnitude > 0.0001f ? off.normalized : -b.dir, e.transform.position);
-                b.hitAt[e] = now;   // the bounce forgets who it hit; not this one, it's still inside it
-                break;
+                if (Data.sparkFx != null) FxOneShot.Play(Data.sparkFx, b.pos, FxOneShot.Angle(b.dir));
+                return true;
             }
+            Vector2 hitAt = e.transform.position;
+            Vector2 off = b.pos - hitAt;
+            Bounce(b, off.sqrMagnitude > 0.0001f ? off.normalized : -b.dir, hitAt);
+            b.hitAt[e] = now;   // the bounce forgets who it hit; not this one, it's still inside it
+            b.pierceLeft = Pierce;
+            // a ricochet off an enemy carries on to the next one near, if there's one to go to
+            if (!b.hasTarget && !b.spent && Nearest(hitAt, Data.ricochetReach, 2, e) > 0)
+            {
+                Vector2 next = nearestFound[0] - b.pos;
+                if (next.sqrMagnitude > 0.0001f) b.dir = next.normalized;
+            }
+            break;
         }
 
         Place(b);
@@ -315,6 +334,32 @@ public class FlyingSword : Weapon<FlyingSwordData>
             top = Mathf.Min(top, barBottom - 0.2f);
         }
         return top;
+    }
+
+    private readonly List<Vector2> nearestFound = new List<Vector2>(8);
+    private readonly List<float> nearestDist = new List<float>(8);
+    private readonly List<EnemyHealth> scan = new List<EnemyHealth>();   // Nearest's own, so it can run inside the hit loop
+
+    // the positions of up to `count` of the nearest live enemies within `reach` of `from`, nearest
+    // first, leaving out `except`; returns how many
+    private int Nearest(Vector2 from, float reach, int count, EnemyHealth except = null)
+    {
+        nearestFound.Clear();
+        nearestDist.Clear();
+        EnemiesIn(from, reach, scan);
+        foreach (var e in scan)
+        {
+            if (e == except || !IsAlive(e)) continue;
+            Vector2 p = e.transform.position;
+            float d = (p - from).sqrMagnitude;
+            int at = nearestDist.Count;
+            while (at > 0 && nearestDist[at - 1] > d) at--;
+            if (at >= count) continue;
+            nearestDist.Insert(at, d);
+            nearestFound.Insert(at, p);
+            if (nearestDist.Count > count) { nearestDist.RemoveAt(count); nearestFound.RemoveAt(count); }
+        }
+        return nearestFound.Count;
     }
 
     private static bool Strong(EnemyHealth e) => e.TryGetComponent(out EliteOutline _) || e.TryGetComponent(out BossMarker _);

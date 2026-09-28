@@ -27,14 +27,14 @@ public class FlyingSwordData : WeaponData<FlyingSword>
     [Header("Levels (the first entry is the unlock; one more pick after the last is the evolution)")]
     public LevelStats[] levels =
     {
-        new LevelStats { damage = 12f, blades = 1, bounces = 1, cooldown = 2f },
-        new LevelStats { damage = 14f, blades = 1, bounces = 1, cooldown = 2f },
-        new LevelStats { damage = 13f, blades = 2, bounces = 2, cooldown = 2f },
-        new LevelStats { damage = 14f, blades = 2, bounces = 2, cooldown = 2f },
-        new LevelStats { damage = 15f, blades = 3, bounces = 2, cooldown = 2f },
-        new LevelStats { damage = 16f, blades = 3, bounces = 3, cooldown = 2f },
-        new LevelStats { damage = 18f, blades = 4, bounces = 3, cooldown = 2f },
-        new LevelStats { damage = 20f, blades = 5, bounces = 3, cooldown = 2f },
+        new LevelStats { damage = 22f, blades = 1, bounces = 2, cooldown = 2f },
+        new LevelStats { damage = 25f, blades = 1, bounces = 2, cooldown = 2f },
+        new LevelStats { damage = 24f, blades = 2, bounces = 3, cooldown = 2f },
+        new LevelStats { damage = 25f, blades = 2, bounces = 3, cooldown = 2f },
+        new LevelStats { damage = 27f, blades = 3, bounces = 4, cooldown = 2f },
+        new LevelStats { damage = 29f, blades = 3, bounces = 4, cooldown = 2f },
+        new LevelStats { damage = 32f, blades = 4, bounces = 5, cooldown = 2f },
+        new LevelStats { damage = 36f, blades = 5, bounces = 6, cooldown = 2f },
     };
 
     [Header("Launch")]
@@ -52,6 +52,8 @@ public class FlyingSwordData : WeaponData<FlyingSword>
     public float clusterRadius = 2.2f;
     [Tooltip("how far a blade looks for a crowd")]
     public float range = 14f;
+    [Tooltip("how far a blade looks for the next enemy to go on to after ricocheting off one")]
+    public float ricochetReach = 5f;
     [Tooltip("how much faster it gets off every bounce: 0.22 = 22%")]
     [Min(0f)] public float bounceAcceleration = 0.08f;
     [Tooltip("the fastest a blade gets, however many times it bounces, before Weapon Speed. the master blades fly at it")]
@@ -156,7 +158,7 @@ public class FlyingSwordData : WeaponData<FlyingSword>
 
         var s = At(level);
         if (level <= 1)
-            return $"Blades snap away from you in every direction and ricochet off the screen's edges {s.bounces} times, faster every bounce. {s.damage:0} to everything they pass through.";
+            return $"Blades snap away from you at the nearest enemies and ricochet {s.bounces} times, off enemies and the screen's edges, faster every bounce. {s.damage:0} a hit.";
 
         var was = At(level - 1);
         var changes = new List<string>();
