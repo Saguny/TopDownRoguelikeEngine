@@ -31,7 +31,11 @@ const ASH = [[0.06, P.S1], [0.12, P.AS1], [0.2, P.AS2], [0.32, P.AS3]];
 const RES = path.join(__dirname, "..", "..", "..", "Assets", "### Different Engine", "Resources");
 const TAU = Math.PI * 2;
 const img = W.img, lerp = W.lerp, easeOut = W.easeOut;
-const M = (w, h) => D.mask(w, h);
+// flat sources are drawn with this much room round their design canvas (see draw.js's origins),
+// so a limb or a horn reaching past it isn't cut off while it's drawn; kit.fit crops it all back
+const FM = 16;
+const M = (w, h) => D.mask(w + 2 * FM, h + 2 * FM, FM, FM);
+const canvas = (w, h) => Object.assign(D.image(w + 2 * FM, h + 2 * FM), { ox: FM, oy: FM });
 const fill = (im, Mk, c) => D.paint(im, Mk, c);
 const clamp01 = v => Math.max(0, Math.min(1, v));
 
@@ -49,23 +53,58 @@ function blob(F, cx, cy, rx, ry, peak = 1, edge = 0.4) {
 // a thick stroke along points, as a mask
 function stroke(Mk, pts, width) { return K2.limb(Mk, pts, width); }
 
+// ---- margins: a sprite is drawn at its design size, then given a margin (an origin offset, see
+// draw.js) before its glow and light go on, so nothing it throws off is cut at the canvas edge
+
+// the same picture on a canvas `m` bigger each side, drawn to at the same coordinates
+function pad(src, m) {
+  const out = { w: src.w + 2 * m, h: src.h + 2 * m, data: new Uint8Array((src.w + 2 * m) * (src.h + 2 * m) * 4), ox: (src.ox | 0) + m, oy: (src.oy | 0) + m };
+  for (let y = 0; y < src.h; y++) out.data.set(src.data.subarray(y * src.w * 4, (y + 1) * src.w * 4), ((y + m) * out.w + m) * 4);
+  return out;
+}
+// an empty canvas the size of another, with its origin
+const blank = like => ({ w: like.w, h: like.h, data: new Uint8Array(like.w * like.h * 4), ox: like.ox | 0, oy: like.oy | 0 });
+// every pixel of an image, raw: fn(rawX, rawY, colour); design coordinates are raw minus the origin
+function eachPx(im, fn) {
+  for (let y = 0; y < im.h; y++) for (let x = 0; x < im.w; x++) {
+    const i = (y * im.w + x) * 4;
+    if (im.data[i + 3]) fn(x, y, [im.data[i], im.data[i + 1], im.data[i + 2], im.data[i + 3]]);
+  }
+}
+function rawPut(im, x, y, c) {
+  x = Math.round(x); y = Math.round(y);
+  if (x < 0 || y < 0 || x >= im.w || y >= im.h) return;
+  const i = (y * im.w + x) * 4;
+  im.data[i] = c[0]; im.data[i + 1] = c[1]; im.data[i + 2] = c[2]; im.data[i + 3] = c[3] === undefined ? 255 : c[3];
+}
+// turned by `ang` about the canvas's middle (a sprite leaning into a dash), same canvas
+function turn(src, ang) {
+  const out = blank(src), c = Math.cos(-ang), s = Math.sin(-ang), cx = src.w / 2, cy = src.h / 2;
+  for (let y = 0; y < src.h; y++) for (let x = 0; x < src.w; x++) {
+    const dx = x + 0.5 - cx, dy = y + 0.5 - cy;
+    const sx = Math.floor(cx + dx * c - dy * s), sy = Math.floor(cy + dx * s + dy * c);
+    if (sx < 0 || sy < 0 || sx >= src.w || sy >= src.h) continue;
+    const i = (sy * src.w + sx) * 4;
+    if (src.data[i + 3]) rawPut(out, x, y, [src.data[i], src.data[i + 1], src.data[i + 2], 255]);
+  }
+  return out;
+}
+
 // everything drawn in an image, gone to nothing by `k` (0 all there, 1 all gone), dithered, and
 // lifted `rise` pixels; `tint` recolours what's left (a flash white, a fade to ash)
 function dissolve(src, k, rise = 0, tint = null, phase = 0) {
-  const out = img(src.w, src.h);
-  for (let y = 0; y < src.h; y++) for (let x = 0; x < src.w; x++) {
-    const c = D.get(src, x, y);
-    if (!c) continue;
-    if (bayer(x + phase, y) < k) continue;
-    put(out, x, y - Math.round(rise * (0.6 + 0.4 * W.hash2(x, 0, phase))), tint || c);
-  }
+  const out = blank(src);
+  eachPx(src, (x, y, c) => {
+    if (bayer(x + phase, y) < k) return;
+    rawPut(out, x, y - Math.round(rise * (0.6 + 0.4 * W.hash2(x, 0, phase))), tint || c);
+  });
   return out;
 }
 
 // a flat silhouette of an image in one colour (a hit flash, a shadow)
 function silhouette(src, col) {
-  const out = img(src.w, src.h);
-  for (let i = 0; i < src.w * src.h; i++) if (src.data[i * 4 + 3]) { out.data[i * 4] = col[0]; out.data[i * 4 + 1] = col[1]; out.data[i * 4 + 2] = col[2]; out.data[i * 4 + 3] = 255; }
+  const out = blank(src);
+  eachPx(src, (x, y) => rawPut(out, x, y, col));
   return out;
 }
 
@@ -84,17 +123,19 @@ function motes(im, f, N, n, seed, x0, x1, yTop, yBot, cols) {
 // a glow round everything already drawn, the way the ghost fire has one: its distance falloff
 // shaded through a two step ramp, solid close in and dithered out to nothing, under the sprite
 function glowAround(im, radius, near, far, phase = 0) {
-  const F = D.field(im.w, im.h);
+  const F = D.field(im.w, im.h), on = (x, y) => x >= 0 && y >= 0 && x < im.w && y < im.h && im.data[(y * im.w + x) * 4 + 3];
   for (let y = 0; y < im.h; y++) for (let x = 0; x < im.w; x++) {
-    if (D.get(im, x, y)) continue;
+    if (on(x, y)) continue;
     let d = 99;
     for (let dy = -radius; dy <= radius; dy++) for (let dx = -radius; dx <= radius; dx++)
-      if (D.get(im, x + dx, y + dy)) d = Math.min(d, Math.hypot(dx, dy));
+      if (on(x + dx, y + dy)) d = Math.min(d, Math.hypot(dx, dy));
     if (d <= radius) F.f[y * im.w + x] = 1 - (d - 0.5) / (radius + 0.5);
   }
   const g = D.shade(D.image(im.w, im.h), F, [[0.35, far], [0.72, near]], { fadeBand: 0.55 });
   if (phase) for (let i = 0; i < g.data.length; i += 4) if (g.data[i + 3] && D.bayer((i / 4) % im.w + phase, ((i / 4) / im.w) | 0) < 0.15) g.data[i + 3] = 0;
-  return D.over(g, im);
+  D.over(g, im);
+  g.ox = im.ox | 0; g.oy = im.oy | 0;
+  return g;
 }
 
 // a flat colour from a hex string, for drawing the flat sources restyle lights
@@ -103,6 +144,41 @@ const INK = C("#000000");         // the sources' outline, which restyle turns d
 
 // the flat source's black outline round everything drawn
 function inked(im, diag = false) { return W.withOutline(im, INK, diag); }
+
+// a strip's frames cropped to what's drawn in them, the same about the middle on every side (so
+// its pivot, the middle, doesn't move) and square (the game slices strips into square frames),
+// with a pixel's gap left all round: nothing touches an edge, nothing is cut off
+function fit(frames, gap = 1) {
+  const w = frames[0].w, h = frames[0].h, cx = w / 2, cy = h / 2;
+  let half = 1;
+  for (const im of frames) for (let y = 0; y < h; y++) for (let x = 0; x < w; x++)
+    if (im.data[(y * w + x) * 4 + 3]) half = Math.max(half, Math.abs(x + 0.5 - cx) + 0.5, Math.abs(y + 0.5 - cy) + 0.5);
+  half = Math.ceil(half) + gap;
+  const size = 2 * half, x0 = Math.round(cx - half), y0 = Math.round(cy - half);
+  return frames.map(im => {
+    const out = img(size, size);
+    for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+      const sx = x + x0, sy = y + y0;
+      if (sx < 0 || sy < 0 || sx >= w || sy >= h) continue;
+      const i = (sy * w + sx) * 4;
+      if (im.data[i + 3]) out.data.set(im.data.subarray(i, i + 4), (y * size + x) * 4);
+    }
+    return out;
+  });
+}
+
+// would any frame be cut off at its edge? the names of those that would
+function clipped(frames) {
+  const bad = [];
+  frames.forEach((im, f) => {
+    const hit = (x, y) => im.data[(y * im.w + x) * 4 + 3];
+    let edge = false;
+    for (let x = 0; x < im.w && !edge; x++) edge = hit(x, 0) || hit(x, im.h - 1);
+    for (let y = 0; y < im.h && !edge; y++) edge = hit(0, y) || hit(im.w - 1, y);
+    if (edge) bad.push(f);
+  });
+  return bad;
+}
 
 function strip(frames) {
   const w = frames[0].w, h = frames[0].h, out = img(w * frames.length, h);
@@ -113,5 +189,5 @@ function strip(frames) {
 // the colours restyle knows, as hex strings
 const H = c => "#" + c.slice(0, 3).map(v => v.toString(16).padStart(2, "0")).join("");
 
-module.exports = { glowAround, C, INK, inked, P, SOUL, RED, AZURE, FIRE, GOLD, JADE, DUST, ASH, RES, TAU, img, lerp, easeOut, M, fill, clamp01, pick, blob,
+module.exports = { FM, canvas, fit, clipped, pad, blank, eachPx, rawPut, turn, glowAround, C, INK, inked, P, SOUL, RED, AZURE, FIRE, GOLD, JADE, DUST, ASH, RES, TAU, img, lerp, easeOut, M, fill, clamp01, pick, blob,
   stroke, dissolve, silhouette, motes, strip, H, D, W, K2, put, bayer, png };

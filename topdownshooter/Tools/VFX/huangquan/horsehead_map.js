@@ -1,0 +1,33 @@
+// Horse-Face's head, drawn by hand, facing right: the long horse's skull dropping steeply to a pale,
+// rounded muzzle, an ear standing up in front of the official's black gauze cap (its gold band, and its
+// two flat wings out on rods fore and aft), and the black mane falling from under it. letters are
+// colours in the flat source (see guardians.js); its neck joins at about (11, 20)
+module.exports = [
+  "..............................",
+  "..KK..................KK......",
+  ".KKKK................KKKK.....",
+  ".KKKKKKKKKKKKKKKKKKKKKKKK.....",
+  "..KK....KKKKKKKKKK..l.KK......",
+  "........KKKKKKKKKK.Fl.........",
+  ".......KKKKKKKKKKKKFl.........",
+  ".......KKKKKKKKKKKKFl.........",
+  ".......gggggggggggg...........",
+  ".....mmmfFFFFFFFFFFFF.........",
+  "....mmmfFFFFfeefFFFFFF........",
+  "....mmmfFFFFfffFFFFFFFF.......",
+  "...mmmfFFFFFFFFFFFFFFFF.......",
+  "...mmmfFFfFFFFFFFFFFFFFF......",
+  "..mmmmfFFFfFFFFFFFFFFFFF......",
+  "..mmmmmffFFfFFFFFFFFFFFFF.....",
+  ".mmmmmmmffFFfFFFFFFFFFFFF.....",
+  ".mmmmmmmm.ffFFFFFFFFFFFFFF....",
+  "mmmmmmmmmm..ffFFFFFFFFFFFF....",
+  "mmmmmmmm.....ffFFFFFlllllll...",
+  "mmmmmm........ffFFFFlllllll...",
+  "mmmm...........ffFFFllllkfll..",
+  "................ffllllllklll..",
+  ".................fflllllllll..",
+  "..................kkkkkkkkl...",
+  "..................ffllllll....",
+  "...................ffllll.....",
+];

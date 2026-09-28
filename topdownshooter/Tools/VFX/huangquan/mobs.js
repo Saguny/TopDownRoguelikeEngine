@@ -41,7 +41,15 @@ const ASH = ramp("#2a2428", "#463e42", "#6a6064", "#948a8a", "#bfb4ae");
 const IRON = ramp("#17111d", "#2b2232", "#463a4b", "#6b5b6c", "#978c9c");
 const TALIS = ramp("#b88418", "#f2c230", "#fff07a");
 
-const light = (frames, ramps, opts = {}) => restyle(frames, Object.assign({ ramps, ao: 2, minArea: 10 }, opts));
+// lit, then given a margin for its glow and light to spill into (see kit.pad)
+const MG = 12;
+function light(frames, ramps, opts = {}, margin = MG) {
+  // a flat source that reaches its own edge has been cut off while it was drawn: make it bigger
+  const cut = K.clipped(frames);
+  if (cut.length) throw new Error(`a ${frames[0].w}x${frames[0].h} source is cut off at its edge in frames ${cut}`);
+  return restyle(frames, Object.assign({ ramps, ao: 2, minArea: 10 }, opts))
+    .map((im, i) => K.pad(Object.assign(im, { ox: frames[i].ox | 0, oy: frames[i].oy | 0 }), margin));
+}
 const dot = (im, x, y, c) => put(im, x, y, typeof c === "string" ? C(c) : c);
 const area = (im, Mk, h) => fill(im, Mk, C(h));
 
@@ -49,7 +57,7 @@ const area = (im, Mk, h) => fill(im, Mk, C(h));
 const SOUL_W = 28, SOUL_H = 30;
 const SOUL_X = 16;
 function soulFlat(f, N) {
-  const im = img(SOUL_W, SOUL_H), ph = f / N * TAU, bob = Math.round(Math.sin(ph) * 1.2);
+  const im = K.canvas(SOUL_W, SOUL_H), ph = f / N * TAU, bob = Math.round(Math.sin(ph) * 1.2);
   const hx = SOUL_X, hy = 9 + bob;
   // the body: a tail of mist from the shoulders, thinning and curling away behind
   const body = M(SOUL_W, SOUL_H);
@@ -69,7 +77,7 @@ function soulFlat(f, N) {
   const out = inked(im);
   // arms reaching out ahead, hands hanging limp: their own outline, so they read over the body
   const reach = Math.round(Math.sin(ph + 1) * 0.8);
-  const arms = img(SOUL_W, SOUL_H);
+  const arms = K.canvas(SOUL_W, SOUL_H);
   area(arms, stroke(M(SOUL_W, SOUL_H), [[hx - 1, hy + 8], [hx + 4, hy + 9 + reach], [hx + 8, hy + 10 + reach], [hx + 9, hy + 12 + reach]], 1), GH[3]);
   return D.over(out, inked(arms));
 }
@@ -99,8 +107,8 @@ function makeSoul() {
     let im;
     if (f === 0) im = K.silhouette(base, P.J5);
     else if (f === 1) im = K.silhouette(base, P.W);
-    else im = dissolve(base, 0.15 + k * 0.85, f * 2.5, f < 4 ? P.J4 : P.J3, f);
-    motes(im, f, 6, 10, 17, 6, 24, 0, 22, [P.J5, P.J3]);
+    else im = dissolve(base, 0.15 + k * 0.85, f * 1.4, f < 4 ? P.J4 : P.J3, f);
+    motes(im, f, 6, 10, 17, 6, 24, 2, 22, [P.J5, P.J3]);
     death.push(im);
   }
   return { wandering_soul: loop, wandering_soul_death: death };
@@ -112,7 +120,7 @@ const PETALS = [-190, -168, -148, -128, -108, -90, -72, -52, -32, -12, 10];
 
 // the flat source: the mound, leaves, stem and arms, the flower `open` (1 wide, 0 clenched)
 function lilyFlat(f, { open = 1, sway = 0, grow = 1, droop = 0 } = {}) {
-  const { w, h } = LS, im = img(w, h);
+  const { w, h } = LS, im = K.canvas(w, h);
   const cx = LS.cx + sway, top = lerp(40, LS.cy, grow), cy = top + droop * 10;
   // grave soil and roots
   area(im, K2.ellipse(M(w, h), 20, 41, 9.5, 2.6), SOIL[2]);
@@ -199,14 +207,14 @@ function lilyLight(out, f, { open = 1, sway = 0, heat = 0, grow = 1, droop = 0 }
     put(out, x, y - 1, P.G3); put(out, x + (Math.cos(a) > 0 ? 1 : -1), y - 1, P.G2);
   });
   // a red glow round the flower's head only: round the thin stems it would just be noise
-  const head = img(LS.w, LS.h);
-  for (let y = 0; y < LS.h; y++) for (let x = 0; x < LS.w; x++) if (y < cy + 5 && Math.abs(x - cx) < 15) { const c = D.get(out, x, y); if (c) put(head, x, y, c); }
+  const head = K.blank(out);
+  for (let y = -out.oy; y < out.h - out.oy; y++) for (let x = -out.ox; x < out.w - out.ox; x++) if (y < cy + 5 && Math.abs(x - cx) < 15) { const c = D.get(out, x, y); if (c) put(head, x, y, c); }
   const halo = glowAround(head, 2, P.R1, P.R0, f + 3);
   let g = D.over(halo, out);
   if (heat > 0) {
-    const F = D.field(LS.w, LS.h);
-    blob(F, cx, cy - 1, 3 + heat * 6, 3 + heat * 6, heat * 1.05, 0.05);
-    D.over(g, D.shade(img(LS.w, LS.h), F, [[0.18, P.R2], [0.4, P.R3], [0.65, P.G3], [0.85, P.W]], { fadeBand: 0.9 }));
+    const F = D.field(g.w, g.h);
+    blob(F, cx + g.ox, cy - 1 + g.oy, 3 + heat * 6, 3 + heat * 6, heat * 1.05, 0.05);
+    D.over(g, D.shade(img(g.w, g.h), F, [[0.18, P.R2], [0.4, P.R3], [0.65, P.G3], [0.85, P.W]], { fadeBand: 0.9 }));
     // pollen drawn into it
     const r = D.rng(31 + f);
     for (let k = 0; k < 8; k++) {
@@ -250,7 +258,7 @@ function makeLily() {
 // ================================================================ the paper servant
 const PS = { w: 32, h: 44 };
 function servantFlat(f, { hop = 0, crouch = 0, arms = 0 } = {}) {
-  const { w, h } = PS, im = img(w, h);
+  const { w, h } = PS, im = K.canvas(w, h);
   const y0 = -hop + crouch;
   const flutter = [0, 1, 0, -1][f % 4];
   // the mourning streamer from the back of its head, fluttering behind
@@ -279,7 +287,7 @@ function servantFlat(f, { hop = 0, crouch = 0, arms = 0 } = {}) {
   const out = inked(im);
   // wide sleeves hanging to paper cuffs, the hands clasped over a gold ingot: over the robe, with
   // their own outline
-  const lift = arms, sv = img(w, h);
+  const lift = arms, sv = K.canvas(w, h);
   const sl = K2.poly(M(w, h), [[11, 18 + y0], [14, 20 + y0], [14, 28 + y0 - lift], [7, 30 + y0 - lift], [8, 22 + y0]]);
   const sr = K2.poly(M(w, h), [[21, 18 + y0], [18, 20 + y0], [18, 28 + y0 - lift], [25, 30 + y0 - lift], [24, 22 + y0]]);
   area(sv, sl, ROBE[1]); area(sv, sr, ROBE[1]);
@@ -320,13 +328,13 @@ function makeServant() {
   const loop = servants([0, 2, 3, 1].map((hop, f) => ({ f, hop })));
   const aim = servants([0, 1, 2].map(f => ({ f, crouch: [1, 2, 2][f], red: f > 0, arms: -1 })));
   const dash = servants([0, 1, 2].map(f => ({ f, red: true, arms: 3 }))).map((body, f) => {
-    const im = img(PS.w, PS.h), r = D.rng(5 + f);
+    const im = K.blank(body), r = D.rng(5 + f);
     // speed lines streaming behind, and scraps of paper whipped off it
     for (let k = 0; k < 9; k++) {
       const y = 6 + r() * 32, len = 5 + r() * 10, x0 = r() * 5;
       for (let x = x0; x < x0 + len; x++) if (bayer(Math.round(x), Math.round(y)) < 0.85 - (x - x0) / len * 0.6) put(im, x, y, k % 3 ? P.CR1 : P.W);
     }
-    D.over(im, K2.rotate(body, -0.38));
+    D.over(im, K.turn(body, -0.38));
     for (let k = 0; k < 3; k++) { const x = 2 + r() * 6, y = 8 + r() * 26; put(im, x, y, P.CR2); put(im, x + 1, y, P.R2); }
     return im;
   });
@@ -336,14 +344,14 @@ function makeServant() {
   const part = (x, y) => y < 16 ? 0 : x < tear(y) ? 1 : 2;
   const fly = [[0.8, -2.6], [-2.4, 0.8], [2.4, 1]];
   for (let f = 0; f < 6; f++) {
-    const t = f / 5, im = img(PS.w, PS.h);
-    for (let y = 0; y < PS.h; y++) for (let x = 0; x < PS.w; x++) {
+    const t = f / 5, im = K.blank(whole);
+    for (let y = -whole.oy; y < whole.h - whole.oy; y++) for (let x = -whole.ox; x < whole.w - whole.ox; x++) {
       const c = D.get(whole, x, y);
       if (!c) continue;
       const p = part(x, y), [vx, vy] = fly[p];
       const spin = p === 0 ? 0 : (p === 1 ? -1 : 1) * t * 0.5;
       const dx = x - 16, dy = y - 24;
-      const nx = 16 + dx * Math.cos(spin) - dy * Math.sin(spin) + vx * t * 6, ny = 24 + dx * Math.sin(spin) + dy * Math.cos(spin) + vy * t * 6 + t * t * 8;
+      const nx = 16 + dx * Math.cos(spin) - dy * Math.sin(spin) + vx * t * 3.5, ny = 24 + dx * Math.sin(spin) + dy * Math.cos(spin) + vy * t * 3.5 + t * t * 3;
       const edge = Math.abs(y - 16) < 1.6 || (y >= 16 && Math.abs(x - tear(y)) < 1.6);
       const burn = edge ? t * 4 : Math.max(0, t * 3 - 1.2) * (1 - Math.abs(dx) / 16);
       let col = c;
@@ -363,7 +371,7 @@ function makeServant() {
 // ================================================================ the hell money burner
 const HB = { w: 38, h: 44 };
 function burnerFlat(f, { rise = 0, raise = 0 } = {}) {
-  const { w, h } = HB, im = img(w, h), y0 = -rise;
+  const { w, h } = HB, im = K.canvas(w, h), y0 = -rise;
   const fr = [0, 1, 1, 0, -1, -1][f % 6];
   // the robe: a hunched back, the hood pushed forward, the hem fraying into smoke
   const robe = K2.poly(M(w, h), [[9, 16 + y0], [13, 9 + y0], [20, 6 + y0], [27, 8 + y0], [30, 13 + y0], [28, 20 + y0],
@@ -417,7 +425,8 @@ function flames(im, cx, base, width, height, f, seed, hot = 0.8) {
 
 // firelight: the lit pixels near a fire warmed toward orange
 function firelight(im, fx, fy, reach, strength = 0.5) {
-  for (let y = 0; y < im.h; y++) for (let x = 0; x < im.w; x++) {
+  const ox = im.ox | 0, oy = im.oy | 0;
+  for (let y = -oy; y < im.h - oy; y++) for (let x = -ox; x < im.w - ox; x++) {
     const c = D.get(im, x, y);
     if (!c) continue;
     const d = Math.hypot(x - fx, y - fy);
@@ -461,9 +470,9 @@ function makeBurner() {
   const act = burners(Array.from({ length: 5 }, (_, f) => ({ f, rise: Math.round(f / 4 * 2), raise: f / 4 })));
   const whole = loop[0], death = [];
   for (let f = 0; f < 6; f++) {
-    const t = f / 5, im = img(HB.w, HB.h);
+    const t = f / 5, im = K.blank(whole);
     // the robe sinks into a heap of ash, the brazier tips and spills
-    for (let y = 0; y < HB.h; y++) for (let x = 0; x < HB.w; x++) {
+    for (let y = -whole.oy; y < whole.h - whole.oy; y++) for (let x = -whole.ox; x < whole.w - whole.ox; x++) {
       const c = D.get(whole, x, y);
       if (!c) continue;
       const ny = y + (39 - y) * Math.min(1, t * 1.25) * 0.8 + (W.hash2(x, 3, 1) - 0.5) * t * 2;
@@ -472,7 +481,7 @@ function makeBurner() {
     }
     const r = D.rng(9);
     for (let k = 0; k < 14; k++) {
-      const x = 32 + r() * 3 + t * (3 + r() * 8), y = 26 - Math.sin(t * Math.PI) * (4 + r() * 8) + t * 10;
+      const x = 32 + r() * 3 + t * (2 + r() * 5), y = 26 - Math.sin(t * Math.PI) * (4 + r() * 8) + t * 10;
       if (bayer(Math.round(x), Math.round(y)) < t * 0.7) continue;
       put(im, x, y, r() < 0.5 ? P.O2 : P.G2);
     }
@@ -487,7 +496,7 @@ const LN = { w: 32, h: 44, cx: 16, cy: 18 };
 const YIN = ["11101", "00101", "11101", "10001", "11101", "00101", "01101"];
 
 function lanternFlat(f, { sway = 0 } = {}) {
-  const { w, h } = LN, im = img(w, h), cx = LN.cx, cy = LN.cy;
+  const { w, h } = LN, im = K.canvas(w, h), cx = LN.cx, cy = LN.cy;
   // the cord it hangs from, from nothing
   area(im, stroke(M(w, h), [[cx, 1], [cx, 7]], 1), WOOD[1]);
   // the roof cap: gold lacquer with upturned eaves and a red ridge
@@ -558,8 +567,8 @@ function makeLantern() {
     if (f === 0) im = K.silhouette(full, P.J5);
     else {
       // the paper catching green fire from the middle out, then gone
-      im = img(LN.w, LN.h);
-      for (let y = 0; y < LN.h; y++) for (let x = 0; x < LN.w; x++) {
+      im = K.blank(full);
+      for (let y = -full.oy; y < full.h - full.oy; y++) for (let x = -full.ox; x < full.w - full.ox; x++) {
         const c = D.get(full, x, y);
         if (!c) continue;
         const d = Math.hypot(x - LN.cx, y - LN.cy) / 16;
@@ -570,8 +579,8 @@ function makeLantern() {
     }
     const r = D.rng(99);
     for (let k = 0; k < 18; k++) {
-      const a = r() * TAU, d = 3 + t * (9 + r() * 10);
-      const x = LN.cx + Math.cos(a) * d, y = LN.cy + Math.sin(a) * d - t * 6;
+      const a = r() * TAU, d = 3 + t * (7 + r() * 8);
+      const x = LN.cx + Math.cos(a) * d, y = LN.cy + Math.sin(a) * d - t * 3;
       if (bayer(Math.round(x), Math.round(y)) < t * 0.75) continue;
       put(im, x, y, r() < 0.4 ? P.J5 : P.J3);
     }
@@ -584,4 +593,4 @@ function makeMobs() {
   return Object.assign({}, makeSoul(), makeLily(), makeServant(), makeBurner(), makeLantern());
 }
 
-module.exports = { makeMobs, flames, firelight, light, ramp, area, dot, GH, HAIR, PAPER, ROBE, GOLD, WOOD, STEM, SOIL, ASH, IRON, TALIS };
+module.exports = { MG, makeMobs, flames, firelight, light, ramp, area, dot, GH, HAIR, PAPER, ROBE, GOLD, WOOD, STEM, SOIL, ASH, IRON, TALIS };

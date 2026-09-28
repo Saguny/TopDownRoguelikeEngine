@@ -69,13 +69,22 @@ function bullFrame(p) {
   return { T, Hd, hx, hy };
 }
 
-// the head's own frame: u along the face from the poll down to the muzzle, v across it (down
-// and back); the face held low at 35 degrees, nodding with the pose
-function headOf(p) {
+// the hand-drawn head, turned by the pose's lean and nod, placed with its poll on the neck: the
+// image to lay into the flat source, and where any of its pixels ends up
+const HEAD_MAP = require("./bullhead_map");
+const HEAD_KEY = { H: HIDE[2], h: HIDE[1], L: HIDE[3], B: HORN[2], b: HORN[1], W: HORN[3], f: HAIR[1], g: GOLD[1], k: "#000000", e: HIDE[1] };
+function bullHead(p) {
   const { T } = bullFrame(p);
-  const poll = T([66, 24]), th = 0.62 + p.nod + p.lean;
-  const a = [Math.cos(th), Math.sin(th)], b = [-Math.sin(th), Math.cos(th)];
-  return (u, v) => [poll[0] + 4 + u * a[0] + v * b[0], poll[1] + 2 + u * a[1] + v * b[1]];
+  const w = HEAD_MAP[0].length, h = HEAD_MAP.length, flat = img(w, h);
+  HEAD_MAP.forEach((row, y) => [...row].forEach((ch, x) => { if (HEAD_KEY[ch]) dot(flat, x, y, HEAD_KEY[ch]); }));
+  const ang = p.lean + p.nod * 0.85, ca = Math.cos(ang), sa = Math.sin(ang);
+  const poll = T([67, 13]), pl = [9, 9];
+  const at = (x, y) => { const dx = x - pl[0], dy = y - pl[1]; return [poll[0] + dx * ca - dy * sa, poll[1] + dx * sa + dy * ca]; };
+  const R = 44, turned = Math.abs(ang) < 0.02 ? null : K2.rotate(flat, ang, R, R);
+  const image = K.canvas(S, S);
+  if (!turned) D.blit(image, flat, Math.round(poll[0] - pl[0]), Math.round(poll[1] - pl[1]));
+  else { const c = at(w / 2, h / 2); D.blit(image, turned, Math.round(c[0] - R / 2), Math.round(c[1] - R / 2)); }
+  return { image, at };
 }
 
 // a leg from the hip to a foot, the knee bent forward between them
@@ -87,7 +96,7 @@ function leg(hip, foot, thick, knee = 1) {
 }
 
 function bullFlat(kind, f) {
-  const im = img(S, S), p = bullPose(kind, f), { T, Hd, hx, hy } = bullFrame(p);
+  const im = K.canvas(S, S), p = bullPose(kind, f), { T, Hd, hx, hy } = bullFrame(p);
   const poly = pts => K2.poly(M(S, S), pts.map(T));
   const hpoly = pts => K2.poly(M(S, S), pts.map(Hd));
   const hip = [hx, hy];
@@ -102,9 +111,9 @@ function bullFlat(kind, f) {
   area(im, K2.rect(M(S, S), p.far[0] - 4, p.far[1] - 3, p.far[0] + 3, p.far[1]), IRON[1]);
 
   // the steel trident: shaft through his far fist, three tines and a crescent guard at its head
-  const grip = T([34, 50]);
-  const up = p.tridentBack ? [-0.93, -0.36] : [0.22, -0.97];
-  const top = [grip[0] + up[0] * 44, grip[1] + up[1] * 44], butt = [grip[0] - up[0] * 38, grip[1] - up[1] * 38];
+  const grip = T([31, 46]);
+  const up = p.tridentBack ? [-0.93, -0.36] : [0.16, -0.99];
+  const top = [grip[0] + up[0] * 40, grip[1] + up[1] * 40], butt = [grip[0] - up[0] * 44, grip[1] - up[1] * 44];
   area(im, stroke(M(S, S), [butt, top], 2), WOOD[1]);
   const side = [-up[1], up[0]];
   const at = (a, b) => [top[0] + up[0] * a + side[0] * b, top[1] + up[1] * a + side[1] * b];
@@ -114,16 +123,31 @@ function bullFlat(kind, f) {
   area(im, stroke(M(S, S), [at(0, 5), at(7, 6), at(10, 5)], 1), STEEL[2]);
   area(im, stroke(M(S, S), [at(-2, -1), at(-4, 0), at(-2, 1)], 1), ROBE[2]);    // a red tassel
 
-  area(im, stroke(M(S, S), [T([44, 34]), T([36, 44]), grip], 7), HIDE[1]);
+  area(im, stroke(M(S, S), [T([42, 26]), T([33, 36]), grip], 7), HIDE[1]);
   area(im, K2.ellipse(M(S, S), grip[0], grip[1], 3.5, 3.5), HIDE[2]);
 
-  // ---- the torso: a barrel of a chest under a shoulder hump
-  area(im, poly([[30, 42], [34, 30], [46, 23], [60, 24], [70, 32], [72, 44], [66, 54], [60, 61], [38, 62], [31, 54]]), HIDE[2]);
+  // ---- the torso: a great hump of shoulder over a deep chest, narrowing to the waist
+  area(im, poly([[28, 32], [34, 22], [46, 16], [58, 17], [68, 24], [70, 36], [64, 46], [60, 56], [38, 57], [33, 46]]), HIDE[2]);
+  // a shaggy black mane down the hump, like a bison's, ragged at its edge
+  const mane = [[62, 12], [56, 10], [48, 12], [40, 16], [33, 22], [28, 30], [27, 38]];
+  const maneM = stroke(M(S, S), mane.map(T), 5);
+  for (let k = 0; k < mane.length - 1; k++) {
+    const [x0, y0] = T(mane[k]), [x1, y1] = T(mane[k + 1]);
+    const nx = -(y1 - y0), ny = x1 - x0, l = Math.hypot(nx, ny) || 1;
+    // ragged clumps sticking up and back off it
+    const mx = (x0 + x1) / 2, my = (y0 + y1) / 2, ux = nx / l, uy = ny / l;
+    const tip = [mx + ux * 5 - 2.5, my + uy * 5 - 1];
+    K2.poly(maneM, [[mx - uy * 2.5, my + ux * 2.5], [mx + uy * 2.5, my - ux * 2.5], tip]);
+  }
+  area(im, maneM, HAIR[1]);
   // chest and belly muscle, drawn in the darker hide
-  for (const q of [[[58, 38], [64, 44]], [[50, 46], [62, 46]], [[52, 51], [60, 51]], [[46, 32], [58, 36]]]) area(im, stroke(M(S, S), q.map(T), 1), HIDE[1]);
+  for (const q of [[[56, 32], [64, 38]], [[48, 42], [60, 42]], [[50, 48], [58, 48]], [[44, 26], [56, 30]]]) area(im, stroke(M(S, S), q.map(T), 1), HIDE[1]);
 
+  // a leather bandolier across the chest, studded, a little skull hung on it
+  area(im, stroke(M(S, S), [T([40, 20]), T([50, 34]), T([60, 52])], 3), IRON[1]);
+  area(im, K2.ellipse(M(S, S), ...T([50, 34]), 2.5, 2.5), HORN[2]);
   // ---- the war skirt: red, iron plates over it, gold studs; an iron belt with a skull buckle
-  const skirt = poly([[36, 56], [62, 56], [66, 74], [58, 76], [48, 73], [40, 76], [32, 72]]);
+  const skirt = poly([[37, 55], [61, 55], [66, 74], [58, 76], [48, 73], [40, 76], [32, 72]]);
   area(im, skirt, ROBE[2]);
   for (const [x0, x1] of [[37, 43], [47, 53], [57, 63]]) area(im, poly([[x0, 58], [x1, 58], [x1 + 1, 70], [x0 + 1, 70]]), IRON[2]);
   area(im, poly([[35, 54], [64, 54], [64, 58], [35, 58]]), IRON[1]);
@@ -137,50 +161,32 @@ function bullFlat(kind, f) {
   const kx = nearLeg[1][0], ky = nearLeg[1][1];
   area(im, K2.poly(M(S, S), [[kx - 4, ky + 1], [kx + 4, ky + 1], [kx + 2, ky + 9], [kx - 3, ky + 9]]), IRON[2]);
 
-  // ---- the head, on a bull's thick neck
-  // a bull's neck, thick as his chest, carrying the head low
-  const H = headOf(p), hp = pts => K2.poly(M(S, S), pts.map(([u, v]) => H(u, v)));
-  area(im, K2.poly(M(S, S), [T([50, 24]), T([62, 20]), H(2, -6), H(8, -6), H(6, 9), H(-2, 11), T([60, 46]), T([52, 38])]), HIDE[2]);
-  // the skull: a straight face angled down to a square muzzle, the jaw heavy under it
-  area(im, hp([[-3, -5], [6, -6], [14, -6], [19, -5], [22, -3], [23, 1], [22, 5], [18, 7], [12, 7], [6, 9], [0, 10], [-4, 6], [-4, -1]]), HIDE[2]);
-  area(im, hp([[15, -6], [19, -5], [22, -3], [23, 1], [22, 5], [18, 7], [15, 6], [14, 0]]), HIDE[3]);
-  area(im, stroke(M(S, S), [H(14, 6), H(18, 5), H(22, 4)], 1), HIDE[1]);            // the mouth
-  area(im, stroke(M(S, S), [H(1, -7), H(5, -6), H(9, -5)], 2), HIDE[1]);            // the brow
-  // the ear, flicked out behind
-  area(im, hp([[0, -3], [-8, -6], [-9, -3], [-1, 0]]), HIDE[1]);
-  // horns out of the poll: the far one behind, darker; the near one sweeping up and forward
-  const poll = H(1, -6), hw = ([x, y]) => [poll[0] + x, poll[1] + y];
-  const hornF = [[-4, 1], [-8, -4], [-8, -9], [-4, -12], [0, -12]].map(hw);
-  area(im, stroke(M(S, S), hornF.slice(0, 3), 3), HORN[1]);
-  area(im, stroke(M(S, S), hornF.slice(2), 1), HORN[1]);
-  const hornN = [[0, 0], [-3, -5], [-2, -10], [3, -13], [9, -13], [12, -10]].map(hw);
-  area(im, stroke(M(S, S), hornN.slice(0, 3), 4), HORN[2]);
-  area(im, stroke(M(S, S), hornN.slice(2, 5), 2), HORN[2]);
-  area(im, stroke(M(S, S), hornN.slice(4), 1), HORN[3]);
-  // a bronze band round the horn's root
-  area(im, stroke(M(S, S), [hw([-4, -3]), hw([1, -4])], 1), GOLD[1]);
-  // a shock of black mane on the poll, falling onto the neck
-  area(im, K2.poly(M(S, S), [hw([-6, 2]), hw([-5, -3]), hw([-2, 0]), hw([-1, -4]), hw([2, 1]), H(-2, 4)]), HAIR[1]);
+  // ---- the head, drawn by hand (bullhead_map.js), turned with the pose, on a bull's thick neck
+  const hd = bullHead(p);
+  area(im, K2.poly(M(S, S), [T([50, 18]), T([60, 16]), hd.at(8, 10), hd.at(6, 20), hd.at(12, 23), T([64, 34]), T([54, 30])]), HIDE[2]);
 
   // ---- the near arm, huge, over everything, and the pauldron on its shoulder
   const out = inked(im);
-  const fg = img(S, S);
-  const sh = T([60, 34]), el = T([68 + p.arm * 0.3, 48]), fist = T([70 + p.arm, 60]);
+  const fg = K.canvas(S, S);
+  const sh = T([60, 26]), el = T([67 + p.arm * 0.3, 40]), fist = T([70 + p.arm, 53]);
   area(fg, stroke(M(S, S), [sh, el, fist], 8), HIDE[2]);
-  area(fg, K2.poly(M(S, S), [T([63, 50]), T([71, 50]), T([72 + p.arm, 57]), T([64 + p.arm, 57])]), IRON[2]);   // the bracer
+  area(fg, K2.poly(M(S, S), [T([62, 42]), T([70, 42]), T([72 + p.arm, 50]), T([64 + p.arm, 50])]), IRON[2]);   // the bracer
   area(fg, K2.ellipse(M(S, S), fist[0], fist[1] + 1, 4.5, 4), HIDE[3]);
   // the pauldron: three lames of black iron stepping down the shoulder, a spike off the top one
-  area(fg, K2.poly(M(S, S), [T([51, 28]), T([57, 23]), T([65, 24]), T([69, 30]), T([66, 32]), T([52, 32])]), IRON[2]);
-  area(fg, K2.poly(M(S, S), [T([51, 32]), T([67, 32]), T([69, 36]), T([52, 37])]), IRON[2]);
-  area(fg, K2.poly(M(S, S), [T([53, 37]), T([69, 36]), T([69, 40]), T([55, 41])]), IRON[2]);
-  area(fg, K2.poly(M(S, S), [T([55, 24]), T([59, 23]), T([54, 17])]), IRON[3]);
-  return D.over(out, inked(fg));
+  area(fg, K2.poly(M(S, S), [T([51, 21]), T([57, 16]), T([65, 17]), T([69, 23]), T([66, 25]), T([52, 25])]), IRON[2]);
+  area(fg, K2.poly(M(S, S), [T([51, 25]), T([67, 25]), T([69, 29]), T([52, 30])]), IRON[2]);
+  area(fg, K2.poly(M(S, S), [T([53, 30]), T([69, 29]), T([69, 33]), T([55, 34])]), IRON[2]);
+  area(fg, K2.poly(M(S, S), [T([54, 17]), T([58, 16]), T([50, 10])]), IRON[3]);
+  // the head last, over the shoulder: it's what he leads with
+  const head = K.canvas(S, S);
+  D.over(head, hd.image);
+  return D.over(D.over(out, inked(fg)), inked(head));
 }
 
 // his light: the eye, the steel and gold catching, the nose ring, and his breath
 function bullLight(out, kind, f) {
   const p = bullPose(kind, f), { T, Hd } = bullFrame(p);
-  const H = headOf(p), eye = H(6, -3);
+  const hd = bullHead(p), eye = hd.at(9.5, 12);
   if (kind === "stun") {
     // eyes spinning
     const a = f / 4 * TAU;
@@ -192,14 +198,18 @@ function bullLight(out, kind, f) {
     for (let k = -2; k <= 2; k++) put(out, eye[0] + k, eye[1] - 2 - (k > 0 ? 1 : 0), P.S0);
   }
   // nostrils and the gold ring through them
-  const nose = H(21, -2);
+  const nose = hd.at(22, 18);
   put(out, nose[0], nose[1], P.S0); put(out, nose[0], nose[1] + 1, P.S0); put(out, nose[0] - 1, nose[1] + 1, P.S0);
-  const ring = H(22, 2);
+  const ring = hd.at(21, 23);
   for (let a = 0; a < 8; a++) put(out, ring[0] + Math.round(Math.cos(a / 8 * TAU) * 2.2), ring[1] + Math.round(Math.sin(a / 8 * TAU) * 2), a < 4 ? P.G2 : P.G3);
   // gold studs on the skirt's plates, rivets on the pauldron
   for (const q of [[40, 62], [50, 62], [60, 62], [40, 67], [50, 67], [60, 67]]) { const s = T(q); put(out, s[0], s[1], P.G2); }
-  for (const q of [[53, 31], [57, 31], [61, 31], [65, 31], [55, 36], [60, 36], [65, 35]]) { const s = T(q); put(out, s[0], s[1], P.G2); }
+  for (const q of [[53, 24], [57, 24], [61, 24], [65, 24], [55, 29], [60, 29], [65, 28]]) { const s = T(q); put(out, s[0], s[1], P.G2); }
   // the skull buckle
+  // the bandolier's studs and its little skull's eyes
+  for (const q of [[43, 24], [46, 28], [54, 40], [57, 46]]) { const s = T(q); put(out, s[0], s[1], P.G2); }
+  const sk = T([50, 34]);
+  put(out, sk[0] - 1, sk[1], P.S0); put(out, sk[0] + 1, sk[1], P.S0);
   const b = T([52, 56]);
   put(out, b[0] - 1, b[1], P.S0); put(out, b[0] + 1, b[1], P.S0); put(out, b[0], b[1] + 2, P.S0);
   // hell runes cut into his hide, glowing: down the arm and a seal on the chest, flaring as he
@@ -207,20 +217,20 @@ function bullLight(out, kind, f) {
   const hot = kind === "telegraph" || kind === "charge";
   const pulse = hot ? 2 : [0, 1, 1, 0, 0, 1][f % 6];
   const runeCol = [P.R1, P.R2, P.R3][pulse] || P.R3, runeHot = hot ? P.G3 : P.R3;
-  const arm = [[61, 38], [63, 42], [65, 41], [66, 45], [68, 44]].map(T);
+  const arm = [[61, 30], [63, 34], [65, 33], [66, 37], [68, 36]].map(T);
   arm.forEach(([x, y], k) => put(out, x, y, k % 2 ? runeHot : runeCol));
-  const seal = T([52, 42]);
+  const seal = T([50, 36]);
   for (let a = 0; a < 10; a++) put(out, seal[0] + Math.round(Math.cos(a / 10 * TAU) * 3), seal[1] + Math.round(Math.sin(a / 10 * TAU) * 3), a % 3 ? runeCol : runeHot);
   put(out, seal[0], seal[1], runeHot); put(out, seal[0] - 1, seal[1] + 1, runeCol); put(out, seal[0] + 1, seal[1] - 1, runeCol);
   if (hot) {
     // their heat bleeding out round him
-    const glow = img(S, S);
+    const glow = K.blank(out);
     for (const [x, y] of [...arm, seal]) put(glow, x, y, P.R2);
     D.over(out, K.glowAround(glow, 2, P.R1, P.R0, f), );
   }
   // a chain wrapped round the forearm, its loose end swinging
-  const fist = T([70 + p.arm, 60]), sw = Math.sin(f / (kind === "march" ? 6 : 4) * TAU) * 3 - (kind === "charge" ? 8 : 0);
-  for (let k = 0; k < 4; k++) { const q = T([64 + k * 2 + p.arm * 0.5, 52 + k]); put(out, q[0], q[1], k % 2 ? STEEL_C[3] : STEEL_C[2]); }
+  const fist = T([70 + p.arm, 53]), sw = Math.sin(f / (kind === "march" ? 6 : 4) * TAU) * 3 - (kind === "charge" ? 8 : 0);
+  for (let k = 0; k < 4; k++) { const q = T([63 + k * 2 + p.arm * 0.5, 45 + k]); put(out, q[0], q[1], k % 2 ? STEEL_C[3] : STEEL_C[2]); }
   for (let k = 0; k <= 10; k++) {
     const t = k / 10, x = fist[0] - 2 + sw * t - t * 3, y = fist[1] + 3 + t * 12 - Math.sin(t * Math.PI) * 1;
     put(out, x, y, k % 2 ? STEEL_C[3] : STEEL_C[1]);
@@ -236,7 +246,7 @@ function bullLight(out, kind, f) {
   }
   if (kind === "stun") {
     // stars round his horns
-    const c = H(-2, -16);
+    const c = hd.at(12, -2);
     for (let k = 0; k < 4; k++) {
       const a = f / 4 * TAU + k * TAU / 4, x = c[0] + Math.cos(a) * 12, y = c[1] + Math.sin(a) * 4;
       W.twinkle(out, x, y, Math.sin(a) > 0 ? 1 : 0, [P.W, P.G2]);
@@ -267,36 +277,193 @@ function bulls(kind, n) {
 
 function makeBull() {
   const march = bulls("march", 6), telegraph = bulls("telegraph", 4), charge = bulls("charge", 4), stun = bulls("stun", 4);
-  // down on a knee, then embers and red smoke out of every crack
+  // rocked back (his stun pose), a flash, then a burn front sweeping through him from his cracked
+  // runes outward, its edge white-hot, what's behind it gone to embers and red smoke
   const death = [];
-  const base = telegraph[0];
+  const base = stun[0];
   for (let f = 0; f < 10; f++) {
     const t = f / 9;
     let im;
-    if (f < 2) im = f === 0 ? K.silhouette(base, P.W) : K.silhouette(base, P.R3);
+    if (f === 0) im = K.silhouette(base, P.W);
+    else if (f === 1) im = K.silhouette(base, P.R3);
     else {
-      im = img(S, S);
-      const sink = Math.min(1, (t - 0.2) * 2) * 10;
-      for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) {
+      im = K.blank(base);
+      const sink = Math.round(Math.min(1, (t - 0.2) * 1.5) * 4);
+      for (let y = -base.oy; y < base.h - base.oy; y++) for (let x = -base.ox; x < base.w - base.ox; x++) {
         const c = D.get(base, x, y);
         if (!c) continue;
-        const burn = t * 1.7 - W.fbm(x / 7, y / 7, 5) - (1 - y / S) * 0.3;
-        if (burn > 0.55) continue;
-        const col = burn > 0.35 ? P.G3 : burn > 0.2 ? P.O2 : burn > 0.05 ? P.R2 : c;
-        put(im, x, y + sink * (y / S), col);
+        // how early this pixel burns: near the chest seal first, the extremities last, broken up
+        const v = Math.hypot(x - 50, y - 36) / 60 * 0.6 + W.fbm(x / 6, y / 6, 5) * 0.55;
+        const d = (t - 0.15) * 1.5 - v;
+        if (d > 0.1) continue;
+        const col = d > 0.06 ? P.W : d > 0.02 ? P.G3 : d > -0.02 ? P.O2 : d > -0.07 ? P.R2 :
+          t > 0.3 && bayer(x, y) < t * 0.6 ? P.R0 : c;
+        put(im, x, y + sink, col);
       }
     }
     // embers and smoke rising off him
     const r = D.rng(300);
-    for (let k = 0; k < 40; k++) {
-      const x = 24 + r() * 60, ph = r(), sp = 0.5 + r();
-      const y = 88 - ((t * sp + ph) % 1) * 80 * t;
-      if (t < 0.15 || bayer(Math.round(x), Math.round(y)) < Math.max(0, t - 0.6) * 2) continue;
-      put(im, x + Math.sin(y * 0.2 + k) * 2, y, k % 3 === 0 ? P.G3 : k % 3 === 1 ? P.O2 : P.R2);
+    for (let k = 0; k < 46; k++) {
+      const x = 26 + r() * 52, ph = r(), sp = 0.5 + r();
+      const y = 88 - ((t * sp + ph) % 1) * 84 * Math.min(1, t * 1.4);
+      if (t < 0.2 || bayer(Math.round(x), Math.round(y)) < Math.max(0, t - 0.7) * 3) continue;
+      put(im, x + Math.sin(y * 0.2 + k) * 2, y, k % 3 === 0 ? P.G3 : k % 3 === 1 ? P.O2 : k % 5 === 0 ? P.AS2 : P.R2);
     }
     death.push(im);
   }
   return { bull_head: march, bull_head_telegraph: telegraph, bull_head_charge: charge, bull_head_stun: stun, bull_head_death: death };
 }
 
-module.exports = { makeBull, bullFlat, bulls, S, HIDE, HORN, STEEL, FACE, TEAL, JADE };
+// ================================================================ Horse-Face
+
+const HORSE_MAP = require("./horsehead_map");
+const HORSE_KEY = { F: FACE[2], f: FACE[1], l: FACE[3], K: HAIR[1], m: HAIR[2], g: GOLD[1], k: "#000000", e: FACE[1] };
+const LANTERN_AT = { float: null, raise: [74, 8] };
+
+// where things are for a frame: his float, the near arm raised (0 at his side, 1 overhead), and
+// the lantern on the chain's end
+function horsePose(kind, f) {
+  const n = kind === "raise" ? 3 : kind === "death" ? 1 : 6;
+  const ph = f / n * TAU;
+  const p = { bob: Math.round(Math.sin(ph) * 2), raise: 0, swing: Math.sin(ph) * 0.35, ph };
+  if (kind === "raise") { p.raise = [0.35, 0.8, 1][f]; p.bob = -1; p.swing = 0; }
+  // the near hand, and the lantern hanging off the chain below it (or held up, swinging over)
+  const down = [64, 54], up = [70, 14];
+  p.hand = [lerp(down[0], up[0], p.raise), lerp(down[1], up[1], p.raise) + p.bob];
+  const chain = lerp(18, 10, p.raise);
+  const a = Math.PI / 2 - p.swing - p.raise * 2.4;           // straight down, swung up over his head
+  p.lantern = [p.hand[0] + Math.cos(a) * chain, p.hand[1] + Math.sin(a) * chain];
+  return p;
+}
+
+function horseFlat(kind, f) {
+  const im = K.canvas(S, S), p = horsePose(kind, f), b = p.bob;
+  const Y = y => y + b;
+  // ---- the robe: shoulders, a deep chest, the skirt flaring and trailing off behind into mist
+  const tail = Math.sin(p.ph) * 3;
+  area(im, K2.poly(M(S, S), [[36, Y(28)], [48, Y(24)], [60, Y(28)], [64, Y(40)], [62, Y(54)], [66, Y(66)], [58, Y(74)],
+    [46, Y(80)], [34, Y(86) + tail], [22, Y(90) + tail], [26, Y(78)], [32, Y(66)], [34, Y(52)], [32, Y(40)]]), TEAL[1]);
+  // the lapel crossing over the chest, the inner robe's white collar
+  area(im, stroke(M(S, S), [[46, Y(26)], [52, Y(36)], [60, Y(42)]], 2), PAPER[2]);
+  // the rank badge: a gold-framed square on the chest
+  area(im, K2.rect(M(S, S), 42, Y(36), 52, Y(45)), GOLD[1]);
+  area(im, K2.rect(M(S, S), 43, Y(37), 51, Y(44)), IRON[0]);
+  // the jade belt, stiff, riding low at the front
+  area(im, K2.poly(M(S, S), [[32, Y(50)], [62, Y(54)], [62, Y(57)], [32, Y(53)]]), JADE[1]);
+  // ---- the far arm: a wide sleeve, the hand holding the ivory court tablet up before him
+  area(im, K2.poly(M(S, S), [[40, Y(30)], [34, Y(40)], [38, Y(52)], [50, Y(50)], [52, Y(44)], [46, Y(34)]]), TEAL[1]);
+  area(im, K2.poly(M(S, S), [[53, Y(24)], [57, Y(24)], [57, Y(46)], [53, Y(46)]]), PAPER[2]);
+  area(im, K2.ellipse(M(S, S), 54, Y(44), 2.5, 2.5), FACE[2]);
+  // ---- the neck, under the head
+  area(im, K2.poly(M(S, S), [[44, Y(18)], [54, Y(16)], [58, Y(28)], [44, Y(30)]]), FACE[2]);
+  // ---- the head, drawn by hand, the mane swaying
+  const head = img(HORSE_MAP[0].length, HORSE_MAP.length);
+  HORSE_MAP.forEach((row, y) => [...row].forEach((ch, x) => { if (HORSE_KEY[ch]) dot(head, x, y, HORSE_KEY[ch]); }));
+  const out = inked(im);
+  // ---- the near arm over it all: the sleeve, the hand, and the chain whip
+  const fg = K.canvas(S, S);
+  const sh = [57, Y(34)], hand = p.hand;
+  const el = [lerp(64, 70, p.raise), lerp(Y(44), Y(24), p.raise)];
+  area(fg, stroke(M(S, S), [sh, el, hand], 7), TEAL[1]);
+  // the sleeve's wide cuff
+  area(fg, K2.ellipse(M(S, S), el[0] * 0.3 + hand[0] * 0.7, el[1] * 0.3 + hand[1] * 0.7, 4.5, 4.5), TEAL[2]);
+  area(fg, K2.ellipse(M(S, S), hand[0], hand[1], 2.5, 2.5), FACE[2]);
+  // the lantern: a small paper one, capped in iron
+  const [lx, ly] = p.lantern;
+  area(fg, K2.ellipse(M(S, S), lx, ly + 5, 3.5, 4.2), PAPER[2]);
+  area(fg, K2.rect(M(S, S), lx - 2, ly, lx + 2, ly + 1), IRON[2]);
+  area(fg, K2.rect(M(S, S), lx - 2, ly + 9, lx + 2, ly + 10), IRON[2]);
+  // the head last, over the shoulder
+  const top = K.canvas(S, S);
+  D.blit(top, head, 38, Y(2));
+  return D.over(D.over(out, inked(fg)), inked(top));
+}
+
+// his light: the icy eye, the badge's crane, the chain's links, the lantern's soul fire, and the
+// mist he trails instead of legs
+function horseLight(out, kind, f) {
+  const p = horsePose(kind, f), b = p.bob, Y = y => y + b;
+  const hot = kind === "raise";
+  // the eye (the map's 'e' at (13, 10))
+  const ex = 38 + 13, ey = Y(2 + 10);
+  put(out, ex, ey, hot ? P.W : P.A4); put(out, ex + 1, ey, P.A3); put(out, ex, ey - 1, P.A2);
+  // the badge: a white crane over a red sun
+  put(out, 48, Y(39), P.R2); put(out, 49, Y(39), P.R2); put(out, 48, Y(40), P.R2);
+  for (const [x, y] of [[45, 42], [46, 41], [47, 41], [48, 42], [49, 42], [46, 43], [50, 41]]) put(out, x, Y(y), P.CR2);
+  // gold plaques on the jade belt
+  for (let x = 35; x <= 60; x += 5) put(out, x, Y(51 + (x - 32) * 0.13), P.G2);
+  // the chain: iron links from the hand to the lantern, sagging a little
+  const [hx, hy] = p.hand, [lx, ly] = p.lantern;
+  const n = Math.ceil(Math.hypot(lx - hx, ly - hy));
+  for (let i = 0; i <= n; i++) {
+    const t = i / n, x = lerp(hx, lx, t) + Math.sin(t * Math.PI) * 1.5 * (1 - p.raise), y = lerp(hy, ly, t) + Math.sin(t * Math.PI) * 1.5 * (1 - p.raise);
+    put(out, x, y, i % 2 ? P.SL1 : P.SL2);
+  }
+  // the lantern's soul fire through its paper, and its light round it
+  const fire = K.blank(out);
+  for (let y = 2; y <= 8; y++) for (let x = -2; x <= 2; x++) {
+    const d = Math.hypot(x / 2.5, (y - 5) / 3.5);
+    if (d > 1) continue;
+    put(fire, lx + x, ly + y, d < 0.35 ? P.W : d < 0.7 ? P.A4 : P.A3);
+  }
+  const glow = K.glowAround(fire, hot ? 4 : 2, P.A2, P.A1, f);
+  D.over(out, glow);
+  // the skirt thinning into azure mist below the knee, wisps curling off it
+  for (let y = Y(60); y < Y(96); y++) for (let x = 16; x < 70; x++) {
+    const c = D.get(out, x, y);
+    if (!c || x >= p.hand[0] - 4 || Math.hypot(x - lx, y - ly - 5) < 8) continue;      // not the arm, the chain or the lantern
+    const k = (y - Y(60)) / 30;
+    if (bayer(x + f, y) < k * 0.9 - 0.2) { put(out, x, y, null); out.data[((y + out.oy) * out.w + x + out.ox) * 4 + 3] = 0; continue; }
+    if (k > 0.25 && bayer(x, y + f) < k) put(out, x, y, k > 0.6 ? P.A3 : P.A2);
+  }
+  const r = D.rng(40);
+  for (let k = 0; k < 12; k++) {
+    const t = ((f / 6) + r()) % 1, x = 30 + r() * 30 - t * 10, y = Y(70) + t * 20;
+    if (bayer(Math.round(x), Math.round(y)) < t) continue;
+    put(out, x, y, t < 0.5 ? P.A4 : P.A2);
+  }
+  return out;
+}
+
+const HORSE_RAMPS = [FACE, TEAL, PAPER, GOLD, IRON, JADE, HAIR];
+function horses(kind, n) {
+  const lit = light(Array.from({ length: n }, (_, f) => horseFlat(kind, f)), HORSE_RAMPS, { ao: 0, minArea: 14 });
+  return lit.map((out, f) => horseLight(out, kind, f));
+}
+
+function makeHorse() {
+  const float = horses("float", 6), raise = horses("raise", 3);
+  // his end: the chain drops, he unravels into azure mist from the hem up, the lantern last
+  const base = float[0], death = [];
+  for (let f = 0; f < 10; f++) {
+    const t = f / 9;
+    let im;
+    if (f === 0) im = K.silhouette(base, P.A5);
+    else {
+      im = K.blank(base);
+      for (let y = -base.oy; y < base.h - base.oy; y++) for (let x = -base.ox; x < base.w - base.ox; x++) {
+        const c = D.get(base, x, y);
+        if (!c) continue;
+        const v = (1 - (y + 10) / 100) * 0.7 + W.fbm(x / 7, y / 7, 9) * 0.4;
+        const d = t * 1.4 - v;
+        if (d > 0.08) continue;
+        const col = d > 0.03 ? P.W : d > -0.02 ? P.A4 : d > -0.07 ? P.A3 : c;
+        put(im, x + (d > -0.07 ? Math.round(Math.sin(y * 0.3 + f) * 2 * t) : 0), y - (d > -0.07 ? Math.round(t * 4) : 0), col);
+      }
+    }
+    motes(im, f, 10, 30, 71, 20, 76, 0, 90, [P.A4, P.A2]);
+    death.push(im);
+  }
+  return { horse_face: float, horse_face_raise: raise, horse_face_death: death };
+}
+
+// where each guardian's eye is in his first frame, in that frame's own pixels (for his statue)
+function eyes(bullFrame0, horseFrame0) {
+  const hd = bullHead(bullPose("march", 0)), e = hd.at(9.5, 12);
+  return {
+    ox: [Math.round(e[0]) + (bullFrame0.ox | 0), Math.round(e[1]) + (bullFrame0.oy | 0)],
+    horse: [38 + 13 + (horseFrame0.ox | 0), 2 + 10 + horsePose("float", 0).bob + (horseFrame0.oy | 0)],
+  };
+}
+
+module.exports = { eyes, makeHorse, horsePose, makeBull, bullFlat, bulls, S, HIDE, HORN, STEEL, FACE, TEAL, JADE };

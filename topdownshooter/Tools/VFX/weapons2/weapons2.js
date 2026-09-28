@@ -62,7 +62,7 @@ function poly(M, pts) {
   return M;
 }
 function limb(M, pts, width) {
-  const C = D.polyline(mask(M.w, M.h), pts);
+  const C = D.polyline(D.mask(M.w, M.h, M.ox, M.oy), pts);
   const T = width > 1 ? D.dilate(C, Math.floor(width / 2), true) : C;
   for (let i = 0; i < T.m.length; i++) if (T.m[i]) M.m[i] = 1;
   return M;

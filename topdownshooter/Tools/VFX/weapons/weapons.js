@@ -60,12 +60,14 @@ function maskOf(im) {
 function withOutline(im, col = P.V0, diag = false) {
   const M = maskOf(im), out = img(im.w, im.h);
   D.paint(out, D.minus(D.dilate(M, 1, diag), M), col);
+  out.ox = im.ox; out.oy = im.oy;
   return D.over(out, im);
 }
 // a dithered glow just outside a shape
 function halo(im, col, density, phase = 0, r = 1) {
   const M = maskOf(im), out = img(im.w, im.h);
   D.paint(out, D.minus(D.dilate(M, r, false), M), col, density, phase);
+  out.ox = im.ox; out.oy = im.oy;
   return out;
 }
 function ringField(F, cx, cy, R, th, peak, gate) {

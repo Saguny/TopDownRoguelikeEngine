@@ -28,18 +28,21 @@ function rng(seed) {
 
 const image = (w, h) => png.make(w, h);
 
+// an image may carry an origin (ox, oy): drawn with a margin round it, so a glow or an outline
+// can spill past where its drawing began without being cut off. every other image has none
 function put(im, x, y, c) {
-  x = Math.round(x); y = Math.round(y);
+  x = Math.round(x) + (im.ox | 0); y = Math.round(y) + (im.oy | 0);
   if (x < 0 || y < 0 || x >= im.w || y >= im.h || !c) return;
   const i = (y * im.w + x) * 4;
   im.data[i] = c[0]; im.data[i + 1] = c[1]; im.data[i + 2] = c[2]; im.data[i + 3] = c[3] === undefined ? 255 : c[3];
 }
 function get(im, x, y) {
+  x = Math.round(x) + (im.ox | 0); y = Math.round(y) + (im.oy | 0);
   if (x < 0 || y < 0 || x >= im.w || y >= im.h) return null;
   const i = (y * im.w + x) * 4;
   return im.data[i + 3] ? [im.data[i], im.data[i + 1], im.data[i + 2], im.data[i + 3]] : null;
 }
-const alpha = (im, x, y) => (x < 0 || y < 0 || x >= im.w || y >= im.h) ? 0 : im.data[(y * im.w + x) * 4 + 3];
+const alpha = (im, x, y) => get(im, x, y) ? get(im, x, y)[3] : 0;
 
 // draws b over a (both same size), keeping a where b is empty
 function over(a, b) {
@@ -47,31 +50,38 @@ function over(a, b) {
   return a;
 }
 function blit(dst, src, ox, oy) {
-  for (let y = 0; y < src.h; y++) for (let x = 0; x < src.w; x++) { const c = get(src, x, y); if (c) put(dst, ox + x, oy + y, c); }
+  const sx = src.ox | 0, sy = src.oy | 0;
+  for (let y = 0; y < src.h; y++) for (let x = 0; x < src.w; x++) {
+    const i = (y * src.w + x) * 4;
+    if (src.data[i + 3]) put(dst, ox + x - sx, oy + y - sy, [src.data[i], src.data[i + 1], src.data[i + 2], src.data[i + 3]]);
+  }
   return dst;
 }
 
 // ---- masks (Uint8Array w*h) ----
-const mask = (w, h) => ({ w, h, m: new Uint8Array(w * h) });
-function mset(M, x, y) { x = Math.round(x); y = Math.round(y); if (x >= 0 && y >= 0 && x < M.w && y < M.h) M.m[y * M.w + x] = 1; }
-const mget = (M, x, y) => x >= 0 && y >= 0 && x < M.w && y < M.h ? M.m[y * M.w + x] : 0;
+// a mask may carry an origin (ox, oy) as an image may; mset and mget take drawing coordinates,
+// everything else here works on its raw cells
+const mask = (w, h, ox = 0, oy = 0) => ({ w, h, m: new Uint8Array(w * h), ox, oy });
+function mset(M, x, y) { x = Math.round(x) + (M.ox | 0); y = Math.round(y) + (M.oy | 0); if (x >= 0 && y >= 0 && x < M.w && y < M.h) M.m[y * M.w + x] = 1; }
+const mget = (M, x, y) => { x = Math.round(x) + (M.ox | 0); y = Math.round(y) + (M.oy | 0); return x >= 0 && y >= 0 && x < M.w && y < M.h ? M.m[y * M.w + x] : 0; };
+const mraw = (M, x, y) => x >= 0 && y >= 0 && x < M.w && y < M.h ? M.m[y * M.w + x] : 0;
 function dilate(M, r = 1, diag = true) {
   let cur = M;
   for (let k = 0; k < r; k++) {
-    const n = mask(M.w, M.h);
+    const n = mask(M.w, M.h, M.ox, M.oy);
     for (let y = 0; y < M.h; y++) for (let x = 0; x < M.w; x++) {
-      if (mget(cur, x, y) || mget(cur, x - 1, y) || mget(cur, x + 1, y) || mget(cur, x, y - 1) || mget(cur, x, y + 1) ||
-        (diag && (mget(cur, x - 1, y - 1) || mget(cur, x + 1, y - 1) || mget(cur, x - 1, y + 1) || mget(cur, x + 1, y + 1))))
+      if (mraw(cur, x, y) || mraw(cur, x - 1, y) || mraw(cur, x + 1, y) || mraw(cur, x, y - 1) || mraw(cur, x, y + 1) ||
+        (diag && (mraw(cur, x - 1, y - 1) || mraw(cur, x + 1, y - 1) || mraw(cur, x - 1, y + 1) || mraw(cur, x + 1, y + 1))))
         n.m[y * M.w + x] = 1;
     }
     cur = n;
   }
   return cur;
 }
-function minus(A, B) { const n = mask(A.w, A.h); for (let i = 0; i < A.m.length; i++) n.m[i] = A.m[i] && !B.m[i] ? 1 : 0; return n; }
+function minus(A, B) { const n = mask(A.w, A.h, A.ox, A.oy); for (let i = 0; i < A.m.length; i++) n.m[i] = A.m[i] && !B.m[i] ? 1 : 0; return n; }
 function paint(im, M, c, density = 1, phase = 0) {
   for (let y = 0; y < M.h; y++) for (let x = 0; x < M.w; x++)
-    if (M.m[y * M.w + x] && (density >= 1 || bayer(x + phase, y) < density)) put(im, x, y, c);
+    if (M.m[y * M.w + x] && (density >= 1 || bayer(x + phase, y) < density)) put(im, x - (M.ox | 0), y - (M.oy | 0), c);
 }
 function line(M, x0, y0, x1, y1) {
   x0 = Math.round(x0); y0 = Math.round(y0); x1 = Math.round(x1); y1 = Math.round(y1);
