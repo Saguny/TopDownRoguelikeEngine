@@ -19,4 +19,4 @@ MonoBehaviour:
   stat: 4
   perRank: 0.05
   maxRank: 5
-  baseCost: 2000
+  baseCost: 40000

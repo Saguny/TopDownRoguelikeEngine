@@ -178,8 +178,17 @@ def fit(wen_by_minute):
 QUICKEN = 0.82
 
 
+# the model's income ignores what evolutions do to it: a playtest (level 38 at 13:32, 63 at 16:59,
+# 74 at 19:35, 98 at 25:38, with its first evolution at about 12:00) had the whole build maxed by
+# 17:00. levels past LATE_FROM cost this much more (ramped in over six levels), which puts that run's
+# full build at about 22-23 minutes and a slower one's by the final boss
+EVOLVED_INCOME = 3.5
+LATE_FROM = 30
+
+
 def level_cost(level):
-    return max(1, round(QUICKEN * fitted_cost(level)))
+    late = 1 + (EVOLVED_INCOME - 1) * min(1.0, max(0, level - LATE_FROM) / 6)
+    return max(1, round(QUICKEN * fitted_cost(level) * late))
 
 
 def fitted_cost(level):

@@ -7,8 +7,8 @@ using UnityEngine;
 // whichever order they're bought in
 public static class CharacterUnlocks
 {
-    public const int FirstPrice = 500;
-    public const int PriceStep = 150;
+    public const int FirstPrice = 10000;
+    public const int PriceStep = 3000;
 
     private const string Prefix = "character_owned_";
     private const string BoughtKey = "characters_bought";

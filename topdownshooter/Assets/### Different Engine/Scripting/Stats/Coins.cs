@@ -67,20 +67,13 @@ public static class Coins
     private static float greedMultiplier = 1f;
     private static float carry;
 
-    // coins per wen at the start of a run, and how that falls off: at Falloff Minutes in it's
-    // down to about a third, at 10 minutes to a fifth, at 30 about a twentieth. a full normal run
-    // pays about 2.5-3k before Greed, a short one a few hundred
-    public const float StartRate = 0.6f;
-    public const float FalloffMinutes = 5f;
-    public const float FalloffPower = 1.5f;
+    // a wen picked up pays one coin (a jade wen what it's worth, 2), times Greed, all run long. the
+    // shop's prices are set for that: a full normal run pays tens of thousands
     private static float runSeconds;
 
     // coins this run has paid so far, for the end screen (RunStatText's Coins Earned)
     public static int EarnedThisRun { get; private set; }
 
-    // coins one wen pays right now, before Greed
-    public static float RateAt(float seconds) => StartRate / Mathf.Pow(1f + Mathf.Max(0f, seconds) / 60f / FalloffMinutes, FalloffPower);
-    public static float RateNow => RateAt(runSeconds);
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetStatics()
@@ -116,11 +109,11 @@ public static class Coins
         Save();
     }
 
-    // wen picked up pays the run's current rate each, times Greed
+    // wen picked up pays a coin each, times Greed
     public static void Earn(int wen)
     {
         if (wen <= 0) return;
-        carry += wen * RateNow * greedMultiplier;
+        carry += wen * greedMultiplier;
         int whole = Mathf.FloorToInt(carry);
         if (whole <= 0) return;
         carry -= whole;

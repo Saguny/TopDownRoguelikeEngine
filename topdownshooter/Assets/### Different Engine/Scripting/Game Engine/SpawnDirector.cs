@@ -1438,7 +1438,7 @@ public class SpawnDirector : MonoBehaviour
     [SerializeField, Min(1f)] private float formationEvery = 7f;
     [Tooltip("the Magistrates each Final Rush brings, all at once at its start, rush 1 first (there are nine: wave ten is the final boss's). a rush past the list uses its last")]
     // (renamed from rushMagistrates, so a scene saved with the old counts can't keep them)
-    [SerializeField] private int[] magistratesPerRush = { 1, 1, 1, 2, 2, 3, 3, 3, 4 };
+    [SerializeField] private int[] magistratesPerRush = { 1, 1, 1, 2, 2, 3, 3, 3, 3 };
     [Tooltip("how much tougher each rush's Magistrate is than the last's, on top of the run's health curve: 1.35 = 35% more. the first is a fight for a build of a few minutes, the ninth for a finished one")]
     [SerializeField, Min(1f)] private float rushBossGrowth = 1.35f;
 

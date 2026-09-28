@@ -414,7 +414,7 @@ MonoBehaviour:
   artRadius: 2.0027025
   slamPrefab: {fileID: 8935870422826526435, guid: 023416e18035a9e42b60629ec9682af5, type: 3}
   slamRadius: 2.2
-  leapWarning: 0.8
+  leapWarning: 1.2
   leapSeconds: 0.55
   leapHeight: 2.5
   slamDamageShare: 1.5

@@ -45,7 +45,7 @@ public class BossMagistrate : MonoBehaviour
     public float artRadius = 2f;
     public GameObject slamPrefab;
     public float slamRadius = 2.2f;
-    public float leapWarning = 0.8f;
+    public float leapWarning = 1.2f;
     public float leapSeconds = 0.55f;
     public float leapHeight = 2.5f;
     [Tooltip("damage of the landing, as a share of the boss's contact damage per tick")]

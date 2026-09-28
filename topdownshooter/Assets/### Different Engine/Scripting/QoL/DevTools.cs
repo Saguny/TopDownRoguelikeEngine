@@ -89,7 +89,7 @@ public class DevTools : MonoBehaviour
         GUILayout.EndHorizontal();
 
         GUILayout.BeginHorizontal();
-        if (GUILayout.Button($"+1000 coins ({Coins.Balance})")) Coins.Add(1000);
+        if (GUILayout.Button($"+100k coins ({Coins.Balance})")) Coins.Add(100000);
         if (GUILayout.Button("Max shop")) SetShopRanks(true);
         if (GUILayout.Button("Reset shop")) SetShopRanks(false);
         GUILayout.EndHorizontal();

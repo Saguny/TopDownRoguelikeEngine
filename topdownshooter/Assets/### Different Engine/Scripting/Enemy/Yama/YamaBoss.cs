@@ -41,7 +41,7 @@ public class YamaBoss : MonoBehaviour, IDamageGate
     [Tooltip("how far from the player he keeps")]
     [Min(2f)] public float hoverDistance = 5f;
     [Tooltip("coins for clearing each spell card without being hit (before Greed)")]
-    public int[] spellBonus = { 400, 550, 700, 1000 };
+    public int[] spellBonus = { 8000, 11000, 14000, 20000 };
 
     // ---- the phases
 
