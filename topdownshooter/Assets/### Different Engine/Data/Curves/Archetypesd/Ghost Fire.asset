@@ -18,6 +18,7 @@ MonoBehaviour:
   baseHealth: 3
   baseSpeed: 1.5
   baseDamage: 8
+  knockbackResist: 0
   contactTickInterval: 0.5
   physicalTaken: 0.6
   magicalTaken: 1.25

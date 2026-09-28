@@ -91,6 +91,14 @@ public class TreasureGourdData : WeaponData<TreasureGourd>
     public float sphereRange = 9f;
     [Tooltip("the sphere's size in flight with nothing swallowed, and at a full charge")]
     public Vector2 sphereScale = new Vector2(0.9f, 1.8f);
+    [Tooltip("evolved it leaves the player's side and flies the screen on its own: how much bigger it is")]
+    public float evolvedSize = 1.3f;
+    [Tooltip("units a second it flies over to the crowd it picked, before Weapon Speed")]
+    public float flySpeed = 11f;
+    [Tooltip("the longest it flies before it opens wherever it's got to")]
+    public float flySeconds = 1.4f;
+    [Tooltip("units a second it drifts about the screen between crowds")]
+    public float wanderSpeed = 2.5f;
 
     [Header("Art (NewSprites/Asesprites/VFX/Weapons/TreasureGourd; Tools > VFX > Build Weapon FX sets these. placeholder shapes until then)")]
     [Tooltip("hovering at the player's shoulder, corked, looping")]
@@ -169,7 +177,7 @@ public class TreasureGourdData : WeaponData<TreasureGourd>
     public override string Describe(int level)
     {
         if (IsEvolved(level))
-            return $"Evolution: it swallows enemy bullets as well. After {evolvedSuctionSeconds:0.#}s it fires what it drew in back out as a plasma sphere that bursts on the first enemy it meets, harder for every bullet and enemy it caught.";
+            return $"Evolution: it leaves your side and flies the screen on its own, seeking out the thickest crowd. It swallows enemy bullets as well. After {evolvedSuctionSeconds:0.#}s it fires what it drew in back out as a plasma sphere that bursts on the first enemy it meets, harder for every bullet and enemy it caught.";
 
         var s = At(level);
         if (level <= 1)

@@ -48,8 +48,10 @@ STARTING = {"Bow", "Peach Talismans", "Seven Star Swords"}   # the cast's starti
 
 # the design: seconds a typical build should need to burn through a whole screen of the horde.
 # quick early (the power fantasy, and the first levels one-shot anyway), a real fight by the
-# middle of the run, a wall to push against at the end
-CLEAR = [(0, 2.5), (5, 3.5), (10, 5.0), (15, 6.0), (20, 7.0), (25, 7.5), (30, 8.0)]
+# middle of the run, and a steady push from there: a build without its evolutions has to work
+# for it, and the evolutions (left out of the build, and only leaned on a little by the horde,
+# SpawnDirector) are what make the late game a mowing-down, as in Vampire Survivors
+CLEAR = [(0, 2.5), (5, 3.5), (10, 4.5), (15, 5.0), (20, 5.5), (25, 6.0), (30, 6.5)]
 
 # a typical run, minute by minute: the player's level, from the level curve and a steady kill rate
 # Vampire Survivors' shape: fragile for a few minutes, a build coming together by 10 (the first

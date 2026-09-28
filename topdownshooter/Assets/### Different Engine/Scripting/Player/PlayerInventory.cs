@@ -362,8 +362,8 @@ public class PlayerInventory : MonoBehaviour
             }
             if (pick == null)
             {
-                Coins.Gift(EnvelopeCoinsPerUpgrade);
-                given.Add(EnvelopeReward.Coins(Coins.WithGreed(EnvelopeCoinsPerUpgrade)));
+                Coins.Gift(GiftCoins);
+                given.Add(EnvelopeReward.Coins(Coins.WithGreed(GiftCoins)));
                 continue;
             }
 
@@ -375,8 +375,28 @@ public class PlayerInventory : MonoBehaviour
         return given;
     }
 
-    // coins in place of an upgrade an envelope couldn't give, before Greed
-    public const int EnvelopeCoinsPerUpgrade = 20;
+    // coins in place of an upgrade an envelope couldn't give, before Greed: the level up's String
+    // of Wen, the gift it offers once there's nothing left to level
+    public int GiftCoins
+    {
+        get
+        {
+            if (coinsGift == null) coinsGift = FindGift(GiftKind.Coins);
+            return coinsGift != null ? coinsGift.coins : 25;
+        }
+    }
+
+    // an envelope would have nothing to give but coins: no evolution ready, nothing held left to
+    // level. it just pays out then (EnvelopeOpening), like the level up's gift
+    public bool EnvelopeWouldBeEmpty(bool evolves)
+    {
+        if (evolves)
+            foreach (var u in runtimeUpgrades)
+                if (u is WeaponData w && w.Level > 0 && w.NextPickEvolves && CanEvolve(w) && !banished.Contains(u)) return false;
+        var pool = OfferPool();
+        pool.RemoveAll(u => u.Level == 0);
+        return pool.Count == 0;
+    }
 
     private bool CanEvolve(WeaponData weapon)
     {

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: HuangquanTimeline
   m_EditorClassIdentifier: 
   crowdScale: 1
-  hardCap: 1500
+  hardCap: 600
   waveMinutes: 3
   beats:
   - label: 'Souls on the road'
@@ -69,7 +69,7 @@ MonoBehaviour:
     minimum: 140
     perInterval: 10
     interval: 1
-    cap: 224
+    cap: 195
     enemies:
     - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
       weight: 3
@@ -82,7 +82,7 @@ MonoBehaviour:
     minimum: 166
     perInterval: 11
     interval: 0.9
-    cap: 266
+    cap: 226
     enemies:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 4
@@ -95,7 +95,7 @@ MonoBehaviour:
     minimum: 220
     perInterval: 16
     interval: 0.9
-    cap: 340
+    cap: 266
     enemies:
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 4
@@ -108,7 +108,7 @@ MonoBehaviour:
     minimum: 260
     perInterval: 17
     interval: 0.8
-    cap: 403
+    cap: 296
     enemies:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 2
@@ -125,7 +125,7 @@ MonoBehaviour:
     minimum: 351
     perInterval: 18
     interval: 0.8
-    cap: 531
+    cap: 338
     enemies:
     - archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
       weight: 0.8
@@ -140,7 +140,7 @@ MonoBehaviour:
     minimum: 442
     perInterval: 24
     interval: 0.7
-    cap: 653
+    cap: 378
     enemies:
     - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
       weight: 5
@@ -153,7 +153,7 @@ MonoBehaviour:
     minimum: 540
     perInterval: 25
     interval: 0.7
-    cap: 790
+    cap: 408
     enemies:
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 4
@@ -168,7 +168,7 @@ MonoBehaviour:
     minimum: 610
     perInterval: 30
     interval: 0.6
-    cap: 890
+    cap: 440
     enemies:
     - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
       weight: 3
@@ -183,7 +183,7 @@ MonoBehaviour:
     minimum: 690
     perInterval: 30
     interval: 0.6
-    cap: 1010
+    cap: 470
     enemies:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 2
@@ -200,7 +200,7 @@ MonoBehaviour:
     minimum: 775
     perInterval: 35
     interval: 0.5
-    cap: 1120
+    cap: 510
     enemies:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 2

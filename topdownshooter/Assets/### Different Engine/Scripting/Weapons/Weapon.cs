@@ -28,6 +28,9 @@ public abstract class Weapon : MonoBehaviour
     // how many more enemies a projectile goes through (the Armour Piercing passive)
     protected int Pierce => Stats ? Stats.PierceTotal : 0;
 
+    // how hard its hits knock enemies back (EnemyMovement.Knock): 1 is the usual little push
+    public virtual float Knockback => 1f;
+
     // Physical or Magical, from its settings asset
     public AttackClass AttackClass => Asset != null ? Asset.AttackClass : AttackClass.Physical;
 

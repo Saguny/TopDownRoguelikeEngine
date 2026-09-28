@@ -1,10 +1,17 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 // the little envelope floating over an elite or a boss that carries one, so it's worth chasing
 // down: dropped when it falls to the player, gone with it if it's swept away (a wave's end, the
-// time running out). pooled enemies come back without it
+// time running out). pooled enemies come back without it. a Final Rush's Magistrates all carry one,
+// but it's one envelope a rush: only the last of them to fall drops it
 public class EnvelopeCarrier : MonoBehaviour
 {
+    private static readonly List<EnvelopeCarrier> carrying = new List<EnvelopeCarrier>();
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics() => carrying.Clear();
+
     public EnvelopeSource source;
     private SpriteRenderer icon, host;
     private Sprite[] frames;
@@ -21,6 +28,7 @@ public class EnvelopeCarrier : MonoBehaviour
 
     private void OnEnable()
     {
+        if (!carrying.Contains(this)) carrying.Add(this);
         host = GetComponent<SpriteRenderer>();
         var lib = VfxLibrary.Get;
         frames = lib != null ? lib.envelopeCarry : null;
@@ -54,12 +62,25 @@ public class EnvelopeCarrier : MonoBehaviour
     // the enemy fell to the player: the envelope falls out of it
     public void Drop()
     {
-        FortuneEnvelope.Drop(transform.position, source);
+        if (source != EnvelopeSource.Boss || !OtherBossCarries()) FortuneEnvelope.Drop(transform.position, source);
         Remove();
+    }
+
+    // another boss still up with an envelope on it: this one's goes with the last of them
+    private bool OtherBossCarries()
+    {
+        foreach (var c in carrying)
+        {
+            if (c == null || c == this || c.source != EnvelopeSource.Boss || !c.isActiveAndEnabled) continue;
+            if (c.TryGetComponent(out EnemyHealth h) && h.Current <= 0f) continue;
+            return true;
+        }
+        return false;
     }
 
     private void Remove()
     {
+        carrying.Remove(this);
         if (icon != null) Destroy(icon.gameObject);
         icon = null;
         Destroy(this);

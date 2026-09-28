@@ -19,4 +19,5 @@ MonoBehaviour:
   baseSpeed: 0.5
   baseDamage: 25
   armour: 0
+  knockbackResist: 1
   contactTickInterval: 1.5

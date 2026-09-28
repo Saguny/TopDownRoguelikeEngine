@@ -95,21 +95,21 @@ public class SpawnDirector : MonoBehaviour
     [Tooltip("how long after the first flock the second sets off")]
     [SerializeField, Min(0f)] private float swarmSplitDelay = 1.2f;
 
-    // an evolution should feel like a spike of power, then the horde catches up and the run is on
-    // the edge again: the health curve (fitted to measured weapon damage, Tools/Balance) keeps the
-    // pressure steady, and this answers an evolution's extra damage (a nerfed evolution adds about
-    // 20-40% to a whole build), slowly enough to enjoy it first
-    [Header("Evolutions (the horde answers an evolved weapon)")]
+    // an evolution is the payoff, as in Vampire Survivors: a spike of power the run is meant to
+    // enjoy. the horde only leans on it a little (Vampire Survivors doesn't at all), and never past
+    // a handful of evolutions' worth, so a full build of them mows the screen down as it should.
+    // the health curve (fitted to measured weapon damage, Tools/Balance) is the run's real pressure
+    [Header("Evolutions (the horde leans on an evolved weapon, a little)")]
     [Tooltip("each evolved weapon the player holds adds this share to the crowd: more alive at once and more arriving")]
-    [SerializeField, Min(0f)] private float evoCrowd = 0.5f;
-    [Tooltip("each evolved weapon multiplies every enemy's health by 1 + this, compounding: 0.5 is x1.5 with one, x2.25 with two")]
-    [SerializeField, Min(0f)] private float evoHealth = 0.5f;
+    [SerializeField, Min(0f)] private float evoCrowd = 0.06f;
+    [Tooltip("each evolved weapon adds this share to every enemy's health, added up, not compounding: 0.1 is x1.1 with one, x1.4 with four")]
+    [SerializeField, Min(0f)] private float evoHealth = 0.1f;
     [Tooltip("each evolved weapon raises the timeline's hard cap by this many, so the extra crowd has room")]
-    [SerializeField, Min(0)] private int evoExtraCap = 75;
-    [Tooltip("each evolved weapon cuts the wen an enemy is worth (and with it the coins) by this share, compounding: 0.45 leaves 55% with one, 30% with two")]
-    [SerializeField, Range(0f, 0.9f)] private float evoWenCut = 0.45f;
-    [Tooltip("and it keeps climbing: every minute an evolution is held counts as this much more of one")]
-    [SerializeField, Min(0f)] private float evoGrowthPerMinute = 0.05f;
+    [SerializeField, Min(0)] private int evoExtraCap = 15;
+    [Tooltip("each evolved weapon cuts the wen an enemy is worth (and with it the coins) by this share, compounding: 0.1 leaves 90% with one, 66% with four")]
+    [SerializeField, Range(0f, 0.9f)] private float evoWenCut = 0.1f;
+    [Tooltip("the most evolutions the horde answers: past this many, the rest are all the player's")]
+    [SerializeField, Min(0f)] private float evoPressureMax = 4f;
     [Tooltip("seconds the horde takes to grow into an evolution, so it swells rather than jumps")]
     [SerializeField, Min(0.1f)] private float evoRampSeconds = 45f;
 
@@ -578,6 +578,7 @@ public class SpawnDirector : MonoBehaviour
         {
             float speedMul = Curve != null ? Curve.SpeedAt(DifficultyTime) : 1f;
             m.SetSpeedMultiplier(speedMul * arch.baseSpeed);
+            m.knockbackResist = IsBoss(arch) ? 1f : arch.knockbackResist;
         }
 
         if (go.TryGetComponent(out EnemyContactDamage d))
@@ -1163,6 +1164,8 @@ public class SpawnDirector : MonoBehaviour
             EliteOutline.Promote(go, eliteSize, eliteHealth, eliteWenDrops);
             EnvelopeCarrier.Attach(go, EnvelopeSource.Elite);
             if (go.TryGetComponent(out EnemyHealth eh)) eh.armour = Mathf.Min(0.6f, eh.armour + eliteArmour);
+            // an elite stands its ground: most of a hit's knockback turned aside
+            if (go.TryGetComponent(out EnemyMovement em)) em.knockbackResist = Mathf.Max(em.knockbackResist, 0.7f);
             placed++;
         }
         return placed > 0;
@@ -1203,16 +1206,15 @@ public class SpawnDirector : MonoBehaviour
         }
     }
 
-    // an evolved weapon can hold a whole screen on its own, so each one the player holds brings
-    // more of the horde, and tougher. the pressure eases in over evoRampSeconds after each
+    // each evolution the player holds brings a little more of the horde, a little tougher, up to
+    // evoPressureMax of them. the pressure eases in over evoRampSeconds after each
     private int evolutionsHeld;
     private float evoPressure;
-    private float evoHeldMinutes;   // minutes of evolutions held, summed over each one
     private float nextEvoCheck;
     private readonly List<Weapon> heldWeapons = new List<Weapon>();
 
     private float EvoCrowd => 1f + evoCrowd * evoPressure;
-    private float EvoHealth => Mathf.Pow(1f + evoHealth, evoPressure);
+    private float EvoHealth => 1f + evoHealth * evoPressure;
     // more of them and tougher, but each worth less wen (and so fewer coins): an evolution
     // shouldn't also speed up the level ups and the shop
     private float EvoWen => Mathf.Pow(1f - evoWenCut, evoPressure);
@@ -1228,8 +1230,7 @@ public class SpawnDirector : MonoBehaviour
             foreach (var w in heldWeapons)
                 if (w != null && w.Evolved) evolutionsHeld++;
         }
-        evoHeldMinutes += evolutionsHeld * Time.deltaTime / 60f;
-        float target = evolutionsHeld + evoHeldMinutes * evoGrowthPerMinute;
+        float target = Mathf.Min(evolutionsHeld, evoPressureMax);
         evoPressure = Mathf.MoveTowards(evoPressure, target, Time.deltaTime / evoRampSeconds);
     }
 
@@ -1643,7 +1644,8 @@ public class SpawnDirector : MonoBehaviour
     {
         if (!finalRushSlider) return;
 
-        if (!finalRush || finalRushQuota <= 0)
+        // the procession is won by its Magistrates, who are all on the field at once: no bar
+        if (!finalRush || finalRushQuota <= 0 || ProcessionRuns)
         {
             finalRushSlider.gameObject.SetActive(false);
             return;
@@ -1652,13 +1654,6 @@ public class SpawnDirector : MonoBehaviour
         finalRushSlider.gameObject.SetActive(true);
 
         finalRushSlider.minValue = 0f;
-        if (ProcessionRuns && rushBosses > 0)
-        {
-            // the procession is won by its Magistrates: the bar fills as they fall
-            finalRushSlider.maxValue = rushBosses;
-            finalRushSlider.value = Mathf.Max(0, bossesSpawnedThisRush - GetAliveBossCount());
-            return;
-        }
         finalRushSlider.maxValue = finalRushQuota;
         finalRushSlider.value = finalRushKills;
     }

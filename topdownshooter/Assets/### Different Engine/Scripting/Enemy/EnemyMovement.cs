@@ -70,6 +70,8 @@ public class EnemyMovement : MonoBehaviour
         _slowUntil = 0f;
         _shove = Vector2.zero;
         _shoveUntil = 0f;
+        _knock = Vector2.zero;
+        _knockUntil = _nextKnock = 0f;
         _smoothedDirection = Vector2.zero;
         _avoidanceSide = 0f;
         _radius = -1f;
@@ -115,8 +117,11 @@ public class EnemyMovement : MonoBehaviour
         if (obstacles != null) direction = obstacles.Steer(position, direction, _avoidanceDistance, ref _avoidanceSide);
         UpdateSmoothedDirection(direction);
 
+        _lastPlayer = player;
         Vector2 velocity = Vector2.zero;
-        if (_smoothedDirection.sqrMagnitude >= 0.001f)
+        // knocked back: its own walk stops for the moment while the hit carries it away
+        if (now < _knockUntil) velocity = _knock;
+        else if (_smoothedDirection.sqrMagnitude >= 0.001f)
         {
             float slow = now < _slowUntil ? _slowFactor : 1f;
             velocity = _smoothedDirection.normalized * (_speed * slow * _headingSpeedMul);
@@ -218,6 +223,31 @@ public class EnemyMovement : MonoBehaviour
             _shove = velocity;
             _shoveUntil = Time.time + Mathf.Max(0f, seconds);
         }
+    }
+
+    // knockback, the way Vampire Survivors does it: a hit that doesn't kill pushes the enemy a
+    // little way back from the player, its own walk stopped for the moment. how much it takes is
+    // its kind's (EnemyArchetype's Knockback Resist, set by the spawner: a boss takes none); after
+    // a knock it can't be knocked again for a beat, so a fast weapon slows the horde, not pins it
+    public const float KnockSpeed = 4.5f;      // units a second at full strength
+    public const float KnockSeconds = 0.1f;
+    public const float KnockRest = 0.25f;
+
+    [Tooltip("share of every knockback it shrugs off: 0 is pushed the full way, 1 not at all. the spawner sets it from the enemy's archetype")]
+    [Range(0f, 1f)] public float knockbackResist;
+    private Vector2 _knock, _lastPlayer;
+    private float _knockUntil, _nextKnock;
+
+    public void Knock(float strength)
+    {
+        float k = strength * (1f - knockbackResist);
+        float now = Time.time;
+        if (k <= 0.01f || now < _nextKnock) return;
+        Vector2 away = (Vector2)transform.position - _lastPlayer;
+        away = away.sqrMagnitude > 0.0001f ? away.normalized : UnityEngine.Random.insideUnitCircle.normalized;
+        _knock = away * (KnockSpeed * k);
+        _knockUntil = now + KnockSeconds;
+        _nextKnock = now + KnockRest;
     }
 
     public void ApplySlow(float factor, float seconds)

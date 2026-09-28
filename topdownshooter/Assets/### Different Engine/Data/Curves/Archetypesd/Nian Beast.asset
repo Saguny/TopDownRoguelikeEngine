@@ -19,6 +19,7 @@ MonoBehaviour:
   baseSpeed: 0.55
   baseDamage: 25
   armour: 0.4
+  knockbackResist: 0.75
   contactTickInterval: 0.5
   physicalTaken: 0.9
   magicalTaken: 1.2

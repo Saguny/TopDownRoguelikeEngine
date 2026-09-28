@@ -45,8 +45,28 @@ public class EnvelopeOpening : MonoBehaviour
     // evolves: whether it can evolve a weapon (FortuneEnvelope.Evolves)
     public static void Open(EnvelopeRarity rarity, EnvelopeSource source, bool evolves = true)
     {
+        // everything maxed: nothing to open, it's just gold, paid out where they stand
+        var player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null && player.TryGetComponent(out PlayerInventory inventory) && inventory.EnvelopeWouldBeEmpty(evolves))
+        {
+            PayOut(rarity, inventory);
+            return;
+        }
         waiting.Enqueue((rarity, source, evolves));
         if (instance == null) Build();
+    }
+
+    private static AudioClip payOutSound;
+
+    // the String of Wen for every upgrade it held, and its own coins
+    private static void PayOut(EnvelopeRarity rarity, PlayerInventory inventory)
+    {
+        int coins = inventory.GiftCoins * FortuneEnvelope.Upgrades(rarity) + FortuneEnvelope.CoinsFor(rarity);
+        Coins.Gift(coins);
+        Vector2 at = inventory.transform.position;
+        if (payOutSound == null) payOutSound = Resources.Load<AudioClip>("Sfx/coins_total");
+        if (payOutSound != null) SfxPlayer.PlayAt(payOutSound, at, 0.9f);
+        PixelNumbers.Show(at + Vector2.up * 1.3f, Coins.WithGreed(coins), true, new Color(1f, 0.85f, 0.3f), 2);
     }
 
     // ---------------------------------------------------------------- parts

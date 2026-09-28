@@ -18,4 +18,5 @@ MonoBehaviour:
   baseHealth: 10
   baseSpeed: 0.75
   baseDamage: 20
+  knockbackResist: 0.2
   contactTickInterval: 0.5

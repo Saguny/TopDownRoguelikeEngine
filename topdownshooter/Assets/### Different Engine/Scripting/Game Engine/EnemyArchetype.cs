@@ -11,6 +11,8 @@ public class EnemyArchetype : ScriptableObject
     public float baseDamage = 5f;
     [Tooltip("share of every hit its armour turns aside: 0.3 = 30% less damage. the Armour Piercing passive cuts through it")]
     [Range(0f, 0.9f)] public float armour = 0f;
+    [Tooltip("share of a hit's knockback it shrugs off: 0 is pushed the full way, 1 not at all (bosses are never pushed, whatever this says)")]
+    [Range(0f, 1f)] public float knockbackResist = 0f;
     [Header("What harms it (the weapons' attack classes)")]
     [Tooltip("damage it takes from Physical weapons (arrows, blades): 0.6 = blades pass through it, 1.3 = soft to them")]
     [Range(0.25f, 2f)] public float physicalTaken = 1f;

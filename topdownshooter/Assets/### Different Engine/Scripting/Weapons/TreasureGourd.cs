@@ -9,10 +9,13 @@ using UnityEngine;
 // evolved (the Gourd of Heaven and Earth) it pulls for longer and swallows enemy bullets as well,
 // a sphere of plasma gathering in its mouth, and instead of the fire it throws that sphere: it
 // bursts on the first enemy it meets, harder and wider for every bullet and enemy it caught, and
-// sets everything in the burst burning
+// sets everything in the burst burning. and evolved it's bigger, and leaves the player's side: it
+// flies the screen on its own, picks out the thickest crowd on it, flies over to it and opens there.
+// whichever it is, when the crowd it locked onto dies before it fires, it turns on the nearest
+// enemy instead
 public class TreasureGourd : Weapon<TreasureGourdData>
 {
-    private enum Phase { Idle, Pull, Spray }
+    private enum Phase { Idle, Fly, Pull, Spray }
 
     private sealed class Burn
     {
@@ -54,6 +57,11 @@ public class TreasureGourd : Weapon<TreasureGourdData>
     private SpriteRenderer gourd, cone, charge;
     private AudioSource voice;
     private bool voiceHeld;
+    // evolved, it flies the screen on its own
+    private bool roaming;
+    private float size = 1f, wanderLeft;
+    private Vector2 flyVelocity, wander;
+    private Afterimage flyTrail;
 
     protected override void Awake()
     {
@@ -87,15 +95,40 @@ public class TreasureGourd : Weapon<TreasureGourdData>
 
         var lv = Data.At(Level);
         bool evolved = Data.IsEvolved(Level);
+        if (evolved != roaming)
+        {
+            roaming = evolved;
+            flyVelocity = Vector2.zero;
+            wanderLeft = 0f;
+            if (phase == Phase.Fly) phase = Phase.Idle;
+        }
+        size = roaming ? Data.evolvedSize : 1f;
         TrackHeading(dt);
 
         switch (phase)
         {
             case Phase.Idle:
                 timer += dt;
-                // with nobody in reach it waits, ready, and opens as soon as someone comes
-                if (timer >= Cooldown(lv.cooldown) && FindGroup(Wide(lv.suctionRadius), out target))
+                // with nobody in reach it waits, ready, and opens as soon as someone comes. roaming,
+                // it first flies over to the crowd it picked
+                if (timer >= Cooldown(lv.cooldown))
+                {
+                    if (!roaming) { if (FindGroup(Wide(lv.suctionRadius), out target)) Uncork(evolved); }
+                    else if (FindCrowd(lv, out target))
+                    {
+                        phase = Phase.Fly;
+                        phaseTime = 0f;
+                        if (flyTrail != null) flyTrail.Restart();
+                    }
+                }
+                break;
+            case Phase.Fly:
+                phaseTime += dt;
+                if ((Standoff(lv) - gourdPos).sqrMagnitude < 0.5f * 0.5f || phaseTime >= Data.flySeconds)
+                {
+                    if (flyTrail != null) flyTrail.Hide();
                     Uncork(evolved);
+                }
                 break;
             case Phase.Pull:
                 phaseTime += dt;
@@ -115,10 +148,14 @@ public class TreasureGourd : Weapon<TreasureGourdData>
 
         Burns(dt);
         Spheres(dt, lv);
+        if (roaming) Roam(lv, dt);
         Show(lv, evolved, dt);
     }
 
     private float Wide(float units) => units * AreaMul;
+
+    // where it looks from: the player, or roaming, the gourd itself
+    private Vector2 From => roaming ? gourdPos : (Vector2)transform.position;
 
     // ---------------------------------------------------------------- aiming
 
@@ -130,9 +167,13 @@ public class TreasureGourd : Weapon<TreasureGourdData>
         if (v.sqrMagnitude > 0.04f) heading = v.normalized;
 
         if (phase == Phase.Idle) aim = heading;
+        else if (phase == Phase.Fly)
+        {
+            if (flyVelocity.sqrMagnitude > 0.04f) aim = flyVelocity.normalized;
+        }
         else
         {
-            Vector2 to = target - (Vector2)transform.position;
+            Vector2 to = target - From;
             if (to.sqrMagnitude < 0.01f) return;
             float step = Data.turnRate * dt;
             float angle = Vector2.SignedAngle(aim, to);
@@ -193,7 +234,109 @@ public class TreasureGourd : Weapon<TreasureGourdData>
         return true;
     }
 
-    private Vector2 Mouth => gourdPos + aim * (Data.aimMouthPixels / WorldPpu);
+    // the nearest enemy within `reach` of `from`, heavy or not (it can't pull those, but it can burn them)
+    private bool Nearest(Vector2 from, float reach, out Vector2 at)
+    {
+        at = from;
+        EnemiesIn(from, reach, nearby);
+        float closest = float.MaxValue;
+        foreach (var e in nearby)
+        {
+            if (!IsAlive(e)) continue;
+            float d = ((Vector2)e.transform.position - from).sqrMagnitude;
+            if (d < closest) { closest = d; at = e.transform.position; }
+        }
+        return closest < float.MaxValue;
+    }
+
+    // roaming: the thickest crowd of small enemies on screen, the nearer the better when two are
+    // alike; with only heavy ones on screen, the nearest of them. false when the screen's empty
+    private bool FindCrowd(TreasureGourdData.LevelStats lv, out Vector2 centre)
+    {
+        centre = gourdPos;
+        Vector2 eye = View(out Vector2 half);
+        EnemiesIn(eye, half.magnitude, nearby);
+        group.Clear();
+        foreach (var e in nearby)
+        {
+            Vector2 p = e.transform.position;
+            if (Mathf.Abs(p.x - eye.x) > half.x || Mathf.Abs(p.y - eye.y) > half.y) continue;
+            if (!Heavy(e)) group.Add(e);
+        }
+        if (group.Count == 0)
+        {
+            if (!Nearest(gourdPos, half.magnitude * 2f, out centre)) return false;
+            return Mathf.Abs(centre.x - eye.x) <= half.x && Mathf.Abs(centre.y - eye.y) <= half.y;
+        }
+
+        float r = Wide(lv.suctionRadius) * 0.6f, r2 = r * r;
+        int step = Mathf.Max(1, group.Count / 40);
+        float bestScore = float.MinValue;
+        for (int i = 0; i < group.Count; i += step)
+        {
+            Vector2 at = group[i].transform.position;
+            int count = 0;
+            Vector2 sum = Vector2.zero;
+            foreach (var e in group)
+            {
+                Vector2 p = e.transform.position;
+                if ((p - at).sqrMagnitude > r2) continue;
+                count++;
+                sum += p;
+            }
+            Vector2 mid = sum / count;
+            float score = count - 0.15f * (mid - gourdPos).magnitude;
+            if (score > bestScore) { bestScore = score; centre = mid; }
+        }
+        return true;
+    }
+
+    // roaming: where it hangs to open on its crowd, off the crowd's edge on the side it came from,
+    // kept on screen
+    private Vector2 Standoff(TreasureGourdData.LevelStats lv)
+    {
+        Vector2 away = gourdPos - target;
+        away = away.sqrMagnitude > 0.01f ? away.normalized : Vector2.up;
+        return InView(target + away * Wide(lv.suctionRadius) * 0.55f, 0.8f);
+    }
+
+    // the camera's centre and half its size, in the world
+    private static Vector2 View(out Vector2 half)
+    {
+        var cam = Camera.main;
+        if (cam == null || !cam.orthographic) { half = new Vector2(9f, 5f); return cam != null ? (Vector2)cam.transform.position : Vector2.zero; }
+        half = new Vector2(cam.orthographicSize * cam.aspect, cam.orthographicSize);
+        return cam.transform.position;
+    }
+
+    // `p` pulled inside the screen, `margin` units in from its edges
+    private static Vector2 InView(Vector2 p, float margin)
+    {
+        Vector2 eye = View(out Vector2 half);
+        half -= new Vector2(margin, margin);
+        return new Vector2(Mathf.Clamp(p.x, eye.x - half.x, eye.x + half.x), Mathf.Clamp(p.y, eye.y - half.y, eye.y + half.y));
+    }
+
+    // the crowd it locked onto has gone (killed before it fired): it turns on the nearest enemy
+    private void Retarget(float reach)
+    {
+        if (Nearest(From, reach, out Vector2 at)) target = at;
+    }
+
+    // about to fire at nothing: it snaps round onto the nearest enemy instead
+    private void Reaim(float reach)
+    {
+        Vector2 mouth = Mouth;
+        EnemiesIn(mouth, reach, nearby);
+        foreach (var e in nearby)
+            if (IsAlive(e) && InCone((Vector2)e.transform.position - mouth, Data.flameHalfAngle + 6f, 0.6f)) return;
+        if (!Nearest(From, reach + 1.5f, out Vector2 at)) return;
+        target = at;
+        Vector2 to = at - From;
+        if (to.sqrMagnitude > 0.01f) aim = to.normalized;
+    }
+
+    private Vector2 Mouth => gourdPos + aim * (Data.aimMouthPixels / WorldPpu * size);
 
     // ---------------------------------------------------------------- the pull
 
@@ -205,8 +348,14 @@ public class TreasureGourd : Weapon<TreasureGourdData>
         held.Clear();
         Vector2 to = target - (Vector2)transform.position;
         aim = to.sqrMagnitude > 0.01f ? to.normalized : heading;
-        // it swings round in front straight away, so the pop is where the mouth will be
-        gourdPos = (Vector2)transform.position + aim * 0.75f;
+        // it swings round in front straight away, so the pop is where the mouth will be (roaming,
+        // it's already where it opens)
+        if (!roaming) gourdPos = (Vector2)transform.position + aim * 0.75f;
+        else
+        {
+            to = target - gourdPos;
+            aim = to.sqrMagnitude > 0.01f ? to.normalized : aim;
+        }
         FxBatch.Play(Data.popFrames, 25f, Mouth, 1f, Data.sortingLayer, Data.sortingOrder + 3);
         OneShot(Data.uncorkSound, Mouth);
         Hold(evolved ? Data.chargeSound : Data.pullSound);
@@ -231,8 +380,10 @@ public class TreasureGourd : Weapon<TreasureGourdData>
             move.ApplySlow(Data.heldSlow, 0.12f);
             if (evolved) held.Add(e);
         }
-        // it keeps its mouth on the clump as it gathers, wherever the player walks
+        // it keeps its mouth on the clump as it gathers, wherever the player walks; the clump killed
+        // before it fires, it turns on the nearest enemy left
         if (caught > 0) target = sum / caught;
+        else Retarget(reach + 1.5f);
 
         if (!evolved) return;
 
@@ -284,6 +435,7 @@ public class TreasureGourd : Weapon<TreasureGourdData>
         phaseTime = 0f;
         scorched.Clear();
         if (voice != null) voice.Stop();
+        Reaim(Wide(Data.At(Level).flameLength));
         OneShot(Data.flameSound, Mouth);
     }
 
@@ -385,6 +537,7 @@ public class TreasureGourd : Weapon<TreasureGourdData>
         int fromBullets = Mathf.Min(swallowed, Data.maxCharge);
         int fromEnemies = Mathf.Min(held.Count, Data.maxCharge - fromBullets);
         float full = (fromBullets + fromEnemies) / (float)Data.maxCharge;
+        Reaim(Data.sphereRange);
 
         var s = spareSpheres.Count > 0 ? spareSpheres.Pop() : NewSphere();
         s.sr.gameObject.SetActive(true);
@@ -451,6 +604,47 @@ public class TreasureGourd : Weapon<TreasureGourdData>
         Juice.Shake(0.12f + 0.12f * s.charge);
     }
 
+    // ---------------------------------------------------------------- roaming (evolved)
+
+    // flying to its crowd it goes fast; open, it hangs where it is; otherwise it drifts about the
+    // screen. it never leaves the screen: when the player runs on it's dragged along at the edge
+    private void Roam(TreasureGourdData.LevelStats lv, float dt)
+    {
+        if (!placed) gourdPos = (Vector2)transform.position + new Vector2(-0.55f, 0.7f);
+        Vector2 goal;
+        float speed;
+        switch (phase)
+        {
+            case Phase.Fly:
+                goal = Standoff(lv);
+                speed = Data.flySpeed * SpeedMul;
+                break;
+            case Phase.Idle:
+                wanderLeft -= dt;
+                if (wanderLeft <= 0f || (wander - gourdPos).sqrMagnitude < 0.3f || InView(wander, 1.2f) != wander)
+                {
+                    Vector2 eye = View(out Vector2 half);
+                    wander = eye + new Vector2(Random.Range(-1f, 1f) * Mathf.Max(0f, half.x - 1.5f), Random.Range(-1f, 1f) * Mathf.Max(0f, half.y - 1.5f));
+                    wanderLeft = Random.Range(1.8f, 3.2f);
+                }
+                goal = wander;
+                speed = Data.wanderSpeed;
+                break;
+            default:
+                goal = gourdPos;
+                speed = 0f;
+                break;
+        }
+        Vector2 to = goal - gourdPos;
+        float d = to.magnitude;
+        Vector2 want = d > 0.01f ? to / d * Mathf.Min(speed, d * 4f) : Vector2.zero;
+        flyVelocity = Vector2.Lerp(flyVelocity, want, 1f - Mathf.Exp(-dt * (phase == Phase.Fly ? 7f : 3f)));
+        gourdPos = InView(gourdPos + flyVelocity * dt, 0.5f);
+
+        if (flyTrail == null) return;
+        if (phase == Phase.Fly) flyTrail.Record();
+    }
+
     // ---------------------------------------------------------------- showing it
 
     private void MakeParts()
@@ -461,6 +655,7 @@ public class TreasureGourd : Weapon<TreasureGourdData>
         cone = WeaponFx.Make(Fx, "Gourd Cone", null, null, Color.white, Data.sortingLayer, Data.sortingOrder - 1);
         charge = WeaponFx.Make(Fx, "Gourd Charge", null, null, Color.white, Data.sortingLayer, Data.sortingOrder + 2);
         cone.enabled = charge.enabled = false;
+        flyTrail = new Afterimage(gourd, 5, 0.35f, 0.45f, 0.7f);
 
         voice = new GameObject("Gourd Voice").AddComponent<AudioSource>();
         voice.transform.SetParent(Fx, false);
@@ -471,17 +666,23 @@ public class TreasureGourd : Weapon<TreasureGourdData>
     private void Show(TreasureGourdData.LevelStats lv, bool evolved, float dt)
     {
         Vector2 me = transform.position;
-        bool open = phase != Phase.Idle;
+        bool open;
 
-        // at rest it bobs at the shoulder behind the way they face; open, it swings round in front
-        Vector2 want = open
-            ? me + aim * 0.75f
-            : me + new Vector2(heading.x >= 0f ? -0.55f : 0.55f, 0.7f + Mathf.Sin(age * 2.6f) * 0.06f);
-        gourdPos = placed ? Vector2.Lerp(gourdPos, want, 1f - Mathf.Exp(-dt * (open ? 30f : 10f))) : want;
+        // at rest it bobs at the shoulder behind the way they face; open, it swings round in front.
+        // roaming, it's where Roam flew it
+        open = phase == Phase.Pull || phase == Phase.Spray;
+        if (!roaming)
+        {
+            Vector2 want = open
+                ? me + aim * 0.75f
+                : me + new Vector2(heading.x >= 0f ? -0.55f : 0.55f, 0.7f + Mathf.Sin(age * 2.6f) * 0.06f);
+            gourdPos = placed ? Vector2.Lerp(gourdPos, want, 1f - Mathf.Exp(-dt * (open ? 30f : 10f))) : want;
+        }
         placed = true;
 
         var t = gourd.transform;
-        t.position = gourdPos;
+        t.position = roaming && !open ? gourdPos + Vector2.up * (Mathf.Sin(age * 2.6f) * 0.08f) : gourdPos;
+        t.localScale = Vector3.one * size;
         if (open)
         {
             t.rotation = Quaternion.Euler(0f, 0f, FxOneShot.Angle(aim));
@@ -492,7 +693,8 @@ public class TreasureGourd : Weapon<TreasureGourdData>
         }
         else
         {
-            t.rotation = Quaternion.identity;
+            // flying, it leans into the way it's going
+            t.rotation = Quaternion.Euler(0f, 0f, roaming ? Mathf.Clamp(-flyVelocity.x * 2.5f, -25f, 25f) : 0f);
             gourd.flipY = false;
             if (Data.Animated) gourd.sprite = Data.gourdFrames[(int)(age * 7f) % Data.gourdFrames.Length];
         }
@@ -517,7 +719,7 @@ public class TreasureGourd : Weapon<TreasureGourdData>
             float grow = Mathf.Clamp01(phaseTime / Mathf.Max(0.1f, Data.evolvedSuctionSeconds));
             float full = Mathf.Min(1f, (swallowed + held.Count) / (float)Data.maxCharge);
             charge.sprite = Data.orbFrames[(int)(age * Data.fps) % Data.orbFrames.Length];
-            charge.transform.position = Mouth + aim * 0.2f;
+            charge.transform.position = Mouth + aim * (0.2f * size);
             charge.transform.localScale = Vector3.one * Mathf.Lerp(0.25f, Mathf.Lerp(Data.sphereScale.x, Data.sphereScale.y, full), grow);
         }
     }

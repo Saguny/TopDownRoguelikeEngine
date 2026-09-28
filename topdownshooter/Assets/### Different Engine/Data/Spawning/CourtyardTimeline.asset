@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CourtyardTimeline
   m_EditorClassIdentifier: 
   crowdScale: 1
-  hardCap: 1500
+  hardCap: 600
   waveMinutes: 3
   beats:
   - label: 'Restless dead'
@@ -69,7 +69,7 @@ MonoBehaviour:
     minimum: 140
     perInterval: 10
     interval: 1
-    cap: 224
+    cap: 190
     enemies:
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 3
@@ -82,7 +82,7 @@ MonoBehaviour:
     minimum: 166
     perInterval: 11
     interval: 0.9
-    cap: 266
+    cap: 220
     enemies:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 5
@@ -95,7 +95,7 @@ MonoBehaviour:
     minimum: 220
     perInterval: 16
     interval: 0.9
-    cap: 340
+    cap: 260
     enemies:
     - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
       weight: 4
@@ -106,7 +106,7 @@ MonoBehaviour:
     minimum: 252
     perInterval: 17
     interval: 0.8
-    cap: 399
+    cap: 290
     enemies:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 2
@@ -123,7 +123,7 @@ MonoBehaviour:
     minimum: 338
     perInterval: 18
     interval: 0.8
-    cap: 518
+    cap: 330
     enemies:
     - archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
       weight: 1
@@ -136,7 +136,7 @@ MonoBehaviour:
     minimum: 432
     perInterval: 24
     interval: 0.7
-    cap: 648
+    cap: 370
     enemies:
     - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
       weight: 5
@@ -149,7 +149,7 @@ MonoBehaviour:
     minimum: 525
     perInterval: 25
     interval: 0.7
-    cap: 775
+    cap: 400
     enemies:
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 5
@@ -162,7 +162,7 @@ MonoBehaviour:
     minimum: 600
     perInterval: 30
     interval: 0.6
-    cap: 875
+    cap: 430
     enemies:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 4
@@ -177,7 +177,7 @@ MonoBehaviour:
     minimum: 675
     perInterval: 30
     interval: 0.6
-    cap: 1000
+    cap: 460
     enemies:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 2
@@ -194,7 +194,7 @@ MonoBehaviour:
     minimum: 750
     perInterval: 35
     interval: 0.5
-    cap: 1100
+    cap: 500
     enemies:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 2

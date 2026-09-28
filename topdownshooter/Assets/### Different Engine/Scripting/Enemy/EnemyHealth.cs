@@ -69,12 +69,6 @@ public class EnemyHealth : MonoBehaviour, IHealth
     public float Max => baseMaxHealth;
     public GameObject WenDropPrefab => wenDropPrefab;
 
-    // how much more its wen is worth than its kind's usual: a step for every time the run has
-    // doubled its health, like Vampire Survivors' stronger enemies dropping green and red gems
-    // the health an evolution added (SpawnDirector) doesn't count: that's the horde pushing back,
-    // not richer enemies
-    private int Worth => Mathf.Clamp(1 + Mathf.FloorToInt(Mathf.Log(Mathf.Max(1f, baseMaxHealth / evoHealth / Mathf.Max(1f, _prefabMaxHealth)), 2f)), 1, 6);
-
     // wen it's worth rounded up or down at random, so a share like 0.4 still averages out
     private int Scaled(int wen)
     {
@@ -175,7 +169,10 @@ public class EnemyHealth : MonoBehaviour, IHealth
         if (audioSource == null)
             audioSource = GetComponent<AudioSource>();
         TryGetComponent(out _gate);
+        TryGetComponent(out _move);
     }
+
+    private EnemyMovement _move;
 
     private void OnEnable()
     {
@@ -290,6 +287,8 @@ public class EnemyHealth : MonoBehaviour, IHealth
         }
 
         OnHealthChanged?.Invoke(currentHealth, baseMaxHealth);
+        // a weapon's hit knocks it back a little (not a burn or other damage over time)
+        if (source != null && !ignoreArmor && _move != null) _move.Knock(source.Knockback);
         return false;
     }
 
@@ -389,7 +388,7 @@ public class EnemyHealth : MonoBehaviour, IHealth
             var p = transform.position;
             p.x += UnityEngine.Random.Range(-0.2f, 0.2f);
             p.y += UnityEngine.Random.Range(-0.2f, 0.2f);
-            int worth = Scaled(count * WenEach * Worth);
+            int worth = Scaled(count * WenEach);
             if (worth > 0) PickupSystem.DropWen(p, worth, wenDropPrefab);
         }
 
@@ -402,7 +401,7 @@ public class EnemyHealth : MonoBehaviour, IHealth
                 float a = (i + UnityEngine.Random.value * 0.5f) / ring * Mathf.PI * 2f;
                 float r = UnityEngine.Random.Range(0.4f, 1.1f);
                 var p = transform.position + new Vector3(Mathf.Cos(a) * r, Mathf.Sin(a) * r, 0f);
-                int worth = Scaled(WenEach * 2 * Worth);
+                int worth = Scaled(WenEach * 2);
                 if (worth > 0) PickupSystem.DropWen(p, worth, wenDropPrefab);
             }
         }
