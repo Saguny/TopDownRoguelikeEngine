@@ -66,6 +66,10 @@ public class UpgradeMenuUI : MonoBehaviour
     // the card under the mouse, or -1. it wins the preview over the keyboard's selection, so a
     // movement key still held from the game can't drag the preview off the card being looked at
     private int hoveredIndex = -1;
+    // the keyboard picked the selection since the mouse last moved: only then does a card that
+    // isn't under the mouse preview. otherwise, off every card, the stats show as they are now
+    private bool keyboardDriven;
+    private Vector2 lastMouse;
     private bool navigationWas = true;
     private bool navigationOff;
 
@@ -112,6 +116,9 @@ public class UpgradeMenuUI : MonoBehaviour
     private void Update()
     {
         if (panel == null || !panel.activeSelf) return;
+        Vector2 mouse = Input.mousePosition;
+        if ((mouse - lastMouse).sqrMagnitude > 4f) keyboardDriven = false;
+        lastMouse = mouse;
         HandleKeyboard();
     }
 
@@ -161,6 +168,8 @@ public class UpgradeMenuUI : MonoBehaviour
 
         panel.SetActive(true);
         hoveredIndex = -1;
+        keyboardDriven = false;
+        lastMouse = Input.mousePosition;
         // the menu steps through its cards itself (HandleKeyboard). the event system's own
         // navigation is off while it's open: a movement key still held from the game would
         // otherwise keep moving the selection on its own
@@ -378,6 +387,7 @@ public class UpgradeMenuUI : MonoBehaviour
         if (step != 0)
         {
             hoveredIndex = -1;      // the keyboard takes over from the mouse
+            keyboardDriven = true;
             selectedIndex = NextActiveIndex(selectedIndex, step);
             FocusButton(selectedIndex);
         }
@@ -436,13 +446,15 @@ public class UpgradeMenuUI : MonoBehaviour
     // expose open state so other systems (pause menu) can check it
     public bool IsOpen => panel != null && panel.activeSelf;
 
-    // the card that's selected or hovered right now, or null
+    // the card to preview: the one under the mouse, or the keyboard's selection while the
+    // keyboard is in charge. null (the stats as they are) when the mouse is off every card
     public UpgradeData Highlighted
     {
         get
         {
             if (!IsOpen) return null;
             if (hoveredIndex >= 0 && hoveredIndex < current.Count && IsActive(hoveredIndex)) return current[hoveredIndex];
+            if (!keyboardDriven) return null;
             var selected = EventSystem.current != null ? EventSystem.current.currentSelectedGameObject : null;
             int index = selectedIndex;
             for (int i = 0; selected != null && i < upgradeButtons.Length; i++)
