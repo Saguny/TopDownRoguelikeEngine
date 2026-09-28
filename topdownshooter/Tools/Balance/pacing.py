@@ -120,7 +120,16 @@ def fit(wen_by_minute):
         FITTED[level] = prev
 
 
+# every level a little cheaper than the fit: playtesters found the third Final Rush (9:00) barely
+# doable, the build a level or so short of it
+QUICKEN = 0.9
+
+
 def level_cost(level):
+    return max(1, round(QUICKEN * fitted_cost(level)))
+
+
+def fitted_cost(level):
     last = max(EARLY)
     if level <= last: return EARLY[level]
     if level >= BLEND_TO: return FITTED[level]
