@@ -77,3 +77,16 @@ edge and a click's burst, straight into `Resources/UI` as PNGs (animation frames
 `UiFlair` slices at run time; nothing to set up in Unity:
 
     node ui/ui.js
+
+## The warnings: the boss medallion and Heaven's thunder
+
+`alerts/alerts.js` draws the medallion that points the way to a boss off the screen (its rim, the
+window the boss's own sprite shows through, the arrowhead; `Resources/UI/boss_*`) and Heaven's
+thunder, the strike that falls on a player standing still in the endless mode (the thunder seal,
+its countdown fill, the bolt and the burst; `Resources/Hazards/strike_*`). Like the Yama and Final
+Rush art, the PNG strips go straight into Resources and the game slices them at run time, so
+there's nothing to set up in Unity:
+
+    node alerts/alerts.js
+
+The strike's sounds are synthesised by `../SFX/thunder.py` (into `Resources/Sfx`).

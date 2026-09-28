@@ -5,7 +5,10 @@ using UnityEngine.SceneManagement;
 // strong stationary build could still stand in one spot for most of an hour. telegraphed strikes
 // land on the player on a clock, so standing still is never a strategy. damage is a share of max
 // health, so stacking health can't out-tank it and it never needs rebalancing against the enemy
-// curve. in an auto shooter, movement is the one skill input, so this is where skill lives
+// curve. in an auto shooter, movement is the one skill input, so this is where skill lives.
+// it's Heaven's thunder: a thunder seal marks the ground (the eight trigrams round a bolt, a red
+// disc filling it as the countdown), the storm gathers, and a bolt comes down on it. art from
+// Tools/VFX/alerts (Resources/Hazards), sounds from Tools/SFX/thunder.py (Resources/Sfx)
 public class Bombardment : MonoBehaviour
 {
     [Header("Schedule (survival seconds)")]
@@ -38,11 +41,19 @@ public class Bombardment : MonoBehaviour
     private Rigidbody2D playerBody;
 
     private float nextSalvo = -1f;
-    private bool announced;
-
     private Shell[] shells;
     private static Sprite disc;
     private static Sprite ring;
+    private Sprite[] sealFrames, fillFrames, boltFrames, burstFrames;
+    private AudioClip warnSound, hitSound;
+    private bool art;
+
+    // the art's seal is drawn 66 pixels out from its centre; the bolt's cell is 192 tall with its
+    // foot 3 pixels up from the bottom
+    private const float SealArtRadius = 66f / YamaArt.WorldPpu;
+    private const float BoltCell = 192f / YamaArt.WorldPpu;
+    private const float BoltFoot = 3f / YamaArt.WorldPpu;
+    private const float BurstArtRadius = 64f / YamaArt.WorldPpu;
 
     private class Shell
     {
@@ -74,8 +85,19 @@ public class Bombardment : MonoBehaviour
 
     private void Awake()
     {
-        if (disc == null) disc = MakeCircle(true);
-        if (ring == null) ring = MakeCircle(false);
+        sealFrames = YamaArt.Strip("Hazards/strike_seal");
+        fillFrames = YamaArt.Strip("Hazards/strike_fill");
+        boltFrames = YamaArt.Strip("Hazards/strike_bolt");
+        burstFrames = YamaArt.Strip("Hazards/strike_burst");
+        warnSound = Resources.Load<AudioClip>("Sfx/strike_warn");
+        hitSound = Resources.Load<AudioClip>("Sfx/strike_hit");
+        art = sealFrames != null && sealFrames.Length > 0 && fillFrames != null && fillFrames.Length > 0;
+        // without the art, plain circles drawn here
+        if (!art)
+        {
+            if (disc == null) disc = MakeCircle(true);
+            if (ring == null) ring = MakeCircle(false);
+        }
 
         shells = new Shell[PoolSize];
         for (int i = 0; i < PoolSize; i++) shells[i] = MakeShell(i);
@@ -135,12 +157,6 @@ public class Bombardment : MonoBehaviour
             bool lead = i == 1 && vel.sqrMagnitude > 1f;
             Strike(lead ? at + vel * telegraph : at + Random.insideUnitCircle * scatter);
         }
-
-        if (!announced)
-        {
-            announced = true;
-            Juice.Text(at + Vector2.up * (radius + 0.6f), "INCOMING - MOVE!", color);
-        }
     }
 
     private void Strike(Vector2 position)
@@ -157,13 +173,14 @@ public class Bombardment : MonoBehaviour
         if (s == null) return;
 
         s.root.transform.position = position;
-        s.root.transform.localScale = Vector3.one * radius * 2f;
+        s.root.transform.localScale = Vector3.one * (art ? radius / SealArtRadius : radius * 2f);
         s.age = 0f;
         s.detonated = false;
         s.fill.transform.localScale = Vector3.zero;
-        s.fill.color = WithAlpha(color, 0.35f);
-        s.ring.color = WithAlpha(color, 0.8f);
+        s.fill.color = art ? Color.white : WithAlpha(color, 0.35f);
+        s.ring.color = art ? Color.white : WithAlpha(color, 0.8f);
         s.root.SetActive(true);
+        if (warnSound != null) SfxPlayer.PlayAt(warnSound, position, 0.8f, Random.Range(0.97f, 1.03f));
     }
 
     private void Tick(Shell s, float dt)
@@ -177,7 +194,15 @@ public class Bombardment : MonoBehaviour
             // the inner disc filling the ring is the countdown; the ring pulses faster as it closes
             s.fill.transform.localScale = Vector3.one * k;
             float pulse = 0.55f + 0.45f * Mathf.Abs(Mathf.Sin(s.age * Mathf.Lerp(6f, 22f, k)));
-            s.ring.color = WithAlpha(color, pulse);
+            if (art)
+            {
+                // the seal turns over its eight frames, and blinks in the last moment before it falls
+                s.ring.sprite = sealFrames[(int)(s.age * 10f) % sealFrames.Length];
+                bool blink = k > 0.8f && (int)(s.age * 30f) % 2 == 0;
+                s.ring.color = new Color(1f, 1f, 1f, blink ? 0.45f : Mathf.Lerp(0.85f, 1f, pulse));
+                s.fill.color = new Color(1f, 1f, 1f, Mathf.Lerp(0.55f, 0.9f, pulse * k));
+            }
+            else s.ring.color = WithAlpha(color, pulse);
 
             if (s.age >= telegraph) Detonate(s);
             return;
@@ -192,6 +217,17 @@ public class Bombardment : MonoBehaviour
         s.fill.transform.localScale = Vector3.one;
         s.fill.color = new Color(1f, 1f, 1f, 0.75f);
         s.ring.color = Color.white;
+        Vector2 at = s.root.transform.position;
+        if (art)
+        {
+            // the seal is spent as the bolt lands: the bolt comes down on it and bursts
+            s.root.SetActive(false);
+            if (boltFrames != null && boltFrames.Length > 0)
+                FxBatch.Play(boltFrames, 28f, at + Vector2.up * (BoltCell * 0.5f - BoltFoot), 1f, sortingLayer, 520);
+            if (burstFrames != null && burstFrames.Length > 0)
+                FxBatch.Play(burstFrames, 22f, at, radius / BurstArtRadius, sortingLayer, 521);
+        }
+        if (hitSound != null) SfxPlayer.PlayAt(hitSound, at, 0.9f, Random.Range(0.94f, 1.04f));
 
         if (player == null || playerHealth == null) return;
 
@@ -210,7 +246,7 @@ public class Bombardment : MonoBehaviour
         root.transform.SetParent(transform, false);
 
         var ringRenderer = root.AddComponent<SpriteRenderer>();
-        ringRenderer.sprite = ring;
+        ringRenderer.sprite = art ? sealFrames[0] : ring;
         ringRenderer.sortingLayerName = sortingLayer;
         ringRenderer.sortingOrder = 500;
 
@@ -218,7 +254,7 @@ public class Bombardment : MonoBehaviour
         fillObject.transform.SetParent(root.transform, false);
 
         var fillRenderer = fillObject.AddComponent<SpriteRenderer>();
-        fillRenderer.sprite = disc;
+        fillRenderer.sprite = art ? fillFrames[0] : disc;
         fillRenderer.sortingLayerName = sortingLayer;
         fillRenderer.sortingOrder = 499;
 

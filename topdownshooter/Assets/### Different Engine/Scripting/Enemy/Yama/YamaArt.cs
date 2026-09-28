@@ -21,11 +21,14 @@ public static class YamaArt
     }
 
     // "yama", "halo", "gate"...: the strip's frames, or none if it's missing
-    public static Sprite[] Frames(string name, float ppu = WorldPpu)
+    public static Sprite[] Frames(string name, float ppu = WorldPpu) => Strip("Yama/" + name, ppu);
+
+    // any strip of square frames under Resources, by its path there ("UI/boss_ring", "Hazards/...")
+    public static Sprite[] Strip(string resourcePath, float ppu = WorldPpu)
     {
-        string key = name + "@" + ppu;
+        string key = resourcePath + "@" + ppu;
         if (strips.TryGetValue(key, out var frames)) return frames;
-        var strip = Texture("Yama/" + name);
+        var strip = Texture(resourcePath);
         if (strip == null) { strips[key] = null; return null; }
         int size = strip.height, n = Mathf.Max(1, strip.width / size);
         frames = new Sprite[n];

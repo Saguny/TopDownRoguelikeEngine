@@ -838,11 +838,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 6576394803195261700}
-  canvas: {fileID: 4937325442727078406}
-  indicatorPrefab: {fileID: 7973987748234085969, guid: 872e1018048de744396c3d1ea7291aed, type: 3}
-  edgePadding: 50
-  arrowRadius: 40
-  arrowBaseRotation: -39.79
+  edgePadding: 22
+  topPadding: 40
+  arrowRadius: 21
 --- !u!1 &1861110209278494426
 GameObject:
   m_ObjectHideFlags: 0
