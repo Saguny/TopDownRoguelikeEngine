@@ -77,6 +77,13 @@ public class VfxLibrary : ScriptableObject
 
     [Header("Opening it: sound (optional)")]
     public AudioClip envelopePickupSound;
+    [Tooltip("looped while it waits to be clicked open")]
+    public AudioClip envelopeIdle;
+    public AudioClip envelopeClick;
+    [Tooltip("the build before the burst, one per rarity, as long as that rarity's charge")]
+    public AudioClip chargeCommon;
+    public AudioClip chargeRare;
+    public AudioClip chargeLegendary;
     public AudioClip envelopeShake;
     [Tooltip("the light turning up a rarity, pitched up for legendary")]
     public AudioClip envelopeTier;

@@ -61,6 +61,11 @@ public static class FortuneFxBuilder
 
         AudioClip Sound(string name) => AssetDatabase.LoadAssetAtPath<AudioClip>(Sounds + name + ".wav");
         library.envelopePickupSound = Sound("fe_pickup");
+        library.envelopeIdle = Sound("fe_idle");
+        library.envelopeClick = Sound("fe_click");
+        library.chargeCommon = Sound("fe_charge_common");
+        library.chargeRare = Sound("fe_charge_rare");
+        library.chargeLegendary = Sound("fe_charge_legendary");
         library.envelopeShake = Sound("fe_shake");
         library.envelopeTier = Sound("fe_tier");
         library.envelopeOpen = Sound("fe_open");
@@ -92,7 +97,7 @@ public static class FortuneFxBuilder
 
     // ------------------------------------------------------------------ the first time
 
-    private static string AutoBuiltKey => "FortuneFxBuilder.v1." + Application.dataPath;
+    private static string AutoBuiltKey => "FortuneFxBuilder.v2." + Application.dataPath;
 
     [InitializeOnLoadMethod]
     private static void ScheduleAutoBuild()
@@ -111,9 +116,20 @@ public static class FortuneFxBuilder
             return;
         }
         if (!File.Exists(FortuneArt + "fe_envelope.aseprite")) return;
-        EditorPrefs.SetBool(AutoBuiltKey, true);
         var library = AssetDatabase.LoadAssetAtPath<VfxLibrary>(Root + "Resources/VfxLibrary.asset");
-        if (library != null && library.envelope != null && library.envelope.Length > 0) return;
+        // the art is already set up: only what's been added since (the opening's riser sounds).
+        // done once they're in; a sound not imported yet is tried again next time
+        if (library != null && library.envelope != null && library.envelope.Length > 0)
+        {
+            if (library.chargeCommon == null && AssetDatabase.LoadAssetAtPath<AudioClip>(Sounds + "fe_charge_common.wav") != null)
+            {
+                try { Build(); }
+                catch (Exception e) { Debug.LogError("couldn't point the fortune envelope at its new sounds, try Tools > VFX > Build Weapon FX\n" + e); }
+            }
+            if (library.chargeCommon != null) EditorPrefs.SetBool(AutoBuiltKey, true);
+            return;
+        }
+        EditorPrefs.SetBool(AutoBuiltKey, true);
         try { WeaponFxBuilder.Build(); }
         catch (Exception e) { Debug.LogError("couldn't set the fortune envelope's art up automatically, try Tools > VFX > Build Weapon FX\n" + e); }
     }

@@ -54,6 +54,7 @@ RANK = {"common": 0, "rare": 1, "legendary": 2}[rarity]
 font_big = ImageFont.truetype(FONT, 26)
 font_small = ImageFont.truetype(FONT, 17)
 font_prompt = ImageFont.truetype(FONT, 19)
+font_open = ImageFont.truetype(FONT, 24)
 
 cache = {}
 def scaled(im, k, key=None):
@@ -120,7 +121,7 @@ state = dict(backdrop=0.0, env_pos=(0, 0), env_rot=0.0, env_sx=1.0, env_sy=1.0, 
              show_big=True, show_flap=False, show_front=False, aura_a=0.0, aura_s=1.0, color=JADE,
              raysA_a=0.0, raysA_rot=0.0, raysA_s=1.0, raysB_a=0.0, raysB_rot=0.0, raysB_s=1.0, flash=None, flash_a=0.0,
              stage_off=(0, 0), stage_s=1.0, scroll=False, scroll_pos=(0, 0), scroll_w=0.0, banner=False, banner_sy=1.0,
-             bursts=[], rewards=[], coins=None, prompt=None, fade=1.0, parts=[])
+             bursts=[], rewards=[], coins=None, prompt=None, prompt_text="Click to continue", click=None, fade=1.0, parts=[])
 frames_out = []
 t_global = 0.0
 sounds = []
@@ -165,7 +166,16 @@ def emit():
         col = tuple(int(v + (255 - v) * 0.35) for v in state["flash"])
         canvas.alpha_composite(Image.new("RGBA", (W, H), col + (int(255 * state["flash_a"]),)))
     if state["prompt"] is not None:
-        text(canvas, "Click to continue", (0, -470), font_prompt, (255, 242, 216, int(255 * state["prompt"])))
+        opening = state["prompt_text"] == "Click to open"
+        text(canvas, state["prompt_text"], (0, -72 * 5 * 0.5 - 70) if opening else (0, -470), font_open if opening else font_prompt, (255, 242, 216, int(255 * state["prompt"])))
+    if state["click"] is not None:
+        # the viewer's click, shown as a ring opening where the pointer is (this is a preview)
+        age = state["click"]
+        if age < 0.35:
+            d = ImageDraw.Draw(canvas)
+            cx, cy = W / 2 + 60 * S, H / 2 + 40 * S
+            r = 6 + age * 90
+            d.ellipse([cx - r, cy - r, cx + r, cy + r], outline=(255, 255, 255, int(255 * (1 - age / 0.35))), width=3)
     if state["fade"] < 1:
         canvas = Image.blend(bg, canvas, state["fade"])
     frames_out.append(canvas.convert("RGB"))
@@ -262,7 +272,8 @@ def confetti(at):
             p.update(img=None, w=max(2, s * random.choice([1, 2])), h=max(2, s), col=(reds if i % 2 == 0 else golds)[i % 3])
         state["parts"].append(p)
 
-# ---- in
+# ---- in (the envelope was just walked into)
+sfx("fe_pickup", 1.0)
 def k_in(k):
     state["backdrop"] = min(1, k * 2)
     state["env_pos"] = (0, 700 + (0 - 700) * back_out(k))
@@ -275,8 +286,48 @@ tick(0.16, k_squash)
 sfx("fe_shake", 0.9)
 state["env_sx"] = state["env_sy"] = 1
 
+# ---- waiting to be opened: floating, the light breathing, a twitch now and then, a hum
+UNOPENED = (255, 230, 184)
+state["prompt_text"] = "Click to open"
+sfx("fe_idle", 1.0)
+wait = 2.6
+twitches = [0.9, 2.1]
+tw = {"t": -1.0}
+def k_idle(k):
+    tt = k * wait
+    breathe = 0.5 + 0.5 * math.sin(tt * 2.4)
+    state["color"] = UNOPENED
+    state["aura_a"] = 0.16 + 0.1 * breathe
+    state["aura_s"] = 0.85 + 0.08 * breathe
+    y = round(math.sin(tt * 1.8) * 3) * 5 * 0.5
+    x, rot = 0.0, 0.0
+    for at in twitches:
+        if at <= tt < at + 1 / FPS and tw["t"] < 0:
+            tw["t"] = 0.0; sfx("fe_shake", random.uniform(1.15, 1.35))
+    if tw["t"] >= 0:
+        tw["t"] += 1 / FPS
+        kk = 1 - tw["t"] / 0.2
+        if kk <= 0: tw["t"] = -1.0
+        else: x += random.uniform(-1, 1) * 5 * kk; y += random.uniform(-1, 1) * 5 * kk; rot = random.uniform(-4, 4) * kk
+    state["env_pos"] = (x, y); state["env_rot"] = rot
+    state["prompt"] = 0.55 + 0.45 * math.sin(tt * 4)
+    if random.random() < 0.12: mote(UNOPENED, random.uniform(-140, 140), random.uniform(-140, 140), 0.5)
+tick(wait, k_idle)
+state["prompt"] = None
+sfx("fe_idle_stop", 1.0)
+sfx("fe_click", 1.0)
+state["click"] = 0.0
+state["env_pos"] = (0, 0); state["env_rot"] = 0
+def k_click(k):
+    s_ = math.sin(k * math.pi) * 0.1 * (1 - k)
+    state["env_sx"], state["env_sy"] = 1 + s_, 1 - s_
+    state["click"] = k * 0.12
+tick(0.12, k_click)
+state["env_sx"] = state["env_sy"] = 1
+
 # ---- the charge
-charge = {0: 1.1, 1: 1.65, 2: 2.3}[RANK]
+charge = {0: 1.4, 1: 2.0, 2: 2.8}[RANK]
+sfx("fe_charge_" + rarity, 1.0)
 shown = [JADE]
 flags = dict(rare=False, leg=False)
 def tier_up(color, strength, jolt):
@@ -284,36 +335,38 @@ def tier_up(color, strength, jolt):
     state["color"] = color
     shown[0] = color
     for i in range(18): mote(color, random.uniform(-60, 60), random.uniform(-60, 60), 1.3)
-    def f(k):
-        state["flash"] = color; state["flash_a"] = strength * 0.55 * (1 - k)
-        kk = 1 - k
-        state["env_pos"] = (random.uniform(-1, 1) * jolt * kk, random.uniform(-1, 1) * jolt * kk)
-        state["aura_s"] = 1.2 + 0.5 * kk
-    tick(0.2, f)
-    state["flash_a"] = 0
+    # it doesn't hold the charge up: a jolt and a flash that die away while it goes on
+    kick["jolt"] = jolt; kick["aura"] = 0.5; kick["flash"] = strength * 0.55
+kick = dict(jolt=0.0, aura=0.0, flash=0.0)
 jit = {"c": 0}
 t = 0.0
 n = round(charge * FPS)
 for i in range(n):
     k = i / n
-    if not flags["rare"] and RANK >= 1 and k > 0.42:
+    if not flags["rare"] and RANK >= 1 and k > 0.4:
         flags["rare"] = True; tier_up(AZURE, 0.55, 14)
-    if not flags["leg"] and RANK == 2 and k > 0.74:
+    if not flags["leg"] and RANK == 2 and k > 0.72:
         flags["leg"] = True; tier_up(GOLD, 0.85, 24)
+    state["flash"] = shown[0]; state["flash_a"] = kick["flash"]; kick["flash"] = max(0.0, kick["flash"] - 2.0 / FPS)
+    if state["click"] is not None: state["click"] += 1 / FPS
     state["env_frame"] = frame(F["fe_big"], min(0.999, k * 1.08))
-    amp = (1 + 6 * k * k) * (1.6 if flags["leg"] else 1.25 if flags["rare"] else 1)
+    amp = (1 + 6 * k * k) * (1.6 if flags["leg"] else 1.25 if flags["rare"] else 1) + kick["jolt"]
+    kick["jolt"] = max(0.0, kick["jolt"] - 100.0 / FPS)
     state["env_pos"] = (random.uniform(-1, 1) * amp, random.uniform(-1, 1) * amp)
     state["env_rot"] = random.uniform(-1, 1) * (1 + 5 * k)
     pulse = 1 + 0.06 * math.sin(i / FPS * (8 + 18 * k))
     state["aura_a"] = 0.18 + 0.32 * k
-    state["aura_s"] = (0.8 + 0.55 * k) * pulse
+    mix_ = min(1, k * 4)
+    state["color"] = tuple(int(UNOPENED[c] + (shown[0][c] - UNOPENED[c]) * mix_) for c in range(3))
+    state["aura_s"] = (0.8 + 0.55 * k + kick["aura"]) * pulse
+    kick["aura"] = max(0.0, kick["aura"] - 2.5 / FPS)
     if flags["rare"]:
         state["raysA_a"] = 0.15 + 0.25 * k
         state["raysA_rot"] += (70 if flags["leg"] else 30) / FPS
     for _ in range(2):
         if random.random() < 0.15 + 0.75 * k: mote(shown[0], random.uniform(-120, 120) + state["env_pos"][0], random.uniform(-120, 120))
     step_world(1 / FPS); emit()
-state["env_pos"] = (0, 0); state["env_rot"] = 0
+state["env_pos"] = (0, 0); state["env_rot"] = 0; state["flash_a"] = 0; state["click"] = None
 
 # ---- the burst
 state["color"] = COLOR[rarity]
@@ -404,6 +457,7 @@ tick(0.5, k_coins)
 state["coins"] = coins
 
 # ---- waiting
+state["prompt_text"] = "Click to continue"
 def k_wait(k):
     state["prompt"] = 0.55 + 0.45 * math.sin(t_global * 4)
     if random.random() < 0.5: mote(COLOR[rarity], random.uniform(-400, 400), random.uniform(-100, 200), 0.35)
@@ -422,9 +476,16 @@ import wave, subprocess, numpy as np, imageio_ffmpeg
 SND = ROOT + "/Assets/### Different Engine/Sounds/Fortune/"
 SR = 48000
 total = np.zeros((int((len(frames_out) / FPS + 3.5) * SR), 2))
+stops = {name[:-5]: at for at, name, _ in sounds if name.endswith("_stop")}
 for at, name, pitch in sounds:
+    if name.endswith("_stop"): continue
     w = wave.open(SND + name + ".wav"); x = np.frombuffer(w.readframes(w.getnframes()), dtype="<i2").astype(float) / 32768
     x = x.reshape(-1, w.getnchannels())
+    if name in stops:
+        # a loop: repeated until it's stopped, a short fade at the end
+        n = int((stops[name] - at) * SR)
+        x = np.tile(x, (n // len(x) + 1, 1))[:n]
+        f = min(n, int(0.03 * SR)); x[-f:] *= np.linspace(1, 0, f)[:, None]
     if x.shape[1] == 1: x = np.repeat(x, 2, axis=1)
     if pitch != 1.0:
         n = int(len(x) / pitch)

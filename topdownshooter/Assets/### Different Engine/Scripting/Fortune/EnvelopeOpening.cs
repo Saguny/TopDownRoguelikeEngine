@@ -6,7 +6,9 @@ using UnityEngine;
 using UnityEngine.UI;
 
 // opening a fortune envelope, the way Rainbow Six Siege opens an alpha pack: the game stops, the
-// envelope drops in and its seal charges while it shakes harder and harder; the light around it
+// envelope drops in and waits, breathing in a plain warm light and twitching now and then, until the
+// player clicks it open. then its seal charges while it shakes harder and harder over a building
+// roar of drums, paper and a sizzling fuse (a riser as long as the charge); the light around it
 // starts jade, and a rare one flares azure partway through, a legendary one gold on top of that,
 // so the rarity is told by the light before it's said. the flap bursts open, a scroll rises out
 // and unrolls, and the rewards land on it one by one, each with a burst in the rarity's colours:
@@ -133,14 +135,37 @@ public class EnvelopeOpening : MonoBehaviour
         prompt.rectTransform.anchoredPosition = new Vector2(0f, -470f);
         prompt.text = "Click to continue";
 
-        voice = new GameObject("Envelope Voice").AddComponent<AudioSource>();
-        voice.transform.SetParent(transform, false);
-        voice.playOnAwake = false;
-        voice.spatialBlend = 0f;
-        voice.ignoreListenerPause = true;
-        var groups = GameSettings.Mixer != null ? GameSettings.Mixer.FindMatchingGroups("SFX") : null;
-        if (groups != null && groups.Length > 0) voice.outputAudioMixerGroup = groups[0];
+        // one-shots go round a few voices: a voice's pitch bends everything still ringing on it
+        for (int i = 0; i < voices.Length; i++) voices[i] = Voice("Envelope Voice " + i);
+        voice = voices[0];
+        // the idle loop and the charge's riser each have a voice of their own, so they can be cut
+        hum = Voice("Envelope Hum");
+        hum.loop = true;
+        riser = Voice("Envelope Riser");
     }
+
+    private AudioSource hum, riser;
+    private readonly AudioSource[] voices = new AudioSource[6];
+    private int nextVoice;
+
+    private AudioSource Voice(string name)
+    {
+        var v = new GameObject(name).AddComponent<AudioSource>();
+        v.transform.SetParent(transform, false);
+        v.playOnAwake = false;
+        v.spatialBlend = 0f;
+        v.ignoreListenerPause = true;
+        var groups = GameSettings.Mixer != null ? GameSettings.Mixer.FindMatchingGroups("SFX") : null;
+        if (groups != null && groups.Length > 0) v.outputAudioMixerGroup = groups[0];
+        return v;
+    }
+
+    // the charge per rarity, in seconds: its riser (Tools/SFX/fortune.py) is cut to exactly this
+    public static float ChargeSeconds(EnvelopeRarity r) => r == EnvelopeRarity.Legendary ? 2.8f : r == EnvelopeRarity.Rare ? 2f : 1.4f;
+    // the light turns azure this far through the charge, then gold
+    private const float RareAt = 0.4f, LegendaryAt = 0.72f;
+    // the rarity isn't told until it's opened: a plain warm light while it waits
+    private static readonly Color Unopened = new Color(1f, 0.9f, 0.72f);
 
     private static Sprite First(Sprite[] frames) => frames != null && frames.Length > 0 ? frames[0] : null;
 
@@ -242,46 +267,99 @@ public class EnvelopeOpening : MonoBehaviour
         yield return Squash(envelopeBox, 0.16f, 0.12f);
         Play(lib?.envelopeShake, 0.9f);
 
-        // ---- the charge: shaking harder and harder, the seal lighting up, the light turning
-        float charge = rarity == EnvelopeRarity.Legendary ? 2.3f : rarity == EnvelopeRarity.Rare ? 1.65f : 1.1f;
+        // ---- waiting to be opened: floating, the light breathing, a twitch now and then as if
+        // something inside wants out; a low hum under it. nothing is told until it's clicked
+        prompt.text = "Click to open";
+        prompt.fontSize = 40f;
+        prompt.rectTransform.anchoredPosition = new Vector2(0f, -72f * Big * 0.5f - 70f);
+        prompt.gameObject.SetActive(true);
+        if (lib != null && lib.envelopeIdle != null) { hum.clip = lib.envelopeIdle; hum.volume = 0f; hum.Play(); }
+        float idle = 0f, nextTwitch = 0.9f, twitch = -1f;
+        yield return null;
+        while (!Pressed())
+        {
+            idle += Dt;
+            if (hum.isPlaying) hum.volume = Mathf.Clamp01(idle / 0.5f);
+            float breathe = 0.5f + 0.5f * Mathf.Sin(idle * 2.4f);
+            aura.color = WithAlpha(Unopened, 0.16f + 0.1f * breathe);
+            aura.rectTransform.localScale = Vector3.one * (0.85f + 0.08f * breathe);
+            Vector2 at = new Vector2(0f, Mathf.Round(Mathf.Sin(idle * 1.8f) * 3f) * Big * 0.5f);
+            float angle = 0f;
+            if (idle >= nextTwitch)
+            {
+                twitch = 0f;
+                nextTwitch = idle + UnityEngine.Random.Range(1.1f, 1.9f);
+                Play(lib?.envelopeShake, UnityEngine.Random.Range(1.15f, 1.35f), 0.55f);
+            }
+            if (twitch >= 0f)
+            {
+                twitch += Dt;
+                float k = 1f - twitch / 0.2f;
+                if (k <= 0f) twitch = -1f;
+                else { at += UnityEngine.Random.insideUnitCircle * 5f * k; angle = UnityEngine.Random.Range(-4f, 4f) * k; }
+            }
+            envelopeBox.anchoredPosition = at;
+            envelopeBox.localRotation = Quaternion.Euler(0f, 0f, angle);
+            prompt.alpha = 0.55f + 0.45f * Mathf.Sin(idle * 4f);
+            if (UnityEngine.Random.value < 0.12f) Mote(Unopened, UnityEngine.Random.insideUnitCircle * 140f, 0.5f);
+            yield return null;
+        }
+        prompt.gameObject.SetActive(false);
+        hum.Stop();
+
+        // ---- clicked: the seal knocked, a squash, and the charge begins
+        Play(lib?.envelopeClick, 1f);
+        envelopeBox.anchoredPosition = Vector2.zero;
+        envelopeBox.localRotation = Quaternion.identity;
+        StartCoroutine(Squash(envelopeBox, 0.12f, 0.1f));
+
+        // ---- the charge: shaking harder and harder, the seal lighting up, the light turning; its
+        // riser runs the whole length and cuts dead on the burst. a click after the first moment
+        // hurries it
+        float charge = ChargeSeconds(rarity);
+        var riserClip = rarity == EnvelopeRarity.Legendary ? lib?.chargeLegendary : rarity == EnvelopeRarity.Rare ? lib?.chargeRare : lib?.chargeCommon;
+        if (riserClip != null) { riser.clip = riserClip; riser.Play(); }
         bool rareShown = false, legendaryShown = false, hurried = false;
         float jitterClock = 0f;
         Vector2 jitter = Vector2.zero;
         float jitterAngle = 0f;
+        yield return null;
         for (float t = 0f; t < charge; t += Dt)
         {
             float k = t / charge;
-            if (Pressed()) { hurried = true; break; }
+            if (t > 0.35f && Pressed()) { hurried = true; break; }
 
-            if (!rareShown && rarity >= EnvelopeRarity.Rare && k > 0.42f)
+            if (!rareShown && rarity >= EnvelopeRarity.Rare && k > RareAt)
             {
                 rareShown = true;
                 shown = Azure;
-                yield return TierUp(shown, 0.55f, 14f);
+                TierUp(shown, 0.55f, 14f);
             }
-            if (!legendaryShown && rarity == EnvelopeRarity.Legendary && k > 0.74f)
+            if (!legendaryShown && rarity == EnvelopeRarity.Legendary && k > LegendaryAt)
             {
                 legendaryShown = true;
                 shown = Gold;
-                yield return TierUp(shown, 0.85f, 24f);
+                TierUp(shown, 0.85f, 24f);
             }
 
             big.sprite = Frame(lib?.envelopeBig, Mathf.Min(0.999f, k * 1.08f)) ?? big.sprite;
-            // jitter re-picked 30 times a second, stronger as it goes
+            // jitter re-picked 30 times a second, stronger as it goes, a jolt on each turn of the light
             jitterClock -= Dt;
             if (jitterClock <= 0f)
             {
                 jitterClock = 1f / 30f;
                 float amp = Mathf.Lerp(1f, 7f, k * k) * (legendaryShown ? 1.6f : rareShown ? 1.25f : 1f);
-                jitter = UnityEngine.Random.insideUnitCircle * amp;
+                jitter = UnityEngine.Random.insideUnitCircle * (amp + jolt);
                 jitterAngle = UnityEngine.Random.Range(-1f, 1f) * Mathf.Lerp(1f, 6f, k);
             }
+            jolt = Mathf.MoveTowards(jolt, 0f, Dt * 100f);
             envelopeBox.anchoredPosition = jitter;
             envelopeBox.localRotation = Quaternion.Euler(0f, 0f, jitterAngle);
 
             float pulse = 1f + 0.06f * Mathf.Sin(t * Mathf.Lerp(8f, 26f, k));
-            aura.color = WithAlpha(shown, Mathf.Lerp(0.18f, 0.5f, k));
-            aura.rectTransform.localScale = Vector3.one * Mathf.Lerp(0.8f, 1.35f, k) * pulse;
+            aura.color = WithAlpha(Color.Lerp(Unopened, shown, Mathf.Clamp01(k * 4f)), Mathf.Lerp(0.18f, 0.5f, k));
+            aura.rectTransform.localScale = Vector3.one * (Mathf.Lerp(0.8f, 1.35f, k) + auraKick) * pulse;
+            auraKick = Mathf.MoveTowards(auraKick, 0f, Dt * 2.5f);
             if (rareShown)
             {
                 raysA.color = WithAlpha(shown, Mathf.Lerp(0.15f, 0.4f, k));
@@ -291,11 +369,8 @@ public class EnvelopeOpening : MonoBehaviour
             if (UnityEngine.Random.value < Mathf.Lerp(0.15f, 0.9f, k)) Mote(shown, envelopeBox.anchoredPosition + UnityEngine.Random.insideUnitCircle * 120f);
             yield return null;
         }
-        if (hurried)
-        {
-            // hurried: the rarity is still told before it bursts
-            if (rarity >= EnvelopeRarity.Rare) shown = ColorOf(rarity);
-        }
+        // hurried: the riser stops where it is, and the burst comes straight in
+        if (hurried) riser.Stop();
         envelopeBox.anchoredPosition = Vector2.zero;
         envelopeBox.localRotation = Quaternion.identity;
 
@@ -405,6 +480,9 @@ public class EnvelopeOpening : MonoBehaviour
         coinsText.text = "+" + coins;
 
         // ---- waiting on the player: the light turning slowly, the prompt breathing
+        prompt.text = "Click to continue";
+        prompt.fontSize = 32f;
+        prompt.rectTransform.anchoredPosition = new Vector2(0f, -470f);
         prompt.gameObject.SetActive(true);
         yield return null;
         while (!Pressed())
@@ -436,20 +514,19 @@ public class EnvelopeOpening : MonoBehaviour
 
     // ---------------------------------------------------------------- the beats
 
-    // the light turns up a rarity: a flash in the new colour, a jolt, a burst of motes
-    private IEnumerator TierUp(Color color, float strength, float jolt)
+    // a jolt added to the charge's shaking, and a kick to its light, both dying away
+    private float jolt, auraKick;
+
+    // the light turns up a rarity: a flash in the new colour, a jolt, a burst of motes. it doesn't
+    // hold the charge up, so the charge keeps time with its riser
+    private void TierUp(Color color, float strength, float kick)
     {
         Play(lib?.envelopeTier != null ? lib.envelopeTier : lib?.envelopeShake, 1f + strength * 0.4f);
         StartCoroutine(Flash(color, strength * 0.55f, 0.28f));
         Tint(color);
         for (int i = 0; i < 18; i++) Mote(color, UnityEngine.Random.insideUnitCircle * 60f, 1.3f);
-        for (float t = 0f; t < 0.2f; t += Dt)
-        {
-            float k = 1f - t / 0.2f;
-            envelopeBox.anchoredPosition = UnityEngine.Random.insideUnitCircle * jolt * k;
-            aura.rectTransform.localScale = Vector3.one * (1.2f + 0.5f * k);
-            yield return null;
-        }
+        jolt = kick;
+        auraKick = 0.5f;
     }
 
     private IEnumerator Flash(Color color, float alpha, float seconds)
@@ -701,6 +778,8 @@ public class EnvelopeOpening : MonoBehaviour
 
     private void Clear()
     {
+        if (hum != null) hum.Stop();
+        if (riser != null) riser.Stop();
         foreach (var go in spawned) if (go != null) Destroy(go);
         spawned.Clear();
         foreach (var p in motes) if (p.image != null) p.image.gameObject.SetActive(false);
@@ -736,11 +815,14 @@ public class EnvelopeOpening : MonoBehaviour
         return frames[Mathf.Clamp((int)(k * frames.Length), 0, frames.Length - 1)];
     }
 
-    private void Play(AudioClip clip, float pitch)
+    private void Play(AudioClip clip, float pitch, float volume = 1f)
     {
         if (clip == null || voice == null) return;
-        voice.pitch = pitch;
-        voice.PlayOneShot(clip);
+        var v = voices[nextVoice];
+        nextVoice = (nextVoice + 1) % voices.Length;
+        v.Stop();
+        v.pitch = pitch;
+        v.PlayOneShot(clip, volume);
     }
 
     private static float EaseOut(float t) => 1f - (1f - t) * (1f - t);
