@@ -58,6 +58,12 @@ CLEAR = [(0, 2.5), (5, 3.5), (10, 4.5), (15, 5.0), (20, 5.5), (25, 6.0), (30, 6.
 # evolutions, which only envelopes dropped from 10:00 can give), dominant by 15, and the build all
 # but complete for the final boss at 27:00. the wen curve is fitted to this (pacing.py)
 LEVEL = [(0, 1), (1, 4), (2, 6), (3, 8), (5, 12), (7.5, 16), (10, 20), (12.5, 24), (15, 28), (20, 36), (25, 44), (27, 47), (30, 51)]
+# the share of the benchmark's damage a build lands in a real run: the benchmark's crowd stands
+# packed and still, play has the horde walking in and spread out, shots and swings missing, the
+# player moving, targets dying mid-attack. measured from a playtest: level 25 at 11:02 (on the
+# schedule) with six weapons, 200k damage over 17:30 of play, about a third of the model's. set a
+# little above that measurement: the first minutes played fine as they were, and it's one run
+IN_PLAY = 0.6
 WEAPON_SHARE = 0.6     # of the picks, how many go to weapons (the rest to passives)
 NEW_WEAPON_EVERY = 4   # picks between new weapons, until the slots are full
 WEAPON_SLOTS = 6
@@ -243,7 +249,7 @@ def build_dps(minute, table, cap):
         shares = [dps_for_share(t, min(1.0, each / 8.0)) for t in kind]
         total += sum(shares) / len(shares)
     passives = 1 + PASSIVE_PER_PICK * picks * (1 - WEAPON_SHARE)
-    return total * passives, level, held, each
+    return total * passives * IN_PLAY, level, held, each
 
 
 _TABLE = {}
