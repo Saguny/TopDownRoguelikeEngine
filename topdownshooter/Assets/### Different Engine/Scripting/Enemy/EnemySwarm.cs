@@ -182,10 +182,18 @@ public class EnemySwarm : MonoBehaviour
         if (instance == this) instance = null;
     }
 
+    // steering once a frame at most: the velocity it sets carries through every physics step the
+    // frame runs. a slow frame runs several steps to catch up, and steering the whole horde again
+    // for each of them only made that frame slower still (the profiler at 1,500 enemies: four steps
+    // a frame, the steering a fifth of it)
+    private int steeredFrame = -1;
+
     private void FixedUpdate()
     {
         int n = members.Count;
         if (n == 0) return;
+        if (Time.frameCount == steeredFrame) return;
+        steeredFrame = Time.frameCount;
 
         if (player == null)
         {
