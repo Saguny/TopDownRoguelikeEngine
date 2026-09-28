@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: HuangquanTimeline
   m_EditorClassIdentifier: 
   crowdScale: 1
-  hardCap: 250
+  hardCap: 500
   waveMinutes: 3
   beats:
   - label: 'Souls on the road'

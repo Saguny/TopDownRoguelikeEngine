@@ -101,7 +101,9 @@ public class SpawnDirector : MonoBehaviour
     [Tooltip("each evolved weapon multiplies every enemy's health by 1 + this, compounding: 1.5 is x2.5 with one, x6.25 with two")]
     [SerializeField, Min(0f)] private float evoHealth = 1.5f;
     [Tooltip("each evolved weapon raises the timeline's hard cap by this many, so the extra crowd has room")]
-    [SerializeField, Min(0)] private int evoExtraCap = 70;
+    [SerializeField, Min(0)] private int evoExtraCap = 200;
+    [Tooltip("each evolved weapon cuts the wen an enemy is worth (and with it the coins) by this share, compounding: 0.45 leaves 55% with one, 30% with two")]
+    [SerializeField, Range(0f, 0.9f)] private float evoWenCut = 0.45f;
     [Tooltip("and it keeps climbing: every minute an evolution is held counts as this much more of one")]
     [SerializeField, Min(0f)] private float evoGrowthPerMinute = 0.05f;
     [Tooltip("seconds the horde takes to grow into an evolution, so it swells rather than jumps")]
@@ -526,6 +528,8 @@ public class SpawnDirector : MonoBehaviour
             if (rush) hpMul *= finalRushHealthMul;
             // the opening: anything ordinary goes down to one hit while the build is still bare
             h.SetScaled(OneShotOpening && !rush && !IsBoss(arch) ? 1f : arch.baseHealth * hpMul);
+            h.evoHealth = EvoHealth;
+            h.wenShare = EvoWen;
             h.armour = arch.armour;
             h.physicalTaken = arch.physicalTaken;
             h.magicalTaken = arch.magicalTaken;
@@ -1170,8 +1174,10 @@ public class SpawnDirector : MonoBehaviour
 
     private float EvoCrowd => 1f + evoCrowd * evoPressure;
     private float EvoHealth => Mathf.Pow(1f + evoHealth, evoPressure);
-    // the frame rate still has the last word: never more than two evolutions' worth of extra room
-    private int HardCap => activeTimeline.hardCap + Mathf.RoundToInt(evoExtraCap * Mathf.Min(evoPressure, 2f));
+    // more of them and tougher, but each worth less wen (and so fewer coins): an evolution
+    // shouldn't also speed up the level ups and the shop
+    private float EvoWen => Mathf.Pow(1f - evoWenCut, evoPressure);
+    private int HardCap => activeTimeline.hardCap + Mathf.RoundToInt(evoExtraCap * evoPressure);
 
     private void TrackEvolutions()
     {

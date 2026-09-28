@@ -60,7 +60,18 @@ public class EnemyHealth : MonoBehaviour, IHealth
 
     // how much more its wen is worth than its kind's usual: a step for every time the run has
     // doubled its health, like Vampire Survivors' stronger enemies dropping green and red gems
-    private int Worth => Mathf.Clamp(1 + Mathf.FloorToInt(Mathf.Log(Mathf.Max(1f, baseMaxHealth / Mathf.Max(1f, _prefabMaxHealth)), 2f)), 1, 6);
+    // the health an evolution added (SpawnDirector) doesn't count: that's the horde pushing back,
+    // not richer enemies
+    private int Worth => Mathf.Clamp(1 + Mathf.FloorToInt(Mathf.Log(Mathf.Max(1f, baseMaxHealth / evoHealth / Mathf.Max(1f, _prefabMaxHealth)), 2f)), 1, 6);
+
+    // wen it's worth rounded up or down at random, so a share like 0.4 still averages out
+    private int Scaled(int wen)
+    {
+        if (wenShare >= 1f) return wen;
+        float f = wen * wenShare;
+        int whole = Mathf.FloorToInt(f);
+        return whole + (UnityEngine.Random.value < f - whole ? 1 : 0);
+    }
 
     // what one of its wen drops is worth: the wen prefab's own worth
     private int WenEach
@@ -149,6 +160,7 @@ public class EnemyHealth : MonoBehaviour, IHealth
         currentHealth = Mathf.Max(1f, baseMaxHealth);
         bonusWenDrops = 0;
         alwaysDropHeal = false;
+        evoHealth = wenShare = 1f;
         transform.localScale = _prefabScale;
         _originalColor = _prefabColor;
         if (spriteRenderer != null)
@@ -177,6 +189,10 @@ public class EnemyHealth : MonoBehaviour, IHealth
     // set by the spawner on elites: wen that always drops, on top of the usual roll, and a heal
     [NonSerialized] public int bonusWenDrops;
     [NonSerialized] public bool alwaysDropHeal;
+    // set by the spawner while the player holds evolutions: the health the horde gained from them,
+    // and the share of its usual wen (and so coins) it's worth
+    [NonSerialized] public float evoHealth = 1f;
+    [NonSerialized] public float wenShare = 1f;
 
     // a lasting tint (an elite's gold). the hit flash comes back to this instead of to white
     public void SetTint(Color tint)
@@ -332,7 +348,8 @@ public class EnemyHealth : MonoBehaviour, IHealth
         if (baseWenOnKill > 0)
         {
             var inv = GetPlayerInventory();
-            if (inv != null) inv.AddWen(baseWenOnKill);
+            int wen = Scaled(baseWenOnKill);
+            if (inv != null && wen > 0) inv.AddWen(wen);
         }
 
         if (wenDropPrefab != null &&
@@ -344,7 +361,8 @@ public class EnemyHealth : MonoBehaviour, IHealth
             var p = transform.position;
             p.x += UnityEngine.Random.Range(-0.2f, 0.2f);
             p.y += UnityEngine.Random.Range(-0.2f, 0.2f);
-            if (count > 0) PickupSystem.DropWen(p, count * WenEach * Worth, wenDropPrefab);
+            int worth = Scaled(count * WenEach * Worth);
+            if (worth > 0) PickupSystem.DropWen(p, worth, wenDropPrefab);
         }
 
         // an elite bursts into a ring of jade
@@ -356,7 +374,8 @@ public class EnemyHealth : MonoBehaviour, IHealth
                 float a = (i + UnityEngine.Random.value * 0.5f) / ring * Mathf.PI * 2f;
                 float r = UnityEngine.Random.Range(0.4f, 1.1f);
                 var p = transform.position + new Vector3(Mathf.Cos(a) * r, Mathf.Sin(a) * r, 0f);
-                PickupSystem.DropWen(p, WenEach * 2 * Worth, wenDropPrefab);
+                int worth = Scaled(WenEach * 2 * Worth);
+                if (worth > 0) PickupSystem.DropWen(p, worth, wenDropPrefab);
             }
         }
 

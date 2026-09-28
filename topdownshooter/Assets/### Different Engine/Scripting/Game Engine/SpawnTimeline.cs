@@ -69,7 +69,7 @@ public class SpawnTimeline : ScriptableObject
     [Tooltip("multiplies every beat's minimum, extra arrivals and cap. the quick way to make the whole stage busier or calmer")]
     [Min(0.1f)] public float crowdScale = 1f;
     [Tooltip("never more alive than this, whatever a beat or surge says. it's the frame rate guard")]
-    [Min(1)] public int hardCap = 250;
+    [Min(1)] public int hardCap = 500;
     [Tooltip("only for the graph above: where the wave lines go (GameLoopController's wave length)")]
     [Min(0.5f)] public float waveMinutes = 3f;
 
