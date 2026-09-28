@@ -56,3 +56,11 @@ Their sounds are synthesised by `../SFX/fortune.py` (into `Sounds/Fortune`). **T
 Weapon FX** points the VfxLibrary at both (it also runs once by itself the first time the art is in
 the project). `fortune/preview.py <common|rare|legendary> <out.gif>` renders an opening outside Unity
 from the art and the sounds, as a GIF and an MP4 with sound.
+
+## The pointer and the menus' flair
+
+`ui/ui.js` draws the game's pointer (and its pressed look), the star that traces a hovered button's
+edge and a click's burst, straight into `Resources/UI` as PNGs (animation frames side by side), which
+`UiFlair` slices at run time; nothing to set up in Unity:
+
+    node ui/ui.js
