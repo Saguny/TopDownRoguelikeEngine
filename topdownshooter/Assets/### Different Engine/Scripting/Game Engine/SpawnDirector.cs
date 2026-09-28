@@ -1390,6 +1390,8 @@ public class SpawnDirector : MonoBehaviour
     [SerializeField, Min(1f)] private float formationEvery = 7f;
     [Tooltip("seconds before another Magistrate joins, while the rush allows more than one")]
     [SerializeField, Min(1f)] private float nextBossAfter = 25f;
+    [Tooltip("how much tougher each rush's Magistrate is than the last's, on top of the run's health curve: 1.35 = 35% more. the first is a fight for a build of a few minutes, the ninth for a finished one")]
+    [SerializeField, Min(1f)] private float rushBossGrowth = 1.35f;
 
     private enum Formation { Column, Pincer, Ring, Fire }
     private float nextFormation, nextBoss, nextTrickle;
@@ -1518,6 +1520,7 @@ public class SpawnDirector : MonoBehaviour
         if (!TryEdgePoint(dir, 1.2f, out Vector2 at)) at = GetSpawnPositionNearOffscreenInsideBounds();
         var go = Spawn(bossArchetype, true, at);
         if (go == null) return;
+        if (go.TryGetComponent(out EnemyHealth h)) h.SetScaled(h.Max * Mathf.Pow(rushBossGrowth, Mathf.Max(0, currentWave - 1)));
         activeBosses.Add(go);
         bossesSpawnedThisRush++;
         EnvelopeCarrier.Attach(go, EnvelopeSource.Boss);
