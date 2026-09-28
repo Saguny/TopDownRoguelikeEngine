@@ -97,13 +97,15 @@ public class SpawnDirector : MonoBehaviour
 
     [Header("Evolutions (the horde answers an evolved weapon)")]
     [Tooltip("each evolved weapon the player holds adds this share to the crowd: more alive at once and more arriving")]
-    [SerializeField, Min(0f)] private float evoCrowd = 0.6f;
-    [Tooltip("each evolved weapon adds this share to every enemy's health")]
-    [SerializeField, Min(0f)] private float evoHealth = 0.75f;
+    [SerializeField, Min(0f)] private float evoCrowd = 0.8f;
+    [Tooltip("each evolved weapon multiplies every enemy's health by 1 + this, compounding: 1.5 is x2.5 with one, x6.25 with two")]
+    [SerializeField, Min(0f)] private float evoHealth = 1.5f;
     [Tooltip("each evolved weapon raises the timeline's hard cap by this many, so the extra crowd has room")]
-    [SerializeField, Min(0)] private int evoExtraCap = 40;
+    [SerializeField, Min(0)] private int evoExtraCap = 70;
+    [Tooltip("and it keeps climbing: every minute an evolution is held counts as this much more of one")]
+    [SerializeField, Min(0f)] private float evoGrowthPerMinute = 0.05f;
     [Tooltip("seconds the horde takes to grow into an evolution, so it swells rather than jumps")]
-    [SerializeField, Min(0.1f)] private float evoRampSeconds = 25f;
+    [SerializeField, Min(0.1f)] private float evoRampSeconds = 20f;
 
     [Header("Opening")]
     [Tooltip("ordinary enemies that spawn while the player is at or below this level die to any hit. 0 turns it off")]
@@ -1162,12 +1164,14 @@ public class SpawnDirector : MonoBehaviour
     // more of the horde, and tougher. the pressure eases in over evoRampSeconds after each
     private int evolutionsHeld;
     private float evoPressure;
+    private float evoHeldMinutes;   // minutes of evolutions held, summed over each one
     private float nextEvoCheck;
     private readonly List<Weapon> heldWeapons = new List<Weapon>();
 
     private float EvoCrowd => 1f + evoCrowd * evoPressure;
-    private float EvoHealth => 1f + evoHealth * evoPressure;
-    private int HardCap => activeTimeline.hardCap + Mathf.RoundToInt(evoExtraCap * evoPressure);
+    private float EvoHealth => Mathf.Pow(1f + evoHealth, evoPressure);
+    // the frame rate still has the last word: never more than two evolutions' worth of extra room
+    private int HardCap => activeTimeline.hardCap + Mathf.RoundToInt(evoExtraCap * Mathf.Min(evoPressure, 2f));
 
     private void TrackEvolutions()
     {
@@ -1179,7 +1183,9 @@ public class SpawnDirector : MonoBehaviour
             foreach (var w in heldWeapons)
                 if (w != null && w.Evolved) evolutionsHeld++;
         }
-        evoPressure = Mathf.MoveTowards(evoPressure, evolutionsHeld, Time.deltaTime / evoRampSeconds);
+        evoHeldMinutes += evolutionsHeld * Time.deltaTime / 60f;
+        float target = evolutionsHeld + evoHeldMinutes * evoGrowthPerMinute;
+        evoPressure = Mathf.MoveTowards(evoPressure, target, Time.deltaTime / evoRampSeconds);
     }
 
     // where the player's been walking lately, from how far they moved, whatever moves them
