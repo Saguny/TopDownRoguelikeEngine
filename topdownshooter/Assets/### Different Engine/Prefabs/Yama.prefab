@@ -311,7 +311,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 637b8e3a65e74fdf887e0bcd1495a4cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bossMusic: {fileID: 0}
+  bossMusic: {fileID: 8300000, guid: f94802e981eeaef4c942d24a1f209690, type: 3}
   musicVolume: 1
   musicFadeOut: 2
   musicFadeIn: 3
