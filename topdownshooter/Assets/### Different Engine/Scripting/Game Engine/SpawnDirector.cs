@@ -376,6 +376,13 @@ public class SpawnDirector : MonoBehaviour
             return;
         }
 
+        // the Final Rush is the Magistrate's procession: its own formations, not the horde
+        if (finalRush && processionCorpse != null && processionCorpse.prefab != null)
+        {
+            UpdateProcession();
+            return;
+        }
+
         // random chance to start preparing a fast phase
         // (the old budget spawner's surprise: a timeline has its own surges, so not with one)
         if (activeTimeline == null &&
@@ -1347,7 +1354,8 @@ public class SpawnDirector : MonoBehaviour
         finalRushQuota = Mathf.Max(1, quota);
         ResetFinalRushProgress();
 
-        TrySpawnInitialBoss();
+        if (processionCorpse != null && processionCorpse.prefab != null) BeginProcession();
+        else TrySpawnInitialBoss();
     }
 
     private void HandleFinalRushEnd(int wave)
@@ -1359,6 +1367,176 @@ public class SpawnDirector : MonoBehaviour
 
         finalRushQuota = 0;
         UpdateFinalRushProgressBar();
+    }
+
+    // ---------------------------------------------------------------- the Magistrate's procession
+    //
+    // a Final Rush is the Jiangshi Magistrate's procession: in the old stories a Taoist priest leads
+    // the dead home in a line, ringing a bell, and the corpses hop after it. so the rush is his own:
+    // jiangshi and his green corpse fire, arriving in formations a bell announces, each Magistrate
+    // with a retinue in file behind him, the crowd sized by how many rushes the run has been
+    // through rather than by the horde's density
+
+    [Header("Final Rush: the Magistrate's procession")]
+    [Tooltip("the corpses that make up the procession (the Jiangshi)")]
+    [SerializeField] private EnemyArchetype processionCorpse;
+    [Tooltip("the Magistrate's corpse fire, in flocks (Ghost Fire)")]
+    [SerializeField] private EnemyArchetype processionFire;
+    [Tooltip("how many are up at once in the first rush")]
+    [SerializeField, Min(1)] private int rushCrowd = 36;
+    [Tooltip("how much bigger each rush's crowd is than the last's: 1.3 = 30% more")]
+    [SerializeField, Min(1f)] private float rushCrowdGrowth = 1.3f;
+    [Tooltip("seconds between formations in the first rush; each rush after is 10% quicker, to 3.5s")]
+    [SerializeField, Min(1f)] private float formationEvery = 7f;
+    [Tooltip("seconds before another Magistrate joins, while the rush allows more than one")]
+    [SerializeField, Min(1f)] private float nextBossAfter = 25f;
+
+    private enum Formation { Column, Pincer, Ring, Fire }
+    private float nextFormation, nextBoss, nextTrickle;
+    private int formationIndex;
+    private static AudioClip procBell;
+
+    private int RushTarget => Mathf.Min(HardCap, Mathf.RoundToInt(rushCrowd * Mathf.Pow(rushCrowdGrowth, Mathf.Max(0, currentWave - 1)) * EvoCrowd));
+    private float FormationGap => Mathf.Max(3.5f, formationEvery * Mathf.Pow(0.9f, Mathf.Max(0, currentWave - 1)));
+
+    private void BeginProcession()
+    {
+        formationIndex = 0;
+        nextFormation = Time.time + 3.5f;           // the Magistrate and his retinue first, then the rest
+        nextBoss = Time.time + nextBossAfter;
+        nextTrickle = Time.time + 1f;
+        SpawnMagistrate();
+    }
+
+    private void UpdateProcession()
+    {
+        int alive = CountAlive();
+        int target = RushTarget;
+
+        // more Magistrates join as the rushes go on, each with his own retinue
+        if (Time.time >= nextBoss)
+        {
+            nextBoss = Time.time + nextBossAfter;
+            if (GetAliveBossCount() < GetMaxBossCountForWave(currentWave)) SpawnMagistrate();
+        }
+
+        if (Time.time >= nextFormation && alive < target)
+        {
+            nextFormation = Time.time + FormationGap;
+            // the formations take turns; the fire joins from the second rush
+            var order = currentWave >= 2
+                ? new[] { Formation.Column, Formation.Ring, Formation.Fire, Formation.Pincer }
+                : new[] { Formation.Column, Formation.Ring, Formation.Pincer };
+            SpawnFormation(order[formationIndex++ % order.Length], target - alive);
+        }
+
+        // stragglers keep the pressure up when the formations have been cut down
+        if (Time.time >= nextTrickle && alive < target / 2)
+        {
+            nextTrickle = Time.time + 0.6f;
+            Spawn(processionCorpse, true);
+        }
+    }
+
+    private void SpawnFormation(Formation f, int room)
+    {
+        int w = Mathf.Max(1, currentWave);
+        Vector2 dir = heading.sqrMagnitude > 0.25f && Random.value < 0.5f ? Rotate(heading.normalized, Random.Range(-45f, 45f)) : RandomDirection();
+        switch (f)
+        {
+            case Formation.Column:
+                Column(processionCorpse, dir, Mathf.Min(room, 6 + 2 * w), 0.85f);
+                break;
+            case Formation.Pincer:
+                int half = Mathf.Min(room / 2, 5 + 2 * w);
+                Column(processionCorpse, dir, half, 0.85f);
+                Column(processionCorpse, -dir, half, 0.85f);
+                break;
+            case Formation.Ring:
+                Ring(processionCorpse, Mathf.Min(room, 12 + 4 * w));
+                break;
+            case Formation.Fire:
+                var fire = processionFire != null && processionFire.prefab != null ? processionFire : processionCorpse;
+                Flock(fire, dir, Mathf.Min(room, 8 + 2 * w));
+                break;
+        }
+        RingBell(f == Formation.Ring ? 0.9f : 1f);
+    }
+
+    // a line of them hopping in single file from the screen's edge, the first nearest
+    private int Column(EnemyArchetype arch, Vector2 dir, int n, float spacing)
+    {
+        if (n <= 0 || !TryEdgePoint(dir, 0.8f, out Vector2 head)) return 0;
+        int made = 0;
+        for (int i = 0; i < n; i++)
+        {
+            Vector2 at = head + dir * (spacing * i) + Rotate(dir, 90f) * Random.Range(-0.12f, 0.12f);
+            if (!ValidSpawn(at)) continue;
+            if (Spawn(arch, true, at) != null) made++;
+        }
+        return made;
+    }
+
+    // a ring of them round the screen, closing in all at once
+    private int Ring(EnemyArchetype arch, int n)
+    {
+        if (n <= 0) return 0;
+        GetView(out Vector2 centre, out float halfW, out float halfH);
+        float r = Mathf.Sqrt(halfW * halfW + halfH * halfH) + 0.8f;
+        float a0 = Random.value * Mathf.PI * 2f;
+        int made = 0;
+        for (int i = 0; i < n; i++)
+        {
+            float a = a0 + i * Mathf.PI * 2f / n;
+            Vector2 at = centre + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * r;
+            if (!ValidSpawn(at)) continue;
+            if (Spawn(arch, true, at) != null) made++;
+        }
+        return made;
+    }
+
+    // a flock of his corpse fire from one side
+    private int Flock(EnemyArchetype arch, Vector2 dir, int n)
+    {
+        if (n <= 0 || !TryEdgePoint(dir, 1.2f, out Vector2 middle)) return 0;
+        float radius = packSpread * Mathf.Sqrt(n) * 0.5f;
+        int made = 0;
+        for (int i = 0; i < n; i++)
+        {
+            Vector2 at = middle + dir * radius + Random.insideUnitCircle * radius;
+            if (!ValidSpawn(at)) continue;
+            if (Spawn(arch, true, at) != null) made++;
+        }
+        return made;
+    }
+
+    // a Magistrate, and his retinue in file behind him
+    private void SpawnMagistrate()
+    {
+        if (bossArchetype == null || bossArchetype.prefab == null) return;
+        Vector2 dir = RandomDirection();
+        if (!TryEdgePoint(dir, 1.2f, out Vector2 at)) at = GetSpawnPositionNearOffscreenInsideBounds();
+        var go = Spawn(bossArchetype, true, at);
+        if (go == null) return;
+        activeBosses.Add(go);
+        bossesSpawnedThisRush++;
+        EnvelopeCarrier.Attach(go, EnvelopeSource.Boss);
+        int retinue = 4 + Mathf.Max(1, currentWave);
+        for (int i = 0; i < retinue; i++)
+        {
+            Vector2 p = at + dir * (1.6f + 0.85f * i) + Rotate(dir, 90f) * ((i % 2 == 0 ? 1f : -1f) * 0.45f);
+            if (ValidSpawn(p)) Spawn(processionCorpse, true, p);
+        }
+        RingBell(0.8f);
+    }
+
+    // the priest's hand bell: a formation is coming
+    private void RingBell(float pitch)
+    {
+        if (procBell == null) procBell = Resources.Load<AudioClip>("Sfx/rush_bell");
+        if (procBell == null) return;
+        var p = GameObject.FindGameObjectWithTag("Player");
+        SfxPlayer.PlayAt(procBell, p != null ? p.transform.position : Vector3.zero, 0.7f, pitch * Random.Range(0.97f, 1.03f));
     }
 
     private void TrySpawnInitialBoss()

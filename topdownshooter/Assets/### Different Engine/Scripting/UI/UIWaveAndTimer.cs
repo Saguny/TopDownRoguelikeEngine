@@ -116,7 +116,7 @@ public class UIWaveAndTimer : MonoBehaviour
     private void HandleRushStart(int waveNumber, int quota)
     {
         if (runTimerText) runTimerText.color = rushColor;
-        if (waveText) waveText.text = $"Wave {waveNumber}";
+        if (waveText) waveText.text = $"Wave {waveNumber} - the Magistrate's procession";
     }
 
     // the clock stays stopped until the next wave starts (GameLoopController)

@@ -5,9 +5,9 @@ public class GameLoopController : MonoBehaviour
 {
     [SerializeField] private float waveDuration = 180f;
     [Tooltip("kills the first Final Rush asks for")]
-    [SerializeField] private int baseKillsToClear = 400;
+    [SerializeField] private int baseKillsToClear = 150;
     [Tooltip("how much more each Final Rush asks for than the one before: 1.3 = 30% more")]
-    [SerializeField, Min(1f)] private float quotaGrowth = 1.2f;
+    [SerializeField, Min(1f)] private float quotaGrowth = 1.3f;
     [SerializeField] private float breakAfterWave = 2f;
     [SerializeField] private GameObject subjectiveDeathFx;
 
@@ -92,7 +92,7 @@ public class GameLoopController : MonoBehaviour
             finalRush = true;
             waveKills = 0;
 
-            // 400, 480, 576, 691, 829, 995, 1194, 1433, 1720 by default: every rush a little more than the last
+            // 150, 195, 254, 330, 428, 557, 724, 941, 1224 by default: every rush a little more than the last
             int quota = Mathf.Max(1, Mathf.RoundToInt(baseKillsToClear * Mathf.Pow(quotaGrowth, waveIndex)));
             GameEvents.OnFinalRushStarted?.Invoke(waveIndex + 1, quota);
 

@@ -222,12 +222,54 @@ public class ItemTooltip : MonoBehaviour
         }
         else
         {
+            // a passive: the stats it moves as they stand now, with this pick's change on a level
+            // up, the way the weapons show theirs (and the panel on the left)
+            if (stats != null && (level > 0 || compare)) PassiveRows(sb, item, stats, compare && !item.IsAtCap);
             string text = compare && !item.IsAtCap ? item.GetDisplayDescription() : item.description;
-            if (!string.IsNullOrWhiteSpace(text)) sb.Append(text).Append('\n');
+            if (!string.IsNullOrWhiteSpace(text)) sb.Append(sb.Length > 0 ? "\n" : "").Append(text).Append('\n');
         }
 
         if (weapon) RunLines(sb, item);
         if (body != null) body.text = sb.ToString().TrimEnd('\n');
+    }
+
+    // the stat a passive raises, and any other the pick would move
+    private void PassiveRows(StringBuilder sb, UpgradeData item, StatContext stats, bool showNext)
+    {
+        var now = StatSheet.Live(stats);
+        var next = showNext ? StatSheet.Live(stats, item) : null;
+        var catalog = StatCatalog.Load();
+        var own = StatOf(item.type);
+        for (int i = 0; i < System.Enum.GetValues(typeof(StatId)).Length; i++)
+        {
+            var id = (StatId)i;
+            bool moves = next != null && Mathf.Abs(next[id] - now[id]) > 0.0001f;
+            if (id != own && !moves) continue;
+            var def = catalog != null ? catalog.Get(id) : null;
+            if (def == null || (!def.showInPanel && !moves)) continue;
+            Row(sb, def.label, now.Text(id), moves ? next.Text(id) : null);
+        }
+    }
+
+    private static StatId? StatOf(UpgradeType type)
+    {
+        switch (type)
+        {
+            case UpgradeType.MaxHealth: return StatId.MaxHealth;
+            case UpgradeType.HealthRegen: return StatId.Recovery;
+            case UpgradeType.MoveSpeed: return StatId.MoveSpeed;
+            case UpgradeType.Might: return StatId.Might;
+            case UpgradeType.Cooldown: return StatId.Cooldown;
+            case UpgradeType.Area: return StatId.Area;
+            case UpgradeType.WeaponSpeed: return StatId.WeaponSpeed;
+            case UpgradeType.ArrowCount: return StatId.ArrowCount;
+            case UpgradeType.Pierce: return StatId.Pierce;
+            case UpgradeType.CritChance: return StatId.CritChance;
+            case UpgradeType.CritDamage: return StatId.CritDamage;
+            case UpgradeType.PickupRadius: return StatId.Magnet;
+            case UpgradeType.ArmourPierce: return StatId.ArmourPierce;
+            default: return null;
+        }
     }
 
     private void Row(StringBuilder sb, string label, string value, string after)

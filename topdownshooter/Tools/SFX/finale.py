@@ -7,6 +7,7 @@ Command Token's, the envelope's and the boss's instruments.
                  climbing the scale over it
   rush_seal      one enemy sealed as the front passes it: a paper stamp slapped down and a small
                  bell (played for each, faster and higher as the wave goes, see SealWave)
+  rush_bell      a Final Rush formation coming: the priest's hand bell that leads the dead
   coins_total    the last of the swept coins in: a cascade of coins and a bright bell (cha-ching)
   aura_pulse_1   the Electrical Aura's pulse: a snap of static, a low electric thump and a short
   aura_pulse_2   buzz, three takes so a pulse every half second never repeats itself exactly
@@ -77,6 +78,21 @@ def rush_seal():
     return fade(hall(x, 0.5, 0.12, seed=113), 0.15)
 
 
+def rush_bell():
+    """the Taoist priest's hand bell that leads the dead: brass, rung three times in a quick shake,
+    each a little softer, its clapper ticking against the rim, then ringing on"""
+    t = times(1.6)
+    x = np.zeros((len(t), 2))
+    ratios = np.array([1.0, 2.32, 4.25, 6.63, 9.4])
+    for k, (at, lv) in enumerate([(0.0, 1.0), (0.11, 0.75), (0.21, 0.6)]):
+        u = np.maximum(t - at, 0)
+        f0 = 1180.0 * (1 + 0.004 * k)
+        ring = modal(u, f0 * ratios, [0.9, 0.55, 0.3, 0.18, 0.1], [1.0, 0.55, 0.35, 0.2, 0.1]) * (t >= at)
+        tick = filt(noise(len(t)), "bandpass", [3000, 9000]) * env(t, 0.004, 0.0002, start=at)
+        x += pan(0.45 * lv * ring + 0.25 * lv * tick, -0.15 + 0.15 * k)
+    return fade(hall(x, 1.2, 0.3, seed=131, tone=7000), 0.4)
+
+
 def coins_total():
     t = times(1.4)
     x = np.zeros((len(t), 2))
@@ -134,6 +150,7 @@ def main():
         "rush_clear": level(rush_clear(), 1.5),
         "rush_seal": level(rush_seal(), -4.0),
         "coins_total": level(coins_total(), -1.0),
+        "rush_bell": level(rush_bell(), -4.0),
         "aura_pulse_1": level(aura_pulse(1), -5.0),
         "aura_pulse_2": level(aura_pulse(2), -5.0),
         "aura_pulse_3": level(aura_pulse(3), -5.0),
