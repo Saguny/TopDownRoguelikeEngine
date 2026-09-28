@@ -10553,6 +10553,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 587209940}
+  - component: {fileID: 587209945}
   m_Layer: 5
   m_Name: Account Tab
   m_TagString: Untagged
@@ -10560,6 +10561,26 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &587209945
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 587209939}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ea93a4b38274d53afbafd6536eeb322, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  accountName: {fileID: 0}
+  resetButton: {fileID: 0}
+  areYouSure: {fileID: 0}
+  confirmButton: {fileID: 0}
+  cancelButton: {fileID: 0}
+  startScale: 0.3
+  openSeconds: 0.3
+  closeSeconds: 0.15
 --- !u!224 &587209940
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11013,6 +11034,9 @@ MonoBehaviour:
     selectedMark: {fileID: 0}
   - button: {fileID: 1888766549}
     content: {fileID: 1687756865}
+    selectedMark: {fileID: 0}
+  - button: {fileID: 1403237384}
+    content: {fileID: 587209939}
     selectedMark: {fileID: 0}
   rememberLast: 0
   tintLabels: 1
