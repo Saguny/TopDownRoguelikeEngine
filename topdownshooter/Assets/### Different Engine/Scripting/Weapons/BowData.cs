@@ -30,7 +30,7 @@ public class BowData : WeaponData<BowWeapon>
         new LevelStats { arrows = 3, damage = 18f, cooldown = 0.9f, speed = 14f },
         new LevelStats { arrows = 4, damage = 18f, cooldown = 0.8f, speed = 14f },
         new LevelStats { arrows = 4, damage = 23f, cooldown = 0.75f, speed = 15f },
-        new LevelStats { arrows = 5, damage = 26f, cooldown = 0.7f, speed = 16f },
+        new LevelStats { arrows = 5, damage = 26f, cooldown = 1f, speed = 16f },
     };
 
     [Header("Evolution (one more pick after the last level)")]
