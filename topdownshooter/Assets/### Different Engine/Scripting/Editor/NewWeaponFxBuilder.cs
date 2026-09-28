@@ -121,8 +121,23 @@ public static class NewWeaponFxBuilder
             arena.riseFrames = WeaponFxBuilder.Frames("Arena/arena_rise");
             arena.riseFps = 20f;
         });
+        BowIcon();
         AssetDatabase.SaveAssets();
         Debug.Log("WEAPONFX: Dragon Line, Ice Cloud, Flying Sword, Treasure Gourd, the back weapons and the arena's spirit seals pointed at their art");
+    }
+
+    // the Heaven-Piercing Bow's icon (Tools/VFX/bow/bow_evolved.js); the Bow keeps its own icon
+    private const string BowEvolvedIcon = Root + "NewSprites/Asesprites/VFX/Weapons/Bow/bow_icon_evolved.aseprite";
+
+    private static void BowIcon()
+    {
+        if (!File.Exists(BowEvolvedIcon)) return;
+        Edit<BowData>("Bow", d =>
+        {
+            var evo = WeaponFxBuilder.FramesAt(BowEvolvedIcon);
+            d.evolvedIcon = evo[0];
+            d.evolvedIconFrames = evo;
+        });
     }
 
     private static void Edit<T>(string asset, Action<T> edit) where T : WeaponData
@@ -182,6 +197,35 @@ public static class NewWeaponFxBuilder
         if (gourd.Animated && gourd.uncorkSound != null) return;
         try { WeaponFxBuilder.Build(); }
         catch (Exception e) { Debug.LogError("couldn't set the Treasure Gourd's art up automatically, try Tools > VFX > Build Weapon FX\n" + e); }
+    }
+
+    // and the Bow's evolved icon, once, the first time it's in the project
+    private static string BowBuiltKey => "NewWeaponFxBuilder.bowicon.v1." + Application.dataPath;
+
+    [InitializeOnLoadMethod]
+    private static void ScheduleBowIcon()
+    {
+        if (EditorPrefs.GetBool(BowBuiltKey)) return;
+        EditorApplication.delayCall -= BowIconOnce;
+        EditorApplication.delayCall += BowIconOnce;
+    }
+
+    private static void BowIconOnce()
+    {
+        if (EditorPrefs.GetBool(BowBuiltKey) || EditorApplication.isPlayingOrWillChangePlaymode) return;
+        if (EditorApplication.isCompiling || EditorApplication.isUpdating)
+        {
+            EditorApplication.delayCall += BowIconOnce;
+            return;
+        }
+        if (!File.Exists(BowEvolvedIcon)) return;
+        EditorPrefs.SetBool(BowBuiltKey, true);
+        try
+        {
+            BowIcon();
+            AssetDatabase.SaveAssets();
+        }
+        catch (Exception e) { Debug.LogError("couldn't set the Heaven-Piercing Bow's icon up automatically, try Tools > VFX > Build Weapon FX\n" + e); }
     }
 
     [InitializeOnLoadMethod]
