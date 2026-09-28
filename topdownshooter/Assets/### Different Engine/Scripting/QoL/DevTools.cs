@@ -33,6 +33,12 @@ public class DevTools : MonoBehaviour
     private PlayerHealth health;
     private SpawnDirector director;
     private GameLoopController loop;
+    private RunTimeLimit limit;
+    // the upgrade list, sorted, remade a few times a second rather than for every GUI event
+    // (IMGUI calls Draw several times a frame; a scene search and a LINQ sort in it cost ~25 ms
+    // a frame over a big horde)
+    private readonly List<UpgradeData> upgrades = new List<UpgradeData>();
+    private float nextList;
 
     private void Update()
     {
@@ -54,6 +60,14 @@ public class DevTools : MonoBehaviour
         {
             director = FindFirstObjectByType<SpawnDirector>();
             loop = FindFirstObjectByType<GameLoopController>();
+            limit = FindFirstObjectByType<RunTimeLimit>();
+        }
+
+        if (open && inventory != null && Time.unscaledTime >= nextList)
+        {
+            nextList = Time.unscaledTime + 0.5f;
+            upgrades.Clear();
+            upgrades.AddRange(inventory.RunUpgrades.Where(u => u != null).OrderBy(u => IsWeapon(u) ? 0 : 1).ThenBy(u => u.GetBaseTitle()));
         }
     }
 
@@ -133,7 +147,6 @@ public class DevTools : MonoBehaviour
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Clock +1 min")) SkipAhead(60f);
             if (GUILayout.Button("Clock +3 min")) SkipAhead(180f);
-            var limit = FindFirstObjectByType<RunTimeLimit>();
             if (limit != null && GUILayout.Button("Time's up")) limit.TimeUpNow();
             GUILayout.EndHorizontal();
         }
@@ -156,7 +169,7 @@ public class DevTools : MonoBehaviour
         GUILayout.Label("Take an upgrade (skips the level up menu and its rules):");
         filter = GUILayout.TextField(filter);
         scroll = GUILayout.BeginScrollView(scroll, GUILayout.Height(showStats ? 150 : 360));
-        foreach (var u in inventory.RunUpgrades.Where(u => u != null).OrderBy(u => IsWeapon(u) ? 0 : 1).ThenBy(u => u.GetBaseTitle()))
+        foreach (var u in upgrades)
         {
             if (filter.Length > 0 && u.GetBaseTitle().IndexOf(filter, StringComparison.OrdinalIgnoreCase) < 0) continue;
 

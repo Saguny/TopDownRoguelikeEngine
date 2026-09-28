@@ -100,6 +100,7 @@ public abstract class Weapon : MonoBehaviour
 
     private static readonly List<Collider2D> overlap = new List<Collider2D>(32);
     private static readonly List<EnemyHealth> candidates = new List<EnemyHealth>(128);
+    private static readonly HashSet<EnemyHealth> collected = new HashSet<EnemyHealth>();
     private static int enemyMask = -1;
 
     // every live enemy whose collider touches the circle, each once
@@ -126,10 +127,13 @@ public abstract class Weapon : MonoBehaviour
         return filter;
     }
 
+    // each enemy once (one can have more than one collider). a set, not results.Contains: a laser
+    // across a packed screen touches hundreds, and checking the list for each was quadratic
     private static void Collect(List<EnemyHealth> results)
     {
+        collected.Clear();
         foreach (var c in overlap)
-            if (c != null && c.TryGetComponent(out EnemyHealth e) && IsAlive(e) && !results.Contains(e))
+            if (c != null && c.TryGetComponent(out EnemyHealth e) && IsAlive(e) && collected.Add(e))
                 results.Add(e);
     }
 

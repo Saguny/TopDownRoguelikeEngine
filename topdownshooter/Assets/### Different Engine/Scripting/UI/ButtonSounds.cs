@@ -43,7 +43,10 @@ public class ButtonSounds : MonoBehaviour
     private void Update()
     {
         if (Time.unscaledTime < nextScan) return;
-        nextScan = Time.unscaledTime + 0.25f;
+        // a search of the whole scene: often while a menu's up (the game stopped, where the level up
+        // makes its cards) or the scene is light, rarely over a running horde, where it cost ~2.5 ms
+        bool menus = Time.timeScale <= 0f || EnemySwarm.Count < 100;
+        nextScan = Time.unscaledTime + (menus ? 0.25f : 3f);
 
         // the mixer can be handed over after this starts, so keep looking until it's found
         if (voice.outputAudioMixerGroup == null && GameSettings.Mixer != null)
