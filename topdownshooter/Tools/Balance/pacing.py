@@ -121,8 +121,8 @@ def fit(wen_by_minute):
 
 
 # every level a little cheaper than the fit: playtesters found the third Final Rush (9:00) barely
-# doable, the build a level or so short of it
-QUICKEN = 0.9
+# doable, the build two levels or so short of it
+QUICKEN = 0.82
 
 
 def level_cost(level):
