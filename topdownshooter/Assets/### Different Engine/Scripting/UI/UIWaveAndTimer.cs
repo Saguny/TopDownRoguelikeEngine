@@ -60,6 +60,10 @@ public class UIWaveAndTimer : MonoBehaviour
         }
         if (waveText)
         {
+            // one line, however long (the Final Rush's name runs past the box): no wrapping, and
+            // spilling past the box rather than being cut
+            waveText.enableWordWrapping = false;
+            waveText.overflowMode = TextOverflowModes.Overflow;
             waveText.text = "";
             waveText.enabled = true;
             waveText.gameObject.SetActive(true);
