@@ -13,15 +13,15 @@ MonoBehaviour:
   m_Name: HuangquanTimeline
   m_EditorClassIdentifier: 
   crowdScale: 1
-  hardCap: 500
+  hardCap: 1500
   waveMinutes: 3
   beats:
   - label: 'Souls on the road'
     fromMinute: 0
-    minimum: 8
-    perInterval: 1
+    minimum: 24
+    perInterval: 3
     interval: 1.5
-    cap: 20
+    cap: 60
     enemies:
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
       weight: 5.25
@@ -29,10 +29,10 @@ MonoBehaviour:
       weight: 1
   - label: 'Will-o-wisps'
     fromMinute: 1.5
-    minimum: 16
-    perInterval: 2
+    minimum: 48
+    perInterval: 6
     interval: 1.25
-    cap: 32
+    cap: 96
     enemies:
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
       weight: 7
@@ -40,10 +40,10 @@ MonoBehaviour:
       weight: 2
   - label: 'The hungry follow'
     fromMinute: 3
-    minimum: 24
-    perInterval: 2
+    minimum: 77
+    perInterval: 6
     interval: 1
-    cap: 42
+    cap: 134
     enemies:
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 3
@@ -53,10 +53,10 @@ MonoBehaviour:
       weight: 1
   - label: 'Lily fields'
     fromMinute: 4.5
-    minimum: 30
-    perInterval: 3
+    minimum: 99
+    perInterval: 10
     interval: 1
-    cap: 50
+    cap: 165
     enemies:
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 3
@@ -66,10 +66,10 @@ MonoBehaviour:
       weight: 5.25
   - label: 'Fox fires'
     fromMinute: 7.5
-    minimum: 40
-    perInterval: 3
+    minimum: 140
+    perInterval: 10
     interval: 1
-    cap: 64
+    cap: 224
     enemies:
     - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
       weight: 3
@@ -79,10 +79,10 @@ MonoBehaviour:
       weight: 2
   - label: 'Coffin bearers'
     fromMinute: 9
-    minimum: 45
-    perInterval: 3
+    minimum: 166
+    perInterval: 11
     interval: 0.9
-    cap: 72
+    cap: 266
     enemies:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 4
@@ -92,10 +92,10 @@ MonoBehaviour:
       weight: 3.5
   - label: 'Ghost festival'
     fromMinute: 12
-    minimum: 55
-    perInterval: 4
+    minimum: 220
+    perInterval: 16
     interval: 0.9
-    cap: 85
+    cap: 340
     enemies:
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 4
@@ -105,10 +105,10 @@ MonoBehaviour:
       weight: 1
   - label: 'The river rises'
     fromMinute: 13.5
-    minimum: 62
-    perInterval: 4
+    minimum: 260
+    perInterval: 17
     interval: 0.8
-    cap: 96
+    cap: 403
     enemies:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 2
@@ -122,10 +122,10 @@ MonoBehaviour:
       weight: 0.3
   - label: 'The guardians stir'
     fromMinute: 18
-    minimum: 78
-    perInterval: 4
+    minimum: 351
+    perInterval: 18
     interval: 0.8
-    cap: 118
+    cap: 531
     enemies:
     - archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
       weight: 0.8
@@ -137,10 +137,10 @@ MonoBehaviour:
       weight: 2
   - label: 'Nine tails'
     fromMinute: 22.5
-    minimum: 92
-    perInterval: 5
+    minimum: 442
+    perInterval: 24
     interval: 0.7
-    cap: 136
+    cap: 653
     enemies:
     - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
       weight: 5
@@ -150,10 +150,10 @@ MonoBehaviour:
       weight: 2
   - label: 'Endless procession'
     fromMinute: 27
-    minimum: 108
-    perInterval: 5
+    minimum: 540
+    perInterval: 25
     interval: 0.7
-    cap: 158
+    cap: 790
     enemies:
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 4
@@ -165,10 +165,10 @@ MonoBehaviour:
       weight: 0.5
   - label: 'Forgetting'
     fromMinute: 31.5
-    minimum: 122
-    perInterval: 6
+    minimum: 610
+    perInterval: 30
     interval: 0.6
-    cap: 178
+    cap: 890
     enemies:
     - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
       weight: 3
@@ -180,10 +180,10 @@ MonoBehaviour:
       weight: 0.8
   - label: 'The sealed bridge'
     fromMinute: 36
-    minimum: 138
-    perInterval: 6
+    minimum: 690
+    perInterval: 30
     interval: 0.6
-    cap: 202
+    cap: 1010
     enemies:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 2
@@ -197,10 +197,10 @@ MonoBehaviour:
       weight: 1
   - label: 'The Yellow Springs'
     fromMinute: 40.5
-    minimum: 155
-    perInterval: 7
+    minimum: 775
+    perInterval: 35
     interval: 0.5
-    cap: 224
+    cap: 1120
     enemies:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 2

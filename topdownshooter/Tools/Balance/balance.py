@@ -52,7 +52,10 @@ STARTING = {"Bow", "Peach Talismans", "Seven Star Swords"}   # the cast's starti
 CLEAR = [(0, 2.5), (5, 3.5), (10, 5.0), (15, 6.0), (20, 7.0), (25, 7.5), (30, 8.0)]
 
 # a typical run, minute by minute: the player's level, from the level curve and a steady kill rate
-LEVEL = [(0, 1), (1, 3), (2, 5), (3, 7), (5, 10), (7.5, 14), (10, 18), (12.5, 21), (15, 24), (20, 30), (25, 35), (30, 40)]
+# Vampire Survivors' shape: fragile for a few minutes, a build coming together by 10 (the first
+# evolutions, which only envelopes dropped from 10:00 can give), dominant by 15, and the build all
+# but complete for the final boss at 27:00. the wen curve is fitted to this (pacing.py)
+LEVEL = [(0, 1), (1, 4), (2, 6), (3, 8), (5, 12), (7.5, 16), (10, 20), (12.5, 24), (15, 28), (20, 36), (25, 44), (27, 47), (30, 51)]
 WEAPON_SHARE = 0.6     # of the picks, how many go to weapons (the rest to passives)
 NEW_WEAPON_EVERY = 4   # picks between new weapons, until the slots are full
 WEAPON_SLOTS = 6

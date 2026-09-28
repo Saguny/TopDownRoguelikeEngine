@@ -494,8 +494,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   waveDuration: 180
-  baseKillsToClear: 150
-  quotaGrowth: 1.25
+  baseKillsToClear: 400
+  quotaGrowth: 1.2
   breakAfterWave: 5
   subjectiveDeathFx: {fileID: 1185364733144309390, guid: 8dbdeab253bc16a41b359021d27d4fb4, type: 3}
   finalWave: 10
@@ -527,8 +527,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
   - {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
   - {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
-  desiredPerScreen: 10
-  budgetPerSecond: 12
+  desiredPerScreen: 30
+  budgetPerSecond: 30
   chunkyPool:
   - {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
   - {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
@@ -552,7 +552,7 @@ MonoBehaviour:
   fastPhasePostClearDelay: 1
   bossArchetype: {fileID: 11400000, guid: b5a152337a0dd734facb49ee513816db, type: 2}
   finalBossArchetype: {fileID: 0}
-  finalBossHealthMul: 12
+  finalBossHealthMul: 3
   finalBossScale: 1.8
   secretBossArchetype: {fileID: 11400000, guid: 256a27c8ddb8c7a4f947e8be4e336b35, type: 2}
   secretBossMinRunTime: 90

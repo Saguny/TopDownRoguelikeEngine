@@ -105,7 +105,7 @@ public class SpawnDirector : MonoBehaviour
     [Tooltip("each evolved weapon multiplies every enemy's health by 1 + this, compounding: 0.5 is x1.5 with one, x2.25 with two")]
     [SerializeField, Min(0f)] private float evoHealth = 0.5f;
     [Tooltip("each evolved weapon raises the timeline's hard cap by this many, so the extra crowd has room")]
-    [SerializeField, Min(0)] private int evoExtraCap = 200;
+    [SerializeField, Min(0)] private int evoExtraCap = 75;
     [Tooltip("each evolved weapon cuts the wen an enemy is worth (and with it the coins) by this share, compounding: 0.45 leaves 55% with one, 30% with two")]
     [SerializeField, Range(0f, 0.9f)] private float evoWenCut = 0.45f;
     [Tooltip("and it keeps climbing: every minute an evolution is held counts as this much more of one")]

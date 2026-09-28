@@ -30,7 +30,7 @@ public class EnvelopeOpening : MonoBehaviour
     public static string NameOf(EnvelopeRarity r) => r == EnvelopeRarity.Legendary ? "LEGENDARY" : r == EnvelopeRarity.Rare ? "RARE" : "COMMON";
 
     private static EnvelopeOpening instance;
-    private static readonly Queue<(EnvelopeRarity rarity, EnvelopeSource source)> waiting = new Queue<(EnvelopeRarity, EnvelopeSource)>();
+    private static readonly Queue<(EnvelopeRarity rarity, EnvelopeSource source, bool evolves)> waiting = new Queue<(EnvelopeRarity, EnvelopeSource, bool)>();
 
     // an envelope is open or waiting to be: the game stays stopped and no level up opens meanwhile
     public static bool Busy => waiting.Count > 0 || (instance != null && instance.running);
@@ -42,9 +42,10 @@ public class EnvelopeOpening : MonoBehaviour
         waiting.Clear();
     }
 
-    public static void Open(EnvelopeRarity rarity, EnvelopeSource source)
+    // evolves: whether it can evolve a weapon (FortuneEnvelope.Evolves)
+    public static void Open(EnvelopeRarity rarity, EnvelopeSource source, bool evolves = true)
     {
-        waiting.Enqueue((rarity, source));
+        waiting.Enqueue((rarity, source, evolves));
         if (instance == null) Build();
     }
 
@@ -232,7 +233,7 @@ public class EnvelopeOpening : MonoBehaviour
         Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) ||
         Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.E);
 
-    private IEnumerator Play((EnvelopeRarity rarity, EnvelopeSource source) what)
+    private IEnumerator Play((EnvelopeRarity rarity, EnvelopeSource source, bool evolves) what)
     {
         running = true;
         var rarity = what.rarity;
@@ -242,7 +243,7 @@ public class EnvelopeOpening : MonoBehaviour
         // what it gives, taken now while the game is stopped
         var player = GameObject.FindGameObjectWithTag("Player");
         var inventory = player != null ? player.GetComponent<PlayerInventory>() : null;
-        var rewards = inventory != null ? inventory.OpenEnvelope(FortuneEnvelope.Upgrades(rarity)) : new List<EnvelopeReward>();
+        var rewards = inventory != null ? inventory.OpenEnvelope(FortuneEnvelope.Upgrades(rarity), what.evolves) : new List<EnvelopeReward>();
         int coins = Coins.WithGreed(FortuneEnvelope.CoinsFor(rarity));
         Coins.Gift(FortuneEnvelope.CoinsFor(rarity));
         foreach (var r in rewards) if (r.IsCoins) coins += r.coins;

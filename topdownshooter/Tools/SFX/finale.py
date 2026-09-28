@@ -11,8 +11,9 @@ Command Token's, the envelope's and the boss's instruments.
   aura_pulse_1   the Electrical Aura's pulse: a snap of static, a low electric thump and a short
   aura_pulse_2   buzz, three takes so a pulse every half second never repeats itself exactly
   aura_pulse_3
-  star_shoot     the Seven Star Swords' evolved stars bursting off the swords, after Terraria's
-                 falling stars: a bright sparkle, a whistle falling away with a shimmer behind it
+  star_shoot_1   the Seven Star Swords' evolved stars bursting off the swords: soft, since it
+  star_shoot_2   plays every burst all run; a breath of air, a gentle glint, a faint falling tone,
+  star_shoot_3   three takes
   star_hit       a star striking: a small glassy twinkle
 
 python finale.py writes them into Assets/### Different Engine/Resources/Sfx/ (the game loads them
@@ -106,23 +107,18 @@ def aura_pulse(seed):
     return fade(hall(x, 0.5, 0.1, seed=seed), 0.12)
 
 
-def star_shoot():
-    t = times(1.0)
+def star_shoot(seed):
+    """soft: this plays every burst, every second and a bit, all run. a breath of air swelling and
+    gone, one gentle glint, and a faint falling tone under it. no bright bells, no whistle"""
+    r = np.random.default_rng(seed)
+    t = times(0.6)
     x = np.zeros((len(t), 2))
-    # the sparkle as they burst off: two bells a fifth apart and a glint of noise
-    x += pan(0.35 * bell(t, fo.note(12), start=0.0) + 0.25 * bell(t, fo.note(15), start=0.012), 0)
-    x += pan(0.3 * filt(noise(len(t)), "highpass", 6000) * env(t, 0.03, 0.0005), 0)
-    # the whistle falling away: a pure tone gliding down with a shimmer of detuned partners
-    for d, lv in ((0.0, 0.5), (3.0, 0.25), (-2.5, 0.2)):
-        f = 2600 * np.exp(-t / 0.35) + 700 + d
-        w = np.sin(2 * np.pi * np.cumsum(f) / SR) * env(t, 0.35, 0.01) * lv
-        x += pan(w * 0.5, -0.3 + 0.2 * d)
-    # the air it cuts through and twinkles left in its trail
-    x += pan(0.35 * whoosh(t, 0.0, 0.5, 5000, 1400, q=1.8), 0.25)
-    for k in range(5):
-        at = 0.08 + k * 0.07
-        x += pan(0.12 * bell(t, fo.note(13 + (k % 3)), start=at), rng.uniform(-0.8, 0.8))
-    return fade(hall(x, 1.1, 0.25, seed=121, tone=7000), 0.35)
+    air = filt(noise(len(t)), "bandpass", [900, 3800]) * env(t, 0.16, 0.035)
+    x += pan(0.5 * air, r.uniform(-0.3, 0.3))
+    x += pan(0.22 * bell(t, fo.note(int(r.integers(5, 9))), start=0.02), r.uniform(-0.4, 0.4))
+    fall = 520 + 700 * np.exp(-t / 0.08)
+    x += pan(0.18 * np.sin(2 * np.pi * np.cumsum(fall) / SR) * env(t, 0.14, 0.01), 0)
+    return fade(hall(x, 0.7, 0.2, seed=121 + seed, tone=4500), 0.25)
 
 
 def star_hit():
@@ -141,7 +137,9 @@ def main():
         "aura_pulse_1": level(aura_pulse(1), -5.0),
         "aura_pulse_2": level(aura_pulse(2), -5.0),
         "aura_pulse_3": level(aura_pulse(3), -5.0),
-        "star_shoot": level(star_shoot(), -3.0),
+        "star_shoot_1": level(star_shoot(1), -10.0),
+        "star_shoot_2": level(star_shoot(2), -10.0),
+        "star_shoot_3": level(star_shoot(3), -10.0),
         "star_hit": level(star_hit(), -7.0),
     }
     for name, x in clips.items():
@@ -169,7 +167,7 @@ def main():
     write(os.path.join(ct.OUT, "finale.wav"), total)
     s2 = np.zeros((int(3 * SR), 2))
     for i in range(3):
-        x = clips["star_shoot"]; st = int(i * 0.9 * SR); s2[st:st + len(x)] += x[:len(s2) - st]
+        x = clips["star_shoot_%d" % (1 + i % 3)]; st = int(i * 0.9 * SR); s2[st:st + len(x)] += x[:len(s2) - st]
         for k in range(3):
             y = clips["star_hit"]; st2 = st + int((0.35 + k * 0.08) * SR); s2[st2:st2 + len(y)] += y[:len(s2) - st2] * 0.8
     write(os.path.join(ct.OUT, "stars.wav"), nz.limit(s2 * 0.8, nz.CEILING))

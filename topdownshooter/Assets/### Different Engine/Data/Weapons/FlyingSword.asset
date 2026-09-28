@@ -43,44 +43,44 @@ MonoBehaviour:
   levels:
   - damage: 12
     blades: 1
-    bounces: 2
+    bounces: 1
     cooldown: 2
-  - damage: 12
+  - damage: 14
     blades: 1
-    bounces: 3
+    bounces: 1
     cooldown: 2
   - damage: 13
     blades: 2
-    bounces: 3
+    bounces: 2
     cooldown: 2
   - damage: 14
     blades: 2
-    bounces: 4
+    bounces: 2
     cooldown: 2
   - damage: 15
     blades: 3
-    bounces: 4
+    bounces: 2
     cooldown: 2
   - damage: 16
     blades: 3
-    bounces: 5
+    bounces: 3
     cooldown: 2
   - damage: 18
     blades: 4
-    bounces: 5
+    bounces: 3
     cooldown: 2
   - damage: 20
     blades: 5
-    bounces: 5
+    bounces: 3
     cooldown: 2
   launchRing: 0.8
-  speed: 9
+  speed: 6.5
   launchSwing: 55
-  turnRate: 300
+  turnRate: 220
   clusterRadius: 2.2
   range: 14
-  bounceAcceleration: 0.15
-  maxSpeed: 22
+  bounceAcceleration: 0.08
+  maxSpeed: 14
   bonusPerBounce: 0.12
   hitRadius: 0.4
   bounceOffStrong: 1

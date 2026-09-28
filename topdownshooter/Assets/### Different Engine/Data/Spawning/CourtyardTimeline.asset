@@ -13,15 +13,15 @@ MonoBehaviour:
   m_Name: CourtyardTimeline
   m_EditorClassIdentifier: 
   crowdScale: 1
-  hardCap: 500
+  hardCap: 1500
   waveMinutes: 3
   beats:
   - label: 'Restless dead'
     fromMinute: 0
-    minimum: 8
-    perInterval: 1
+    minimum: 24
+    perInterval: 3
     interval: 1.5
-    cap: 20
+    cap: 60
     enemies:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 3
@@ -29,10 +29,10 @@ MonoBehaviour:
       weight: 3.5
   - label: 'Wisps gather'
     fromMinute: 1.5
-    minimum: 15
-    perInterval: 2
+    minimum: 45
+    perInterval: 6
     interval: 1.25
-    cap: 30
+    cap: 90
     enemies:
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
       weight: 7
@@ -40,10 +40,10 @@ MonoBehaviour:
       weight: 2
   - label: 'The hungry wake'
     fromMinute: 3
-    minimum: 24
-    perInterval: 2
+    minimum: 77
+    perInterval: 6
     interval: 1
-    cap: 40
+    cap: 128
     enemies:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 2
@@ -53,10 +53,10 @@ MonoBehaviour:
       weight: 2
   - label: 'Hungry procession'
     fromMinute: 4.5
-    minimum: 30
-    perInterval: 3
+    minimum: 99
+    perInterval: 10
     interval: 1
-    cap: 50
+    cap: 165
     enemies:
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 4
@@ -66,10 +66,10 @@ MonoBehaviour:
       weight: 1
   - label: 'Foxes in the eaves'
     fromMinute: 7.5
-    minimum: 40
-    perInterval: 3
+    minimum: 140
+    perInterval: 10
     interval: 1
-    cap: 64
+    cap: 224
     enemies:
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 3
@@ -79,10 +79,10 @@ MonoBehaviour:
       weight: 3.5
   - label: 'Coffin row'
     fromMinute: 9
-    minimum: 45
-    perInterval: 3
+    minimum: 166
+    perInterval: 11
     interval: 0.9
-    cap: 72
+    cap: 266
     enemies:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 5
@@ -92,10 +92,10 @@ MonoBehaviour:
       weight: 0.3
   - label: 'Fox fire'
     fromMinute: 12
-    minimum: 55
-    perInterval: 4
+    minimum: 220
+    perInterval: 16
     interval: 0.9
-    cap: 85
+    cap: 340
     enemies:
     - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
       weight: 4
@@ -103,10 +103,10 @@ MonoBehaviour:
       weight: 7
   - label: 'Temple overrun'
     fromMinute: 13.5
-    minimum: 60
-    perInterval: 4
+    minimum: 252
+    perInterval: 17
     interval: 0.8
-    cap: 95
+    cap: 399
     enemies:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 2
@@ -120,10 +120,10 @@ MonoBehaviour:
       weight: 0.4
   - label: 'Year of the Nian'
     fromMinute: 18
-    minimum: 75
-    perInterval: 4
+    minimum: 338
+    perInterval: 18
     interval: 0.8
-    cap: 115
+    cap: 518
     enemies:
     - archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
       weight: 1
@@ -133,10 +133,10 @@ MonoBehaviour:
       weight: 2
   - label: 'Nine-tailed night'
     fromMinute: 22.5
-    minimum: 90
-    perInterval: 5
+    minimum: 432
+    perInterval: 24
     interval: 0.7
-    cap: 135
+    cap: 648
     enemies:
     - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
       weight: 5
@@ -146,10 +146,10 @@ MonoBehaviour:
       weight: 5.25
   - label: 'Hungry ghost festival'
     fromMinute: 27
-    minimum: 105
-    perInterval: 5
+    minimum: 525
+    perInterval: 25
     interval: 0.7
-    cap: 155
+    cap: 775
     enemies:
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 5
@@ -159,10 +159,10 @@ MonoBehaviour:
       weight: 0.5
   - label: 'The dead march'
     fromMinute: 31.5
-    minimum: 120
-    perInterval: 6
+    minimum: 600
+    perInterval: 30
     interval: 0.6
-    cap: 175
+    cap: 875
     enemies:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 4
@@ -174,10 +174,10 @@ MonoBehaviour:
       weight: 0.8
   - label: 'Every grave open'
     fromMinute: 36
-    minimum: 135
-    perInterval: 6
+    minimum: 675
+    perInterval: 30
     interval: 0.6
-    cap: 200
+    cap: 1000
     enemies:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 2
@@ -191,10 +191,10 @@ MonoBehaviour:
       weight: 1
   - label: 'The last night'
     fromMinute: 40.5
-    minimum: 150
-    perInterval: 7
+    minimum: 750
+    perInterval: 35
     interval: 0.5
-    cap: 220
+    cap: 1100
     enemies:
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 2

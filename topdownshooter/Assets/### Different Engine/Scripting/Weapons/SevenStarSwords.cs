@@ -106,18 +106,20 @@ public class SevenStarSwords : Weapon<SevenStarSwordsData>
 
     // ---- evolution: homing stars ---------------------------------------------------------
 
-    // Terraria's falling stars: a sparkle and a whistle falling away as a burst goes off, a glassy
-    // twinkle as each strikes (Resources/Sfx, made by Tools/SFX/finale.py)
-    private static AudioClip shootSound, hitSound;
+    // a burst goes off softly (it's every second and a bit, all run): a breath of air and a gentle
+    // glint, one of three takes; a glassy twinkle as each star strikes (Resources/Sfx, made by
+    // Tools/SFX/finale.py)
+    private static AudioClip[] shootSounds;
+    private static AudioClip hitSound;
     private static bool soundsLoaded;
     private float nextHitSound;
-    private const float ShootVolume = 0.6f, HitVolume = 0.35f, HitSoundEvery = 0.05f;
+    private const float ShootVolume = 0.4f, HitVolume = 0.35f, HitSoundEvery = 0.05f;
 
     private static void LoadSounds()
     {
         if (soundsLoaded) return;
         soundsLoaded = true;
-        shootSound = Resources.Load<AudioClip>("Sfx/star_shoot");
+        shootSounds = new[] { Resources.Load<AudioClip>("Sfx/star_shoot_1"), Resources.Load<AudioClip>("Sfx/star_shoot_2"), Resources.Load<AudioClip>("Sfx/star_shoot_3") };
         hitSound = Resources.Load<AudioClip>("Sfx/star_hit");
     }
 
@@ -125,7 +127,8 @@ public class SevenStarSwords : Weapon<SevenStarSwordsData>
     {
         FindTargets();
         LoadSounds();
-        if (shootSound != null && swords.Count > 0) SfxPlayer.PlayAt(shootSound, transform.position, ShootVolume, Random.Range(0.95f, 1.06f));
+        var shoot = shootSounds[Random.Range(0, shootSounds.Length)];
+        if (shoot != null && swords.Count > 0) SfxPlayer.PlayAt(shoot, transform.position, ShootVolume, Random.Range(0.92f, 1.08f));
         int n = Data.starsPerSword, k = 0;
         for (int i = 0; i < swords.Count; i++)
         {

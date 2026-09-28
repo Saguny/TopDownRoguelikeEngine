@@ -337,19 +337,22 @@ public class PlayerInventory : MonoBehaviour
 
     // ---------------------------------------------------------------- fortune envelopes
 
-    // what an envelope gives: its evolution first, if a weapon is ready for one (at its top level,
-    // another weapon held), then levels of whatever is held, drawn from the pool the level up uses
-    // (the same one more than once when it's worth it), each taken as it's drawn. with nothing left
-    // to level, the rest is coins. returns what was given, in order, for the scroll
-    public List<EnvelopeReward> OpenEnvelope(int upgrades)
+    // what an envelope gives: an evolution first, if it can give one (FortuneEnvelope.Evolves) and a
+    // weapon is ready (at its top level, its partner held); one at most, like Vampire Survivors'
+    // chests. then levels of whatever is held, drawn from the pool the level up uses (the same one
+    // more than once when it's worth it), each taken as it's drawn. with nothing left to level, the
+    // rest is coins. returns what was given, in order, for the scroll
+    public List<EnvelopeReward> OpenEnvelope(int upgrades, bool evolves = true)
     {
         var given = new List<EnvelopeReward>();
+        bool evolved = false;
         for (int i = 0; i < upgrades; i++)
         {
             UpgradeData pick = null;
             bool evolution = false;
-            foreach (var u in runtimeUpgrades)
-                if (u is WeaponData w && w.Level > 0 && w.NextPickEvolves && CanEvolve(w) && !banished.Contains(u)) { pick = u; evolution = true; break; }
+            if (evolves && !evolved)
+                foreach (var u in runtimeUpgrades)
+                    if (u is WeaponData w && w.Level > 0 && w.NextPickEvolves && CanEvolve(w) && !banished.Contains(u)) { pick = u; evolution = evolved = true; break; }
             if (pick == null)
             {
                 // levels of what's held only: an envelope doesn't fill a slot

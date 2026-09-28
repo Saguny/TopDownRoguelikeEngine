@@ -27,35 +27,35 @@ public class FlyingSwordData : WeaponData<FlyingSword>
     [Header("Levels (the first entry is the unlock; one more pick after the last is the evolution)")]
     public LevelStats[] levels =
     {
-        new LevelStats { damage = 12f, blades = 1, bounces = 2, cooldown = 2f },
-        new LevelStats { damage = 12f, blades = 1, bounces = 3, cooldown = 2f },
-        new LevelStats { damage = 13f, blades = 2, bounces = 3, cooldown = 2f },
-        new LevelStats { damage = 14f, blades = 2, bounces = 4, cooldown = 2f },
-        new LevelStats { damage = 15f, blades = 3, bounces = 4, cooldown = 2f },
-        new LevelStats { damage = 16f, blades = 3, bounces = 5, cooldown = 2f },
-        new LevelStats { damage = 18f, blades = 4, bounces = 5, cooldown = 2f },
-        new LevelStats { damage = 20f, blades = 5, bounces = 5, cooldown = 2f },
+        new LevelStats { damage = 12f, blades = 1, bounces = 1, cooldown = 2f },
+        new LevelStats { damage = 14f, blades = 1, bounces = 1, cooldown = 2f },
+        new LevelStats { damage = 13f, blades = 2, bounces = 2, cooldown = 2f },
+        new LevelStats { damage = 14f, blades = 2, bounces = 2, cooldown = 2f },
+        new LevelStats { damage = 15f, blades = 3, bounces = 2, cooldown = 2f },
+        new LevelStats { damage = 16f, blades = 3, bounces = 3, cooldown = 2f },
+        new LevelStats { damage = 18f, blades = 4, bounces = 3, cooldown = 2f },
+        new LevelStats { damage = 20f, blades = 5, bounces = 3, cooldown = 2f },
     };
 
     [Header("Launch")]
     [Tooltip("how far from the player the blades appear, in a ring round them")]
     public float launchRing = 0.8f;
     [Tooltip("speed the instant it's launched, before Weapon Speed: no wind up, it snaps away")]
-    public float speed = 9f;
+    public float speed = 6.5f;
     [Tooltip("evolved: degrees each blade leaves off to the side of its target, so it swings round onto it in an arc")]
     public float launchSwing = 55f;
 
     [Header("Flight")]
     [Tooltip("evolved: degrees a second a blade turns onto the crowd it's after: lower is a wider arc. unevolved blades don't seek")]
-    public float turnRate = 300f;
+    public float turnRate = 220f;
     [Tooltip("how close together enemies have to be to count as a crowd worth curving onto")]
     public float clusterRadius = 2.2f;
     [Tooltip("how far a blade looks for a crowd")]
     public float range = 14f;
     [Tooltip("how much faster it gets off every bounce: 0.22 = 22%")]
-    [Min(0f)] public float bounceAcceleration = 0.15f;
+    [Min(0f)] public float bounceAcceleration = 0.08f;
     [Tooltip("the fastest a blade gets, however many times it bounces, before Weapon Speed. the master blades fly at it")]
-    public float maxSpeed = 22f;
+    public float maxSpeed = 14f;
     [Tooltip("extra damage for every bounce it has done: 0.12 = +12% a bounce")]
     [Min(0f)] public float bonusPerBounce = 0.12f;
     [Tooltip("radius it hits in, before Area. it goes straight through ordinary enemies")]

@@ -48,11 +48,26 @@ public class FortuneEnvelope : MonoBehaviour
     private static readonly List<FortuneEnvelope> lying = new List<FortuneEnvelope>();
     public static IReadOnlyList<FortuneEnvelope> Lying => lying;
 
+    // like Vampire Survivors' chests, only an envelope dropped from this far into the run (on the
+    // run clock) can evolve a weapon; one dropped earlier gives levels even if it's opened later
+    public const float EvolvesFromSeconds = 600f;
+    private static float runSeconds;
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    private static void ResetStatics() => lying.Clear();
+    private static void ResetStatics()
+    {
+        lying.Clear();
+        runSeconds = 0f;
+        GameEvents.OnRunTimeChanged -= OnRunTime;
+        GameEvents.OnRunTimeChanged += OnRunTime;
+    }
+
+    private static void OnRunTime(float seconds) => runSeconds = seconds;
 
     public EnvelopeRarity Rarity { get; private set; }
     public EnvelopeSource Source { get; private set; }
+    // whether it can evolve a weapon: dropped at 10:00 or later, or by the final boss
+    public bool Evolves { get; private set; }
 
     private SpriteRenderer body, glow, beam, marker;
     private Sprite[] bodyFrames, glowFrames, beamFrames, markerFrames;
@@ -68,6 +83,7 @@ public class FortuneEnvelope : MonoBehaviour
         var env = go.AddComponent<FortuneEnvelope>();
         env.Rarity = Roll(source);
         env.Source = source;
+        env.Evolves = source == EnvelopeSource.FinalBoss || runSeconds >= EvolvesFromSeconds;
         env.from = at;
         // it lands a little way off, so it isn't hidden under the body
         Vector2 off = Random.insideUnitCircle.normalized * Random.Range(0.4f, 0.8f);
@@ -185,7 +201,7 @@ public class FortuneEnvelope : MonoBehaviour
             if (Animated(lib.envelopePickup)) FxBatch.Play(lib.envelopePickup, 25f, transform.position + Vector3.up * 0.2f, 1.3f);
             if (lib.envelopePickupSound != null) SfxPlayer.PlayAt(lib.envelopePickupSound, transform.position, lib.envelopeVolume * 1.6f);
         }
-        EnvelopeOpening.Open(Rarity, Source);
+        EnvelopeOpening.Open(Rarity, Source, Evolves);
         Destroy(gameObject);
     }
 

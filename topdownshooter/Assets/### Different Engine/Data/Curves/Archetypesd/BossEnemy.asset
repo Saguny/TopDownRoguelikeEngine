@@ -15,7 +15,7 @@ MonoBehaviour:
   prefab: {fileID: 4184005365869111389, guid: 598b32028e328164499014cafc094010, type: 3}
   cost: 10
   weight: 1
-  baseHealth: 200
+  baseHealth: 2500
   baseSpeed: 0.5
   baseDamage: 25
   armour: 0.3
