@@ -60,10 +60,6 @@ public class UIWaveAndTimer : MonoBehaviour
         }
         if (waveText)
         {
-            // one line, however long (the Final Rush's name runs past the box): no wrapping, and
-            // spilling past the box rather than being cut
-            waveText.enableWordWrapping = false;
-            waveText.overflowMode = TextOverflowModes.Overflow;
             waveText.text = "";
             waveText.enabled = true;
             waveText.gameObject.SetActive(true);
@@ -120,7 +116,7 @@ public class UIWaveAndTimer : MonoBehaviour
     private void HandleRushStart(int waveNumber, int quota)
     {
         if (runTimerText) runTimerText.color = rushColor;
-        if (waveText) waveText.text = $"Wave {waveNumber} - the Magistrate's procession";
+        if (waveText) waveText.text = $"Wave {waveNumber}";
     }
 
     // the clock stays stopped until the next wave starts (GameLoopController)
