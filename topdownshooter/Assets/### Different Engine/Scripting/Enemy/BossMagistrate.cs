@@ -120,6 +120,11 @@ public class BossMagistrate : MonoBehaviour
     // three second storm off halfway
     private AudioSource[] voices;
     private int nextVoice;
+    // voices of their own out where the dead come up round the player, so the strikes are heard
+    // from there and not from the boss
+    private AudioSource[] groundVoices;
+    private int nextGroundVoice;
+    private bool soundHeld;
 
     private float Pace => torn ? tornPace : 1f;
     private float Damage => contact != null ? contact.damagePerTick : 10f;
@@ -157,7 +162,9 @@ public class BossMagistrate : MonoBehaviour
 
     private void OnDisable()
     {
-        if (voices != null) foreach (var v in voices) if (v != null) v.Stop();
+        StopVoices(voices);
+        StopVoices(groundVoices);
+        soundHeld = false;
         if (shadow != null) shadow.gameObject.SetActive(false);
         if (body != null) body.simulated = true;
         if (bodyCollider != null) bodyCollider.enabled = true;
@@ -166,6 +173,7 @@ public class BossMagistrate : MonoBehaviour
     private void OnDestroy()
     {
         if (shadow != null) Destroy(shadow.gameObject);
+        if (groundVoices != null) foreach (var v in groundVoices) if (v != null) Destroy(v.gameObject);
     }
 
     // ---- every frame: the pose's frame, its hop, its shadow and its bar
@@ -210,6 +218,7 @@ public class BossMagistrate : MonoBehaviour
 
     private void LateUpdate()
     {
+        LateUpdateSound();
         if (!airborne) ground = transform.position;
         if (shadow != null) shadow.position = ground + Vector2.down * shadowDrop;
         if (barFill != null)
@@ -363,7 +372,7 @@ public class BossMagistrate : MonoBehaviour
         foreach (var at in spots)
         {
             FxOneShot.Play(raiseFx, at);
-            Play(strikeSound, Random.Range(0.9f, 1.1f), 0.7f);
+            PlayAt(strikeSound, at, Random.Range(0.9f, 1.1f), 0.7f);
             var go = ObjectPool.For(minionPrefab).Get(at, Quaternion.identity);
             if (go.TryGetComponent(out EnemyHealth e))
             {
@@ -432,14 +441,56 @@ public class BossMagistrate : MonoBehaviour
 
     private void MakeVoices()
     {
-        voices = new AudioSource[8];
-        for (int i = 0; i < voices.Length; i++)
+        voices = new AudioSource[6];
+        for (int i = 0; i < voices.Length; i++) voices[i] = Voice(gameObject.AddComponent<AudioSource>());
+
+        groundVoices = new AudioSource[8];
+        for (int i = 0; i < groundVoices.Length; i++)
+            groundVoices[i] = Voice(new GameObject("Magistrate Strike Voice").AddComponent<AudioSource>());
+    }
+
+    private static AudioSource Voice(AudioSource v)
+    {
+        v.playOnAwake = false;
+        v.spatialBlend = 1f;    // like SfxPlayer's voices, so it sits in the mix with the rest
+        return v;
+    }
+
+    private static void StopVoices(AudioSource[] set)
+    {
+        if (set == null) return;
+        foreach (var v in set) if (v != null) v.Stop();
+    }
+
+    // while the game is stopped (a level up, the pause menu, an envelope opening) its sounds are
+    // held where they are and carry on when it starts again, so they don't play over the menu
+    private void LateUpdateSound()
+    {
+        bool stopped = Time.timeScale <= 0f;
+        if (stopped == soundHeld) return;
+        soundHeld = stopped;
+        Hold(voices, stopped);
+        Hold(groundVoices, stopped);
+    }
+
+    private static void Hold(AudioSource[] set, bool hold)
+    {
+        if (set == null) return;
+        foreach (var v in set)
         {
-            var v = gameObject.AddComponent<AudioSource>();
-            v.playOnAwake = false;
-            v.spatialBlend = 1f;    // like SfxPlayer's voices, so it sits in the mix with the rest
-            voices[i] = v;
+            if (v == null) continue;
+            if (hold) v.Pause();
+            else v.UnPause();
         }
+    }
+
+    private void PlayAt(AudioClip clip, Vector2 at, float pitch = 1f, float volume = 1f)
+    {
+        if (clip == null || groundVoices == null) return;
+        var v = groundVoices[nextGroundVoice];
+        nextGroundVoice = (nextGroundVoice + 1) % groundVoices.Length;
+        v.transform.position = at;
+        StartVoice(v, clip, pitch, volume);
     }
 
     // each on the next voice round, so a pitched one never bends another that's still ringing
@@ -448,6 +499,11 @@ public class BossMagistrate : MonoBehaviour
         if (clip == null || voices == null) return;
         var v = voices[nextVoice];
         nextVoice = (nextVoice + 1) % voices.Length;
+        StartVoice(v, clip, pitch, volume);
+    }
+
+    private void StartVoice(AudioSource v, AudioClip clip, float pitch, float volume)
+    {
         v.Stop();
         v.clip = clip;
         v.pitch = pitch;
