@@ -16,6 +16,8 @@ public class RunCounterText : MonoBehaviour
     [SerializeField] private string format = "{0}";
     [Tooltip("how much the text swells for a moment when the number goes up. 0 = none")]
     [SerializeField, Min(0f)] private float punch = 0.15f;
+    [Tooltip("the HUD's animated outline and gold glint (HudTextFx)")]
+    [SerializeField] private bool animatedOutline = true;
 
     private TMP_Text text;
     private int shown = -1;
@@ -26,6 +28,7 @@ public class RunCounterText : MonoBehaviour
     {
         text = GetComponent<TMP_Text>();
         baseScale = transform.localScale;
+        if (animatedOutline) HudTextFx.On(text);
     }
 
     private bool dirty;

@@ -187,11 +187,16 @@ public class CommandTokenHUD : MonoBehaviour
         image.fillClockwise = true;
     }
 
+    private static TMP_FontAsset font;
+
     private static TMP_Text Label(RectTransform parent, string name, float size, Vector2 at)
     {
         var text = Part<TextMeshProUGUI>(parent, name, 112f);
         text.rectTransform.anchoredPosition = at;
         text.alignment = TextAlignmentOptions.Center;
+        // the game's own font, as the rest of the HUD
+        if (font == null) font = Resources.Load<TMP_FontAsset>("fonts/Pixelta");
+        if (font != null) text.font = font;
         text.fontSize = size;
         text.fontStyle = FontStyles.Bold;
         text.color = Color.white;

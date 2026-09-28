@@ -1,6 +1,9 @@
 using UnityEngine;
 using TMPro;
 
+// the run clock and the wave. the wave text only ever reads "Wave n" and is always up; the clock
+// turns red through a Final Rush and, while it's stopped (a rush won until the next wave, and the
+// final boss, who runs on no clock), wears HudTextFx's blue and red outline
 public class UIWaveAndTimer : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI runTimerText;
@@ -11,6 +14,8 @@ public class UIWaveAndTimer : MonoBehaviour
     [SerializeField] private Color frozenColor = new Color(0.6f, 0.85f, 1f, 1f);
 
     private Color waveColor;
+    private HudTextFx timerFx;
+    private int wave = 1;
 
     private void Awake()
     {
@@ -31,6 +36,23 @@ public class UIWaveAndTimer : MonoBehaviour
         if (rushColor.a == 0f) rushColor = new Color(1f, 0.25f, 0.25f, 1f);
         if (frozenColor.a == 0f) frozenColor = new Color(0.6f, 0.85f, 1f, 1f);
         if (waveText) waveColor = waveText.color;
+        timerFx = HudTextFx.On(runTimerText);
+        HudTextFx.On(waveText);
+    }
+
+    // nothing else may hide it or say anything else in it
+    private void LateUpdate()
+    {
+        if (!waveText) return;
+        if (!waveText.gameObject.activeSelf) waveText.gameObject.SetActive(true);
+        if (!waveText.enabled) waveText.enabled = true;
+        string want = $"Wave {wave}";
+        if (waveText.text != want) waveText.text = want;
+    }
+
+    private void Frozen(bool frozen)
+    {
+        if (timerFx != null) timerFx.Frozen = frozen;
     }
 
     private void Start()
@@ -44,7 +66,7 @@ public class UIWaveAndTimer : MonoBehaviour
         }
         if (waveText)
         {
-            waveText.text = "";
+            waveText.text = $"Wave {wave}";
             waveText.enabled = true;
             waveText.gameObject.SetActive(true);
         }
@@ -73,15 +95,15 @@ public class UIWaveAndTimer : MonoBehaviour
     // no clock for the final boss: it's kill or be killed
     private void HandleFinalBoss()
     {
-        if (waveText) waveText.text = "final boss";
         if (runTimerText) runTimerText.color = frozenColor;
+        Frozen(true);
     }
 
     // the boss is down: the run is won (RunVictory)
     private void HandleBossDown(Vector3 _)
     {
-        if (waveText) waveText.text = "victory";
         if (runTimerText) runTimerText.color = normalColor;
+        Frozen(false);
     }
 
     private void HandleRunTimeChanged(float seconds)
@@ -93,20 +115,23 @@ public class UIWaveAndTimer : MonoBehaviour
 
     private void HandleWaveStarted(int waveNumber)
     {
-        if (waveText) { waveText.text = $"wave {waveNumber}"; waveText.color = waveColor; }
+        wave = Mathf.Max(1, waveNumber);
+        if (waveText) { waveText.text = $"Wave {wave}"; waveText.color = waveColor; }
         if (runTimerText) runTimerText.color = normalColor;
+        Frozen(false);
     }
 
     private void HandleRushStart(int waveNumber, int quota)
     {
+        wave = Mathf.Max(1, waveNumber);
         if (runTimerText) runTimerText.color = rushColor;
-        if (waveText) waveText.text = $"Wave {waveNumber}";
+        Frozen(false);
     }
 
     // the clock stays stopped until the next wave starts (GameLoopController)
     private void HandleRushEnd(int waveNumber)
     {
         if (runTimerText) runTimerText.color = frozenColor;
-        if (waveText) waveText.text = $"Wave {waveNumber} cleared";
+        Frozen(true);
     }
 }

@@ -619,11 +619,11 @@ public class SpawnDirector : MonoBehaviour
         return EnemyRegistry.Count;
     }
 
+    // the Magistrates a Final Rush brings (Magistrates Per Rush), whichever spawner runs it
     private int GetMaxBossCountForWave(int wave)
     {
-        if (wave >= 5) return 4;
-        if (wave >= 3) return 2;
-        return 1;
+        if (magistratesPerRush == null || magistratesPerRush.Length == 0) return 1;
+        return Mathf.Max(1, magistratesPerRush[Mathf.Clamp(wave - 1, 0, magistratesPerRush.Length - 1)]);
     }
 
     private int GetAliveBossCount()
@@ -1390,7 +1390,8 @@ public class SpawnDirector : MonoBehaviour
     [Tooltip("seconds between formations in the first rush; each rush after is 10% quicker, to 3.5s")]
     [SerializeField, Min(1f)] private float formationEvery = 7f;
     [Tooltip("the Magistrates each Final Rush brings, all at once at its start, rush 1 first (there are nine: wave ten is the final boss's). a rush past the list uses its last")]
-    [SerializeField] private int[] rushMagistrates = { 1, 1, 1, 2, 2, 3, 3, 3, 4 };
+    // (renamed from rushMagistrates, so a scene saved with the old counts can't keep them)
+    [SerializeField] private int[] magistratesPerRush = { 1, 1, 1, 2, 2, 3, 3, 3, 4 };
     [Tooltip("how much tougher each rush's Magistrate is than the last's, on top of the run's health curve: 1.35 = 35% more. the first is a fight for a build of a few minutes, the ninth for a finished one")]
     [SerializeField, Min(1f)] private float rushBossGrowth = 1.35f;
 
@@ -1420,9 +1421,7 @@ public class SpawnDirector : MonoBehaviour
         nextFormation = Time.time + 3.5f;           // the Magistrates and their retinues first, then the rest
         nextTrickle = Time.time + 1f;
         // the rush's whole set of Magistrates comes at once, from all round, each with his retinue
-        rushBosses = rushMagistrates != null && rushMagistrates.Length > 0
-            ? Mathf.Max(1, rushMagistrates[Mathf.Clamp(currentWave - 1, 0, rushMagistrates.Length - 1)])
-            : GetMaxBossCountForWave(currentWave);
+        rushBosses = GetMaxBossCountForWave(currentWave);
         float a0 = Random.value * 360f;
         for (int i = 0; i < rushBosses; i++) SpawnMagistrate(Rotate(Vector2.right, a0 + 360f * i / rushBosses));
     }
