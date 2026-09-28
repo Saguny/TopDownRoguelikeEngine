@@ -377,7 +377,7 @@ public class SpawnDirector : MonoBehaviour
         }
 
         // the Final Rush is the Magistrate's procession: its own formations, not the horde
-        if (finalRush && processionCorpse != null && processionCorpse.prefab != null)
+        if (finalRush && ProcessionRuns)
         {
             UpdateProcession();
             return;
@@ -1354,7 +1354,7 @@ public class SpawnDirector : MonoBehaviour
         finalRushQuota = Mathf.Max(1, quota);
         ResetFinalRushProgress();
 
-        if (processionCorpse != null && processionCorpse.prefab != null) BeginProcession();
+        if (ProcessionRuns) BeginProcession();
         else TrySpawnInitialBoss();
     }
 
@@ -1395,6 +1395,18 @@ public class SpawnDirector : MonoBehaviour
 
     private enum Formation { Column, Pincer, Ring, Fire }
     private float nextFormation, nextBoss, nextTrickle;
+    private int rushBosses;             // how many Magistrates this rush brings; it's won when they're all down
+
+    // the Final Rush is won when all its Magistrates have come and fallen (the procession). without
+    // one, the old way: its kill quota met and its bosses down
+    public bool RushWon(int kills, int quota)
+    {
+        if (!ProcessionRuns) return kills >= quota && !HasAliveBosses();
+        if (bossArchetype == null || bossArchetype.prefab == null) return true;
+        return bossesSpawnedThisRush >= rushBosses && GetAliveBossCount() == 0;
+    }
+
+    private bool ProcessionRuns => processionCorpse != null && processionCorpse.prefab != null;
     private int formationIndex;
     private static AudioClip procBell;
 
@@ -1406,6 +1418,7 @@ public class SpawnDirector : MonoBehaviour
         formationIndex = 0;
         nextFormation = Time.time + 3.5f;           // the Magistrate and his retinue first, then the rest
         nextBoss = Time.time + nextBossAfter;
+        rushBosses = GetMaxBossCountForWave(currentWave);
         nextTrickle = Time.time + 1f;
         SpawnMagistrate();
     }
@@ -1415,11 +1428,13 @@ public class SpawnDirector : MonoBehaviour
         int alive = CountAlive();
         int target = RushTarget;
 
-        // more Magistrates join as the rushes go on, each with his own retinue
-        if (Time.time >= nextBoss)
+        // the rush's Magistrates come one after another, each with his own retinue: the next when
+        // the last falls, or after a while if he's still standing
+        if (bossesSpawnedThisRush < rushBosses && (GetAliveBossCount() == 0 || Time.time >= nextBoss))
         {
             nextBoss = Time.time + nextBossAfter;
-            if (GetAliveBossCount() < GetMaxBossCountForWave(currentWave)) SpawnMagistrate();
+            SpawnMagistrate();
+            rushBarDirty = true;
         }
 
         if (Time.time >= nextFormation && alive < target)
@@ -1637,6 +1652,13 @@ public class SpawnDirector : MonoBehaviour
         finalRushSlider.gameObject.SetActive(true);
 
         finalRushSlider.minValue = 0f;
+        if (ProcessionRuns && rushBosses > 0)
+        {
+            // the procession is won by its Magistrates: the bar fills as they fall
+            finalRushSlider.maxValue = rushBosses;
+            finalRushSlider.value = Mathf.Max(0, bossesSpawnedThisRush - GetAliveBossCount());
+            return;
+        }
         finalRushSlider.maxValue = finalRushQuota;
         finalRushSlider.value = finalRushKills;
     }

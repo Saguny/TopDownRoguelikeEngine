@@ -92,13 +92,13 @@ public class GameLoopController : MonoBehaviour
             finalRush = true;
             waveKills = 0;
 
-            // 150, 195, 254, 330, 428, 557, 724, 941, 1224 by default: every rush a little more than the last
+            // the kill quota, for a scene without the procession (150, 195, 254 ... 1224 by default)
             int quota = Mathf.Max(1, Mathf.RoundToInt(baseKillsToClear * Mathf.Pow(quotaGrowth, waveIndex)));
             GameEvents.OnFinalRushStarted?.Invoke(waveIndex + 1, quota);
 
-            // a rush ends with its quota met and its bosses down (they carry fortune envelopes); one
-            // still going when the final boss is due ends there, so the boss gets its time
-            while ((waveKills < quota || RushBossesUp) && !BossIsDue)
+            // a rush ends when its Magistrates have all come and fallen (SpawnDirector's procession);
+            // one still going when the final boss is due ends there, so the boss gets its time
+            while (!RushWon(quota) && !BossIsDue)
                 yield return null;
 
             // won: nothing more spawns until the next wave, the spirit seal's wave rolls out and
@@ -163,7 +163,7 @@ public class GameLoopController : MonoBehaviour
         }
     }
 
-    private static bool RushBossesUp => SpawnDirector.Active != null && SpawnDirector.Active.HasAliveBosses();
+    private bool RushWon(int quota) => SpawnDirector.Active != null ? SpawnDirector.Active.RushWon(waveKills, quota) : waveKills >= quota;
 
     private bool BossIsDue => !GameMode.IsEndless && totalRun >= finalBossByMinute * 60f;
 
