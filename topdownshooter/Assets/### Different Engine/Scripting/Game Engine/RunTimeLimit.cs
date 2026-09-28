@@ -21,13 +21,27 @@ public class RunTimeLimit : MonoBehaviour
 
     public bool TimeIsUp => sent > 0;
 
-    private void OnEnable() => GameEvents.OnRunTimeChanged += OnRunTime;
-    private void OnDisable() => GameEvents.OnRunTimeChanged -= OnRunTime;
+    private bool finalBoss;
+
+    private void OnEnable()
+    {
+        GameEvents.OnRunTimeChanged += OnRunTime;
+        GameEvents.OnFinalBossStarted += OnFinalBoss;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.OnRunTimeChanged -= OnRunTime;
+        GameEvents.OnFinalBossStarted -= OnFinalBoss;
+    }
+
+    // the final boss runs on no clock: kill it or die
+    private void OnFinalBoss() => finalBoss = true;
 
     private void OnRunTime(float seconds)
     {
         runTime = seconds;
-        if (GameMode.IsEndless) return;
+        if (GameMode.IsEndless || finalBoss) return;
         if (sent == 0 && runTime >= limitMinutes * 60f) TimeUp();
         else if (sent > 0 && runTime >= nextAt) Send();
     }

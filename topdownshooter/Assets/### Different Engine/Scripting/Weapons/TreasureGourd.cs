@@ -245,6 +245,14 @@ public class TreasureGourd : Weapon<TreasureGourdData>
             }
             b.PullToward(mouth, Data.bulletPullSpeed);
         }
+        // and a boss's danmaku
+        int caughtShots = Danmaku.Absorb(mouth, reach, Data.bulletPullSpeed);
+        if (caughtShots > 0)
+        {
+            swallowed += caughtShots;
+            FxBatch.Play(Data.absorbFrames, 25f, mouth, 1f, Data.sortingLayer, Data.sortingOrder + 4);
+            OneShot(Data.absorbSound, mouth, Random.Range(0.95f, 1.1f) + 0.02f * Mathf.Min(swallowed, 10));
+        }
     }
 
     // elites and bosses are too heavy to be pulled

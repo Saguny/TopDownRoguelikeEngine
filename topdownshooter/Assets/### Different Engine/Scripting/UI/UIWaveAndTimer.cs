@@ -38,7 +38,7 @@ public class UIWaveAndTimer : MonoBehaviour
     private void Update()
     {
         if (!waveText) return;
-        bool waiting = GameLoopController.AwaitingEnvelope && !EnvelopeOpening.Busy;
+        bool waiting = (GameLoopController.AwaitingEnvelope || RunVictory.AwaitingEnvelope) && !EnvelopeOpening.Busy;
         if (waiting)
         {
             if (!askedForEnvelope) waveText.text = "open the boss's envelope";
@@ -86,16 +86,17 @@ public class UIWaveAndTimer : MonoBehaviour
         GameEvents.OnFinalBossDefeated -= HandleBossDown;
     }
 
+    // no clock for the final boss: it's kill or be killed
     private void HandleFinalBoss()
     {
         if (waveText) waveText.text = "final boss";
-        if (runTimerText) runTimerText.color = rushColor;
+        if (runTimerText) runTimerText.color = frozenColor;
     }
 
-    // the boss is down; the night goes on until the Wuchang come (RunTimeLimit)
+    // the boss is down: the run is won (RunVictory)
     private void HandleBossDown(Vector3 _)
     {
-        if (waveText) waveText.text = "survive the night";
+        if (waveText) waveText.text = "victory";
         if (runTimerText) runTimerText.color = normalColor;
     }
 

@@ -6,6 +6,13 @@ using System;
 using UnityEditor;
 #endif
 
+// something on an enemy that decides how much of a hit lands, e.g. a boss whose phases each have
+// their own bar (YamaBoss): 0 turns the hit aside entirely
+public interface IDamageGate
+{
+    float Admit(float damage, DamageKind kind, float current);
+}
+
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Collider2D))]
 public class EnemyHealth : MonoBehaviour, IHealth
@@ -91,6 +98,7 @@ public class EnemyHealth : MonoBehaviour, IHealth
     public event Action<float, float> OnHealthChanged;
 
     private bool _dead;
+    private IDamageGate _gate;
     private Color _originalColor;
     private Coroutine _flashRoutine;
     private Vector3 _restScale;
@@ -166,6 +174,7 @@ public class EnemyHealth : MonoBehaviour, IHealth
 
         if (audioSource == null)
             audioSource = GetComponent<AudioSource>();
+        TryGetComponent(out _gate);
     }
 
     private void OnEnable()
@@ -241,6 +250,7 @@ public class EnemyHealth : MonoBehaviour, IHealth
         float dmg = ignoreArmor ? rawDamage : Mathf.Max(0f, rawDamage - armor * pierce);
         dmg *= 1f - armour * pierce;
         if (source != null) dmg *= source.AttackClass == AttackClass.Magical ? magicalTaken : physicalTaken;
+        if (_gate != null) dmg = _gate.Admit(dmg, kind, currentHealth);
         if (dmg <= 0f) return false;
         _silentDeath = kind == DamageKind.Silent;
 

@@ -96,6 +96,7 @@ public class BGMManager : MonoBehaviour
     // the music fades out as the spiral closes
     private void OnLoadStarted(string scene)
     {
+        if (BossThemePlaying) EndBossTheme(fadeOutSeconds);
         if (MoodOf(scene) == mood || bgmSource == null || !bgmSource.isPlaying) return;
         Fade(FadeOutAndStop());
     }
@@ -105,6 +106,13 @@ public class BGMManager : MonoBehaviour
         // every time a new scene loads, try to find the TMP again
         RebindSongTextInScene();
         if (bgmSource == null) return;
+        // a boss's music never outlives its fight: a restart comes back to the run's
+        if (bossSource != null && bossSource.isPlaying)
+        {
+            if (bossRoutine != null) StopCoroutine(bossRoutine);
+            bossRoutine = null;
+            bossSource.Stop();
+        }
 
         Mood next = MoodOf(scene.name);
         if (next == Mood.None)
@@ -171,6 +179,74 @@ public class BGMManager : MonoBehaviour
             yield return null;
         }
         bgmSource.volume = to;
+    }
+
+    // ---- a boss's own music
+
+    private AudioSource bossSource;
+    private Coroutine bossRoutine;
+
+    public bool BossThemePlaying => bossSource != null && bossSource.isPlaying;
+
+    // a boss fight's own music (a boss's Boss Music slot, e.g. Yama's): the run's music fades out,
+    // then this fades in and loops until EndBossTheme. real time, so menus don't stall it
+    public void PlayBossTheme(AudioClip clip, float volume = 1f, float fadeOut = 2f, float fadeIn = 2.5f)
+    {
+        if (clip == null || bgmSource == null) return;
+        if (bossSource == null)
+        {
+            bossSource = gameObject.AddComponent<AudioSource>();
+            bossSource.outputAudioMixerGroup = bgmSource.outputAudioMixerGroup;
+            bossSource.playOnAwake = false;
+            bossSource.spatialBlend = 0f;
+            bossSource.priority = bgmSource.priority;
+        }
+        bossSource.loop = true;
+        bossSource.clip = clip;
+        if (bossRoutine != null) StopCoroutine(bossRoutine);
+        bossRoutine = StartCoroutine(CrossToBoss(Mathf.Clamp01(volume) * fullVolume, fadeOut, fadeIn));
+    }
+
+    // the boss's music fades away (the fight's won or lost); the run's doesn't come back
+    public void EndBossTheme(float seconds = 3f)
+    {
+        if (bossSource == null || !bossSource.isPlaying) return;
+        if (bossRoutine != null) StopCoroutine(bossRoutine);
+        bossRoutine = StartCoroutine(FadeBossOut(seconds));
+    }
+
+    private IEnumerator CrossToBoss(float to, float fadeOut, float fadeIn)
+    {
+        if (fadeRoutine != null) { StopCoroutine(fadeRoutine); fadeRoutine = null; }
+        if (bgmSource.isPlaying)
+        {
+            yield return Volume(bgmSource.volume, 0f, fadeOut);
+            bgmSource.Pause();
+        }
+        bossSource.volume = 0f;
+        bossSource.time = 0f;
+        bossSource.Play();
+        for (float t = 0f; t < fadeIn; t += Time.unscaledDeltaTime)
+        {
+            float k = t / fadeIn;
+            bossSource.volume = to * k * k;
+            yield return null;
+        }
+        bossSource.volume = to;
+        bossRoutine = null;
+    }
+
+    private IEnumerator FadeBossOut(float seconds)
+    {
+        float from = bossSource.volume;
+        for (float t = 0f; t < seconds; t += Time.unscaledDeltaTime)
+        {
+            float k = t / seconds;
+            bossSource.volume = from * (1f - (1f - (1f - k) * (1f - k)));
+            yield return null;
+        }
+        bossSource.Stop();
+        bossRoutine = null;
     }
 
     private void RebindSongTextInScene()

@@ -1282,6 +1282,7 @@ MonoBehaviour:
   west: {fileID: 6293569183525540883}
   spawnTimeline: {fileID: 11400000, guid: ae986a71d27641dcb727583eb9504367, type: 2}
   difficulty: {fileID: 11400000, guid: 6aecb6b51941e7340b88c29a9e69e93c, type: 2}
+  finalBoss: {fileID: 11400000, guid: 0a90ab38f0df4970b16568c2ce7184ee, type: 2}
   playerStart: {x: 0, y: -4}
 --- !u!1 &589262328283841259
 GameObject:

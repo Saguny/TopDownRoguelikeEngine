@@ -132,15 +132,11 @@ public class GameLoopController : MonoBehaviour
         }
     }
 
-    // no more waves once the final boss is up, but the run clock keeps counting so the end
-    // screen reports the real time the run took, and the time limit still comes
+    // no more waves once the final boss is up, and no clock either: the fight runs until the boss
+    // or the player falls (the end screen's time played is kept by RunStats)
     private IEnumerator BossClock()
     {
-        while (true)
-        {
-            Tick();
-            yield return null;
-        }
+        while (true) yield return null;
     }
 
     private void Tick()

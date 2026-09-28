@@ -268,9 +268,34 @@ public class SpawnDirector : MonoBehaviour
     }
     public Rect PlayRect => GetPlayRectFromBorders();
 
+    // how thin the horde runs, e.g. while Yama's danmaku needs the room: 1 = as usual
+    [System.NonSerialized] public float BossCrowd = 1f;
+
+    // how tough an enemy made now would be, times its archetype's health: the map's curve at this
+    // point of the run and the horde's evolution pressure
+    public float HealthMultiplier => (Curve != null ? Curve.HealthAt(DifficultyTime) : 1f) * EvoHealth;
+
+    // nothing more spawns for the rest of the run (a final boss's end)
+    public void StopSpawning() => spawningStopped = true;
+
     private void HandleFinalBossStarted()
     {
-        var arch = finalBossArchetype != null ? finalBossArchetype : bossArchetype;
+        var mapBoss = Playfield.Active != null ? Playfield.Active.finalBoss : null;
+        var arch = mapBoss != null ? mapBoss : finalBossArchetype != null ? finalBossArchetype : bossArchetype;
+
+        // a boss with a fight of its own (Yama): it comes in its own way and runs the fight itself
+        if (arch != null && arch.prefab != null && arch.prefab.TryGetComponent(out YamaBoss _))
+        {
+            bossFight = true;
+            var p = GameObject.FindGameObjectWithTag("Player");
+            Vector2 at = p != null ? (Vector2)p.transform.position + Vector2.up * 4.6f : Vector2.zero;
+            var go = Instantiate(arch.prefab, at, Quaternion.identity);
+            activeBosses.Add(go);
+            EnvelopeCarrier.Attach(go, EnvelopeSource.FinalBoss);
+            go.GetComponent<YamaBoss>().Begin(this, arch);
+            return;
+        }
+
         if (arch == null || arch.prefab == null)
         {
             // nothing to fight: count it as beaten rather than hold the night up
@@ -302,12 +327,10 @@ public class SpawnDirector : MonoBehaviour
 
     }
 
-    [Tooltip("seconds of quiet after the final boss falls before the horde comes back for the rest of the run")]
-    [SerializeField, Min(0f)] private float quietAfterFinalBoss = 4f;
 
-    // the boss falls and takes the horde with it: a moment's quiet to pick up its envelope and the
-    // wen, then the night goes on until the Wuchang come for the player (RunTimeLimit)
-    private void FinalBossDown(Vector3 position)
+    // the boss falls and takes the horde with it, and the run is won: its envelope to open, the
+    // wen swept in, and the results (RunVictory)
+    public void FinalBossDown(Vector3 position)
     {
         if (finalBossDown) return;
         finalBossDown = true;
@@ -322,12 +345,16 @@ public class SpawnDirector : MonoBehaviour
     private IEnumerator ClearAfterBoss()
     {
         yield return null;
-        yield return PurgeInsideOut(null);
+        var player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            SealWave.Roll(player.transform.position);
+            while (SealWave.Running) yield return null;
+        }
+        else yield return PurgeInsideOut(null);
         GameEvents.OnCollectAllWen?.Invoke();
-        yield return new WaitForSeconds(quietAfterFinalBoss);
         if (timeUp) yield break;
-        bossFight = false;
-        spawningStopped = false;
+        RunVictory.Begin();
     }
 
     private void Update()
@@ -368,7 +395,7 @@ public class SpawnDirector : MonoBehaviour
             }
         }
 
-        float densityScale = (Curve != null ? Curve.DensityAt(DifficultyTime) : 1f) * EvoCrowd;
+        float densityScale = (Curve != null ? Curve.DensityAt(DifficultyTime) : 1f) * EvoCrowd * BossCrowd;
         float rushScale = finalRush ? densityScale * 1.2f : densityScale;
 
         int alive = CountAlive();
@@ -837,7 +864,7 @@ public class SpawnDirector : MonoBehaviour
         if (beat == null) return;
 
         float surge = Time.time < surgeUntil ? surgeCrowd : 1f;
-        float crowd = activeTimeline.crowdScale * surge * EvoCrowd;
+        float crowd = activeTimeline.crowdScale * surge * EvoCrowd * BossCrowd;
         int cap = Mathf.Min(HardCap, Mathf.RoundToInt(beat.cap * crowd));
         int minimum = Mathf.Min(cap, Mathf.RoundToInt(beat.minimum * crowd));
         int alive = CountAlive() - SpawnCrossing.Live;

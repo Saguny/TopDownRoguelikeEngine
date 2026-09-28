@@ -49,6 +49,13 @@ public static class PlayfieldBuilder
                 if (playfield.spawnTimeline == null) Debug.LogWarning("PlayfieldBuilder: no spawn timeline at " + layout.timeline);
             }
             if (layout.start != null && layout.start.Length == 2) playfield.playerStart = new Vector2(layout.start[0], layout.start[1]);
+            // what's set on the prefab by hand, not in the layout, survives a rebuild
+            var before = AssetDatabase.LoadAssetAtPath<GameObject>(layout.prefabPath);
+            if (before != null && before.TryGetComponent(out Playfield old))
+            {
+                playfield.difficulty = old.difficulty;
+                playfield.finalBoss = old.finalBoss;
+            }
             var groups = new Dictionary<string, Transform>();
             foreach (var o in layout.objects)
             {

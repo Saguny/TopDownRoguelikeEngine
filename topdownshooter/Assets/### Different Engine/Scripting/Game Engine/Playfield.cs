@@ -13,6 +13,9 @@ public class Playfield : MonoBehaviour
     [Tooltip("how tough its enemies get over the run and how fast levels come. empty uses the scene's")]
     public DifficultyCurve difficulty;
 
+    [Tooltip("this map's own final boss, e.g. Yama for the Courtyard. empty: the scene's")]
+    public EnemyArchetype finalBoss;
+
     [Tooltip("where the run begins, from the playfield's centre. used when this map is swapped into a scene")]
     public Vector2 playerStart = new Vector2(0f, -4f);
 
