@@ -14,8 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Treasure Gourd
   type: 24
-  icon: {fileID: 0}
-  iconFrames: []
+  icon: {fileID: 5863863638100628583, guid: e178fb59320563d4e8f78c981b8c2fb4, type: 3}
+  iconFrames:
+  - {fileID: 5863863638100628583, guid: e178fb59320563d4e8f78c981b8c2fb4, type: 3}
+  - {fileID: -1684589226679617875, guid: e178fb59320563d4e8f78c981b8c2fb4, type: 3}
+  - {fileID: -4225505482782985424, guid: e178fb59320563d4e8f78c981b8c2fb4, type: 3}
+  - {fileID: -6999150221590302530, guid: e178fb59320563d4e8f78c981b8c2fb4, type: 3}
   iconFps: 8
   includeInPool: 1
   value: 0
@@ -27,8 +31,171 @@ MonoBehaviour:
   overchargeCeiling: 1
   overchargeHalfStacks: 8
   evolutionPartner: {fileID: 0}
-  evolvedIcon: {fileID: 0}
-  evolvedIconFrames: []
+  evolvedIcon: {fileID: -600448601453836630, guid: 0289f17f7dc906344a858fc74113e481, type: 3}
+  evolvedIconFrames:
+  - {fileID: -600448601453836630, guid: 0289f17f7dc906344a858fc74113e481, type: 3}
+  - {fileID: -5082254930368992220, guid: 0289f17f7dc906344a858fc74113e481, type: 3}
+  - {fileID: 4994355703237344757, guid: 0289f17f7dc906344a858fc74113e481, type: 3}
+  - {fileID: 2919416514379921512, guid: 0289f17f7dc906344a858fc74113e481, type: 3}
   evolvedTitle: Gourd of Heaven and Earth
   backFrames: []
   backFps: 6
+  levels:
+  - damage: 10
+    suctionRadius: 2.6
+    flameLength: 2.6
+    burnDps: 6
+    burnSeconds: 2
+    cooldown: 5
+  - damage: 10
+    suctionRadius: 2.9
+    flameLength: 2.6
+    burnDps: 6
+    burnSeconds: 2.5
+    cooldown: 5
+  - damage: 13
+    suctionRadius: 2.9
+    flameLength: 3
+    burnDps: 6
+    burnSeconds: 2.5
+    cooldown: 5
+  - damage: 13
+    suctionRadius: 3.2
+    flameLength: 3
+    burnDps: 8
+    burnSeconds: 3
+    cooldown: 5
+  - damage: 16
+    suctionRadius: 3.2
+    flameLength: 3.4
+    burnDps: 8
+    burnSeconds: 3
+    cooldown: 4.5
+  - damage: 16
+    suctionRadius: 3.6
+    flameLength: 3.4
+    burnDps: 8
+    burnSeconds: 3.5
+    cooldown: 4.5
+  - damage: 19
+    suctionRadius: 3.6
+    flameLength: 3.8
+    burnDps: 10
+    burnSeconds: 3.5
+    cooldown: 4.5
+  - damage: 22
+    suctionRadius: 4
+    flameLength: 4.2
+    burnDps: 10
+    burnSeconds: 4
+    cooldown: 4
+  suctionSeconds: 1.5
+  suctionHalfAngle: 36
+  pullSpeed: 5
+  gatherDistance: 1.3
+  heldSlow: 0.25
+  turnRate: 150
+  spraySeconds: 0.75
+  flameHalfAngle: 17
+  burnTick: 0.5
+  maxBurnVisuals: 60
+  evolvedSuctionSeconds: 2
+  bulletPullSpeed: 9
+  sphereDamage: 60
+  damagePerBullet: 25
+  damagePerEnemy: 8
+  maxCharge: 40
+  blastRadius: 2.2
+  blastGrowth: 0.5
+  sphereSpeed: 7
+  sphereRange: 9
+  sphereScale: {x: 0.9, y: 1.8}
+  gourdFrames:
+  - {fileID: -1628895398660179124, guid: b771cdd2b75672346a1d702dc59d62dd, type: 3}
+  - {fileID: 6022216336324523404, guid: b771cdd2b75672346a1d702dc59d62dd, type: 3}
+  - {fileID: -5644388035041934801, guid: b771cdd2b75672346a1d702dc59d62dd, type: 3}
+  - {fileID: -6710359659381706674, guid: b771cdd2b75672346a1d702dc59d62dd, type: 3}
+  aimFrames:
+  - {fileID: -1395205084251053591, guid: c9a759028a6af534f98fbac9becc5e3c, type: 3}
+  - {fileID: -3064251338048718767, guid: c9a759028a6af534f98fbac9becc5e3c, type: 3}
+  - {fileID: 2005575232591675683, guid: c9a759028a6af534f98fbac9becc5e3c, type: 3}
+  - {fileID: 3214523902565522255, guid: c9a759028a6af534f98fbac9becc5e3c, type: 3}
+  - {fileID: -3593400397374262285, guid: c9a759028a6af534f98fbac9becc5e3c, type: 3}
+  - {fileID: 1664991674425731092, guid: c9a759028a6af534f98fbac9becc5e3c, type: 3}
+  - {fileID: 1897930303917752801, guid: c9a759028a6af534f98fbac9becc5e3c, type: 3}
+  - {fileID: 1067184793411460086, guid: c9a759028a6af534f98fbac9becc5e3c, type: 3}
+  aimMouthPixels: 9.5
+  popFrames:
+  - {fileID: -1772494651989504643, guid: da9186c06691adc4da7a3716e56ceec3, type: 3}
+  - {fileID: -7253609458275635975, guid: da9186c06691adc4da7a3716e56ceec3, type: 3}
+  - {fileID: -2268770325709936458, guid: da9186c06691adc4da7a3716e56ceec3, type: 3}
+  - {fileID: 7747324070216451976, guid: da9186c06691adc4da7a3716e56ceec3, type: 3}
+  - {fileID: -6656339424257441721, guid: da9186c06691adc4da7a3716e56ceec3, type: 3}
+  suckFrames:
+  - {fileID: 8902958872599283708, guid: 2176d41ae49405f459b0d943355407d6, type: 3}
+  - {fileID: -419875711495062037, guid: 2176d41ae49405f459b0d943355407d6, type: 3}
+  - {fileID: -1762043653974553144, guid: 2176d41ae49405f459b0d943355407d6, type: 3}
+  - {fileID: -727537785718040591, guid: 2176d41ae49405f459b0d943355407d6, type: 3}
+  - {fileID: -1326388659631062685, guid: 2176d41ae49405f459b0d943355407d6, type: 3}
+  - {fileID: -602450871869176909, guid: 2176d41ae49405f459b0d943355407d6, type: 3}
+  suckMouthPixels: 46
+  suckArtLength: 92
+  flameFrames:
+  - {fileID: -8736811083954132599, guid: 213892c5b5154e74cb531eddfa82f5b9, type: 3}
+  - {fileID: 7992298553742197299, guid: 213892c5b5154e74cb531eddfa82f5b9, type: 3}
+  - {fileID: -1692139437752119123, guid: 213892c5b5154e74cb531eddfa82f5b9, type: 3}
+  - {fileID: -3742404790269417223, guid: 213892c5b5154e74cb531eddfa82f5b9, type: 3}
+  - {fileID: -1348730368485389086, guid: 213892c5b5154e74cb531eddfa82f5b9, type: 3}
+  - {fileID: -126053028062437886, guid: 213892c5b5154e74cb531eddfa82f5b9, type: 3}
+  - {fileID: 7396464062986274821, guid: 213892c5b5154e74cb531eddfa82f5b9, type: 3}
+  - {fileID: 1922971296705329149, guid: 213892c5b5154e74cb531eddfa82f5b9, type: 3}
+  - {fileID: 4105036609873662517, guid: 213892c5b5154e74cb531eddfa82f5b9, type: 3}
+  - {fileID: 6868490063613851024, guid: 213892c5b5154e74cb531eddfa82f5b9, type: 3}
+  - {fileID: -4455029220558123810, guid: 213892c5b5154e74cb531eddfa82f5b9, type: 3}
+  flameMouthPixels: 53
+  flameArtLength: 104
+  burnFrames:
+  - {fileID: 4369732917987201084, guid: abfef0cfedc75c74491a6a2d0b2a25d1, type: 3}
+  - {fileID: -7176733244063878876, guid: abfef0cfedc75c74491a6a2d0b2a25d1, type: 3}
+  - {fileID: 7721189290024903546, guid: abfef0cfedc75c74491a6a2d0b2a25d1, type: 3}
+  - {fileID: -7398413491246315665, guid: abfef0cfedc75c74491a6a2d0b2a25d1, type: 3}
+  - {fileID: 2618391034707332399, guid: abfef0cfedc75c74491a6a2d0b2a25d1, type: 3}
+  - {fileID: -43041022920161176, guid: abfef0cfedc75c74491a6a2d0b2a25d1, type: 3}
+  orbFrames:
+  - {fileID: -7781160745880735605, guid: b9ffbecf9319b924ebcc61f4579f920e, type: 3}
+  - {fileID: -1087431082040201520, guid: b9ffbecf9319b924ebcc61f4579f920e, type: 3}
+  - {fileID: -1399417352590168692, guid: b9ffbecf9319b924ebcc61f4579f920e, type: 3}
+  - {fileID: -7212025037024552589, guid: b9ffbecf9319b924ebcc61f4579f920e, type: 3}
+  - {fileID: -1361291198140197807, guid: b9ffbecf9319b924ebcc61f4579f920e, type: 3}
+  - {fileID: -4461946695181588633, guid: b9ffbecf9319b924ebcc61f4579f920e, type: 3}
+  blastFrames:
+  - {fileID: -756503475006988323, guid: 1c70d06fc81db8a408d37abc1285bb05, type: 3}
+  - {fileID: -4193117958825547919, guid: 1c70d06fc81db8a408d37abc1285bb05, type: 3}
+  - {fileID: 3035816344240833873, guid: 1c70d06fc81db8a408d37abc1285bb05, type: 3}
+  - {fileID: 7502242267399788740, guid: 1c70d06fc81db8a408d37abc1285bb05, type: 3}
+  - {fileID: -8634276355783844468, guid: 1c70d06fc81db8a408d37abc1285bb05, type: 3}
+  - {fileID: 3174616619467257213, guid: 1c70d06fc81db8a408d37abc1285bb05, type: 3}
+  - {fileID: 8028021652790910509, guid: 1c70d06fc81db8a408d37abc1285bb05, type: 3}
+  - {fileID: 2046609817274352430, guid: 1c70d06fc81db8a408d37abc1285bb05, type: 3}
+  - {fileID: 7937622007462807179, guid: 1c70d06fc81db8a408d37abc1285bb05, type: 3}
+  - {fileID: -6018206291547494996, guid: 1c70d06fc81db8a408d37abc1285bb05, type: 3}
+  - {fileID: -6711667383770828487, guid: 1c70d06fc81db8a408d37abc1285bb05, type: 3}
+  - {fileID: 1063968408851673742, guid: 1c70d06fc81db8a408d37abc1285bb05, type: 3}
+  blastArtRadius: 2.108108
+  absorbFrames:
+  - {fileID: 5468247565240434139, guid: 20bf12fa267a74e449737213ca35ddc1, type: 3}
+  - {fileID: -8109278150202510574, guid: 20bf12fa267a74e449737213ca35ddc1, type: 3}
+  - {fileID: -8544429244872213630, guid: 20bf12fa267a74e449737213ca35ddc1, type: 3}
+  - {fileID: 5706474146325461324, guid: 20bf12fa267a74e449737213ca35ddc1, type: 3}
+  - {fileID: 2048944464118101542, guid: 20bf12fa267a74e449737213ca35ddc1, type: 3}
+  fps: 16.7
+  sortingLayer: Aura
+  sortingOrder: 6
+  soundVolume: 0.4
+  uncorkSound: {fileID: 8300000, guid: f85778d1ecad427394ad94a22d56871c, type: 3}
+  pullSound: {fileID: 8300000, guid: afc189c484d148738a6b57c9d8bcff80, type: 3}
+  flameSound: {fileID: 8300000, guid: 2b5d10a9b1724c64b02c0451d8606058, type: 3}
+  chargeSound: {fileID: 8300000, guid: c8abe6650e444acead18a2df03d6f4c9, type: 3}
+  absorbSound: {fileID: 8300000, guid: 52fbd33fccc54217b0b2bf46d62b23e9, type: 3}
+  launchSound: {fileID: 8300000, guid: 4a2ffa39a63f4cf098b35b78c07884d2, type: 3}
+  blastSound: {fileID: 8300000, guid: 6f4ea1ad7a0f45d08f21a5b2c5889d3c, type: 3}

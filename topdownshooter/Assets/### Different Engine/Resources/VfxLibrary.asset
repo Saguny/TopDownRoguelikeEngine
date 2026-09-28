@@ -225,6 +225,7 @@ MonoBehaviour:
   - {fileID: -5618124522825078196, guid: 071b7f955ed48674085ab8158a91d3ba, type: 3}
   - {fileID: 982568288106974168, guid: 071b7f955ed48674085ab8158a91d3ba, type: 3}
   - {fileID: 7143101463611644472, guid: 071b7f955ed48674085ab8158a91d3ba, type: 3}
+  envelopeVolume: 0.25
   envelopePickupSound: {fileID: 8300000, guid: f874ea8147237424c8c08cab7bd9fddd, type: 3}
   envelopeIdle: {fileID: 8300000, guid: 4c0e4b4afc14c1841b979820fee3a54e, type: 3}
   envelopeClick: {fileID: 8300000, guid: f4cc5375b83ffe140aa9de68d98bd91e, type: 3}
@@ -268,5 +269,6 @@ MonoBehaviour:
   - {fileID: 3666243207347529202, guid: d36ed5dc3c9f8c044b8ad203f7eaf65c, type: 3}
   - {fileID: 7626347415906249963, guid: d36ed5dc3c9f8c044b8ad203f7eaf65c, type: 3}
   - {fileID: 770962241346342093, guid: d36ed5dc3c9f8c044b8ad203f7eaf65c, type: 3}
+  wuchangVolume: 0.45
   chainSound: {fileID: 8300000, guid: 18f8989a0effe744e8c0c5abb470e76f, type: 3}
   swallowSound: {fileID: 8300000, guid: b3139bd37f4f7b84ea425fe83120e971, type: 3}
