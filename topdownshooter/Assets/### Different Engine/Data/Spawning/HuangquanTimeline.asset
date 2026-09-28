@@ -29,7 +29,7 @@ MonoBehaviour:
       weight: 1
   - label: 'Will-o-wisps'
     fromMinute: 1.5
-    minimum: 22
+    minimum: 20
     perInterval: 3
     interval: 1.25
     cap: 45
@@ -40,7 +40,7 @@ MonoBehaviour:
       weight: 2
   - label: 'The hungry follow'
     fromMinute: 3
-    minimum: 48
+    minimum: 38
     perInterval: 4
     interval: 1
     cap: 84
@@ -53,7 +53,7 @@ MonoBehaviour:
       weight: 1
   - label: 'Lily fields'
     fromMinute: 4.5
-    minimum: 78
+    minimum: 58
     perInterval: 8
     interval: 1
     cap: 130
@@ -66,8 +66,8 @@ MonoBehaviour:
       weight: 5.25
   - label: 'Fox fires'
     fromMinute: 7.5
-    minimum: 140
-    perInterval: 10
+    minimum: 88
+    perInterval: 6
     interval: 1
     cap: 195
     enemies:
@@ -79,8 +79,8 @@ MonoBehaviour:
       weight: 2
   - label: 'Coffin bearers'
     fromMinute: 9
-    minimum: 166
-    perInterval: 11
+    minimum: 102
+    perInterval: 7
     interval: 0.9
     cap: 226
     enemies:
@@ -92,8 +92,8 @@ MonoBehaviour:
       weight: 3.5
   - label: 'Ghost festival'
     fromMinute: 12
-    minimum: 220
-    perInterval: 16
+    minimum: 120
+    perInterval: 10
     interval: 0.9
     cap: 266
     enemies:
@@ -105,8 +105,8 @@ MonoBehaviour:
       weight: 1
   - label: 'The river rises'
     fromMinute: 13.5
-    minimum: 260
-    perInterval: 17
+    minimum: 133
+    perInterval: 11
     interval: 0.8
     cap: 296
     enemies:
@@ -122,8 +122,8 @@ MonoBehaviour:
       weight: 0.3
   - label: 'The guardians stir'
     fromMinute: 18
-    minimum: 351
-    perInterval: 18
+    minimum: 152
+    perInterval: 12
     interval: 0.8
     cap: 338
     enemies:
@@ -137,8 +137,8 @@ MonoBehaviour:
       weight: 2
   - label: 'Nine tails'
     fromMinute: 22.5
-    minimum: 442
-    perInterval: 24
+    minimum: 170
+    perInterval: 16
     interval: 0.7
     cap: 378
     enemies:
@@ -150,8 +150,8 @@ MonoBehaviour:
       weight: 2
   - label: 'Endless procession'
     fromMinute: 27
-    minimum: 540
-    perInterval: 25
+    minimum: 184
+    perInterval: 16
     interval: 0.7
     cap: 408
     enemies:
@@ -165,8 +165,8 @@ MonoBehaviour:
       weight: 0.5
   - label: 'Forgetting'
     fromMinute: 31.5
-    minimum: 610
-    perInterval: 30
+    minimum: 198
+    perInterval: 20
     interval: 0.6
     cap: 440
     enemies:
@@ -180,8 +180,8 @@ MonoBehaviour:
       weight: 0.8
   - label: 'The sealed bridge'
     fromMinute: 36
-    minimum: 690
-    perInterval: 30
+    minimum: 212
+    perInterval: 20
     interval: 0.6
     cap: 470
     enemies:
@@ -197,8 +197,8 @@ MonoBehaviour:
       weight: 1
   - label: 'The Yellow Springs'
     fromMinute: 40.5
-    minimum: 775
-    perInterval: 35
+    minimum: 230
+    perInterval: 23
     interval: 0.5
     cap: 510
     enemies:

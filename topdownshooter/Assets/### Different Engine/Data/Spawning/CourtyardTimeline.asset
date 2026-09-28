@@ -29,7 +29,7 @@ MonoBehaviour:
       weight: 3.5
   - label: 'Wisps gather'
     fromMinute: 1.5
-    minimum: 21
+    minimum: 19
     perInterval: 3
     interval: 1.25
     cap: 42
@@ -40,7 +40,7 @@ MonoBehaviour:
       weight: 2
   - label: 'The hungry wake'
     fromMinute: 3
-    minimum: 48
+    minimum: 36
     perInterval: 4
     interval: 1
     cap: 80
@@ -53,7 +53,7 @@ MonoBehaviour:
       weight: 2
   - label: 'Hungry procession'
     fromMinute: 4.5
-    minimum: 78
+    minimum: 58
     perInterval: 8
     interval: 1
     cap: 130
@@ -66,8 +66,8 @@ MonoBehaviour:
       weight: 1
   - label: 'Foxes in the eaves'
     fromMinute: 7.5
-    minimum: 140
-    perInterval: 10
+    minimum: 86
+    perInterval: 6
     interval: 1
     cap: 190
     enemies:
@@ -79,8 +79,8 @@ MonoBehaviour:
       weight: 3.5
   - label: 'Coffin row'
     fromMinute: 9
-    minimum: 166
-    perInterval: 11
+    minimum: 99
+    perInterval: 7
     interval: 0.9
     cap: 220
     enemies:
@@ -92,8 +92,8 @@ MonoBehaviour:
       weight: 0.3
   - label: 'Fox fire'
     fromMinute: 12
-    minimum: 220
-    perInterval: 16
+    minimum: 117
+    perInterval: 10
     interval: 0.9
     cap: 260
     enemies:
@@ -103,8 +103,8 @@ MonoBehaviour:
       weight: 7
   - label: 'Temple overrun'
     fromMinute: 13.5
-    minimum: 252
-    perInterval: 17
+    minimum: 130
+    perInterval: 11
     interval: 0.8
     cap: 290
     enemies:
@@ -120,8 +120,8 @@ MonoBehaviour:
       weight: 0.4
   - label: 'Year of the Nian'
     fromMinute: 18
-    minimum: 338
-    perInterval: 18
+    minimum: 148
+    perInterval: 12
     interval: 0.8
     cap: 330
     enemies:
@@ -133,8 +133,8 @@ MonoBehaviour:
       weight: 2
   - label: 'Nine-tailed night'
     fromMinute: 22.5
-    minimum: 432
-    perInterval: 24
+    minimum: 166
+    perInterval: 16
     interval: 0.7
     cap: 370
     enemies:
@@ -146,8 +146,8 @@ MonoBehaviour:
       weight: 5.25
   - label: 'Hungry ghost festival'
     fromMinute: 27
-    minimum: 525
-    perInterval: 25
+    minimum: 180
+    perInterval: 16
     interval: 0.7
     cap: 400
     enemies:
@@ -159,8 +159,8 @@ MonoBehaviour:
       weight: 0.5
   - label: 'The dead march'
     fromMinute: 31.5
-    minimum: 600
-    perInterval: 30
+    minimum: 194
+    perInterval: 20
     interval: 0.6
     cap: 430
     enemies:
@@ -174,8 +174,8 @@ MonoBehaviour:
       weight: 0.8
   - label: 'Every grave open'
     fromMinute: 36
-    minimum: 675
-    perInterval: 30
+    minimum: 207
+    perInterval: 20
     interval: 0.6
     cap: 460
     enemies:
@@ -191,8 +191,8 @@ MonoBehaviour:
       weight: 1
   - label: 'The last night'
     fromMinute: 40.5
-    minimum: 750
-    perInterval: 35
+    minimum: 225
+    perInterval: 23
     interval: 0.5
     cap: 500
     enemies:

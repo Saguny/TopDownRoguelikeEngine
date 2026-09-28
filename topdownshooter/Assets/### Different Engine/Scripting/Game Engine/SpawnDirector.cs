@@ -66,7 +66,23 @@ public class SpawnDirector : MonoBehaviour
              "the Final Rush, bosses and the secret boss work the same either way")]
     [SerializeField] private SpawnTimeline timeline;
     [Tooltip("share of spawns placed on the side the player is walking toward, so running away runs into the horde")]
-    [SerializeField, Range(0f, 1f)] private float aheadBias = 0.45f;
+    [SerializeField, Range(0f, 1f)] private float aheadBias = 0.25f;
+
+    // the horde comes on a front, not from everywhere at once: most of it arrives from one side,
+    // the front drifting round slowly and every so often swinging to another side of the screen,
+    // so there's a direction to face and room to move into. the rest still comes from anywhere
+    [Header("Fronts (where the horde comes from)")]
+    [Tooltip("share of the horde that comes on the front (the rest from anywhere, or ahead of the player)")]
+    [SerializeField, Range(0f, 1f)] private float frontShare = 0.75f;
+    [Tooltip("degrees either side of the front it comes from")]
+    [SerializeField, Range(10f, 180f)] private float frontSpread = 55f;
+    [Tooltip("degrees a second the front drifts round")]
+    [SerializeField] private float frontDrift = 6f;
+    [Tooltip("seconds between the front swinging to another side, a random time in this range")]
+    [SerializeField] private Vector2 frontSwingEvery = new Vector2(25f, 40f);
+    [Tooltip("seconds a wave takes to build up to its full crowd after the break, so a cleared screen doesn't refill all at once")]
+    [SerializeField, Min(0f)] private float waveBuildUp = 35f;
+    private float frontAngle, nextSwing, waveStartedAt = -999f;
     [Tooltip("enemies left further behind than this many screen half-diagonals are brought round in front again. 0 turns it off")]
     [SerializeField, Min(0f)] private float recycleDistance = 1.6f;
     [Tooltip("the least time between two timeline events, so ones that come due together don't land at once")]
@@ -218,6 +234,8 @@ public class SpawnDirector : MonoBehaviour
     private void HandleWaveStarted(int wave)
     {
         betweenWaves = false;
+        // the first wave has its own gentle opening; the ones after a rush build up from a clear screen
+        if (wave > 1) waveStartedAt = Time.time;
 
         // treat wave 1 as "new run" for the easter egg
         if (wave == 1)
@@ -358,6 +376,7 @@ public class SpawnDirector : MonoBehaviour
         timeElapsed += Time.deltaTime;
         if (rushBarDirty) { rushBarDirty = false; UpdateFinalRushProgressBar(); }
         TrackPlayerHeading();
+        TrackFront();
         TrackEvolutions();
         if (spawningStopped) return;
 
@@ -715,7 +734,9 @@ public class SpawnDirector : MonoBehaviour
         for (int tries = 0; tries < 6; tries++)
         {
             bool ahead = heading.sqrMagnitude > 0.25f && Random.value < aheadBias;
-            Vector2 dir = ahead ? Rotate(heading.normalized, Random.Range(-60f, 60f)) : RandomDirection();
+            Vector2 dir = ahead ? Rotate(heading.normalized, Random.Range(-60f, 60f))
+                : Random.value < frontShare ? FrontDirection()
+                : RandomDirection();
             if (TryEdgePoint(dir, Random.Range(0.6f, 0.6f + offscreenBand), out var ring)) return ring;
         }
 
@@ -869,8 +890,10 @@ public class SpawnDirector : MonoBehaviour
 
         float surge = Time.time < surgeUntil ? surgeCrowd : 1f;
         float crowd = activeTimeline.crowdScale * surge * EvoCrowd * BossCrowd;
-        int cap = Mathf.Min(HardCap, Mathf.RoundToInt(beat.cap * crowd));
-        int minimum = Mathf.Min(cap, Mathf.RoundToInt(beat.minimum * crowd));
+        // after a break the wave builds up to its crowd: half the cap and none of the refill at once
+        float build = WaveBuild;
+        int cap = Mathf.Min(HardCap, Mathf.RoundToInt(beat.cap * crowd * Mathf.Lerp(0.5f, 1f, build)));
+        int minimum = Mathf.Min(cap, Mathf.RoundToInt(beat.minimum * crowd * build));
         int alive = CountAlive() - SpawnCrossing.Live;
 
         trickleTimer -= Time.deltaTime * surge;
@@ -1233,6 +1256,25 @@ public class SpawnDirector : MonoBehaviour
         float target = Mathf.Min(evolutionsHeld, evoPressureMax);
         evoPressure = Mathf.MoveTowards(evoPressure, target, Time.deltaTime / evoRampSeconds);
     }
+
+    private Vector2 FrontDirection()
+    {
+        float a = (frontAngle + Random.Range(-frontSpread, frontSpread)) * Mathf.Deg2Rad;
+        return new Vector2(Mathf.Cos(a), Mathf.Sin(a));
+    }
+
+    // the front drifting, and swinging to another side now and then
+    private void TrackFront()
+    {
+        if (nextSwing <= 0f) { frontAngle = Random.value * 360f; nextSwing = Time.time + Random.Range(frontSwingEvery.x, frontSwingEvery.y); }
+        frontAngle += frontDrift * Time.deltaTime;
+        if (Time.time < nextSwing) return;
+        frontAngle += Random.Range(100f, 260f);
+        nextSwing = Time.time + Random.Range(frontSwingEvery.x, frontSwingEvery.y);
+    }
+
+    // 0 as a wave starts to 1 once it has built up
+    private float WaveBuild => waveBuildUp <= 0f ? 1f : Mathf.Clamp01((Time.time - waveStartedAt) / waveBuildUp);
 
     // where the player's been walking lately, from how far they moved, whatever moves them
     private void TrackPlayerHeading()

@@ -568,7 +568,7 @@ MonoBehaviour:
   maxSpawnCooldownEarly: 0.15
   maxSpawnCooldownLate: 0.05
   timeline: {fileID: 11400000, guid: ae986a71d27641dcb727583eb9504367, type: 2}
-  aheadBias: 0.45
+  aheadBias: 0.25
   recycleDistance: 1.6
   secondsBetweenEvents: 2
   eliteSize: 1.25
