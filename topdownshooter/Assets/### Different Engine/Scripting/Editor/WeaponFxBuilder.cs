@@ -142,7 +142,8 @@ public static class WeaponFxBuilder
             meteor.spriteAngleOffset = 0f;
             meteor.impactEffectPrefab = impact;
             meteor.impactEffectDuration = 0.6f;
-            meteor.targetMarkPrefab = mark;
+            // no seal where it'll land: telegraphing the ground is the bosses' language, not the player's
+            meteor.targetMarkPrefab = null;
             meteor.craterPrefab = crater;
             meteor.impactShake = 0.05f;
         });

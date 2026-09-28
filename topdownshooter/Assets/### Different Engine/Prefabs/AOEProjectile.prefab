@@ -53,7 +53,7 @@ MonoBehaviour:
   impactEffectPrefab: {fileID: 8778668243115159914, guid: c7723f77bdc20084cb2890532e2a2656, type: 3}
   impactEffectDuration: 0.6
   impactVisualScale: 1
-  targetMarkPrefab: {fileID: 1735380146410646954, guid: 8c3099ba5a5398647bab74473e0b6b11, type: 3}
+  targetMarkPrefab: {fileID: 0}
   craterPrefab: {fileID: 7765594953526533672, guid: 7259c9e1f02ddd14ca0c91846138023d, type: 3}
   impactShake: 0.05
   spriteAngleOffset: 0
