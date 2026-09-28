@@ -59,8 +59,8 @@ public struct Shot
 // the boss's bullets, Touhou's way: hundreds of them, each a sprite in one shared mesh (one draw),
 // moved and checked against the player in one loop. the player's hitbox is small and shown while
 // bullets are about; passing close to a bullet grazes it (a spark, a tick). a hit takes a fixed
-// share of the player's max health, whatever the run's difficulty, then a moment's invulnerability
-// and the bullets right round the player cleared, so nobody is ever killed in one hit. a phase's
+// share of the player's max health, whatever the run's difficulty, then a moment's invulnerability,
+// so nobody is ever killed in one hit (or in a burst of them). a phase's
 // end cancels everything into sparkles and wen. made on first use
 public class Danmaku : MonoBehaviour
 {
@@ -75,7 +75,6 @@ public class Danmaku : MonoBehaviour
     private const float PlayerHitRadius = 0.16f;
     private const float GrazeRadius = 0.75f;
     private const float MercySeconds = 1.3f;
-    private const float MercyClear = 2.4f;
     private const float Cell = 32f;
     private const float Forget = 30f;               // this far from the player, a bullet's gone
 
@@ -343,10 +342,9 @@ public class Danmaku : MonoBehaviour
 
         if (hit)
         {
-            // a moment's grace, and the bullets right round the player cleared, so a hit is never
-            // the first of several at once
+            // a moment's grace, so a hit is never the first of several at once. the bullets stay:
+            // getting out of them is still the player's job
             player.GrantInvulnerability(MercySeconds);
-            CancelWithin(me, MercyClear, false);
             PlayerHit?.Invoke(hitAt);
         }
     }
