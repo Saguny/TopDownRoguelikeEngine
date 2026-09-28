@@ -84,6 +84,7 @@ public class SfxPlayer : MonoBehaviour
         recent[id] = (now, index);
 
         var src = sources[index];
+        AudioRouting.Route(src);        // into the SFX group, so the SFX volume reaches it
         src.transform.position = position;
         src.clip = clip;
         src.volume = Mathf.Clamp01(volume);

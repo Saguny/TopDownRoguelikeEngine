@@ -107,6 +107,7 @@ public class PlayerHealth : MonoBehaviour, IHealth
 
         _audio = GetComponent<AudioSource>();
         if (_audio == null) _audio = gameObject.AddComponent<AudioSource>();
+        AudioRouting.Route(_audio);
 
         PushHealthChanged();
         UpdateHudBar();

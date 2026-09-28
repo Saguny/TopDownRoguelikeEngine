@@ -672,7 +672,7 @@ public class TreasureGourd : Weapon<TreasureGourdData>
         cone.enabled = charge.enabled = false;
         flyTrail = new Afterimage(gourd, 5, 0.35f, 0.45f, 0.7f);
 
-        voice = new GameObject("Gourd Voice").AddComponent<AudioSource>();
+        voice = AudioRouting.Route(new GameObject("Gourd Voice").AddComponent<AudioSource>());
         voice.transform.SetParent(Fx, false);
         voice.playOnAwake = false;
         voice.spatialBlend = 1f;    // like SfxPlayer's voices, so it sits in the mix with the rest

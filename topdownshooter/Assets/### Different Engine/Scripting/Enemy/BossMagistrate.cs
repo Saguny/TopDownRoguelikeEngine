@@ -442,11 +442,11 @@ public class BossMagistrate : MonoBehaviour
     private void MakeVoices()
     {
         voices = new AudioSource[6];
-        for (int i = 0; i < voices.Length; i++) voices[i] = Voice(gameObject.AddComponent<AudioSource>());
+        for (int i = 0; i < voices.Length; i++) voices[i] = Voice(AudioRouting.Route(gameObject.AddComponent<AudioSource>()));
 
         groundVoices = new AudioSource[8];
         for (int i = 0; i < groundVoices.Length; i++)
-            groundVoices[i] = Voice(new GameObject("Magistrate Strike Voice").AddComponent<AudioSource>());
+            groundVoices[i] = Voice(AudioRouting.Route(new GameObject("Magistrate Strike Voice").AddComponent<AudioSource>()));
     }
 
     private static AudioSource Voice(AudioSource v)

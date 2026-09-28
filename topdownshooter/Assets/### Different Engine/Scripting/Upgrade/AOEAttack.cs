@@ -72,7 +72,7 @@ public class AOEAttack : MonoBehaviour
             _meteorSpeed = Mathf.Max(0.1f, meteor.speed);
         _audio = GetComponent<AudioSource>();
         if (_audio == null)
-            _audio = gameObject.AddComponent<AudioSource>();
+            _audio = AudioRouting.Route(gameObject.AddComponent<AudioSource>());
 
         if (targetCamera == null)
             targetCamera = Camera.main;
