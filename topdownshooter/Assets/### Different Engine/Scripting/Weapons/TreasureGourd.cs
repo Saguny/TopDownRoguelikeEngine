@@ -143,7 +143,8 @@ public class TreasureGourd : Weapon<TreasureGourdData>
     // the furthest group of enemies it could pull: every enemy in reach is tried as a direction, and
     // each direction counts who'd be in the cone. of the directions with a real group in them (Min
     // Group or more), the one whose group sits furthest out wins; with no group that size anywhere,
-    // the biggest there is. false when there's nobody in reach at all
+    // the biggest there is. with only bosses and elites in reach (a boss fought alone), the nearest
+    // of them: it can't pull them, but it still fires at them. false when there's nobody in reach
     private bool FindGroup(float reach, out Vector2 centre)
     {
         Vector2 me = transform.position;
@@ -153,7 +154,16 @@ public class TreasureGourd : Weapon<TreasureGourdData>
         EnemiesIn(me, far, nearby);
         group.Clear();
         foreach (var e in nearby) if (!Heavy(e)) group.Add(e);
-        if (group.Count == 0) return false;
+        if (group.Count == 0)
+        {
+            float closest = float.MaxValue;
+            foreach (var e in nearby)
+            {
+                float d = ((Vector2)e.transform.position - me).sqrMagnitude;
+                if (d < closest) { closest = d; centre = e.transform.position; }
+            }
+            return nearby.Count > 0;
+        }
 
         float half = Data.suctionHalfAngle * 0.85f;
         int step = Mathf.Max(1, group.Count / 48);             // a big crowd: try every few, not all

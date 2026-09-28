@@ -115,7 +115,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseMaxHealth: 300
   currentHealth: 0
-  armor: 5
+  armor: 0
   armour: 0
   wenDropPrefab: {fileID: 6789325886152309237, guid: 42881677769281a46a72816921134c5f, type: 3}
   minWen: 60
@@ -315,6 +315,6 @@ MonoBehaviour:
   musicVolume: 1
   musicFadeOut: 2
   musicFadeIn: 3
-  healthPerCurve: 5600
+  health: 205000
   crowdDuringFight: 0
   hoverDistance: 5

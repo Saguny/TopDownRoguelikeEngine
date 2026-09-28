@@ -18,5 +18,5 @@ MonoBehaviour:
   baseHealth: 200
   baseSpeed: 0.5
   baseDamage: 25
-  armour: 0.2
+  armour: 0
   contactTickInterval: 1.5

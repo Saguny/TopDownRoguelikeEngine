@@ -16,8 +16,8 @@ using UnityEngine;
 // he's fought alone: nothing else spawns once he comes (Crowd During Fight turns the horde back up)
 // no clock runs while he's up (GameLoopController): it's him or the player. his bullets take a
 // fixed share of the player's max health, never scaled with the run (Danmaku), and damage never
-// carries from one phase into the next, so he can't be burst down. his health follows the map's
-// health curve and the horde's evolution pressure (SpawnDirector). art and sounds from Resources
+// carries from one phase into the next, so he can't be burst down. his health is set for a fight of
+// about 2:30 against six evolved weapons (Tools/Balance/boss.py). art and sounds from Resources
 // (YamaArt); his music is the Boss Music slot below
 [RequireComponent(typeof(EnemyHealth))]
 public class YamaBoss : MonoBehaviour, IDamageGate
@@ -30,8 +30,8 @@ public class YamaBoss : MonoBehaviour, IDamageGate
     [Min(0.1f)] public float musicFadeIn = 3f;
 
     [Header("Health")]
-    [Tooltip("his health for each step of the map's health curve when he comes (x15 or so at 27:00 on the Courtyard), times the horde's evolution pressure")]
-    [Min(1f)] public float healthPerCurve = 5600f;
+    [Tooltip("his whole health. set for a fight of about 2:30 against six evolved weapons (Tools/Balance/boss.py works it out and writes it here); a weaker build takes longer, and it's him or you")]
+    [Min(1f)] public float health = 205000f;
     [Tooltip("each phase's share of his health, in order: Verdict, Ledger, Tribute, Naihe, Ten Courts, Mirror")]
     public float[] phaseShares = { 0.12f, 0.18f, 0.12f, 0.18f, 0.19f, 0.21f };
 
@@ -58,7 +58,7 @@ public class YamaBoss : MonoBehaviour, IDamageGate
     private float floor, top;
     private bool broke, invulnerable = true, dying, allowKill;
 
-    private EnemyHealth health;
+    private EnemyHealth hp;
     private SpawnDirector director;
     private SpriteRenderer body, halo, gate, wheel;
     private Collider2D hurtbox;
@@ -80,14 +80,14 @@ public class YamaBoss : MonoBehaviour, IDamageGate
     public void Begin(SpawnDirector spawner, EnemyArchetype arch)
     {
         director = spawner;
-        health = GetComponent<EnemyHealth>();
-        float total = healthPerCurve * (director != null ? director.HealthMultiplier : 1f);
-        health.SetScaled(total);
+        hp = GetComponent<EnemyHealth>();
+        float total = health;
+        hp.SetScaled(total);
         if (arch != null)
         {
-            health.armour = arch.armour;
-            health.physicalTaken = arch.physicalTaken;
-            health.magicalTaken = arch.magicalTaken;
+            hp.armour = arch.armour;
+            hp.physicalTaken = arch.physicalTaken;
+            hp.magicalTaken = arch.magicalTaken;
         }
 
         phases = new[]
@@ -259,7 +259,7 @@ public class YamaBoss : MonoBehaviour, IDamageGate
         if (phase >= 0 && !dying)
         {
             float span = Mathf.Max(1f, top - floor);
-            screen.SetBar((health.Current - floor) / span, cardsLeft, invulnerable);
+            screen.SetBar((hp.Current - floor) / span, cardsLeft, invulnerable);
         }
     }
 
@@ -423,7 +423,7 @@ public class YamaBoss : MonoBehaviour, IDamageGate
     {
         var p = phases[i];
         phase = i;
-        top = i == 0 ? health.Max : floors[i - 1];
+        top = i == 0 ? hp.Max : floors[i - 1];
         floor = floors[i];
         broke = false;
         invulnerable = true;
@@ -586,7 +586,7 @@ public class YamaBoss : MonoBehaviour, IDamageGate
         else RunVictory.Begin();
         allowKill = true;
         if (hurtbox != null) hurtbox.enabled = false;
-        health.TakeDamage(health.Current + 1f, DamageKind.Normal);
+        hp.TakeDamage(hp.Current + 1f, DamageKind.Normal);
     }
 
     // ================================================================ his danmaku
@@ -742,7 +742,7 @@ public class YamaBoss : MonoBehaviour, IDamageGate
                 Danmaku.Fan(E, Danmaku.AimAt(E), 3, 24f, Shot.Of(BulletType.Flame, BulletColor.Red, 3.6f));
             }
             float span = Mathf.Max(1f, top - floor);
-            if (ring >= 2.2f && (health.Current - floor) / span < 0.5f)
+            if (ring >= 2.2f && (hp.Current - floor) / span < 0.5f)
             {
                 ring = 0f;
                 Danmaku.Ring(E, 24, UnityEngine.Random.value * 360f, Shot.Of(BulletType.Orb, BulletColor.Bone, 1.6f));

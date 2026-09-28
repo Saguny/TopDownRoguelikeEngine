@@ -271,10 +271,6 @@ public class SpawnDirector : MonoBehaviour
     // how thin the horde runs, e.g. while Yama's danmaku needs the room: 1 = as usual
     [System.NonSerialized] public float BossCrowd = 1f;
 
-    // how tough an enemy made now would be, times its archetype's health: the map's curve at this
-    // point of the run and the horde's evolution pressure
-    public float HealthMultiplier => (Curve != null ? Curve.HealthAt(DifficultyTime) : 1f) * EvoHealth;
-
     // nothing more spawns for the rest of the run (a final boss's end)
     public void StopSpawning() => spawningStopped = true;
 
