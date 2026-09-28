@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// the Treasure Gourd hovers at the player's shoulder. every so often it swings round in front of
-// them, facing the way they're walking, and the cork pops: for a moment and a half it pulls the
-// small enemies in front of it together (elites and bosses are too heavy), then it sprays a cone of
-// holy fire over the clump, and whatever the fire touched burns for a while after. it turns to
-// follow the player while it's open, so the pull and the fire can be steered.
+// the Treasure Gourd hovers at the player's shoulder. every so often it picks out the furthest group
+// of enemies it can reach, swings round in front of the player to face it, and the cork pops: for
+// a moment and a half it pulls the small enemies there together (elites and bosses are too heavy),
+// then it sprays a cone of holy fire over the clump, and whatever the fire touched burns for a
+// while after. it keeps its mouth on that clump while it's open, however the player moves.
 // evolved (the Gourd of Heaven and Earth) it pulls for longer and swallows enemy bullets as well,
 // a sphere of plasma gathering in its mouth, and instead of the fire it throws that sphere: it
 // bursts on the first enemy it meets, harder and wider for every bullet and enemy it caught, and
@@ -46,6 +46,8 @@ public class TreasureGourd : Weapon<TreasureGourdData>
     private Phase phase = Phase.Idle;
     private float timer, phaseTime, age;
     private Vector2 heading = Vector2.right, aim = Vector2.right, gourdPos;
+    private Vector2 target;         // the clump it's locked onto, in the world
+    private readonly List<EnemyHealth> group = new List<EnemyHealth>();
     private bool placed;
     private int swallowed;
     private Rigidbody2D body;
@@ -91,8 +93,8 @@ public class TreasureGourd : Weapon<TreasureGourdData>
         {
             case Phase.Idle:
                 timer += dt;
-                // with nobody near it waits, ready, and opens as soon as someone comes
-                if (timer >= Cooldown(lv.cooldown) && RandomEnemy(transform.position, Wide(lv.suctionRadius) + 1.5f) != null)
+                // with nobody in reach it waits, ready, and opens as soon as someone comes
+                if (timer >= Cooldown(lv.cooldown) && FindGroup(Wide(lv.suctionRadius), out target))
                     Uncork(evolved);
                 break;
             case Phase.Pull:
@@ -120,7 +122,8 @@ public class TreasureGourd : Weapon<TreasureGourdData>
 
     // ---------------------------------------------------------------- aiming
 
-    // the way the player is walking; standing still, the way they last walked
+    // the way the player is walking (for where it rests at their shoulder). open, it turns to keep
+    // its mouth on the clump it locked onto
     private void TrackHeading(float dt)
     {
         Vector2 v = body != null ? body.linearVelocity : Vector2.zero;
@@ -129,10 +132,55 @@ public class TreasureGourd : Weapon<TreasureGourdData>
         if (phase == Phase.Idle) aim = heading;
         else
         {
+            Vector2 to = target - (Vector2)transform.position;
+            if (to.sqrMagnitude < 0.01f) return;
             float step = Data.turnRate * dt;
-            float angle = Vector2.SignedAngle(aim, heading);
+            float angle = Vector2.SignedAngle(aim, to);
             aim = Rotate(aim, Mathf.Clamp(angle, -step, step)).normalized;
         }
+    }
+
+    // the furthest group of enemies it could pull: every enemy in reach is tried as a direction, and
+    // each direction counts who'd be in the cone. of the directions with a real group in them (Min
+    // Group or more), the one whose group sits furthest out wins; with no group that size anywhere,
+    // the biggest there is. false when there's nobody in reach at all
+    private bool FindGroup(float reach, out Vector2 centre)
+    {
+        Vector2 me = transform.position;
+        centre = me;
+        // the cone starts at the mouth, about a unit in front of the player
+        float far = reach + 1.1f;
+        EnemiesIn(me, far, nearby);
+        group.Clear();
+        foreach (var e in nearby) if (!Heavy(e)) group.Add(e);
+        if (group.Count == 0) return false;
+
+        float half = Data.suctionHalfAngle * 0.85f;
+        int step = Mathf.Max(1, group.Count / 48);             // a big crowd: try every few, not all
+        int bestCount = 0, bigCount = 0;
+        float bestFar = -1f;
+        Vector2 best = me, big = me;
+        for (int i = 0; i < group.Count; i += step)
+        {
+            Vector2 dir = ((Vector2)group[i].transform.position - me).normalized;
+            if (dir.sqrMagnitude < 0.5f) continue;
+            int count = 0;
+            Vector2 sum = Vector2.zero;
+            foreach (var e in group)
+            {
+                Vector2 off = (Vector2)e.transform.position - me;
+                if (Vector2.Angle(dir, off) > half) continue;
+                count++;
+                sum += off;
+            }
+            if (count == 0) continue;
+            Vector2 mid = me + sum / count;
+            float distance = (mid - me).magnitude;
+            if (count >= Data.minGroup && distance > bestFar) { bestFar = distance; bestCount = count; best = mid; }
+            if (count > bigCount) { bigCount = count; big = mid; }
+        }
+        centre = bestCount > 0 ? best : big;
+        return true;
     }
 
     private Vector2 Mouth => gourdPos + aim * (Data.aimMouthPixels / WorldPpu);
@@ -145,7 +193,8 @@ public class TreasureGourd : Weapon<TreasureGourdData>
         phaseTime = 0f;
         swallowed = 0;
         held.Clear();
-        aim = heading;
+        Vector2 to = target - (Vector2)transform.position;
+        aim = to.sqrMagnitude > 0.01f ? to.normalized : heading;
         // it swings round in front straight away, so the pop is where the mouth will be
         gourdPos = (Vector2)transform.position + aim * 0.75f;
         FxBatch.Play(Data.popFrames, 25f, Mouth, 1f, Data.sortingLayer, Data.sortingOrder + 3);
@@ -158,9 +207,13 @@ public class TreasureGourd : Weapon<TreasureGourdData>
         Vector2 mouth = Mouth, gather = mouth + aim * Data.gatherDistance;
         float reach = Wide(lv.suctionRadius);
         EnemiesIn(mouth, reach, nearby);
+        Vector2 sum = Vector2.zero;
+        int caught = 0;
         foreach (var e in nearby)
         {
             if (Heavy(e) || !InCone((Vector2)e.transform.position - mouth, Data.suctionHalfAngle, 0.8f)) continue;
+            sum += (Vector2)e.transform.position;
+            caught++;
             if (!e.TryGetComponent(out EnemyMovement move)) continue;
             Vector2 to = gather - (Vector2)e.transform.position;
             float speed = Mathf.Min(Data.pullSpeed, to.magnitude * 4f);
@@ -168,6 +221,8 @@ public class TreasureGourd : Weapon<TreasureGourdData>
             move.ApplySlow(Data.heldSlow, 0.12f);
             if (evolved) held.Add(e);
         }
+        // it keeps its mouth on the clump as it gathers, wherever the player walks
+        if (caught > 0) target = sum / caught;
 
         if (!evolved) return;
 

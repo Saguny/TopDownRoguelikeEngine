@@ -5,7 +5,7 @@ using UnityEngine;
 // the Treasure Gourd (Bao Hulu), the spirit gourd Taoist alchemists trap evil spirits in, and its
 // evolution, the Gourd of Heaven and Earth (Qiankun Hulu). every so often it's uncorked the way
 // the player is walking: it pulls the small enemies in front of it together, then sprays a cone of
-// holy fire over the clump that sets it burning. evolved, it swallows enemy bullets as well, and
+// holy fire over the clump that sets it burning. it aims itself, at the furthest group it can reach. evolved, it swallows enemy bullets as well, and
 // what it drew in comes back out as a plasma sphere that bursts on the first thing it meets
 [CreateAssetMenu(menuName = "Rogue/Weapons/Treasure Gourd", fileName = "TreasureGourd")]
 public class TreasureGourdData : WeaponData<TreasureGourd>
@@ -53,8 +53,10 @@ public class TreasureGourdData : WeaponData<TreasureGourd>
     public float gatherDistance = 1.3f;
     [Tooltip("how much slower enemies walk while it has hold of them, so their own feet don't fight it")]
     [Range(0f, 1f)] public float heldSlow = 0.25f;
-    [Tooltip("degrees a second it turns to follow the way the player walks while it's open")]
-    public float turnRate = 150f;
+    [Tooltip("degrees a second it turns to keep its mouth on the clump it locked onto while it's open")]
+    public float turnRate = 360f;
+    [Tooltip("enemies that count as a group worth aiming at: it goes for the furthest group this big it can reach, or the biggest there is when there's none")]
+    [Min(1)] public int minGroup = 3;
 
     [Header("The fire")]
     [Tooltip("seconds it sprays for")]
@@ -171,7 +173,7 @@ public class TreasureGourdData : WeaponData<TreasureGourd>
 
         var s = At(level);
         if (level <= 1)
-            return $"Every {s.cooldown:0.#}s it's uncorked the way you walk, pulls the small enemies in front of it together for {suctionSeconds:0.#}s, then sprays holy fire over them for {s.damage:0}, leaving them burning.";
+            return $"Every {s.cooldown:0.#}s it's uncorked at the furthest group of enemies it can reach, pulls the small ones together for {suctionSeconds:0.#}s, then sprays holy fire over them for {s.damage:0}, leaving them burning.";
 
         var was = At(level - 1);
         var changes = new List<string>();
