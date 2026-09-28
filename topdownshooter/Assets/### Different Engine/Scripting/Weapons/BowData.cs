@@ -23,13 +23,13 @@ public class BowData : WeaponData<BowWeapon>
     [Header("Levels (the first entry is the unlock)")]
     public LevelStats[] levels =
     {
-        new LevelStats { arrows = 1, damage = 10.5f, cooldown = 1f, speed = 12f },
-        new LevelStats { arrows = 2, damage = 10.5f, cooldown = 1f, speed = 12f },
-        new LevelStats { arrows = 2, damage = 14f, cooldown = 1f, speed = 12f },
-        new LevelStats { arrows = 3, damage = 14f, cooldown = 0.9f, speed = 12f },
-        new LevelStats { arrows = 3, damage = 18f, cooldown = 0.9f, speed = 14f },
-        new LevelStats { arrows = 4, damage = 18f, cooldown = 0.8f, speed = 14f },
-        new LevelStats { arrows = 4, damage = 23f, cooldown = 0.75f, speed = 15f },
+        new LevelStats { arrows = 1, damage = 10.5f, cooldown = 1.4f, speed = 12f },
+        new LevelStats { arrows = 2, damage = 10.5f, cooldown = 1.4f, speed = 12f },
+        new LevelStats { arrows = 2, damage = 14f, cooldown = 1.3f, speed = 12f },
+        new LevelStats { arrows = 3, damage = 14f, cooldown = 1.25f, speed = 12f },
+        new LevelStats { arrows = 3, damage = 18f, cooldown = 1.2f, speed = 14f },
+        new LevelStats { arrows = 4, damage = 18f, cooldown = 1.15f, speed = 14f },
+        new LevelStats { arrows = 4, damage = 23f, cooldown = 1.1f, speed = 15f },
         new LevelStats { arrows = 5, damage = 26f, cooldown = 1f, speed = 16f },
     };
 
