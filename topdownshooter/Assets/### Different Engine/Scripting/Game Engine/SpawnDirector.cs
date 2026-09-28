@@ -1383,7 +1383,7 @@ public class SpawnDirector : MonoBehaviour
     [Tooltip("the Magistrate's corpse fire, in flocks (Ghost Fire)")]
     [SerializeField] private EnemyArchetype processionFire;
     [Tooltip("how many are up at once in the first rush")]
-    [SerializeField, Min(1)] private int rushCrowd = 36;
+    [SerializeField, Min(1)] private int rushCrowd = 30;
     [Tooltip("how much bigger each rush's crowd is than the last's: 1.3 = 30% more")]
     [SerializeField, Min(1f)] private float rushCrowdGrowth = 1.3f;
     [Tooltip("seconds between formations in the first rush; each rush after is 10% quicker, to 3.5s")]
@@ -1521,6 +1521,14 @@ public class SpawnDirector : MonoBehaviour
         var go = Spawn(bossArchetype, true, at);
         if (go == null) return;
         if (go.TryGetComponent(out EnemyHealth h)) h.SetScaled(h.Max * Mathf.Pow(rushBossGrowth, Mathf.Max(0, currentWave - 1)));
+        // he raises fewer of the dead in the early rushes: 2 at a time (4 up at once) in the first,
+        // 3 (6) in the second, his full count from the third
+        if (go.TryGetComponent(out BossMagistrate m))
+        {
+            int w = Mathf.Max(1, currentWave);
+            m.minions = Mathf.Min(m.minions, 1 + w);
+            m.maxMinions = Mathf.Min(m.maxMinions, 2 + 2 * w);
+        }
         activeBosses.Add(go);
         bossesSpawnedThisRush++;
         EnvelopeCarrier.Attach(go, EnvelopeSource.Boss);
