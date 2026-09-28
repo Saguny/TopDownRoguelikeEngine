@@ -31,8 +31,12 @@ MonoBehaviour:
   overchargeCeiling: 1
   overchargeHalfStacks: 8
   evolutionPartner: {fileID: 0}
-  evolvedIcon: {fileID: 0}
-  evolvedIconFrames: []
+  evolvedIcon: {fileID: -600448601453836630, guid: b835d6469bb342af916114af2ff1c0bc, type: 3}
+  evolvedIconFrames:
+  - {fileID: -600448601453836630, guid: b835d6469bb342af916114af2ff1c0bc, type: 3}
+  - {fileID: -5082254930368992220, guid: b835d6469bb342af916114af2ff1c0bc, type: 3}
+  - {fileID: 4994355703237344757, guid: b835d6469bb342af916114af2ff1c0bc, type: 3}
+  - {fileID: 2919416514379921512, guid: b835d6469bb342af916114af2ff1c0bc, type: 3}
   evolvedTitle: Heaven-Piercing Bow
   backFrames:
   - {fileID: -6025918656516946900, guid: 427aa8b4ea054c93b7854f75fcbb7b0b, type: 3}
