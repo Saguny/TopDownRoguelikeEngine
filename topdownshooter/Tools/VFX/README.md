@@ -42,6 +42,19 @@ generator's `out/`, the same files `assemble.lua` would have Aseprite build:
 Then **Tools > VFX > Build Weapon FX** in Unity points everything at the new art (it also runs
 once by itself the first time the new art is in the project).
 
+## The Treasure Gourd
+
+`gourd/gourd.js` draws the Treasure Gourd (the gourd at the player's shoulder and aimed, the cork
+popping, the pull, the holy fire, an enemy burning, the evolution's plasma sphere, its burst and a
+swallowed bullet, and the level up icons), in the Flying Sword's and the Command Token's style:
+
+    node gourd/gourd.js
+    node write-ase.js gourd/out "../../Assets/### Different Engine/NewSprites/Asesprites/VFX/Weapons"
+
+Its sounds are synthesised by `../SFX/gourd.py` (into `Sounds/Gourd`). **Tools > VFX > Build Weapon
+FX** points the weapon at both (it also runs once by itself the first time the gourd's art is in the
+project).
+
 ## The fortune envelope and the end of a run
 
 `fortune/fortune.js` draws the fortune envelope that elites and bosses drop (on the ground, its beam,

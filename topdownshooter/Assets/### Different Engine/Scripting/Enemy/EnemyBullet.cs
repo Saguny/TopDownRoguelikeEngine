@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 // a shot fired at the player (the boss's corpse fire): flies straight, hurts the player when it
@@ -15,8 +16,31 @@ public class EnemyBullet : MonoBehaviour
     private static PlayerHealth player;
     private static float playerRadius = 0.3f;
 
+    // every bullet in flight, for anything that catches them (the Gourd of Heaven and Earth)
+    private static readonly List<EnemyBullet> live = new List<EnemyBullet>();
+    public static IReadOnlyList<EnemyBullet> Live => live;
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    private static void ResetStatics() => player = null;
+    private static void ResetStatics()
+    {
+        player = null;
+        live.Clear();
+    }
+
+    private void OnEnable() => live.Add(this);
+    private void OnDisable() => live.Remove(this);
+
+    public float Damage => damage;
+
+    // drawn off its course toward a point, as fast as `speed`, instead of flying on
+    public void PullToward(Vector2 point, float speed)
+    {
+        Vector2 to = point - (Vector2)transform.position;
+        velocity = Vector2.MoveTowards(velocity, to.normalized * speed, speed * 6f * Time.deltaTime);
+    }
+
+    // caught and gone, without hurting anyone
+    public void Swallow() => ObjectPool.Recycle(gameObject);
 
     public static void Fire(GameObject prefab, Vector2 at, Vector2 velocity, float damage)
     {

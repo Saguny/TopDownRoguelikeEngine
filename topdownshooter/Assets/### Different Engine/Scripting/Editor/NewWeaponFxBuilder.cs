@@ -72,6 +72,40 @@ public static class NewWeaponFxBuilder
             Icons(d, "FlyingSword/fs_icon", "FlyingSword/fs_icon_evolved");
         });
 
+        Edit<TreasureGourdData>("TreasureGourd", d =>
+        {
+            d.gourdFrames = WeaponFxBuilder.Frames("TreasureGourd/tg_gourd");
+            d.aimFrames = WeaponFxBuilder.Frames("TreasureGourd/tg_gourd_aim");
+            // the mouth: 9.5px right of the aimed gourd's centre; the pull and the fire are drawn
+            // pointing right out of a mouth 46 and 53px left of their centres, 92 and 104px long
+            d.aimMouthPixels = 9.5f;
+            d.popFrames = WeaponFxBuilder.Frames("TreasureGourd/tg_pop");
+            d.suckFrames = WeaponFxBuilder.Frames("TreasureGourd/tg_suck");
+            d.suckMouthPixels = 46f;
+            d.suckArtLength = 92f;
+            d.flameFrames = WeaponFxBuilder.Frames("TreasureGourd/tg_flame");
+            d.flameMouthPixels = 53f;
+            d.flameArtLength = 104f;
+            d.burnFrames = WeaponFxBuilder.Frames("TreasureGourd/tg_burn");
+            d.orbFrames = WeaponFxBuilder.Frames("TreasureGourd/tg_orb");
+            d.blastFrames = WeaponFxBuilder.Frames("TreasureGourd/tg_blast");
+            d.blastArtRadius = 60f / WorldPpu;
+            d.absorbFrames = WeaponFxBuilder.Frames("TreasureGourd/tg_absorb");
+            d.fps = 16.7f;
+            Icons(d, "TreasureGourd/tg_icon", "TreasureGourd/tg_icon_evolved");
+
+            // its sounds (Tools/SFX/gourd.py), where they're missing
+            AudioClip Clip(AudioClip was, string name) =>
+                was != null ? was : AssetDatabase.LoadAssetAtPath<AudioClip>(Root + "Sounds/Gourd/" + name + ".wav");
+            d.uncorkSound = Clip(d.uncorkSound, "tg_uncork");
+            d.pullSound = Clip(d.pullSound, "tg_pull");
+            d.flameSound = Clip(d.flameSound, "tg_flame");
+            d.chargeSound = Clip(d.chargeSound, "tg_charge");
+            d.absorbSound = Clip(d.absorbSound, "tg_absorb");
+            d.launchSound = Clip(d.launchSound, "tg_launch");
+            d.blastSound = Clip(d.blastSound, "tg_blast");
+        });
+
         // the weapons the cast starts with, worn on their backs
         Edit<BowData>("Bow", d => Back(d, "Bow/back_bow"));
         Edit<PeachTalismansData>("PeachTalismans", d => Back(d, "PeachTalismans/back_peach"));
@@ -88,7 +122,7 @@ public static class NewWeaponFxBuilder
             arena.riseFps = 20f;
         });
         AssetDatabase.SaveAssets();
-        Debug.Log("WEAPONFX: Dragon Line, Ice Cloud, Flying Sword, the back weapons and the arena's spirit seals pointed at their art");
+        Debug.Log("WEAPONFX: Dragon Line, Ice Cloud, Flying Sword, Treasure Gourd, the back weapons and the arena's spirit seals pointed at their art");
     }
 
     private static void Edit<T>(string asset, Action<T> edit) where T : WeaponData
@@ -120,6 +154,35 @@ public static class NewWeaponFxBuilder
 
     private static string AutoBuiltKey => "NewWeaponFxBuilder.v1." + Application.dataPath;
     private const string Marker = Root + "NewSprites/Asesprites/VFX/Weapons/DragonLine/dl_head.aseprite";
+
+    // the Treasure Gourd came later: its art is set up once on its own the same way
+    private static string GourdBuiltKey => "NewWeaponFxBuilder.gourd.v1." + Application.dataPath;
+    private const string GourdMarker = Root + "NewSprites/Asesprites/VFX/Weapons/TreasureGourd/tg_gourd.aseprite";
+
+    [InitializeOnLoadMethod]
+    private static void ScheduleGourdBuild()
+    {
+        if (EditorPrefs.GetBool(GourdBuiltKey)) return;
+        EditorApplication.delayCall -= GourdBuild;
+        EditorApplication.delayCall += GourdBuild;
+    }
+
+    private static void GourdBuild()
+    {
+        if (EditorPrefs.GetBool(GourdBuiltKey) || EditorApplication.isPlayingOrWillChangePlaymode) return;
+        if (EditorApplication.isCompiling || EditorApplication.isUpdating)
+        {
+            EditorApplication.delayCall += GourdBuild;
+            return;
+        }
+        if (!File.Exists(GourdMarker)) return;
+        var gourd = AssetDatabase.LoadAssetAtPath<TreasureGourdData>(Weapons + "TreasureGourd.asset");
+        if (gourd == null) return;
+        EditorPrefs.SetBool(GourdBuiltKey, true);
+        if (gourd.Animated && gourd.uncorkSound != null) return;
+        try { WeaponFxBuilder.Build(); }
+        catch (Exception e) { Debug.LogError("couldn't set the Treasure Gourd's art up automatically, try Tools > VFX > Build Weapon FX\n" + e); }
+    }
 
     [InitializeOnLoadMethod]
     private static void ScheduleAutoBuild()

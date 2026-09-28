@@ -1,0 +1,488 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+// the Treasure Gourd hovers at the player's shoulder. every so often it swings round in front of
+// them, facing the way they're walking, and the cork pops: for a moment and a half it pulls the
+// small enemies in front of it together (elites and bosses are too heavy), then it sprays a cone of
+// holy fire over the clump, and whatever the fire touched burns for a while after. it turns to
+// follow the player while it's open, so the pull and the fire can be steered.
+// evolved (the Gourd of Heaven and Earth) it pulls for longer and swallows enemy bullets as well,
+// a sphere of plasma gathering in its mouth, and instead of the fire it throws that sphere: it
+// bursts on the first enemy it meets, harder and wider for every bullet and enemy it caught, and
+// sets everything in the burst burning
+public class TreasureGourd : Weapon<TreasureGourdData>
+{
+    private enum Phase { Idle, Pull, Spray }
+
+    private sealed class Burn
+    {
+        public float left, tick, dps;
+        public SpriteRenderer sr;
+        public float phase;
+    }
+
+    private sealed class Sphere
+    {
+        public SpriteRenderer sr;
+        public Afterimage trail;
+        public Vector2 pos, dir;
+        public float travelled, damage, radius, charge;
+    }
+
+    private const float WorldPpu = 37f / 1.3f;
+    private const float CatchSeconds = 0.1f;   // the fire's first two frames: it reaches out over these
+    private const float DieSeconds = 0.18f;    // and its last three, dying back
+
+    private readonly Dictionary<EnemyHealth, Burn> burning = new Dictionary<EnemyHealth, Burn>();
+    private readonly List<EnemyHealth> burnKeys = new List<EnemyHealth>();
+    private readonly Stack<SpriteRenderer> spareBurns = new Stack<SpriteRenderer>();
+    private readonly HashSet<EnemyHealth> scorched = new HashSet<EnemyHealth>();
+    private readonly HashSet<EnemyHealth> held = new HashSet<EnemyHealth>();
+    private readonly List<EnemyHealth> nearby = new List<EnemyHealth>();
+    private readonly List<EnemyBullet> bullets = new List<EnemyBullet>();
+    private readonly List<Sphere> spheres = new List<Sphere>();
+    private readonly Stack<Sphere> spareSpheres = new Stack<Sphere>();
+
+    private Phase phase = Phase.Idle;
+    private float timer, phaseTime, age;
+    private Vector2 heading = Vector2.right, aim = Vector2.right, gourdPos;
+    private bool placed;
+    private int swallowed;
+    private Rigidbody2D body;
+    private SpriteRenderer gourd, cone, charge;
+    private AudioSource voice;
+    private bool voiceHeld;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        body = GetComponent<Rigidbody2D>();
+    }
+
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+        if (voice != null) voice.Stop();
+        phase = Phase.Idle;
+    }
+
+    private void Update()
+    {
+        if (Data == null || Level <= 0) return;
+        if (gourd == null) MakeParts();
+
+        // while the game is stopped the pull's long sound waits where it is
+        bool stopped = Time.timeScale <= 0f;
+        if (stopped != voiceHeld && voice != null)
+        {
+            voiceHeld = stopped;
+            if (stopped) voice.Pause();
+            else voice.UnPause();
+        }
+        float dt = Time.deltaTime;
+        if (dt <= 0f) return;
+        age += dt;
+
+        var lv = Data.At(Level);
+        bool evolved = Data.IsEvolved(Level);
+        TrackHeading(dt);
+
+        switch (phase)
+        {
+            case Phase.Idle:
+                timer += dt;
+                // with nobody near it waits, ready, and opens as soon as someone comes
+                if (timer >= Cooldown(lv.cooldown) && RandomEnemy(transform.position, Wide(lv.suctionRadius) + 1.5f) != null)
+                    Uncork(evolved);
+                break;
+            case Phase.Pull:
+                phaseTime += dt;
+                Pull(lv, evolved, dt);
+                if (phaseTime >= (evolved ? Data.evolvedSuctionSeconds : Data.suctionSeconds))
+                {
+                    if (evolved) Launch(lv);
+                    else StartSpray();
+                }
+                break;
+            case Phase.Spray:
+                phaseTime += dt;
+                Spray(lv);
+                if (phaseTime >= Data.spraySeconds) Close();
+                break;
+        }
+
+        Burns(dt);
+        Spheres(dt, lv);
+        Show(lv, evolved, dt);
+    }
+
+    private float Wide(float units) => units * AreaMul;
+
+    // ---------------------------------------------------------------- aiming
+
+    // the way the player is walking; standing still, the way they last walked
+    private void TrackHeading(float dt)
+    {
+        Vector2 v = body != null ? body.linearVelocity : Vector2.zero;
+        if (v.sqrMagnitude > 0.04f) heading = v.normalized;
+
+        if (phase == Phase.Idle) aim = heading;
+        else
+        {
+            float step = Data.turnRate * dt;
+            float angle = Vector2.SignedAngle(aim, heading);
+            aim = Rotate(aim, Mathf.Clamp(angle, -step, step)).normalized;
+        }
+    }
+
+    private Vector2 Mouth => gourdPos + aim * (Data.aimMouthPixels / WorldPpu);
+
+    // ---------------------------------------------------------------- the pull
+
+    private void Uncork(bool evolved)
+    {
+        phase = Phase.Pull;
+        phaseTime = 0f;
+        swallowed = 0;
+        held.Clear();
+        aim = heading;
+        // it swings round in front straight away, so the pop is where the mouth will be
+        gourdPos = (Vector2)transform.position + aim * 0.75f;
+        FxBatch.Play(Data.popFrames, 25f, Mouth, 1f, Data.sortingLayer, Data.sortingOrder + 3);
+        OneShot(Data.uncorkSound, Mouth);
+        Hold(evolved ? Data.chargeSound : Data.pullSound);
+    }
+
+    private void Pull(TreasureGourdData.LevelStats lv, bool evolved, float dt)
+    {
+        Vector2 mouth = Mouth, gather = mouth + aim * Data.gatherDistance;
+        float reach = Wide(lv.suctionRadius);
+        EnemiesIn(mouth, reach, nearby);
+        foreach (var e in nearby)
+        {
+            if (Heavy(e) || !InCone((Vector2)e.transform.position - mouth, Data.suctionHalfAngle, 0.8f)) continue;
+            if (!e.TryGetComponent(out EnemyMovement move)) continue;
+            Vector2 to = gather - (Vector2)e.transform.position;
+            float speed = Mathf.Min(Data.pullSpeed, to.magnitude * 4f);
+            move.Shove(to.normalized * speed, 0.12f);
+            move.ApplySlow(Data.heldSlow, 0.12f);
+            if (evolved) held.Add(e);
+        }
+
+        if (!evolved) return;
+
+        // evolved: enemy bullets in reach are drawn off course into the mouth and swallowed
+        bullets.Clear();
+        bullets.AddRange(EnemyBullet.Live);
+        float r2 = reach * reach;
+        foreach (var b in bullets)
+        {
+            if (b == null || !b.isActiveAndEnabled) continue;
+            Vector2 off = (Vector2)b.transform.position - mouth;
+            if (off.sqrMagnitude > r2) continue;
+            if (off.sqrMagnitude < 0.35f * 0.35f)
+            {
+                b.Swallow();
+                swallowed++;
+                FxBatch.Play(Data.absorbFrames, 25f, mouth, 1f, Data.sortingLayer, Data.sortingOrder + 4);
+                OneShot(Data.absorbSound, mouth, Random.Range(0.95f, 1.1f) + 0.02f * Mathf.Min(swallowed, 10));
+                continue;
+            }
+            b.PullToward(mouth, Data.bulletPullSpeed);
+        }
+    }
+
+    // elites and bosses are too heavy to be pulled
+    private static bool Heavy(EnemyHealth e) =>
+        e.TryGetComponent(out BossMarker _) || e.TryGetComponent(out EliteOutline _) || e.TryGetComponent(out SecretBossBehavior _);
+
+    // inside the cone the gourd faces, or close enough to the mouth not to matter
+    private bool InCone(Vector2 off, float halfAngle, float close)
+    {
+        if (off.sqrMagnitude < close * close) return true;
+        return Vector2.Angle(aim, off) <= halfAngle;
+    }
+
+    // ---------------------------------------------------------------- the fire
+
+    private void StartSpray()
+    {
+        phase = Phase.Spray;
+        phaseTime = 0f;
+        scorched.Clear();
+        if (voice != null) voice.Stop();
+        OneShot(Data.flameSound, Mouth);
+    }
+
+    private void Spray(TreasureGourdData.LevelStats lv)
+    {
+        if (phaseTime > Data.spraySeconds - DieSeconds) return;   // dying back, it no longer burns anything new
+
+        Vector2 mouth = Mouth;
+        float reach = Wide(lv.flameLength) * Mathf.Clamp01(phaseTime / CatchSeconds + 0.35f);
+        float spread = Mathf.Tan(Data.flameHalfAngle * Mathf.Deg2Rad);
+        EnemiesIn(mouth, reach, nearby);
+        foreach (var e in nearby)
+        {
+            if (scorched.Contains(e)) continue;
+            Vector2 off = (Vector2)e.transform.position - mouth;
+            float along = Vector2.Dot(off, aim);
+            if (along < -0.3f || along > reach) continue;
+            float across = Mathf.Abs(off.x * aim.y - off.y * aim.x);
+            if (across > spread * Mathf.Max(0f, along) + 0.5f) continue;
+
+            scorched.Add(e);
+            if (!Hit(e, lv.damage * Might)) Ignite(e, lv);
+        }
+    }
+
+    private void Close()
+    {
+        phase = Phase.Idle;
+        timer = 0f;
+        if (voice != null) voice.Stop();
+    }
+
+    // ---------------------------------------------------------------- burning
+
+    private void Ignite(EnemyHealth e, TreasureGourdData.LevelStats lv)
+    {
+        if (!IsAlive(e)) return;
+        if (burning.TryGetValue(e, out var b))
+        {
+            b.left = Mathf.Max(b.left, lv.burnSeconds);
+            b.dps = Mathf.Max(b.dps, lv.burnDps);
+            return;
+        }
+        b = new Burn { left = lv.burnSeconds, dps = lv.burnDps, phase = Random.value * 10f };
+        if (burning.Count < Data.maxBurnVisuals && Data.burnFrames != null && Data.burnFrames.Length > 0)
+        {
+            b.sr = spareBurns.Count > 0 ? spareBurns.Pop()
+                : WeaponFx.Make(Fx, "Holy Fire", Data.burnFrames[0], WeaponFx.Disc, Color.white, Data.sortingLayer, Data.sortingOrder + 1);
+            b.sr.gameObject.SetActive(true);
+        }
+        burning.Add(e, b);
+    }
+
+    private void Burns(float dt)
+    {
+        if (burning.Count == 0) return;
+        burnKeys.Clear();
+        burnKeys.AddRange(burning.Keys);
+        float tick = Mathf.Max(0.05f, Data.burnTick);
+        foreach (var e in burnKeys)
+        {
+            var b = burning[e];
+            bool done = !IsAlive(e);
+            if (!done)
+            {
+                b.left -= dt;
+                b.tick += dt;
+                while (!done && b.tick >= tick)
+                {
+                    b.tick -= tick;
+                    // a burn, not a hit, so it goes through armor
+                    if (Hit(e, b.dps * tick * Might, true)) done = true;
+                }
+                if (b.left <= 0f) done = true;
+            }
+            if (done)
+            {
+                if (b.sr != null)
+                {
+                    b.sr.gameObject.SetActive(false);
+                    spareBurns.Push(b.sr);
+                }
+                burning.Remove(e);
+                continue;
+            }
+            if (b.sr != null)
+            {
+                b.sr.transform.position = e.transform.position + Vector3.up * 0.05f;
+                var frames = Data.burnFrames;
+                b.sr.sprite = frames[(int)((age + b.phase) * Data.fps) % frames.Length];
+            }
+        }
+    }
+
+    // ---------------------------------------------------------------- the evolution's sphere
+
+    private void Launch(TreasureGourdData.LevelStats lv)
+    {
+        int fromBullets = Mathf.Min(swallowed, Data.maxCharge);
+        int fromEnemies = Mathf.Min(held.Count, Data.maxCharge - fromBullets);
+        float full = (fromBullets + fromEnemies) / (float)Data.maxCharge;
+
+        var s = spareSpheres.Count > 0 ? spareSpheres.Pop() : NewSphere();
+        s.sr.gameObject.SetActive(true);
+        s.pos = Mouth;
+        s.dir = aim;
+        s.travelled = 0f;
+        s.charge = full;
+        s.damage = (Data.sphereDamage + Data.damagePerBullet * fromBullets + Data.damagePerEnemy * fromEnemies) * Might;
+        s.radius = Wide(Data.blastRadius) * (1f + Data.blastGrowth * full);
+        s.sr.transform.position = s.pos;
+        s.sr.transform.localScale = Vector3.one * Mathf.Lerp(Data.sphereScale.x, Data.sphereScale.y, full);
+        s.trail.Restart();
+        spheres.Add(s);
+
+        OneShot(Data.launchSound, s.pos, Mathf.Lerp(1.08f, 0.9f, full));
+        FxBatch.Play(Data.popFrames, 25f, Mouth, 1.4f, Data.sortingLayer, Data.sortingOrder + 3);
+        Close();
+    }
+
+    private Sphere NewSphere()
+    {
+        var art = Data.orbFrames != null && Data.orbFrames.Length > 0 ? Data.orbFrames[0] : null;
+        var sr = WeaponFx.Make(Fx, "Plasma Sphere", art, WeaponFx.Disc, new Color(0.7f, 0.45f, 1f), Data.sortingLayer, Data.sortingOrder + 2);
+        if (art == null) WeaponFx.Resize(sr, 0.6f);
+        return new Sphere { sr = sr, trail = new Afterimage(sr, 4, 0.3f, 0.5f, 0.5f) };
+    }
+
+    private void Spheres(float dt, TreasureGourdData.LevelStats lv)
+    {
+        float speed = Data.sphereSpeed * SpeedMul;
+        for (int i = spheres.Count - 1; i >= 0; i--)
+        {
+            var s = spheres[i];
+            float step = speed * dt;
+            s.pos += s.dir * step;
+            s.travelled += step;
+            s.sr.transform.position = s.pos;
+            if (Data.orbFrames != null && Data.orbFrames.Length > 0)
+                s.sr.sprite = Data.orbFrames[(int)(age * Data.fps) % Data.orbFrames.Length];
+            s.trail.Record();
+
+            // it bursts on the first enemy it meets, or at the end of its flight
+            float touch = 0.3f * s.sr.transform.localScale.x;
+            EnemiesIn(s.pos, touch, nearby);
+            if (nearby.Count == 0 && s.travelled < Data.sphereRange) continue;
+
+            Burst(s, lv);
+            s.trail.Hide();
+            s.sr.gameObject.SetActive(false);
+            spareSpheres.Push(s);
+            spheres.RemoveAt(i);
+        }
+    }
+
+    private void Burst(Sphere s, TreasureGourdData.LevelStats lv)
+    {
+        EnemiesIn(s.pos, s.radius, nearby);
+        foreach (var e in nearby)
+            if (!Hit(e, s.damage)) Ignite(e, lv);
+
+        float scale = s.radius / Mathf.Max(0.01f, Data.blastArtRadius);
+        FxBatch.Play(Data.blastFrames, Data.fps, s.pos, scale, Data.sortingLayer, Data.sortingOrder + 5);
+        OneShot(Data.blastSound, s.pos, Mathf.Lerp(1.05f, 0.88f, s.charge));
+        Juice.Shake(0.12f + 0.12f * s.charge);
+    }
+
+    // ---------------------------------------------------------------- showing it
+
+    private void MakeParts()
+    {
+        var idle = Data.Animated ? Data.gourdFrames[0] : null;
+        gourd = WeaponFx.Make(Fx, "Treasure Gourd", idle, WeaponFx.Disc, new Color(0.9f, 0.65f, 0.25f), Data.sortingLayer, Data.sortingOrder);
+        if (idle == null) WeaponFx.Resize(gourd, 0.6f);
+        cone = WeaponFx.Make(Fx, "Gourd Cone", null, null, Color.white, Data.sortingLayer, Data.sortingOrder - 1);
+        charge = WeaponFx.Make(Fx, "Gourd Charge", null, null, Color.white, Data.sortingLayer, Data.sortingOrder + 2);
+        cone.enabled = charge.enabled = false;
+
+        voice = new GameObject("Gourd Voice").AddComponent<AudioSource>();
+        voice.transform.SetParent(Fx, false);
+        voice.playOnAwake = false;
+        voice.spatialBlend = 1f;    // like SfxPlayer's voices, so it sits in the mix with the rest
+    }
+
+    private void Show(TreasureGourdData.LevelStats lv, bool evolved, float dt)
+    {
+        Vector2 me = transform.position;
+        bool open = phase != Phase.Idle;
+
+        // at rest it bobs at the shoulder behind the way they face; open, it swings round in front
+        Vector2 want = open
+            ? me + aim * 0.75f
+            : me + new Vector2(heading.x >= 0f ? -0.55f : 0.55f, 0.7f + Mathf.Sin(age * 2.6f) * 0.06f);
+        gourdPos = placed ? Vector2.Lerp(gourdPos, want, 1f - Mathf.Exp(-dt * (open ? 30f : 10f))) : want;
+        placed = true;
+
+        var t = gourd.transform;
+        t.position = gourdPos;
+        if (open)
+        {
+            t.rotation = Quaternion.Euler(0f, 0f, FxOneShot.Angle(aim));
+            gourd.flipY = aim.x < 0f;
+            var frames = Data.aimFrames;
+            if (frames != null && frames.Length >= 8)
+                gourd.sprite = frames[(phase == Phase.Pull ? 0 : 4) + (int)(age * Data.fps) % 4];
+        }
+        else
+        {
+            t.rotation = Quaternion.identity;
+            gourd.flipY = false;
+            if (Data.Animated) gourd.sprite = Data.gourdFrames[(int)(age * 7f) % Data.gourdFrames.Length];
+        }
+        if (voice != null) voice.transform.position = gourdPos;
+
+        // the pull or the fire, laid out from the mouth
+        cone.enabled = false;
+        if (phase == Phase.Pull && Data.suckFrames != null && Data.suckFrames.Length > 0)
+            Lay(Data.suckFrames[(int)(age * 20f) % Data.suckFrames.Length], Data.suckMouthPixels, Wide(lv.suctionRadius), Data.suckArtLength);
+        else if (phase == Phase.Spray && Data.flameFrames != null && Data.flameFrames.Length >= 11)
+        {
+            int frame = phaseTime < CatchSeconds ? Mathf.Min(1, (int)(phaseTime / CatchSeconds * 2f))
+                : phaseTime > Data.spraySeconds - DieSeconds ? 8 + Mathf.Min(2, (int)((phaseTime - (Data.spraySeconds - DieSeconds)) / DieSeconds * 3f))
+                : 2 + (int)(age * 18f) % 6;
+            Lay(Data.flameFrames[frame], Data.flameMouthPixels, Wide(lv.flameLength), Data.flameArtLength);
+        }
+
+        // evolved, the sphere gathering in the mouth as it pulls, bigger for everything it caught
+        charge.enabled = phase == Phase.Pull && evolved && Data.orbFrames != null && Data.orbFrames.Length > 0;
+        if (charge.enabled)
+        {
+            float grow = Mathf.Clamp01(phaseTime / Mathf.Max(0.1f, Data.evolvedSuctionSeconds));
+            float full = Mathf.Min(1f, (swallowed + held.Count) / (float)Data.maxCharge);
+            charge.sprite = Data.orbFrames[(int)(age * Data.fps) % Data.orbFrames.Length];
+            charge.transform.position = Mouth + aim * 0.2f;
+            charge.transform.localScale = Vector3.one * Mathf.Lerp(0.25f, Mathf.Lerp(Data.sphereScale.x, Data.sphereScale.y, full), grow);
+        }
+    }
+
+    // a cone sprite drawn pointing right with its mouth `mouthPixels` left of its centre, laid out
+    // from the gourd's mouth along the aim and scaled so it reaches `length`
+    private void Lay(Sprite frame, float mouthPixels, float length, float artLength)
+    {
+        cone.enabled = true;
+        cone.sprite = frame;
+        float scale = length / Mathf.Max(0.01f, artLength / WorldPpu);
+        cone.transform.localScale = Vector3.one * scale;
+        cone.transform.position = Mouth + aim * (mouthPixels / WorldPpu * scale);
+        cone.transform.rotation = Quaternion.Euler(0f, 0f, FxOneShot.Angle(aim));
+        cone.flipY = aim.x < 0f;
+    }
+
+    // ---------------------------------------------------------------- sound
+
+    private void OneShot(AudioClip clip, Vector2 at, float pitch = 1f)
+    {
+        if (clip != null) SfxPlayer.PlayAt(clip, at, Data.soundVolume, pitch);
+    }
+
+    // the pull's long sound, on a voice of its own so the horde's hits can't cut it off
+    private void Hold(AudioClip clip)
+    {
+        if (voice == null || clip == null) return;
+        voice.Stop();
+        voice.clip = clip;
+        voice.volume = Data.soundVolume;
+        voice.pitch = 1f;
+        voice.Play();
+    }
+
+    private static Vector2 Rotate(Vector2 v, float degrees)
+    {
+        float r = degrees * Mathf.Deg2Rad, c = Mathf.Cos(r), s = Mathf.Sin(r);
+        return new Vector2(v.x * c - v.y * s, v.x * s + v.y * c);
+    }
+}

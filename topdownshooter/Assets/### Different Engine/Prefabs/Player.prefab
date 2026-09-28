@@ -239,6 +239,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3d5022850414a664ab4a37a90360610a, type: 2}
   - {fileID: 11400000, guid: 407e451e68b2c389bbe6374fa1944a04, type: 2}
   - {fileID: 11400000, guid: 42d6a117291763fd41ad22cd1ff7247e, type: 2}
+  - {fileID: 11400000, guid: 5d2c8e4f7a1b4c6e9f3a0b2d4c6e8a19, type: 2}
   upgradeMenuUI: {fileID: 0}
   progressBarGradient: {fileID: 0}
   difficultyCurve: {fileID: 11400000, guid: 6c1138631aa634642a0f09433161fd98, type: 2}

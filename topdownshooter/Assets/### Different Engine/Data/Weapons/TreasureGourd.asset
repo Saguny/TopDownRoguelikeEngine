@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c1e3a52b9d84f0e9a6b2c4d8e1f3a57, type: 3}
+  m_Name: TreasureGourd
+  m_EditorClassIdentifier: 
+  title: Treasure Gourd
+  type: 24
+  icon: {fileID: 0}
+  iconFrames: []
+  iconFps: 8
+  includeInPool: 1
+  value: 0
+  additive: 0
+  description: A spirit gourd pulls the horde together and sprays it with holy fire.
+  level: 0
+  maxLevel: 9
+  overcharge: 0
+  overchargeCeiling: 1
+  overchargeHalfStacks: 8
+  evolutionPartner: {fileID: 0}
+  evolvedIcon: {fileID: 0}
+  evolvedIconFrames: []
+  evolvedTitle: Gourd of Heaven and Earth
+  backFrames: []
+  backFps: 6
