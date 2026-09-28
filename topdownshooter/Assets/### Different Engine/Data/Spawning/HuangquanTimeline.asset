@@ -23,60 +23,64 @@ MonoBehaviour:
     interval: 1.5
     cap: 20
     enemies:
-    - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 5.25
-    - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
+    - archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
       weight: 1
-  - label: 'Will-o-wisps'
+  - label: 'Paper servants'
     fromMinute: 1.5
     minimum: 20
     perInterval: 3
     interval: 1.25
     cap: 45
     enemies:
-    - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 7
-    - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
-      weight: 2
-  - label: 'The hungry follow'
+    - archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
+      weight: 1
+    - archetype: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
+      weight: 1.2
+  - label: 'The lilies bloom'
     fromMinute: 3
     minimum: 38
     perInterval: 4
     interval: 1
     cap: 84
     enemies:
-    - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
-      weight: 3
-    - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 5.25
-    - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
+    - archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
       weight: 1
-  - label: 'Lily fields'
+    - archetype: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
+      weight: 1.2
+    - archetype: {fileID: 11400000, guid: a3184018aa7a46349a261a70dd4f1048, type: 2}
+      weight: 1.5
+  - label: 'Spirit money burns'
     fromMinute: 4.5
     minimum: 58
     perInterval: 8
     interval: 1
     cap: 130
     enemies:
-    - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
-      weight: 3
-    - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
+    - archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
       weight: 1
-    - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 5.25
-  - label: 'Fox fires'
+    - archetype: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
+      weight: 1.5
+    - archetype: {fileID: 11400000, guid: a3184018aa7a46349a261a70dd4f1048, type: 2}
+      weight: 1.8
+    - archetype: {fileID: 11400000, guid: 990cd3efe98f4eaa86f3a85b3166dc46, type: 2}
+      weight: 0.8
+  - label: 'Lanterns on the road'
     fromMinute: 7.5
     minimum: 88
     perInterval: 6
     interval: 1
     cap: 195
     enemies:
-    - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
-      weight: 3
-    - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 5.25
-    - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
-      weight: 2
+    - archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
+      weight: 1
+    - archetype: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
+      weight: 1.5
+    - archetype: {fileID: 11400000, guid: a3184018aa7a46349a261a70dd4f1048, type: 2}
+      weight: 1.8
+    - archetype: {fileID: 11400000, guid: 990cd3efe98f4eaa86f3a85b3166dc46, type: 2}
+      weight: 1
+    - archetype: {fileID: 11400000, guid: 12d74180d23f40ecac7cdcd6ddc30cdb, type: 2}
+      weight: 0.25
   - label: 'Coffin bearers'
     fromMinute: 9
     minimum: 102
@@ -84,12 +88,18 @@ MonoBehaviour:
     interval: 0.9
     cap: 226
     enemies:
-    - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
-      weight: 4
-    - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
+    - archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
+      weight: 1.1
+    - archetype: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
+      weight: 1.8
+    - archetype: {fileID: 11400000, guid: a3184018aa7a46349a261a70dd4f1048, type: 2}
       weight: 2
-    - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 3.5
+    - archetype: {fileID: 11400000, guid: 990cd3efe98f4eaa86f3a85b3166dc46, type: 2}
+      weight: 1
+    - archetype: {fileID: 11400000, guid: 12d74180d23f40ecac7cdcd6ddc30cdb, type: 2}
+      weight: 0.3
+    - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
+      weight: 0.8
   - label: 'Ghost festival'
     fromMinute: 12
     minimum: 120
@@ -97,11 +107,17 @@ MonoBehaviour:
     interval: 0.9
     cap: 266
     enemies:
-    - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
-      weight: 4
-    - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 7
-    - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
+    - archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
+      weight: 1.2
+    - archetype: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
+      weight: 2
+    - archetype: {fileID: 11400000, guid: a3184018aa7a46349a261a70dd4f1048, type: 2}
+      weight: 2.2
+    - archetype: {fileID: 11400000, guid: 990cd3efe98f4eaa86f3a85b3166dc46, type: 2}
+      weight: 1.2
+    - archetype: {fileID: 11400000, guid: 12d74180d23f40ecac7cdcd6ddc30cdb, type: 2}
+      weight: 0.35
+    - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
       weight: 1
   - label: 'The river rises'
     fromMinute: 13.5
@@ -110,16 +126,18 @@ MonoBehaviour:
     interval: 0.8
     cap: 296
     enemies:
+    - archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
+      weight: 1.2
+    - archetype: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
+      weight: 2.2
+    - archetype: {fileID: 11400000, guid: a3184018aa7a46349a261a70dd4f1048, type: 2}
+      weight: 2.4
+    - archetype: {fileID: 11400000, guid: 990cd3efe98f4eaa86f3a85b3166dc46, type: 2}
+      weight: 1.2
+    - archetype: {fileID: 11400000, guid: 12d74180d23f40ecac7cdcd6ddc30cdb, type: 2}
+      weight: 0.35
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
-      weight: 2
-    - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
-      weight: 3
-    - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
-      weight: 2
-    - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 5.25
-    - archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
-      weight: 0.3
+      weight: 1
   - label: 'The guardians stir'
     fromMinute: 18
     minimum: 152
@@ -127,27 +145,37 @@ MonoBehaviour:
     interval: 0.8
     cap: 338
     enemies:
-    - archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
-      weight: 0.8
+    - archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
+      weight: 1.3
+    - archetype: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
+      weight: 2.4
+    - archetype: {fileID: 11400000, guid: a3184018aa7a46349a261a70dd4f1048, type: 2}
+      weight: 2.6
+    - archetype: {fileID: 11400000, guid: 990cd3efe98f4eaa86f3a85b3166dc46, type: 2}
+      weight: 1.3
+    - archetype: {fileID: 11400000, guid: 12d74180d23f40ecac7cdcd6ddc30cdb, type: 2}
+      weight: 0.4
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
-      weight: 2
-    - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
-      weight: 3
-    - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
-      weight: 2
-  - label: 'Nine tails'
+      weight: 1.2
+  - label: 'Paper and fire'
     fromMinute: 22.5
     minimum: 170
     perInterval: 16
     interval: 0.7
     cap: 378
     enemies:
-    - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
-      weight: 5
-    - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 5.25
-    - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
-      weight: 2
+    - archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
+      weight: 1.3
+    - archetype: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
+      weight: 2.8
+    - archetype: {fileID: 11400000, guid: a3184018aa7a46349a261a70dd4f1048, type: 2}
+      weight: 2.6
+    - archetype: {fileID: 11400000, guid: 990cd3efe98f4eaa86f3a85b3166dc46, type: 2}
+      weight: 1.4
+    - archetype: {fileID: 11400000, guid: 12d74180d23f40ecac7cdcd6ddc30cdb, type: 2}
+      weight: 0.4
+    - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
+      weight: 1.2
   - label: 'Endless procession'
     fromMinute: 27
     minimum: 184
@@ -155,14 +183,18 @@ MonoBehaviour:
     interval: 0.7
     cap: 408
     enemies:
-    - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
-      weight: 4
-    - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
+    - archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
+      weight: 1.4
+    - archetype: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
       weight: 3
-    - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 3.5
-    - archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
-      weight: 0.5
+    - archetype: {fileID: 11400000, guid: a3184018aa7a46349a261a70dd4f1048, type: 2}
+      weight: 2.8
+    - archetype: {fileID: 11400000, guid: 990cd3efe98f4eaa86f3a85b3166dc46, type: 2}
+      weight: 1.4
+    - archetype: {fileID: 11400000, guid: 12d74180d23f40ecac7cdcd6ddc30cdb, type: 2}
+      weight: 0.45
+    - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
+      weight: 1.3
   - label: 'Forgetting'
     fromMinute: 31.5
     minimum: 198
@@ -170,14 +202,18 @@ MonoBehaviour:
     interval: 0.6
     cap: 440
     enemies:
-    - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
+    - archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
+      weight: 1.4
+    - archetype: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
       weight: 3
-    - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
+    - archetype: {fileID: 11400000, guid: a3184018aa7a46349a261a70dd4f1048, type: 2}
       weight: 3
-    - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 5.25
-    - archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
-      weight: 0.8
+    - archetype: {fileID: 11400000, guid: 990cd3efe98f4eaa86f3a85b3166dc46, type: 2}
+      weight: 1.5
+    - archetype: {fileID: 11400000, guid: 12d74180d23f40ecac7cdcd6ddc30cdb, type: 2}
+      weight: 0.45
+    - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
+      weight: 1.4
   - label: 'The sealed bridge'
     fromMinute: 36
     minimum: 212
@@ -185,16 +221,18 @@ MonoBehaviour:
     interval: 0.6
     cap: 470
     enemies:
-    - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
-      weight: 2
-    - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 3.5
-    - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
+    - archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
+      weight: 1.5
+    - archetype: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
+      weight: 3.2
+    - archetype: {fileID: 11400000, guid: a3184018aa7a46349a261a70dd4f1048, type: 2}
       weight: 3
-    - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
-      weight: 2
-    - archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
-      weight: 1
+    - archetype: {fileID: 11400000, guid: 990cd3efe98f4eaa86f3a85b3166dc46, type: 2}
+      weight: 1.5
+    - archetype: {fileID: 11400000, guid: 12d74180d23f40ecac7cdcd6ddc30cdb, type: 2}
+      weight: 0.5
+    - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
+      weight: 1.5
   - label: 'The Yellow Springs'
     fromMinute: 40.5
     minimum: 230
@@ -202,22 +240,24 @@ MonoBehaviour:
     interval: 0.5
     cap: 510
     enemies:
-    - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
-      weight: 2
-    - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
-      weight: 5.25
-    - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
-      weight: 3
-    - archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
-      weight: 3
-    - archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
+    - archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
       weight: 1.5
+    - archetype: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
+      weight: 3.4
+    - archetype: {fileID: 11400000, guid: a3184018aa7a46349a261a70dd4f1048, type: 2}
+      weight: 3.2
+    - archetype: {fileID: 11400000, guid: 990cd3efe98f4eaa86f3a85b3166dc46, type: 2}
+      weight: 1.6
+    - archetype: {fileID: 11400000, guid: 12d74180d23f40ecac7cdcd6ddc30cdb, type: 2}
+      weight: 0.5
+    - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
+      weight: 1.6
   events:
   - label: 'Souls drift by'
     atMinute: 1.5
     repeatEveryMinutes: 0
     kind: 0
-    archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
+    archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
     count: 50
     speed: 1.8
     health: 1
@@ -227,57 +267,57 @@ MonoBehaviour:
     atMinute: 3
     repeatEveryMinutes: 0
     kind: 0
-    archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
+    archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
     count: 70
     speed: 1.8
     health: 1
     crowd: 1.6
     seconds: 20
-  - label: 'The hungry circle'
+  - label: 'Paper servants close in'
     atMinute: 5.25
     repeatEveryMinutes: 0
     kind: 2
-    archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
+    archetype: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
     count: 14
     speed: 1.6
     health: 1
     crowd: 1.6
     seconds: 20
-  - label: 'Elite: Jiangshi'
+  - label: 'Elite: Money Burner'
     atMinute: 6.75
     repeatEveryMinutes: 0
     kind: 3
-    archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
+    archetype: {fileID: 11400000, guid: 990cd3efe98f4eaa86f3a85b3166dc46, type: 2}
     count: 1
     speed: 1.6
     health: 10
     crowd: 1.6
     seconds: 20
-  - label: 'Fox fire!'
+  - label: 'Paper streamers'
     atMinute: 8.25
     repeatEveryMinutes: 0
     kind: 0
-    archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
+    archetype: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
     count: 14
     speed: 1.4
     health: 1
     crowd: 1.6
     seconds: 20
-  - label: 'Will-o-wisps close in'
+  - label: 'The souls close in'
     atMinute: 10.5
     repeatEveryMinutes: 0
     kind: 2
-    archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
+    archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
     count: 80
     speed: 1.6
     health: 1
     crowd: 1.6
     seconds: 20
-  - label: 'Elite hunger'
+  - label: 'Elite burners'
     atMinute: 12
     repeatEveryMinutes: 0
     kind: 3
-    archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
+    archetype: {fileID: 11400000, guid: 990cd3efe98f4eaa86f3a85b3166dc46, type: 2}
     count: 2
     speed: 1.6
     health: 10
@@ -287,17 +327,17 @@ MonoBehaviour:
     atMinute: 12.75
     repeatEveryMinutes: 0
     kind: 0
-    archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
+    archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
     count: 110
     speed: 1.8
     health: 1
     crowd: 1.6
     seconds: 20
-  - label: 'Funeral procession'
+  - label: 'Paper funeral procession'
     atMinute: 14.25
     repeatEveryMinutes: 0
     kind: 1
-    archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
+    archetype: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
     count: 12
     speed: 2.2
     health: 1
@@ -317,37 +357,37 @@ MonoBehaviour:
     atMinute: 17.25
     repeatEveryMinutes: 0
     kind: 0
-    archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
+    archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
     count: 130
     speed: 1.8
     health: 1
     crowd: 1.6
     seconds: 20
-  - label: 'The hungry circle'
+  - label: 'Paper servants close in'
     atMinute: 19.5
     repeatEveryMinutes: 0
     kind: 2
-    archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
+    archetype: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
     count: 30
     speed: 1.6
     health: 1
     crowd: 1.6
     seconds: 20
-  - label: 'Elite: Nian'
+  - label: 'Elite: Soul Lantern'
     atMinute: 21
     repeatEveryMinutes: 0
     kind: 3
-    archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
+    archetype: {fileID: 11400000, guid: 12d74180d23f40ecac7cdcd6ddc30cdb, type: 2}
     count: 1
     speed: 1.6
     health: 6
     crowd: 1.6
     seconds: 20
-  - label: 'Fox run'
+  - label: 'Paper run'
     atMinute: 23.25
     repeatEveryMinutes: 0
     kind: 1
-    archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
+    archetype: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
     count: 16
     speed: 1.8
     health: 1
@@ -357,7 +397,7 @@ MonoBehaviour:
     atMinute: 24.75
     repeatEveryMinutes: 0
     kind: 0
-    archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
+    archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
     count: 150
     speed: 1.8
     health: 1
@@ -367,7 +407,7 @@ MonoBehaviour:
     atMinute: 26.25
     repeatEveryMinutes: 0
     kind: 2
-    archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
+    archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
     count: 36
     speed: 1.6
     health: 1
@@ -383,31 +423,31 @@ MonoBehaviour:
     health: 1
     crowd: 1.8
     seconds: 30
-  - label: 'Elite foxes'
+  - label: 'Elite servants'
     atMinute: 30
     repeatEveryMinutes: 0
     kind: 3
-    archetype: {fileID: 11400000, guid: 84107f1b74d690b408e7810cdc3ac5c3, type: 2}
+    archetype: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
     count: 3
     speed: 1.6
     health: 8
     crowd: 1.6
     seconds: 20
-  - label: 'Nian stampede!'
+  - label: 'Souls stampede!'
     atMinute: 33
     repeatEveryMinutes: 0
     kind: 1
-    archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
+    archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
     count: 8
     speed: 2.5
     health: 1
     crowd: 1.6
     seconds: 20
-  - label: 'The hungry circle'
+  - label: 'Paper servants close in'
     atMinute: 34.5
     repeatEveryMinutes: 0
     kind: 2
-    archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
+    archetype: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
     count: 44
     speed: 1.6
     health: 1
@@ -417,17 +457,17 @@ MonoBehaviour:
     atMinute: 37.5
     repeatEveryMinutes: 9
     kind: 0
-    archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
+    archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
     count: 180
     speed: 1.8
     health: 1
     crowd: 1.6
     seconds: 20
-  - label: 'Elite hunger'
+  - label: 'Elite burners'
     atMinute: 38.25
     repeatEveryMinutes: 9
     kind: 3
-    archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
+    archetype: {fileID: 11400000, guid: 990cd3efe98f4eaa86f3a85b3166dc46, type: 2}
     count: 3
     speed: 1.6
     health: 8
@@ -453,11 +493,11 @@ MonoBehaviour:
     health: 1
     crowd: 2
     seconds: 30
-  - label: 'Nian stampede!'
+  - label: 'Souls stampede!'
     atMinute: 43.5
     repeatEveryMinutes: 9
     kind: 1
-    archetype: {fileID: 11400000, guid: 2414b3e704988664dafe7a81e0d0da74, type: 2}
+    archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
     count: 10
     speed: 2.5
     health: 1

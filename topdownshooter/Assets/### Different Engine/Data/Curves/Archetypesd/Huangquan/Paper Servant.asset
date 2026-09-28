@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48e0b7cb409370741a046cd96fa59353, type: 3}
+  m_Name: Paper Servant
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 1048871670121432657, guid: 3b3afb13fcec4a4d891d061ae6a1cd9e, type: 3}
+  cost: 1
+  weight: 0.4
+  baseHealth: 3
+  baseSpeed: 1
+  baseDamage: 12
+  armour: 0
+  knockbackResist: 0.2
+  physicalTaken: 1.2
+  magicalTaken: 1.3
+  pattern: 3
+  group:
+    x: 3
+    y: 5
+  maxAlive: 24
+  contactTickInterval: 0.5

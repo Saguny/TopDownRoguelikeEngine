@@ -4091,6 +4091,7 @@ GameObject:
   - component: {fileID: 1225509089789689379}
   - component: {fileID: 4212602378258955988}
   - component: {fileID: 3357709512151717076}
+  - component: {fileID: 7300000000000000001}
   m_Layer: 13
   m_Name: Ox-Head
   m_TagString: Untagged
@@ -4107,7 +4108,7 @@ Transform:
   m_GameObject: {fileID: 4320141695412094619}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.6, y: 21.8, z: 0}
+  m_LocalPosition: {x: -4.6, y: 22.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4219,7 +4220,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: -1.1945946}
+  m_Offset: {x: 0, y: -1.9}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.45454547, y: 0.51724136}
@@ -4229,7 +4230,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.1945946, y: 0.56216216}
+  m_Size: {x: 3.3, y: 1}
   m_EdgeRadius: 0
 --- !u!1 &4569212401384376365
 GameObject:
@@ -7625,6 +7626,11 @@ MonoBehaviour:
   spawnTimeline: {fileID: 11400000, guid: 116d2d63dd594e9689d719ec787e6b7e, type: 2}
   difficulty: {fileID: 11400000, guid: 21b5fed46a435f046824afdafb8f17f1, type: 2}
   playerStart: {x: 0, y: -4}
+  rushBosses:
+  - {fileID: 11400000, guid: 1059a2af538546d38292c3f3243a8b08, type: 2}
+  - {fileID: 11400000, guid: 6da1b8d69dfe4328b9f971b5c6087e94, type: 2}
+  processionMain: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
+  processionFast: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
 --- !u!1 &6616076253459072930
 GameObject:
   m_ObjectHideFlags: 0
@@ -8024,6 +8030,7 @@ GameObject:
   - component: {fileID: 10564724711484138}
   - component: {fileID: 2639096630345811501}
   - component: {fileID: 4034332617552735371}
+  - component: {fileID: 7300000000000000002}
   m_Layer: 13
   m_Name: Horse-Face
   m_TagString: Untagged
@@ -8040,7 +8047,7 @@ Transform:
   m_GameObject: {fileID: 7017048526203511570}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.6, y: 21.8, z: 0}
+  m_LocalPosition: {x: 4.6, y: 22.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8152,7 +8159,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: -1.1945946}
+  m_Offset: {x: 0, y: -1.9}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.505618}
@@ -8162,7 +8169,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.1945946, y: 0.56216216}
+  m_Size: {x: 3.3, y: 1}
   m_EdgeRadius: 0
 --- !u!1 &7043151249487964955
 GameObject:
@@ -11001,3 +11008,33 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.56216216, y: 0.21081081}
   m_EdgeRadius: 0
+--- !u!114 &7300000000000000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4320141695412094619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6047903b3bde4367b3d6b89e01afefc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  guardian: {fileID: 11400000, guid: 1059a2af538546d38292c3f3243a8b08, type: 2}
+  kind: ox
+  wakeReach: 1.4
+--- !u!114 &7300000000000000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7017048526203511570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6047903b3bde4367b3d6b89e01afefc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  guardian: {fileID: 11400000, guid: 6da1b8d69dfe4328b9f971b5c6087e94, type: 2}
+  kind: horse
+  wakeReach: 1.4

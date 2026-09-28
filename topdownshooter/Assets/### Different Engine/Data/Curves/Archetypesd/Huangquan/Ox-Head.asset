@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48e0b7cb409370741a046cd96fa59353, type: 3}
+  m_Name: Ox-Head
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 1048871670121432657, guid: c5973c0a5de746c0bb1adef4472dc157, type: 3}
+  cost: 10
+  weight: 1
+  baseHealth: 900
+  baseSpeed: 1
+  baseDamage: 30
+  armour: 0.15
+  knockbackResist: 1
+  physicalTaken: 1.0
+  magicalTaken: 1.0
+  pattern: 0
+  group:
+    x: 1
+    y: 1
+  maxAlive: 0
+  contactTickInterval: 1.0
