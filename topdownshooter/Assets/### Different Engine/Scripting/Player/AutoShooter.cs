@@ -63,8 +63,10 @@ public class AutoShooter : MonoBehaviour
         cooldown -= Time.deltaTime;
         if (cooldown > 0f) return;
 
-        int extra = stats ? stats.ArrowCountTotal : 0;
-        int shots = Mathf.Max(1, levelArrows + extra);
+        // the evolved Bow is one unbroken stream: a single arrow a shot, whatever the level or
+        // extra arrows said before
+        int extra = stats && !Unbound ? stats.ArrowCountTotal : 0;
+        int shots = Unbound ? 1 : Mathf.Max(1, levelArrows + extra);
 
         List<Transform> targets = null;
         if (aimer != null) targets = aimer.FindTargets(transform.position, shots);

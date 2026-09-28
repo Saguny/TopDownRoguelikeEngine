@@ -17,9 +17,9 @@ public class BowWeapon : Weapon<BowData>
         var s = Data.At(Level);
         bool evolved = Data.IsEvolved(Level);
 
-        // evolved it looses a volley every Evolved Interval, whatever the Cooldown stat says, and
-        // every arrow shines
-        shooter.SetLevelStats(s.arrows, evolved ? s.damage * Data.evolvedDamageMul : s.damage, evolved ? Data.evolvedInterval : s.cooldown, s.speed);
+        // evolved it looses one arrow every Evolved Interval, whatever the Cooldown stat or the
+        // arrow count says, and every arrow shines
+        shooter.SetLevelStats(evolved ? 1 : s.arrows,evolved ? s.damage * Data.evolvedDamageMul : s.damage, evolved ? Data.evolvedInterval : s.cooldown, s.speed);
         shooter.Unbound = evolved;
         shooter.Shine = evolved ? Data : null;
         shooter.Armed = true;
