@@ -67,6 +67,12 @@ def old_cost(level):
 
 SCALE = 25
 
+# the opening, where the horde starts at its old size and ramps in (a few wisps, not flocks): a
+# little dearer than the old curve, which a playtester found a touch quick, blending into the
+# scaled Vampire Survivors curve by BLEND_TO
+EARLY = {1: 20, 2: 36, 3: 55, 4: 80, 5: 110, 6: 145, 7: 190, 8: 250, 9: 330, 10: 450}
+BLEND_TO = 16
+
 
 def vs_cost(level):
     """Vampire Survivors' XP from `level` to the next, without its walls at 20 and 40"""
@@ -76,12 +82,21 @@ def vs_cost(level):
     return 455 + 16 * (level - 40)
 
 
+def level_cost(level):
+    last = max(EARLY)
+    if level <= last: return EARLY[level]
+    if level >= BLEND_TO: return SCALE * vs_cost(level)
+    # geometric from the opening's last level to the scaled curve
+    a, b = EARLY[last], SCALE * vs_cost(BLEND_TO)
+    return round(a * (b / a) ** ((level - last) / (BLEND_TO - last)))
+
+
 def main():
     observed = sum(old_cost(l) for l in range(1, OBSERVED_LEVEL))
     k = observed / banked(OLD_CAPS, OLD_HEALTH, OBSERVED_SECONDS)
     cap_now = caps(TIMELINE)
     health_now = B.curve_keys(os.path.join(CURVES, "CourtyardDifficulty.asset"))
-    cost = {l: SCALE * vs_cost(l) for l in range(1, 100)}
+    cost = {l: level_cost(l) for l in range(1, 100)}
     cumulative = [0]
     for l in range(1, 100): cumulative.append(cumulative[-1] + cost[l])
 

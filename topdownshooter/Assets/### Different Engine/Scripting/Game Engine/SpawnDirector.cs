@@ -86,7 +86,7 @@ public class SpawnDirector : MonoBehaviour
     [Tooltip("enemies costing this much or less (wisps) arrive in a pack instead of one at a time")]
     [SerializeField, Min(0)] private int packMaxCost = 1;
     [Tooltip("how many a pack holds, at the start of the run and once the spawn ramp is done")]
-    [SerializeField] private Vector2Int packSizeEarly = new Vector2Int(8, 12);
+    [SerializeField] private Vector2Int packSizeEarly = new Vector2Int(3, 5);
     [SerializeField] private Vector2Int packSizeLate = new Vector2Int(16, 26);
     [Tooltip("how far apart a pack's members are: its radius is this x sqrt(size) / 2")]
     [SerializeField, Min(0f)] private float packSpread = 0.55f;

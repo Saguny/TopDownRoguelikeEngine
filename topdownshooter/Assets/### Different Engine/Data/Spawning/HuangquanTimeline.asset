@@ -18,10 +18,10 @@ MonoBehaviour:
   beats:
   - label: 'Souls on the road'
     fromMinute: 0
-    minimum: 24
-    perInterval: 3
+    minimum: 8
+    perInterval: 1
     interval: 1.5
-    cap: 60
+    cap: 20
     enemies:
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
       weight: 5.25
@@ -29,10 +29,10 @@ MonoBehaviour:
       weight: 1
   - label: 'Will-o-wisps'
     fromMinute: 1.5
-    minimum: 48
-    perInterval: 6
+    minimum: 22
+    perInterval: 3
     interval: 1.25
-    cap: 96
+    cap: 45
     enemies:
     - archetype: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
       weight: 7
@@ -40,10 +40,10 @@ MonoBehaviour:
       weight: 2
   - label: 'The hungry follow'
     fromMinute: 3
-    minimum: 77
-    perInterval: 6
+    minimum: 48
+    perInterval: 4
     interval: 1
-    cap: 134
+    cap: 84
     enemies:
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 3
@@ -53,10 +53,10 @@ MonoBehaviour:
       weight: 1
   - label: 'Lily fields'
     fromMinute: 4.5
-    minimum: 99
-    perInterval: 10
+    minimum: 78
+    perInterval: 8
     interval: 1
-    cap: 165
+    cap: 130
     enemies:
     - archetype: {fileID: 11400000, guid: 323e5f2d423cbb649a9be83bf08aa13d, type: 2}
       weight: 3

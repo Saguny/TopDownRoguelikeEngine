@@ -576,7 +576,7 @@ MonoBehaviour:
   eliteWenDrops: 12
   eliteArmour: 0.15
   packMaxCost: 1
-  packSizeEarly: {x: 8, y: 12}
+  packSizeEarly: {x: 3, y: 5}
   packSizeLate: {x: 16, y: 26}
   packSpread: 0.55
   oneShotThroughLevel: 5
