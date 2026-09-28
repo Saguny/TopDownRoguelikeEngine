@@ -77,8 +77,8 @@ public class GameLoopController : MonoBehaviour
                 yield return null;
             }
 
-            // the run clock keeps counting through the Final Rush, so it's the real time played
-            // and a normal run can't outlast its 30 minutes however long the rushes take
+            // the run clock stops for the Final Rush and stays stopped until the next wave starts:
+            // the rush, the seal's wave, the wen swept in and the boss's envelope are all extra
             finalRush = true;
             waveKills = 0;
 
@@ -89,22 +89,27 @@ public class GameLoopController : MonoBehaviour
             // a rush ends with its quota met and its bosses down (they carry fortune envelopes); one
             // still going when the final boss is due ends there, so the boss gets its time
             while ((waveKills < quota || RushBossesUp) && !BossIsDue)
-            {
-                Tick();
                 yield return null;
-            }
 
-            GameEvents.OnPurgeEnemiesWithFx?.Invoke(subjectiveDeathFx);
-            GameEvents.OnCollectAllWen?.Invoke();
-
+            // won: nothing more spawns until the next wave, the spirit seal's wave rolls out and
+            // seals the horde (SealWave), and once it has passed, the wen pours in
             GameEvents.OnFinalRushEnded?.Invoke(waveIndex + 1);
+            GameEvents.OnPurgeEnemiesWithFx?.Invoke(subjectiveDeathFx);
+            yield return null;
+            while (SealWave.Running) yield return null;
+            GameEvents.OnCollectAllWen?.Invoke();
             GameEvents.OnWaveCleared?.Invoke(waveIndex + 1);
 
             for (float t = 0f; t < breakAfterWave; t += Time.deltaTime)
+                yield return null;
+
+            // the next wave waits for the rush boss's envelope to be picked up and opened
+            while (BossEnvelopeWaiting)
             {
-                Tick();
+                AwaitingEnvelope = true;
                 yield return null;
             }
+            AwaitingEnvelope = false;
 
             if (!GameMode.IsEndless && (waveIndex + 1 >= finalWave || BossIsDue))
             {
@@ -132,6 +137,24 @@ public class GameLoopController : MonoBehaviour
     {
         totalRun += Time.deltaTime;
         GameEvents.OnRunTimeChanged?.Invoke(totalRun);
+    }
+
+    // true while a cleared Final Rush waits on its boss's envelope (UIWaveAndTimer says so)
+    public static bool AwaitingEnvelope { get; private set; }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics() => AwaitingEnvelope = false;
+
+    private static bool BossEnvelopeWaiting
+    {
+        get
+        {
+            if (EnvelopeOpening.Busy) return true;
+            var lying = FortuneEnvelope.Lying;
+            for (int i = 0; i < lying.Count; i++)
+                if (lying[i] != null && lying[i].Source != EnvelopeSource.Elite) return true;
+            return false;
+        }
     }
 
     private static bool RushBossesUp => SpawnDirector.Active != null && SpawnDirector.Active.HasAliveBosses();

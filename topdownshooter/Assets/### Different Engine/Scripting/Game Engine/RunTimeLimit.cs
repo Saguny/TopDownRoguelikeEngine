@@ -8,7 +8,7 @@ using UnityEngine;
 // endless runs have no limit. GameLoopController adds it; the Wuchang prefabs come from the VfxLibrary
 public class RunTimeLimit : MonoBehaviour
 {
-    [Tooltip("on the run clock, which counts the real time played. the final boss comes by 25:00; this is how long it gets")]
+    [Tooltip("on the run clock, which stops for the Final Rushes. the final boss comes by 25:00; this is how long it gets")]
     [Min(1f)] public float limitMinutes = 30f;
     [Tooltip("another one comes every this many seconds after the first")]
     [Min(5f)] public float every = 60f;

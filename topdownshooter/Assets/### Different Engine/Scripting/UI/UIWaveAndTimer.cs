@@ -7,6 +7,11 @@ public class UIWaveAndTimer : MonoBehaviour
     [SerializeField] private TextMeshProUGUI waveText;
     [SerializeField] private Color normalColor = default;
     [SerializeField] private Color rushColor = default;
+    [Tooltip("the run clock while it's stopped, from a Final Rush won until the next wave starts")]
+    [SerializeField] private Color frozenColor = new Color(0.6f, 0.85f, 1f, 1f);
+
+    private bool askedForEnvelope;
+    private Color waveColor;
 
     private void Awake()
     {
@@ -25,6 +30,23 @@ public class UIWaveAndTimer : MonoBehaviour
 
         if (normalColor.a == 0f) normalColor = Color.white;
         if (rushColor.a == 0f) rushColor = new Color(1f, 0.25f, 0.25f, 1f);
+        if (frozenColor.a == 0f) frozenColor = new Color(0.6f, 0.85f, 1f, 1f);
+        if (waveText) waveColor = waveText.color;
+    }
+
+    // a cleared Final Rush waits on its boss's envelope: say so, gently pulsing, until it's opened
+    private void Update()
+    {
+        if (!waveText) return;
+        bool waiting = GameLoopController.AwaitingEnvelope && !EnvelopeOpening.Busy;
+        if (waiting)
+        {
+            if (!askedForEnvelope) waveText.text = "open the boss's envelope";
+            float a = 0.65f + 0.35f * Mathf.Sin(Time.unscaledTime * 4f);
+            waveText.color = new Color(1f, 0.85f, 0.35f, a);
+        }
+        else if (askedForEnvelope) waveText.color = waveColor;
+        askedForEnvelope = waiting;
     }
 
     private void Start()
@@ -86,7 +108,7 @@ public class UIWaveAndTimer : MonoBehaviour
 
     private void HandleWaveStarted(int waveNumber)
     {
-        if (waveText) waveText.text = $"wave {waveNumber}";
+        if (waveText) { waveText.text = $"wave {waveNumber}"; waveText.color = waveColor; }
         if (runTimerText) runTimerText.color = normalColor;
     }
 
@@ -96,9 +118,10 @@ public class UIWaveAndTimer : MonoBehaviour
         if (waveText) waveText.text = $"Wave {waveNumber}";
     }
 
+    // the clock stays stopped until the next wave starts (GameLoopController)
     private void HandleRushEnd(int waveNumber)
     {
-        if (runTimerText) runTimerText.color = normalColor;
+        if (runTimerText) runTimerText.color = frozenColor;
         if (waveText) waveText.text = $"Wave {waveNumber} cleared";
     }
 }

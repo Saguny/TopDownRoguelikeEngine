@@ -138,6 +138,9 @@ public class SpawnDirector : MonoBehaviour
     private float spawnCooldown;
     private bool finalRush;
     private float spawnPausedUntil;
+    // from a cleared Final Rush until the next wave starts (its boss envelope opened first), the
+    // field stays empty
+    private bool betweenWaves;
     private float runTime;
     private bool preparingFastPhase;
     private bool fastPhaseSequenceRunning;
@@ -207,13 +210,15 @@ public class SpawnDirector : MonoBehaviour
     }
 
     // how far into the run the difficulty curve is read: the run clock on screen, so a curve's
-    // minutes are the minutes the player sees. the clock counts the Final Rushes too, so it's the
-    // real time played. without a GameLoopController, time played
+    // minutes are the minutes the player sees. the clock stops for the Final Rushes, so they don't
+    // toughen the horde. without a GameLoopController, time played
     private bool hasRunClock;
     private float DifficultyTime => hasRunClock ? runTime : timeElapsed;
 
     private void HandleWaveStarted(int wave)
     {
+        betweenWaves = false;
+
         // treat wave 1 as "new run" for the easter egg
         if (wave == 1)
         {
@@ -336,7 +341,7 @@ public class SpawnDirector : MonoBehaviour
         // secret boss easter egg roll runs independently of normal spawning
         TrySpawnSecretBoss();
 
-        if (Time.time < spawnPausedUntil) return;
+        if (Time.time < spawnPausedUntil || betweenWaves) return;
 
         bool inFastPhase = Time.time < fastPhaseUntil;
 
@@ -1325,6 +1330,7 @@ public class SpawnDirector : MonoBehaviour
     private void HandleFinalRushEnd(int wave)
     {
         finalRush = false;
+        betweenWaves = true;
         spawnPausedUntil = Time.time + pauseAfterClear;
         activeBosses.Clear();
 
@@ -1354,9 +1360,12 @@ public class SpawnDirector : MonoBehaviour
         budgetPerSecond += spawnrateIncreasePerWave;
     }
 
+    // a Final Rush won: the spirit seal's wave rolls out from the player and seals the horde
     private void HandlePurge(GameObject fx)
     {
-        StartCoroutine(PurgeInsideOut(fx));
+        var player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null) SealWave.Roll(player.transform.position);
+        else StartCoroutine(PurgeInsideOut(fx));
     }
 
     private void HandleEnemyKilled(int id)

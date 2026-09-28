@@ -68,7 +68,7 @@ public class Aura : MonoBehaviour
         {
             _pulseTimer -= interval;
             if (_pulseTimer > interval) _pulseTimer = 0f;     // after a long stall, one pulse, not a burst
-            Pulse();
+            if (Pulse()) PulseSound();
         }
 
         if (visual)
@@ -101,6 +101,20 @@ public class Aura : MonoBehaviour
         _filter.useTriggers = Physics2D.queriesHitTriggers;
         _filterReady = true;
         return _filter;
+    }
+
+    // a pulse that caught something crackles: a snap of static, a low electric thump and a short
+    // buzz, one of three takes at a slightly different pitch each time so it never drones
+    // (Resources/Sfx, made by Tools/SFX/finale.py)
+    private static AudioClip[] _pulseSounds;
+    private const float PulseVolume = 0.4f;
+
+    private void PulseSound()
+    {
+        if (_pulseSounds == null)
+            _pulseSounds = new[] { Resources.Load<AudioClip>("Sfx/aura_pulse_1"), Resources.Load<AudioClip>("Sfx/aura_pulse_2"), Resources.Load<AudioClip>("Sfx/aura_pulse_3") };
+        var clip = _pulseSounds[Random.Range(0, _pulseSounds.Length)];
+        if (clip != null) SfxPlayer.PlayAt(clip, transform.position, PulseVolume, Random.Range(0.94f, 1.08f));
     }
 
     // one pulse: every enemy inside the field, shocked once

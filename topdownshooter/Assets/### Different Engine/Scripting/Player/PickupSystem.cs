@@ -23,6 +23,8 @@ public class PickupSystem : MonoBehaviour
         public Vector2[] pos = new Vector2[256];
         public bool[] pulled = new bool[256];
         public int[] worth = new int[256];
+        public float[] launch = new float[256];     // in a sweep, when it takes off (-1: not yet given)
+        public Vector2[] vel = new Vector2[256];    // in a sweep, its flight
         public int merge = -1;          // the envelope everything goes into once too much is lying about
 
         public Mesh mesh;
@@ -57,10 +59,19 @@ public class PickupSystem : MonoBehaviour
     private MagnetArea magnet;
     private float playerRadius = 0.4f;
     private float sweepUntil = -1f;
+    private float sweepStart = -1f;
+    private int sweepPieces, sweepCollected, sweepWen;
+    private float nextSweepSound;
+    private static AudioClip totalSound;
 
-    // how fast a pulled pickup closes in, per second (the old magnet's pull), and in a sweep
+    // how fast a pulled pickup closes in, per second (the old magnet's pull)
     private const float PullRate = 8f;
-    private const float SweepRate = 14f;
+    // a sweep: the nearest take off first and the furthest this much later, each hopping out and
+    // swirling round before it's drawn in faster and faster; any still out after SweepMax are collected
+    private const float SweepStagger = 0.45f;
+    private const float SweepMax = 3f;
+    private const float SweepHop = 4.5f, SweepSwirl = 5f;
+    private const float SweepPull = 30f, SweepPullGrowth = 220f, SweepDrag = 3f, SweepTopSpeed = 45f;
     private static readonly Bounds Everywhere = new Bounds(Vector3.zero, new Vector3(100000f, 100000f, 1000f));
 
     private static PickupSystem Get()
@@ -157,12 +168,28 @@ public class PickupSystem : MonoBehaviour
         }
     }
 
-    // the end of a wave: everything flies to the player, and whatever hasn't arrived after
-    // `seconds` is collected where it is
+    // the end of a wave: everything flies to the player, nearest first, in a swirl, and whatever
+    // hasn't arrived after a few seconds (at least `seconds`) is collected where it is. a sweep
+    // already going carries on
     public static void Sweep(float seconds)
     {
         var sys = Get();
-        if (sys != null) sys.sweepUntil = Time.time + Mathf.Max(0.05f, seconds);
+        if (sys == null) return;
+        if (sys.sweepStart >= 0f)
+        {
+            sys.sweepUntil = Mathf.Max(sys.sweepUntil, Time.time + Mathf.Max(0.05f, seconds));
+            return;
+        }
+        sys.sweepStart = Time.time;
+        sys.sweepUntil = Time.time + Mathf.Max(SweepMax, seconds);
+        sys.sweepPieces = 0;
+        sys.sweepCollected = 0;
+        sys.sweepWen = 0;
+        foreach (var k in sys.kinds)
+        {
+            for (int i = 0; i < k.count; i++) k.launch[i] = -1f;
+            sys.sweepPieces += k.count;
+        }
     }
 
     // ---- kinds
@@ -236,10 +263,15 @@ public class PickupSystem : MonoBehaviour
             System.Array.Resize(ref k.pos, k.count * 2);
             System.Array.Resize(ref k.pulled, k.count * 2);
             System.Array.Resize(ref k.worth, k.count * 2);
+            System.Array.Resize(ref k.launch, k.count * 2);
+            System.Array.Resize(ref k.vel, k.count * 2);
         }
         k.pos[k.count] = at;
         k.pulled[k.count] = false;
         k.worth[k.count] = worth;
+        k.launch[k.count] = -1f;
+        k.vel[k.count] = Vector2.zero;
+        if (sweepStart >= 0f) sweepPieces++;
         k.count++;
         k.dirty = true;
     }
@@ -259,7 +291,7 @@ public class PickupSystem : MonoBehaviour
 
         int total = 0;
         foreach (var k in kinds) total += k.count;
-        if (total == 0) { sweepUntil = -1f; return; }
+        if (total == 0) { if (sweepStart >= 0f) EndSweep(); return; }
 
         if (inventory == null)
         {
@@ -273,10 +305,19 @@ public class PickupSystem : MonoBehaviour
         Vector2 player = inventory.transform.position;
         float magnetRadius = magnet != null ? magnet.Radius : 1.5f;
         float magnetSq = magnetRadius * magnetRadius;
-        bool sweeping = sweepUntil > 0f;
+        bool sweeping = sweepStart >= 0f;
         bool sweepOver = sweeping && Time.time >= sweepUntil;
         float dt = Time.deltaTime;
-        float step = 1f - Mathf.Exp(-(sweeping ? SweepRate : PullRate) * dt);
+        float step = 1f - Mathf.Exp(-PullRate * dt);
+        float now = Time.time;
+
+        // a fresh sweep: when each takes off, by how far it is
+        float furthest = 0f;
+        if (sweeping)
+            foreach (var k in kinds)
+                for (int i = 0; i < k.count; i++)
+                    if (k.launch[i] < 0f) furthest = Mathf.Max(furthest, (k.pos[i] - player).sqrMagnitude);
+        furthest = Mathf.Sqrt(furthest);
 
         int collected = 0, biggest = 0;
         AudioClip sound = null;
@@ -303,13 +344,21 @@ public class PickupSystem : MonoBehaviour
                     pos[i] = pos[last];
                     pulled[i] = pulled[last];
                     k.worth[i] = k.worth[last];
+                    k.launch[i] = k.launch[last];
+                    k.vel[i] = k.vel[last];
                     if (k.merge == i) k.merge = -1;
                     else if (k.merge == last) k.merge = i;
                     k.dirty = true;
                     continue;
                 }
 
-                if (!pulled[i] && (sweeping || sq <= magnetSq)) pulled[i] = true;
+                if (sweeping)
+                {
+                    if (Fly(k, i, player, dx, dy, sq, reach, now, dt, furthest)) i++;   // arrived: collected next time round
+                    continue;
+                }
+
+                if (!pulled[i] && sq <= magnetSq) pulled[i] = true;
                 if (pulled[i] && step > 0f)
                 {
                     pos[i] = new Vector2(p.x + dx * step, p.y + dy * step);
@@ -317,18 +366,79 @@ public class PickupSystem : MonoBehaviour
                 }
             }
         }
-        if (sweepOver) sweepUntil = -1f;
-
         if (collected > 0)
         {
             inventory.AddWen(collected);
             RunStats.PickedUpWen(collected);
-            if (sound != null) SfxPlayer.PlayAt(sound, player, volume);
+            if (sweeping)
+            {
+                sweepWen += collected;
+                // the pickups ring faster and higher as the sweep comes in
+                if (sound != null && now >= nextSweepSound)
+                {
+                    nextSweepSound = now + 0.03f;
+                    float done = sweepPieces > 0 ? Mathf.Clamp01((float)sweepCollected / sweepPieces) : 1f;
+                    SfxPlayer.PlayAt(sound, player, volume, 0.9f + 0.7f * done);
+                }
+            }
+            else if (sound != null) SfxPlayer.PlayAt(sound, player, volume);
             // a jade wen or an envelope says what it was worth
             var lib = VfxLibrary.Get;
             if (lib != null && biggest > lib.bronzeUpTo)
                 PixelNumbers.Show(player + Vector2.up * 0.9f, biggest, false, biggest > lib.jadeUpTo ? new Color(1f, 0.45f, 0.4f) : new Color(0.55f, 0.95f, 0.8f), 1);
         }
+        if (sweepOver) EndSweep();
+    }
+
+    // one piece's flight in a sweep: waiting its turn, then a hop out and round, then drawn in
+    // harder and harder. true when it reached the player this frame (moved onto it, to be
+    // collected on the next pass of the loop)
+    private bool Fly(Kind k, int i, Vector2 player, float dx, float dy, float sq, float reach, float now, float dt, float furthest)
+    {
+        float d = Mathf.Sqrt(sq);
+        Vector2 toward = d > 0.0001f ? new Vector2(dx / d, dy / d) : Vector2.up;
+        if (k.launch[i] < 0f)
+        {
+            float share = furthest > 0.01f ? Mathf.Pow(d / furthest, 0.7f) : 0f;
+            k.launch[i] = now + share * SweepStagger + Random.Range(0f, 0.06f);
+            // out, away from the player, and round, all the same way so it reads as one whirl
+            var round = new Vector2(-toward.y, toward.x);
+            k.vel[i] = -toward * SweepHop * Random.Range(0.7f, 1.2f) + round * SweepSwirl * Random.Range(0.7f, 1.3f);
+        }
+        float flying = now - k.launch[i];
+        if (flying < 0f) return false;
+
+        Vector2 v = k.vel[i];
+        v += toward * (SweepPull + SweepPullGrowth * flying) * dt;
+        v *= Mathf.Exp(-SweepDrag * dt);
+        if (v.sqrMagnitude > SweepTopSpeed * SweepTopSpeed) v = v.normalized * SweepTopSpeed;
+        k.vel[i] = v;
+        Vector2 move = v * dt;
+        k.dirty = true;
+
+        // about to pass through the player: it's arrived
+        if (Vector2.Dot(move, toward) >= d - reach * 0.5f && flying > 0.1f)
+        {
+            k.pos[i] = player;
+            sweepCollected++;
+            return true;
+        }
+        k.pos[i] += move;
+        return false;
+    }
+
+    // the sweep's last piece in: a cascade and a bell, and what it all came to
+    private void EndSweep()
+    {
+        bool worthIt = sweepPieces >= 12 && sweepWen > 0;
+        sweepStart = -1f;
+        sweepUntil = -1f;
+        if (!worthIt || inventory == null) return;
+        if (totalSound == null) totalSound = Resources.Load<AudioClip>("Sfx/coins_total");
+        Vector2 at = inventory.transform.position;
+        if (totalSound != null) SfxPlayer.PlayAt(totalSound, at, 0.9f);
+        PixelNumbers.Show(at + Vector2.up * 1.3f, sweepWen, true, new Color(1f, 0.85f, 0.3f), 2);
+        sweepWen = 0;
     }
 
     private void AdoptStrays()

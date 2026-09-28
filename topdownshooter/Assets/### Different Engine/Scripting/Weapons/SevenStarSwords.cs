@@ -106,9 +106,26 @@ public class SevenStarSwords : Weapon<SevenStarSwordsData>
 
     // ---- evolution: homing stars ---------------------------------------------------------
 
+    // Terraria's falling stars: a sparkle and a whistle falling away as a burst goes off, a glassy
+    // twinkle as each strikes (Resources/Sfx, made by Tools/SFX/finale.py)
+    private static AudioClip shootSound, hitSound;
+    private static bool soundsLoaded;
+    private float nextHitSound;
+    private const float ShootVolume = 0.6f, HitVolume = 0.35f, HitSoundEvery = 0.05f;
+
+    private static void LoadSounds()
+    {
+        if (soundsLoaded) return;
+        soundsLoaded = true;
+        shootSound = Resources.Load<AudioClip>("Sfx/star_shoot");
+        hitSound = Resources.Load<AudioClip>("Sfx/star_hit");
+    }
+
     private void Burst(float damage)
     {
         FindTargets();
+        LoadSounds();
+        if (shootSound != null && swords.Count > 0) SfxPlayer.PlayAt(shootSound, transform.position, ShootVolume, Random.Range(0.95f, 1.06f));
         int n = Data.starsPerSword, k = 0;
         for (int i = 0; i < swords.Count; i++)
         {
@@ -208,6 +225,11 @@ public class SevenStarSwords : Weapon<SevenStarSwordsData>
                     Hit(e, s.damage);
                     SignatureSlow(e);
                     if (Data.starHitFx != null) FxOneShot.Play(Data.starHitFx, pos);
+                    if (hitSound != null && Time.time >= nextHitSound)
+                    {
+                        nextHitSound = Time.time + HitSoundEvery;
+                        SfxPlayer.PlayAt(hitSound, pos, HitVolume, Random.Range(0.9f, 1.3f));
+                    }
                     s.hit.Add(e);
                     if (s.pierceLeft-- <= 0) done = true;
                     break;
