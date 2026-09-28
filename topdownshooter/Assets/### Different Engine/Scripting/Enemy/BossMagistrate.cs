@@ -77,6 +77,21 @@ public class BossMagistrate : MonoBehaviour
     [Tooltip("seconds a raised jiangshi takes to climb out of the ground; it can't hurt or move until it's up")]
     public float riseSeconds = 0.5f;
 
+    [Header("Sound (Tools/SFX/boss.py)")]
+    [Tooltip("the boss's sounds are made at the game's reference loudness; this sets them in the mix, like an enemy death's 0.45")]
+    [Range(0f, 1f)] public float soundVolume = 0.5f;
+    [Tooltip("the leap's seal: timed to the crouch and the flight, so it's played faster once the seal has torn")]
+    public AudioClip sealSound;
+    public AudioClip leapSound;
+    public AudioClip slamSound;
+    [Tooltip("raising its arms and the arms of fire turning, as long as the storm")]
+    public AudioClip stormSound;
+    [Tooltip("the cast and the seals glowing round the player, timed to the warning")]
+    public AudioClip raiseSound;
+    [Tooltip("lightning into each seal as the dead come up, once a spot")]
+    public AudioClip strikeSound;
+    public AudioClip tearSound;
+
     [Header("Health bar")]
     public float barWidth = 2.2f;
     public float barHeight = 3.3f;
@@ -101,6 +116,10 @@ public class BossMagistrate : MonoBehaviour
     private int lastAttack = -1;
     private readonly List<EnemyHealth> raised = new List<EnemyHealth>();
     private static Sprite pixel;
+    // its own voices, so the horde's hits and deaths (which share SfxPlayer's) can't cut a
+    // three second storm off halfway
+    private AudioSource[] voices;
+    private int nextVoice;
 
     private float Pace => torn ? tornPace : 1f;
     private float Damage => contact != null ? contact.damagePerTick : 10f;
@@ -124,6 +143,7 @@ public class BossMagistrate : MonoBehaviour
             shadow = go.transform;
         }
         MakeBar();
+        MakeVoices();
     }
 
     private void OnEnable()
@@ -137,6 +157,7 @@ public class BossMagistrate : MonoBehaviour
 
     private void OnDisable()
     {
+        if (voices != null) foreach (var v in voices) if (v != null) v.Stop();
         if (shadow != null) shadow.gameObject.SetActive(false);
         if (body != null) body.simulated = true;
         if (bodyCollider != null) bodyCollider.enabled = true;
@@ -237,9 +258,11 @@ public class BossMagistrate : MonoBehaviour
             if (mark.TryGetComponent(out FxOneShot shot)) shot.lifetime = warning + flight + 0.3f;
         }
 
+        Play(sealSound, Pace);
         pose = Pose.Crouch;
         yield return new WaitForSeconds(warning);
 
+        Play(leapSound);
         pose = Pose.Air;
         airborne = true;
         body.simulated = false;
@@ -261,6 +284,7 @@ public class BossMagistrate : MonoBehaviour
         if (mark != null && mark.activeInHierarchy) ObjectPool.Recycle(mark);
 
         FxOneShot.Play(slamPrefab, target, 0f, slamRadius / artRadius);
+        Play(slamSound, Random.Range(0.96f, 1.04f));
         Juice.Shake(slamShake);
         if (player != null && ((Vector2)player.position - target).sqrMagnitude <= slamRadius * slamRadius &&
             player.TryGetComponent(out PlayerHealth hp))
@@ -279,6 +303,7 @@ public class BossMagistrate : MonoBehaviour
     private IEnumerator Storm()
     {
         pose = Pose.Cast;
+        Play(stormSound);
         yield return new WaitForSeconds(0.45f / Pace);
 
         var player = PlayerAwareness.Player;
@@ -309,8 +334,10 @@ public class BossMagistrate : MonoBehaviour
     private IEnumerator Raise()
     {
         pose = Pose.Cast;
-        yield return new WaitForSeconds(0.4f / Pace);
         var player = PlayerAwareness.Player;
+        if (player == null) yield break;
+        Play(raiseSound, Pace);
+        yield return new WaitForSeconds(0.4f / Pace);
         if (player == null) yield break;
 
         int n = Mathf.Min(minions + (torn ? 2 : 0), maxMinions - raised.Count);
@@ -336,6 +363,7 @@ public class BossMagistrate : MonoBehaviour
         foreach (var at in spots)
         {
             FxOneShot.Play(raiseFx, at);
+            Play(strikeSound, Random.Range(0.9f, 1.1f), 0.7f);
             var go = ObjectPool.For(minionPrefab).Get(at, Quaternion.identity);
             if (go.TryGetComponent(out EnemyHealth e))
             {
@@ -378,6 +406,7 @@ public class BossMagistrate : MonoBehaviour
     private void Tear()
     {
         torn = true;
+        Play(tearSound);
         Juice.Shake(slamShake * 0.8f);
         Ring(transform.position, ringShots + 6, 0f);
     }
@@ -398,6 +427,33 @@ public class BossMagistrate : MonoBehaviour
     }
 
     private static float Angle(Vector2 dir) => Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+
+    // ---- sound
+
+    private void MakeVoices()
+    {
+        voices = new AudioSource[8];
+        for (int i = 0; i < voices.Length; i++)
+        {
+            var v = gameObject.AddComponent<AudioSource>();
+            v.playOnAwake = false;
+            v.spatialBlend = 1f;    // like SfxPlayer's voices, so it sits in the mix with the rest
+            voices[i] = v;
+        }
+    }
+
+    // each on the next voice round, so a pitched one never bends another that's still ringing
+    private void Play(AudioClip clip, float pitch = 1f, float volume = 1f)
+    {
+        if (clip == null || voices == null) return;
+        var v = voices[nextVoice];
+        nextVoice = (nextVoice + 1) % voices.Length;
+        v.Stop();
+        v.clip = clip;
+        v.pitch = pitch;
+        v.volume = Mathf.Clamp01(soundVolume * volume);
+        v.Play();
+    }
 
     // ---- a health bar over its hat, in the world's pixels
 

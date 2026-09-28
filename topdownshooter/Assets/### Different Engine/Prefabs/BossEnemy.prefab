@@ -433,5 +433,13 @@ MonoBehaviour:
   raiseWarning: 0.9
   raiseMarkRadius: 0.75
   riseSeconds: 0.5
+  soundVolume: 0.5
+  sealSound: {fileID: 8300000, guid: 9c5665a430b64791bfd617898b98fb74, type: 3}
+  leapSound: {fileID: 8300000, guid: e95eac3adb9c49009ea5e278c5abfed7, type: 3}
+  slamSound: {fileID: 8300000, guid: 0bff39f8ce9c4fb3909296b7552b1084, type: 3}
+  stormSound: {fileID: 8300000, guid: 0f224bc439d34ebabdb58ca58ffa982c, type: 3}
+  raiseSound: {fileID: 8300000, guid: 635519684bc24ace9281893c94a28305, type: 3}
+  strikeSound: {fileID: 8300000, guid: a81606ce00a0494ca29c608b3301d8ea, type: 3}
+  tearSound: {fileID: 8300000, guid: 0c1e22bf6bf740259af17af629e8b50f, type: 3}
   barWidth: 2.2
   barHeight: 1.9324323

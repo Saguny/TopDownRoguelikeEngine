@@ -365,6 +365,17 @@ public static class WeaponFxBuilder
             boss.artRadius = 57f / WorldPpu;
             boss.minionPrefab = minion;
             boss.raiseFx = strike;
+
+            // its attacks' sounds (Tools/SFX/boss.py), where they're missing
+            AudioClip Clip(AudioClip was, string name) =>
+                was != null ? was : AssetDatabase.LoadAssetAtPath<AudioClip>(Root + "Sounds/Boss/" + name + ".wav");
+            boss.sealSound = Clip(boss.sealSound, "bm_seal");
+            boss.leapSound = Clip(boss.leapSound, "bm_leap");
+            boss.slamSound = Clip(boss.slamSound, "bm_slam");
+            boss.stormSound = Clip(boss.stormSound, "bm_storm");
+            boss.raiseSound = Clip(boss.raiseSound, "bm_raise");
+            boss.strikeSound = Clip(boss.strikeSound, "bm_strike");
+            boss.tearSound = Clip(boss.tearSound, "bm_tear");
         });
     }
 
