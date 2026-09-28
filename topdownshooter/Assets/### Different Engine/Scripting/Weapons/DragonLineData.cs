@@ -22,14 +22,14 @@ public class DragonLineData : WeaponData<DragonLine>
     [Header("Levels (the first entry is the unlock; one more pick after the last is the evolution)")]
     public LevelStats[] levels =
     {
-        new LevelStats { damage = 10f, cooldown = 5f, dragons = 1 },
-        new LevelStats { damage = 12f, cooldown = 5f, dragons = 1 },
-        new LevelStats { damage = 12f, cooldown = 4.5f, dragons = 1 },
-        new LevelStats { damage = 14f, cooldown = 4.5f, dragons = 2 },
-        new LevelStats { damage = 17f, cooldown = 4.5f, dragons = 2 },
-        new LevelStats { damage = 17f, cooldown = 4f, dragons = 2 },
-        new LevelStats { damage = 20f, cooldown = 4f, dragons = 3 },
-        new LevelStats { damage = 24f, cooldown = 3.5f, dragons = 3 },
+        new LevelStats { damage = 7f, cooldown = 5f, dragons = 1 },
+        new LevelStats { damage = 8.4f, cooldown = 5f, dragons = 1 },
+        new LevelStats { damage = 8.4f, cooldown = 4.5f, dragons = 1 },
+        new LevelStats { damage = 9.8f, cooldown = 4.5f, dragons = 2 },
+        new LevelStats { damage = 11.9f, cooldown = 4.5f, dragons = 2 },
+        new LevelStats { damage = 11.9f, cooldown = 4f, dragons = 2 },
+        new LevelStats { damage = 14f, cooldown = 4f, dragons = 3 },
+        new LevelStats { damage = 16.8f, cooldown = 3.5f, dragons = 3 },
     };
 
     [Header("The line and the dragon")]
@@ -58,7 +58,7 @@ public class DragonLineData : WeaponData<DragonLine>
     [Tooltip("seconds between spirals, before Cooldown")]
     public float evolvedCooldown = 6f;
     [Tooltip("damage of the fire it spits, before Might. the head hits for Evolved Head Multiplier times this")]
-    public float fireDamage = 130f;
+    public float fireDamage = 110f;
     [Min(1f)] public float evolvedHeadMultiplier = 1.5f;
     [Tooltip("damage of its coils as they shove enemies back, before Might")]
     public float coilDamage = 40f;
@@ -142,11 +142,11 @@ public class DragonLineData : WeaponData<DragonLine>
 
         var s = At(level);
         if (level <= 1)
-            return $"Every {s.cooldown:0.#}s a line is cast across the screen and an azure dragon flies along it. Its body hits for {s.damage:0}, its head for {s.damage * headMultiplier:0}.";
+            return $"Every {s.cooldown:0.#}s a line is cast across the screen and an azure dragon flies along it. Its body hits for {s.damage:0.#}, its head for {s.damage * headMultiplier:0.#}.";
 
         var was = At(level - 1);
         var changes = new List<string>();
-        if (s.damage > was.damage) changes.Add($"Body hits for {s.damage:0}, head for {s.damage * headMultiplier:0}.");
+        if (s.damage > was.damage) changes.Add($"Body hits for {s.damage:0.#}, head for {s.damage * headMultiplier:0.#}.");
         if (s.cooldown < was.cooldown) changes.Add($"Every {s.cooldown:0.#}s.");
         if (s.dragons > was.dragons) changes.Add(s.dragons == 2 ? "Two dragons at once." : $"{s.dragons} dragons at once.");
         return changes.Count > 0 ? string.Join(" ", changes) : "A stronger dragon.";

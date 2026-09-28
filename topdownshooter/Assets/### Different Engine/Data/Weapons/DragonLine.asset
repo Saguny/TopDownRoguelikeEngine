@@ -41,28 +41,28 @@ MonoBehaviour:
   backFrames: []
   backFps: 6
   levels:
-  - damage: 10
+  - damage: 7
     cooldown: 5
     dragons: 1
-  - damage: 12
+  - damage: 8.4
     cooldown: 5
     dragons: 1
-  - damage: 12
+  - damage: 8.4
     cooldown: 4.5
     dragons: 1
-  - damage: 14
+  - damage: 9.8
     cooldown: 4.5
     dragons: 2
-  - damage: 17
+  - damage: 11.9
     cooldown: 4.5
     dragons: 2
-  - damage: 17
+  - damage: 11.9
     cooldown: 4
     dragons: 2
-  - damage: 20
+  - damage: 14
     cooldown: 4
     dragons: 3
-  - damage: 24
+  - damage: 16.8
     cooldown: 3.5
     dragons: 3
   headMultiplier: 3
@@ -76,7 +76,7 @@ MonoBehaviour:
   headRadius: 0.55
   bodyRadius: 0.35
   evolvedCooldown: 6
-  fireDamage: 130
+  fireDamage: 110
   evolvedHeadMultiplier: 1.5
   coilDamage: 40
   spiralTurns: 4

@@ -179,6 +179,7 @@ def paper(title, w, level):
 # weapons changed since Benchmarks/weapon_dps.csv was measured: their measured damage times this,
 # until the benchmark is run again (then empty this)
 ADJUST = {
+    "Dragon Line": 0.7,          # line damage x0.7
 }
 
 
