@@ -1,11 +1,15 @@
 using TMPro;
 using UnityEngine;
 
-// a HUD number for this run: kills, or wen picked up. put it on the text and pick which
+// a HUD number for this run: kills, wen picked up, or the coins the run has earned for the shop.
+// put it on the text and pick which. next to a coin, it has to be Coins Earned: wen are coins too
+// in the fiction but aren't the shop's, and a wen count next to a coin read as coins, far more
+// than reached the shop (a player saw 2.9k and found 1.1k)
 [RequireComponent(typeof(TMP_Text))]
 public class RunCounterText : MonoBehaviour
 {
-    public enum Counter { Kills, WenPickedUp }
+    // only ever add at the end: scenes store these as numbers
+    public enum Counter { Kills, WenPickedUp, CoinsEarned }
 
     [SerializeField] private Counter counter = Counter.Kills;
     [Tooltip("{0} is the count")]
@@ -29,12 +33,14 @@ public class RunCounterText : MonoBehaviour
     private void OnEnable()
     {
         RunStats.Changed += MarkDirty;
+        Coins.Changed += MarkDirty;     // envelopes and gifts pay coins without a pickup
         Show();
     }
 
     private void OnDisable()
     {
         RunStats.Changed -= MarkDirty;
+        Coins.Changed -= MarkDirty;
         transform.localScale = baseScale;
     }
 
@@ -50,7 +56,9 @@ public class RunCounterText : MonoBehaviour
 
     private void Show()
     {
-        int value = counter == Counter.Kills ? RunStats.Kills : RunStats.WenPickedUp;
+        int value = counter == Counter.Kills ? RunStats.Kills
+            : counter == Counter.WenPickedUp ? RunStats.WenPickedUp
+            : Coins.EarnedThisRun;
         if (value == shown) return;
         if (value > shown && shown >= 0) punchTime = 0.12f;
         shown = value;
