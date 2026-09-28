@@ -115,6 +115,10 @@ public class DevTools : MonoBehaviour
         if (GUILayout.Button("Max all weapons")) MaxWeapons();
         GUILayout.EndHorizontal();
 
+        GUI.enabled = loop != null && !loop.InFinalRush && loop.RunSeconds < PlaytestAt;
+        if (GUILayout.Button("Playtest: 8:50, level 25, a typical build")) PlaytestLoadout();
+        GUI.enabled = true;
+
         // maps: picking one restarts the scene on it
         if (director != null && MapSelection.Count > 1)
         {
@@ -219,6 +223,32 @@ public class DevTools : MonoBehaviour
     {
         if (loop != null) loop.SkipAhead(seconds);
         director.SkipTime(seconds);
+    }
+
+    // a playtester's build at the third Final Rush (9:00), ten seconds before it: level 25, six
+    // weapons and four passives at these levels (what's held already is levelled up to them)
+    private const float PlaytestAt = 8 * 60 + 50;
+    private static readonly (string title, int level)[] PlaytestBuild =
+    {
+        ("Bow", 2), ("Treasure Gourd", 6), ("Seven Star Swords", 4), ("Dragon Line", 1),
+        ("Electrical Aura", 2), ("Peach Talismans", 4),
+        ("Might", 4), ("Area", 1), ("Executioner", 1), ("Cooldown", 1),
+    };
+
+    private void PlaytestLoadout()
+    {
+        if (loop == null || director == null || inventory == null) return;
+        float was = loop.RunSeconds;
+        loop.JumpTo(PlaytestAt);
+        director.SkipTime(PlaytestAt - was);
+        inventory.SetLevel(25);
+        foreach (var (title, level) in PlaytestBuild)
+        {
+            var u = inventory.RunUpgrades.FirstOrDefault(x => x != null && x.GetBaseTitle() == title);
+            if (u == null) { Debug.LogWarning("Dev Tools: no upgrade called " + title); continue; }
+            for (int guard = 0; guard < 16 && u.Level < level && u.CanOffer; guard++) inventory.TakeUpgrade(u);
+        }
+        if (health != null) health.Heal(health.Max);
     }
 
     private void SetSpeed(float s)

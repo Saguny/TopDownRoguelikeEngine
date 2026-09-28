@@ -26,6 +26,8 @@ public class GameLoopController : MonoBehaviour
     private int waveKills;
     private bool finalRush;
     private float totalRun;
+    private Coroutine loop;
+    private float jumpElapsed = -1f;     // dev tools: where in its wave a jump lands
 
     private void OnEnable()
     {
@@ -43,7 +45,7 @@ public class GameLoopController : MonoBehaviour
     {
         // normal runs end at the time limit if nothing has ended them before
         if (!TryGetComponent(out RunTimeLimit _)) gameObject.AddComponent<RunTimeLimit>();
-        StartCoroutine(Loop());
+        loop = StartCoroutine(Loop());
     }
 
     // this is where we inject the scene ui into the spawned prefab
@@ -70,6 +72,7 @@ public class GameLoopController : MonoBehaviour
 
             GameEvents.OnWaveStarted?.Invoke(waveIndex + 1);
             elapsed = 0f;
+            if (jumpElapsed >= 0f) { elapsed = jumpElapsed; jumpElapsed = -1f; }
             waveKills = 0;
             finalRush = false;
 
@@ -171,6 +174,23 @@ public class GameLoopController : MonoBehaviour
 
     // dev tools: jump the run clock ahead to test later parts of a stage. going past the end of
     // the wave starts its Final Rush, same as waiting would
+    public float RunSeconds => totalRun;
+    public bool InFinalRush => finalRush;
+
+    // dev tools: the run clock set to `seconds`, in the wave that holds it, as if played to there.
+    // not during a Final Rush (its spawner and envelope are mid-way)
+    public void JumpTo(float seconds)
+    {
+        if (finalRush || seconds <= totalRun) return;
+        int last = GameMode.IsEndless ? int.MaxValue : finalWave - 2;
+        waveIndex = Mathf.Clamp(Mathf.FloorToInt(seconds / waveDuration), 0, last);
+        jumpElapsed = Mathf.Clamp(seconds - waveIndex * waveDuration, 0f, waveDuration);
+        totalRun = seconds;
+        if (loop != null) StopCoroutine(loop);
+        loop = StartCoroutine(Loop());
+        GameEvents.OnRunTimeChanged?.Invoke(totalRun);
+    }
+
     public void SkipAhead(float seconds)
     {
         if (finalRush || seconds <= 0f) return;

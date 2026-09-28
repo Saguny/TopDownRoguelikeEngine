@@ -68,6 +68,16 @@ public class PlayerInventory : MonoBehaviour
     private readonly List<UpgradeData> taken = new List<UpgradeData>();
     public IReadOnlyList<UpgradeData> Taken => taken;
 
+    // dev tools: straight to a level, no menus for the levels skipped
+    public void SetLevel(int level)
+    {
+        currentLevel = Mathf.Max(1, level);
+        RunStats.ReachedLevel(currentLevel);
+        wenCount = 0;
+        pendingLevelUps = 0;
+        RefreshWenRequirement();
+    }
+
     public void TakeUpgrade(UpgradeData upgrade)
     {
         if (upgrade == null || !upgrade.CanOffer) return;
