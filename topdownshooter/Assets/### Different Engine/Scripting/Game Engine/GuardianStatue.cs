@@ -84,7 +84,8 @@ public class GuardianStatue : MonoBehaviour
         }
         if (best == null) return false;
         best.Wake();
-        at = (Vector2)best.transform.position + Vector2.down * 1.2f;
+        // he steps down in front of his plinth
+        at = (Vector2)best.transform.position + Vector2.down * 2.9f;
         return true;
     }
 
@@ -105,5 +106,7 @@ public class GuardianStatue : MonoBehaviour
         Woken = false;
         var fx = YamaArt.Strip("Huangquan/statue_restore");
         if (fx != null && fx.Length > 0) FxBatch.Play(fx, 16f, (Vector2)transform.position, 1f, "Aura", 12);
+        var clip = Resources.Load<AudioClip>("Sfx/hq_statue_restore");
+        if (clip != null) SfxPlayer.PlayAt(clip, transform.position, 0.7f);
     }
 }

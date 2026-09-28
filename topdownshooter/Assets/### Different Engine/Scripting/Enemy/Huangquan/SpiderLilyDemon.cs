@@ -39,6 +39,7 @@ public class SpiderLilyDemon : MonoBehaviour
     {
         move.Rooted = true;
         winding = false;
+        Hq.Sound("hq_lily_rise", transform.position, 0.4f, 0.15f);
         ringAngle = Random.value * 360f;
         // not all in step: a field of them pulses like something breathing
         nextRing = Time.time + firstDelay + Random.value * interval * 0.6f;

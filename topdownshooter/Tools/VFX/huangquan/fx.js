@@ -13,7 +13,7 @@
 //   wisp_puff         a wisp leaving the lantern
 //   charge_lane       Ox-Head's lane: red chevrons streaming along a dark band (the game tiles it)
 //   charge_launch     the road bursting under him as he sets off: a flattened shock ring, dust
-//   charge_crack      the road he's charged down, split and glowing, cooling
+//   charge_crack_0-7  the road he's charged down, split and glowing, cooling; eight headings
 //   charge_dust       dust off his hooves
 //   bull_ghost_r/_l   his afterimage mid-charge, facing right / left, a red silhouette burning off
 //   trample           something of the horde going under his hooves
@@ -491,6 +491,11 @@ function makeFx(poses = {}) {
     charge_crack: chargeCrack(), charge_dust: chargeDust(), trample: trample(), charge_crash: chargeCrash(),
     horse_halo: horseHalo(), horse_pulse: horsePulse(), statue_burst: statueBurst(), statue_restore: statueRestore(),
   };
+  // the road's cracks turned to eight headings over a half turn (the game picks the nearest; a
+  // crack runs both ways)
+  const crack = fx.charge_crack;
+  delete fx.charge_crack;
+  for (let k = 0; k < 8; k++) fx["charge_crack_" + k] = crack.map(im => K.turn(im, k / 8 * Math.PI));
   const RED_GHOST = [P.R3, P.R2, P.R1, P.R0], PAPER_GHOST = [P.W, P.CR2, P.CR1, P.AS3];
   if (poses.bull) { fx.bull_ghost_r = ghost(poses.bull, RED_GHOST); fx.bull_ghost_l = ghost(poses.bull, RED_GHOST, 5, true); }
   if (poses.servant) { fx.paper_ghost_r = ghost(poses.servant, PAPER_GHOST, 4); fx.paper_ghost_l = ghost(poses.servant, PAPER_GHOST, 4, true); }

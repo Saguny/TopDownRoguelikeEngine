@@ -35,7 +35,16 @@ public class HorseFace : MonoBehaviour
     private SpriteRenderer halo;
     private Sprite[] haloArt, pulseArt;
 
-    private Vector2 Lantern => (Vector2)transform.position + new Vector2(0f, 0.9f);
+    // where the lantern is held up in his raise (the art's: 1 unit ahead of him and 1.3 up), on
+    // whichever side he's facing
+    private Vector2 Lantern
+    {
+        get
+        {
+            bool left = art != null && art.Renderer != null && art.Renderer.flipX;
+            return (Vector2)transform.position + new Vector2(left ? -1.01f : 1.01f, 1.28f);
+        }
+    }
 
     private void Awake()
     {

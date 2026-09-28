@@ -54,7 +54,15 @@ public class BullHead : MonoBehaviour
     private Collider2D body;
     private Collider2D playerBody;
     private SpriteRenderer lane;
-    private Sprite[] laneArt, dustArt, crashArt, trampleArt;
+    private Sprite[] laneArt, dustArt, crashArt, trampleArt, launchArt, ghostRight, ghostLeft;
+    private readonly Sprite[][] crackArt = new Sprite[8][];
+    private Vector2 lastCrack;
+    private float nextGhost;
+
+    // his hooves, below his middle (the art's centre)
+    private const float Feet = 1.45f;
+    private const float CrackEvery = 0.7f;      // units of road between cracks
+    private const float GhostEvery = 0.06f;     // seconds between afterimages
     private Color rest = Color.white;
     private readonly List<EnemyMovement> under = new List<EnemyMovement>(32);
 
@@ -75,6 +83,10 @@ public class BullHead : MonoBehaviour
         dustArt = YamaArt.Strip("Huangquan/charge_dust");
         crashArt = YamaArt.Strip("Huangquan/charge_crash");
         trampleArt = YamaArt.Strip("Huangquan/trample");
+        launchArt = YamaArt.Strip("Huangquan/charge_launch");
+        ghostRight = YamaArt.Strip("Huangquan/bull_ghost_r");
+        ghostLeft = YamaArt.Strip("Huangquan/bull_ghost_l");
+        for (int k = 0; k < 8; k++) crackArt[k] = YamaArt.Strip("Huangquan/charge_crack_" + k);
         if (laneArt != null && laneArt.Length > 0)
         {
             var go = new GameObject("Charge Lane");
@@ -204,7 +216,7 @@ public class BullHead : MonoBehaviour
         lane.sprite = YamaArt.Frame(laneArt, now, 14f);
         float width = lane.sprite.bounds.size.y;
         lane.size = new Vector2(chargeEnd * Mathf.Clamp01(k * 3f), width);
-        lane.transform.position = laneStart + dir * (lane.size.x * 0.5f);
+        lane.transform.position = laneStart + Vector2.down * Feet + dir * (lane.size.x * 0.5f);
         lane.transform.rotation = Quaternion.Euler(0f, 0f, Hq.Angle(dir));
         lane.color = new Color(1f, 1f, 1f, Mathf.Lerp(0.45f, 0.95f, k));
     }
@@ -223,7 +235,12 @@ public class BullHead : MonoBehaviour
         move.Face(dir, seconds + 0.2f);
         if (art != null) art.Play("charge", seconds + 0.1f, loop: true);
         Hq.Sound("hq_bull_charge", transform.position, 0.85f, 0.2f);
-        Juice.Shake(0.08f);
+        Juice.Shake(0.12f);
+        // the road bursting under his hooves as he sets off
+        Vector2 hooves = (Vector2)transform.position + Vector2.down * Feet;
+        if (launchArt != null) FxBatch.Play(launchArt, 20f, hooves, 1f, "Player", -2);
+        lastCrack = hooves;
+        nextGhost = Time.time;
         Begin(State.Charge, seconds);
     }
 
@@ -265,7 +282,22 @@ public class BullHead : MonoBehaviour
         }
         if (trampled > 0) Hq.Sound("hq_bull_trample", me, 0.5f, 0.09f);
 
-        if (dustArt != null && Random.value < 0.5f) FxBatch.Play(dustArt, 18f, me - dir * 0.5f + Random.insideUnitCircle * 0.2f, 1f, "Enemy", 1);
+        Vector2 hooves = me + Vector2.down * Feet;
+        if (dustArt != null && Random.value < 0.6f) FxBatch.Play(dustArt, 18f, hooves - dir * 0.6f + Random.insideUnitCircle * 0.25f, 1f, "Enemy", 1);
+        // the road splitting behind him, glowing, cooling
+        if ((hooves - lastCrack).sqrMagnitude >= CrackEvery * CrackEvery)
+        {
+            lastCrack = hooves;
+            var crack = crackArt[CrackHeading(dir)];
+            if (crack != null) FxBatch.Play(crack, 7f, hooves, 1f, "Player", -3);
+        }
+        // afterimages burning off behind him
+        if (now >= nextGhost)
+        {
+            nextGhost = now + GhostEvery;
+            var ghost = dir.x >= 0f ? ghostRight : ghostLeft;
+            if (ghost != null) FxBatch.Play(ghost, 18f, me, 1f, "Enemy", 1);
+        }
 
         // the player, caught in the line
         if (!hitPlayer && Hq.FindPlayer(out Vector2 player) && (player - me).sqrMagnitude < 0.9f * 0.9f)
@@ -283,6 +315,15 @@ public class BullHead : MonoBehaviour
         if (now >= until) Crash(me, false);
     }
 
+    // which of the eight pre-turned cracks runs along a heading (they're turned clockwise on the
+    // screen by eighths of a half turn, and a crack runs both ways)
+    private static int CrackHeading(Vector2 d)
+    {
+        float a = -Mathf.Atan2(d.y, d.x) * Mathf.Rad2Deg;
+        a = ((a % 180f) + 180f) % 180f;
+        return Mathf.RoundToInt(a / 22.5f) % 8;
+    }
+
     // the charge over: into a wall (a crash), or run out (a skid). stunned either way
     private void Crash(Vector2 me, bool wall)
     {
@@ -297,6 +338,7 @@ public class BullHead : MonoBehaviour
         }
         else Hq.Sound("hq_bull_skid", me, 0.6f, 0.1f);
         if (art != null) art.Play("stun", stun, loop: true);
+        Hq.Sound("hq_bull_dazed", me, 0.5f, 0.3f);
         Taken(stunnedTaken);
         Begin(State.Stun, stun);
     }

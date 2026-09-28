@@ -72,6 +72,8 @@ public class SoulLantern : MonoBehaviour
         side = Random.value < 0.5f ? -1f : 1f;
         shown = false;
         if (health != null) health.Died += OnDied;
+        // rare: it announces itself, a far clear bell
+        Hq.Sound("hq_lantern_appear", transform.position, 0.7f, 1f, 1f, 0.02f);
     }
 
     private void Start() => Show();

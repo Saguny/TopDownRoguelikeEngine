@@ -55,8 +55,11 @@ public class PaperServant : MonoBehaviour
             if (now >= nextTrail)
             {
                 nextTrail = now + trailEvery;
-                var ghost = YamaArt.Strip("Huangquan/paper_trail");
-                if (ghost != null) FxBatch.Play(ghost, 22f, transform.position, 1f, "Enemy", 1);
+                // scraps of paper shed along the line, and its afterimage paling behind it
+                var scraps = YamaArt.Strip("Huangquan/paper_trail");
+                if (scraps != null) FxBatch.Play(scraps, 22f, transform.position, 1f, "Enemy", 1);
+                var ghost = YamaArt.Strip(heading.x >= 0f ? "Huangquan/paper_ghost_r" : "Huangquan/paper_ghost_l");
+                if (ghost != null) FxBatch.Play(ghost, 24f, transform.position, 1f, "Enemy", 1);
             }
             if (now >= until || !move.Driven) Hold(pause);
             return;
