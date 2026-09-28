@@ -36,8 +36,35 @@ public class HudTextFx : MonoBehaviour
     {
         text = GetComponent<TMP_Text>();
         phase = Random.value * GlintEvery;
-        material = text.fontMaterial;           // its own copy, so its outline can move alone
-        if (material != null) material.EnableKeyword(ShaderUtilities.Keyword_Underlay);
+        material = MakeMaterial(text);
+        if (material == null) return;
+        text.fontMaterial = material;
+        material.EnableKeyword(ShaderUtilities.Keyword_Underlay);
+    }
+
+    // its own copy of the font's material, so its outline can move alone. the game's font is drawn
+    // with TMP's Bitmap shader, which has no outline or underlay; its atlas is a distance field, so
+    // the copy is switched to a Distance Field shader, which has both
+    private static Material MakeMaterial(TMP_Text t)
+    {
+        var shared = t.fontSharedMaterial;
+        if (shared == null) return null;
+        var m = new Material(shared) { name = shared.name + " (HUD)" };
+        // the mobile one: TMP's default font (in Resources) uses it, so it's always in a build
+        var sdf = Shader.Find("TextMeshPro/Mobile/Distance Field");
+        if (sdf == null) sdf = Shader.Find("TextMeshPro/Distance Field");
+        var font = t.font;
+        if (sdf != null && m.shader != sdf && font != null)
+        {
+            m.shader = sdf;
+            m.SetTexture(ShaderUtilities.ID_MainTex, font.atlasTexture);
+            m.SetFloat(ShaderUtilities.ID_GradientScale, font.atlasPadding + 1);
+            m.SetFloat(ShaderUtilities.ID_TextureWidth, font.atlasWidth);
+            m.SetFloat(ShaderUtilities.ID_TextureHeight, font.atlasHeight);
+            m.SetFloat(ShaderUtilities.ID_WeightNormal, font.normalStyle);
+            m.SetFloat(ShaderUtilities.ID_WeightBold, font.boldStyle);
+        }
+        return m;
     }
 
     private void OnDestroy()
@@ -81,6 +108,8 @@ public class HudTextFx : MonoBehaviour
             material.SetFloat(ShaderUtilities.ID_UnderlayDilate, 0.2f);
             material.SetFloat(ShaderUtilities.ID_UnderlaySoftness, 0.15f);
         }
+        // so the outline and the glow get room round each letter
+        ShaderUtilities.UpdateShaderRatios(material);
     }
 
     // each letter's colour: the gold glint sweeping across, or the blue and red rippling through
