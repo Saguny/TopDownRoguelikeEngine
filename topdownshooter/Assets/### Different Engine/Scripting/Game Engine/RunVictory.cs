@@ -49,6 +49,8 @@ public class RunVictory : MonoBehaviour
         if (BGMManager.Instance != null) BGMManager.Instance.EndBossTheme(2.5f);
         var screen = YamaScreenIfAny();
         if (screen != null) screen.EndFight();
+        // the boss's light gives way to the stage's own as the results come
+        if (BossGrade.Current != null) BossGrade.Current.Set(BossGrade.Look.Normal, 2.5f);
 
         // gold glow floods in over real time (the results stop the game), then the results
         MakeLight();

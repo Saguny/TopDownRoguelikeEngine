@@ -62,6 +62,7 @@ public class YamaBoss : MonoBehaviour, IDamageGate
     private SpriteRenderer body, halo, gate, wheel;
     private Collider2D hurtbox;
     private YamaScreen screen;
+    private BossGrade grade;
     private Sprite[] frames, haloFrames, gateFrames;
     private readonly List<SpriteRenderer> ghosts = new List<SpriteRenderer>();
     private readonly List<float> ghostAge = new List<float>();
@@ -119,6 +120,8 @@ public class YamaBoss : MonoBehaviour, IDamageGate
         haloFrames = YamaArt.Frames("halo");
         gateFrames = YamaArt.Frames("gate");
         screen = YamaScreen.Get();
+        grade = BossGrade.Get();
+        Danmaku.PlayerHit += OnPlayerHit;
 
         body = GetComponent<SpriteRenderer>();
         body.sortingLayerName = "Aura";
@@ -177,8 +180,18 @@ public class YamaBoss : MonoBehaviour, IDamageGate
         if (wheel != null) Destroy(wheel.gameObject);
         if (gate != null) Destroy(gate.gameObject);
         Danmaku.ShowHitbox = false;
+        Danmaku.PlayerHit -= OnPlayerHit;
         if (director != null) director.BossCrowd = 1f;
     }
+
+    // the player hit: the edges of the world bleed red for a moment
+    private void OnPlayerHit(Vector2 at)
+    {
+        if (grade != null) grade.Hurt();
+        screen.Flash(new Color(1f, 0.1f, 0.1f), 0.18f, 0.3f);
+    }
+
+    private BossGrade.Look Mood => rage ? BossGrade.Look.Rage : BossGrade.Look.Fight;
 
     // ---- the damage gate: each phase's bar is its own, and he can't be hurt between them
 
@@ -302,8 +315,10 @@ public class YamaBoss : MonoBehaviour, IDamageGate
         Vector2 gateAt = basePos + new Vector2(0f, -1.4f);
         if (director != null) director.PauseSpawning(14f);
         screen.Letterbox(true);
-        screen.Dim(0.55f);
-        screen.Vignette(new Color(0.55f, 0.05f, 0.1f), 0.6f);
+        screen.Dim(0.35f);
+        screen.Vignette(new Color(0.55f, 0.05f, 0.1f), 0.35f);
+        // the world's light turns to the underworld's as he comes
+        grade.Set(BossGrade.Look.Fight, 3.5f);
         if (bossMusic != null && BGMManager.Instance != null)
             BGMManager.Instance.PlayBossTheme(bossMusic, musicVolume, musicFadeOut, musicFadeIn);
 
@@ -321,10 +336,12 @@ public class YamaBoss : MonoBehaviour, IDamageGate
         gate.transform.position = gateAt;
         gate.enabled = true;
         StartCoroutine(Gate());
+        grade.Punch(0.45f);
         yield return Wait(1.2f);
 
         YamaArt.Play("yama_toll", basePos, 1f, 0.88f);
         Juice.Shake(0.32f);
+        grade.Punch(0.3f);
         yield return Wait(0.35f);
 
         // he rises out of it
@@ -346,6 +363,7 @@ public class YamaBoss : MonoBehaviour, IDamageGate
         Juice.Freeze(0.1f);
         Juice.Shake(0.7f);
         screen.Flash(Color.white, 0.7f, 0.6f);
+        grade.Punch(1f);
         screen.Title("YAMA", "King of Hell  -  Judge of the Dead", 3f);
         var death = YamaArt.Frames("death");
         if (death != null) FxBatch.Play(death, 16f, basePos, 1.5f, "Aura", 41);
@@ -353,8 +371,8 @@ public class YamaBoss : MonoBehaviour, IDamageGate
         yield return Wait(1.8f);
 
         screen.Letterbox(false);
-        screen.Dim(0.18f);
-        screen.Vignette(new Color(0.55f, 0.05f, 0.1f), 0.35f);
+        screen.Dim(0.06f);
+        screen.Vignette(new Color(0.55f, 0.05f, 0.1f), 0.15f);
         screen.ShowBar("Yama  -  King of Hell");
         YamaArt.Play("yama_bar", basePos, 0.7f);
         if (director != null) director.BossCrowd = crowdDuringFight;
@@ -411,7 +429,9 @@ public class YamaBoss : MonoBehaviour, IDamageGate
             YamaArt.Play("yama_roar", transform.position, 1f, 0.85f);
             Juice.Shake(0.5f);
             screen.Flash(new Color(1f, 0.2f, 0.2f), 0.45f, 0.5f);
-            screen.Vignette(new Color(0.75f, 0.05f, 0.08f), 0.7f, true);
+            screen.Vignette(new Color(0.75f, 0.05f, 0.08f), 0.4f, true);
+            grade.Set(BossGrade.Look.Rage, 1.5f);
+            grade.Punch(0.9f);
         }
 
         if (p.card != null) yield return Declare(p.card);
@@ -433,7 +453,9 @@ public class YamaBoss : MonoBehaviour, IDamageGate
         var charge = YamaArt.Frames("charge");
         if (charge != null) FxBatch.Play(charge, 8f, E, 2.4f, "Aura", 42);
         screen.Declare(card, YamaArt.Frames("portrait", 100f)?[0]);
-        screen.Dim(0.42f);
+        screen.Dim(0.2f);
+        grade.Set(rage ? BossGrade.Look.Rage : BossGrade.Look.Spell, 1.2f);
+        grade.Punch(0.5f);
         Juice.Shake(0.18f);
         StartCoroutine(FadeWheel(0.4f, 0.6f));
         yield return Wait(1.5f);
@@ -462,6 +484,7 @@ public class YamaBoss : MonoBehaviour, IDamageGate
         var blast = YamaArt.Frames("blast");
         if (blast != null) FxBatch.Play(blast, 18f, transform.position, 2f, "Aura", 42);
         screen.Flash(Color.white, 0.4f, 0.35f);
+        grade.Punch(0.8f);
         Juice.Freeze(0.08f);
         Juice.Shake(0.45f);
 
@@ -471,7 +494,8 @@ public class YamaBoss : MonoBehaviour, IDamageGate
             cardsLeft--;
             StartCoroutine(FadeWheel(0f, 0.8f));
             screen.ClearCard();
-            screen.Dim(0.18f);
+            screen.Dim(0.06f);
+            grade.Set(Mood, 1.5f);
             if (clean)
             {
                 int coins = Coins.WithGreed(spellBonus != null && card < spellBonus.Length ? spellBonus[card] : 500);
@@ -500,7 +524,8 @@ public class YamaBoss : MonoBehaviour, IDamageGate
         screen.ClearCard();
         screen.HideBar();
         screen.Letterbox(true);
-        screen.Dim(0.5f);
+        screen.Dim(0.3f);
+        grade.Set(BossGrade.Look.Dying, 0.8f);
         following = false;
         StartCoroutine(FadeWheel(0f, 0.5f));
         YamaArt.Play("yama_death_cry", transform.position, 1f);
@@ -518,6 +543,7 @@ public class YamaBoss : MonoBehaviour, IDamageGate
             if (blast != null) FxBatch.Play(blast, 20f, p, UnityEngine.Random.Range(0.9f, 1.5f), "Aura", 42);
             YamaArt.Play("yama_blast", p, 0.55f, UnityEngine.Random.Range(0.85f, 1.15f));
             Juice.Shake(Mathf.Lerp(0.15f, 0.4f, k / 15f));
+            grade.Punch(Mathf.Lerp(0.2f, 0.55f, k / 15f));
             // he shudders and flickers white
             basePos = at + UnityEngine.Random.insideUnitCircle * 0.12f;
             body.color = k % 2 == 0 ? new Color(1f, 0.6f, 0.6f) : Color.white;
@@ -531,6 +557,8 @@ public class YamaBoss : MonoBehaviour, IDamageGate
         if (death != null) FxBatch.Play(death, 14f, at, 2.6f, "Aura", 43);
         YamaArt.Play("yama_death", at, 1f);
         screen.Flash(Color.white, 1f, 1.4f);
+        grade.Punch(1f);
+        grade.Set(BossGrade.Look.Triumph, 2.5f);
         Juice.Freeze(0.15f);
         Juice.Shake(1f);
         body.enabled = false;
@@ -543,8 +571,8 @@ public class YamaBoss : MonoBehaviour, IDamageGate
         yield return Wait(1.2f);
         screen.Title("YAMA HAS FALLEN", "The Ledger of Life and Death is closed", 3.4f);
         screen.Letterbox(false);
-        screen.Dim(0.1f);
-        screen.Vignette(new Color(1f, 0.85f, 0.4f), 0.25f);
+        screen.Dim(0f);
+        screen.Vignette(new Color(1f, 0.85f, 0.4f), 0.15f);
         YamaArt.Play("yama_victory", at, 0.9f);
 
         // the horde goes with him, his envelope falls, and the run is won (RunVictory)
