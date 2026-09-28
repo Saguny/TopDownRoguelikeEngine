@@ -15,7 +15,8 @@ using UnityEngine.SceneManagement;
 // evolution) and at each stage measures it against
 //   crowd   a standing crowd of Crowd Size enemies closing in on the player
 //   single  one enemy on its own
-// the enemies can't die (their health is huge, their armour and resistances are off), so the
+// it all happens on the TestGround, open floor far past the map, so no wall or pillar gets in the
+// way of the player's walk or the crowd. the enemies can't die (their health is huge, their armour and resistances are off), so the
 // crowd is the same size the whole time and every weapon faces the same thing. the player walks
 // a slow circle so weapons that follow them, and the ink brush, work as they do in play.
 // written to <project>/Benchmarks/weapon_dps.csv (read by Tools/Balance/balance.py, which fits
@@ -100,6 +101,8 @@ public class WeaponBenchmark : MonoBehaviour
         inventory.wenForUpgrade = int.MaxValue / 2;
         if (inventory.upgradeMenuUI != null && inventory.upgradeMenuUI.IsOpen) inventory.upgradeMenuUI.Close();
         Clear();
+        // out onto open ground: the map's walls, pillars and road would stop the walk and the crowd
+        TestGround.MovePlayer(inventory.gameObject);
 
         if (crowdPrefab == null && director.Timeline != null)
             crowdPrefab = director.Timeline.beats.SelectMany(b => b.enemies)

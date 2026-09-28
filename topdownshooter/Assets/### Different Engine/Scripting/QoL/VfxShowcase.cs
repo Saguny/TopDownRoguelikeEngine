@@ -49,6 +49,9 @@ public class VfxShowcase : MonoBehaviour
         yield return new WaitForSecondsRealtime(2.5f);
         director.enabled = false;
         if (inventory.upgradeMenuUI != null && inventory.upgradeMenuUI.IsOpen) inventory.upgradeMenuUI.Close();
+        // out onto open ground, clear of the map's walls and pillars
+        foreach (var go in EnemyRegistry.All.ToList()) if (go != null) ObjectPool.Recycle(go);
+        TestGround.MovePlayer(inventory.gameObject);
         Time.timeScale = 1f;
 
         foreach (var w in inventory.RunUpgrades.OfType<WeaponData>().Where(w => !(w is CommandTokenData)).ToList())
