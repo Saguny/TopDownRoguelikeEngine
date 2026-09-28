@@ -1,5 +1,7 @@
 using UnityEngine;
 
+public enum SpawnPattern { Horde, Cluster, OnScreen, Burst, Edge, Rare }
+
 [CreateAssetMenu(menuName = "Rogue/EnemyArchetype")]
 public class EnemyArchetype : ScriptableObject
 {
@@ -18,6 +20,16 @@ public class EnemyArchetype : ScriptableObject
     [Range(0.25f, 2f)] public float physicalTaken = 1f;
     [Tooltip("damage it takes from Magical weapons (talismans, spells, summoned things)")]
     [Range(0.25f, 2f)] public float magicalTaken = 1f;
+
+    [Header("How it arrives (the timeline spawner)")]
+    [Tooltip("Horde: the usual, flocks of the small ones from the front. Cluster: a big tight crowd of them at once. OnScreen: " +
+             "somewhere on the screen itself, away from the player (a plant that grows there). Burst: a few together from one point " +
+             "of the edge. Edge: one at a time at the screen's edge. Rare: at the edge, seldom (keep its weight low and Max Alive 1)")]
+    public SpawnPattern pattern = SpawnPattern.Horde;
+    [Tooltip("how many come together for Cluster and Burst: a random count in this range")]
+    public Vector2Int group = new Vector2Int(1, 1);
+    [Tooltip("the most of its kind alive at once. 0 = no limit")]
+    [Min(0)] public int maxAlive = 0;
 
     [Header("Contact Damage")]
     public float contactTickInterval = 0.5f;

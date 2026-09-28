@@ -72,6 +72,9 @@ public class EnemyMovement : MonoBehaviour
         _shoveUntil = 0f;
         _knock = Vector2.zero;
         _knockUntil = _nextKnock = 0f;
+        _driveUntil = 0f;
+        _hasteUntil = 0f;
+        _haste = 1f;
         _smoothedDirection = Vector2.zero;
         _avoidanceSide = 0f;
         _radius = -1f;
@@ -118,13 +121,26 @@ public class EnemyMovement : MonoBehaviour
         UpdateSmoothedDirection(direction);
 
         _lastPlayer = player;
+        // rooted (a spider lily): it never moves, whatever pushes it
+        if (Rooted)
+        {
+            _rigidbody.linearVelocity = Vector2.zero;
+            return;
+        }
         Vector2 velocity = Vector2.zero;
+        float slowNow = now < _slowUntil ? _slowFactor : 1f;
         // knocked back: its own walk stops for the moment while the hit carries it away
         if (now < _knockUntil) velocity = _knock;
+        // driven by its own behaviour (a dash, a charge, keeping its distance): that instead of the walk
+        else if (now < _driveUntil)
+        {
+            velocity = _drive * slowNow;
+            if (_driveGhost) push = Vector2.zero;
+        }
         else if (_smoothedDirection.sqrMagnitude >= 0.001f)
         {
-            float slow = now < _slowUntil ? _slowFactor : 1f;
-            velocity = _smoothedDirection.normalized * (_speed * slow * _headingSpeedMul);
+            float haste = now < _hasteUntil ? _haste : 1f;
+            velocity = _smoothedDirection.normalized * (_speed * slowNow * haste * _headingSpeedMul);
         }
         velocity += push;
         if (now < _shoveUntil) velocity += _shove;
@@ -240,6 +256,7 @@ public class EnemyMovement : MonoBehaviour
 
     public void Knock(float strength)
     {
+        if (Rooted) return;
         float k = strength * (1f - knockbackResist);
         float now = Time.time;
         if (k <= 0.01f || now < _nextKnock) return;
@@ -248,6 +265,39 @@ public class EnemyMovement : MonoBehaviour
         _knock = away * (KnockSpeed * k);
         _knockUntil = now + KnockSeconds;
         _nextKnock = now + KnockRest;
+    }
+
+    // ---- for enemies with a mind of their own (Huangquan Road's): rooted, driven, hasted
+
+    // never moves: no walk, no push, no knockback
+    public bool Rooted { get; set; }
+
+    // its walking speed right now (the run's curve and its kind's), for behaviours that move it themselves
+    public float Speed => _speed;
+
+    private Vector2 _drive;
+    private float _driveUntil;
+    private bool _driveGhost;
+
+    // moves at `velocity` for `seconds` instead of walking to the player. ghost: through the crowd,
+    // not pushed apart from it (a paper servant slicing through). a zero velocity holds it still
+    public void Drive(Vector2 velocity, float seconds, bool ghost = false)
+    {
+        _drive = velocity;
+        _driveUntil = Time.time + Mathf.Max(0f, seconds);
+        _driveGhost = ghost;
+    }
+
+    public bool Driven => Time.time < _driveUntil;
+    public void StopDrive() => _driveUntil = 0f;
+
+    private float _haste = 1f, _hasteUntil;
+
+    // walks faster for a moment (a soul lantern's aura); the strongest running wins
+    public void Haste(float factor, float seconds)
+    {
+        if (Time.time >= _hasteUntil || factor > _haste) _haste = factor;
+        _hasteUntil = Mathf.Max(_hasteUntil, Time.time + seconds);
     }
 
     public void ApplySlow(float factor, float seconds)

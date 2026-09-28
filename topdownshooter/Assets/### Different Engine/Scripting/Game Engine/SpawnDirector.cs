@@ -581,6 +581,7 @@ public class SpawnDirector : MonoBehaviour
         var go = IsBoss(arch)
             ? Instantiate(arch.prefab, pos, Quaternion.identity)
             : ObjectPool.For(arch.prefab).Get(pos, Quaternion.identity);
+        Count(arch, go);
 
         if (go.TryGetComponent(out EnemyHealth h))
         {
@@ -916,12 +917,16 @@ public class SpawnDirector : MonoBehaviour
             bool refill = alive < minimum;
             if (!refill && trickleOwed <= 0) break;
 
-            var arch = SpawnTimeline.PickFrom(beat.enemies);
+            // a kind already at its most alive (a rare lantern, the few burners) gives way to another
+            EnemyArchetype arch = null;
+            for (int tries = 0; tries < 4 && arch == null; tries++)
+            {
+                arch = SpawnTimeline.PickFrom(beat.enemies);
+                if (arch != null && AtMost(arch)) arch = null;
+            }
             if (arch == null) break;
 
-            int made = arch.cost <= packMaxCost
-                ? SpawnPack(arch, cap - alive, HardCap - alive)
-                : Spawn(arch, false) != null ? 1 : 0;
+            int made = SpawnByPattern(arch, cap - alive, HardCap - alive);
             if (made == 0) break;
 
             alive += made;
@@ -933,12 +938,80 @@ public class SpawnDirector : MonoBehaviour
     // that pours in all at once, the flocks growing as the run goes on. a flock isn't cut down to
     // the beat's last few places (only to the hard cap), or late in a beat they'd dwindle to pairs.
     // returns how many were made
-    private int SpawnPack(EnemyArchetype arch, int room, int hardRoom)
+    // how each kind arrives (EnemyArchetype.pattern). returns how many were made
+    private int SpawnByPattern(EnemyArchetype arch, int room, int hardRoom)
+    {
+        switch (arch.pattern)
+        {
+            case SpawnPattern.Cluster:
+                return SpawnPack(arch, room, hardRoom, Random.Range(arch.group.x, arch.group.y + 1));
+            case SpawnPattern.OnScreen:
+                return TryOnScreenPoint(out Vector2 on) && Spawn(arch, false, on) != null ? 1 : 0;
+            case SpawnPattern.Burst:
+                return SpawnBurst(arch, Mathf.Min(hardRoom, Random.Range(arch.group.x, arch.group.y + 1)));
+            case SpawnPattern.Edge:
+            case SpawnPattern.Rare:
+                return Spawn(arch, false) != null ? 1 : 0;
+            default:
+                return arch.cost <= packMaxCost ? SpawnPack(arch, room, hardRoom) : Spawn(arch, false) != null ? 1 : 0;
+        }
+    }
+
+    // the living of each kind that has a Max Alive, to hold it to that
+    private readonly Dictionary<EnemyArchetype, List<GameObject>> capped = new Dictionary<EnemyArchetype, List<GameObject>>();
+
+    private bool AtMost(EnemyArchetype arch)
+    {
+        if (arch.maxAlive <= 0 || !capped.TryGetValue(arch, out var list)) return false;
+        list.RemoveAll(g => g == null || !g.activeInHierarchy);
+        return list.Count >= arch.maxAlive;
+    }
+
+    private void Count(EnemyArchetype arch, GameObject go)
+    {
+        if (arch == null || arch.maxAlive <= 0 || go == null) return;
+        if (!capped.TryGetValue(arch, out var list)) capped[arch] = list = new List<GameObject>();
+        list.Add(go);
+    }
+
+    // somewhere on the screen, well away from the player and off the props: for what grows where it
+    // stands (a spider lily)
+    private bool TryOnScreenPoint(out Vector2 pos)
+    {
+        GetView(out Vector2 centre, out float halfW, out float halfH);
+        Vector2 me = playerTransform != null ? (Vector2)playerTransform.position : centre;
+        for (int tries = 0; tries < 10; tries++)
+        {
+            pos = centre + new Vector2(Random.Range(-halfW + 1f, halfW - 1f), Random.Range(-halfH + 1f, halfH - 1.5f));
+            if ((pos - me).sqrMagnitude < 3.5f * 3.5f) continue;
+            if (ValidSpawn(pos)) return true;
+        }
+        pos = default;
+        return false;
+    }
+
+    // a few together from one point of the edge on the front, a tight knot that sets off at once
+    private int SpawnBurst(EnemyArchetype arch, int size)
+    {
+        if (size <= 0) return 0;
+        Vector2 at = GetSpawnPositionNearOffscreenInsideBounds();
+        int made = 0;
+        for (int i = 0; i < size; i++)
+        {
+            Vector2 p = at + Random.insideUnitCircle * 0.8f;
+            if (!ValidSpawn(p)) p = at;
+            if (Spawn(arch, false, p) != null) made++;
+        }
+        return made;
+    }
+
+    private int SpawnPack(EnemyArchetype arch, int room, int hardRoom, int forced = 0)
     {
         float ramp = spawnCapRampDuration > 0f ? Mathf.Clamp01(timeElapsed / spawnCapRampDuration) : 1f;
         int least = Mathf.RoundToInt(Mathf.Lerp(packSizeEarly.x, packSizeLate.x, ramp));
         int most = Mathf.RoundToInt(Mathf.Lerp(packSizeEarly.y, packSizeLate.y, ramp));
-        int size = Mathf.Min(Random.Range(least, most + 1), Mathf.Max(room, least), hardRoom);
+        // a cluster kind's own size, not cut down to the beat's room (only to the hard cap)
+        int size = forced > 0 ? Mathf.Min(forced, hardRoom) : Mathf.Min(Random.Range(least, most + 1), Mathf.Max(room, least), hardRoom);
         if (size <= 0) return 0;
 
         // the cloud's radius grows with the square root of its size, so it stays as dense; its
@@ -1451,11 +1524,34 @@ public class SpawnDirector : MonoBehaviour
     public bool RushWon(int kills, int quota)
     {
         if (!ProcessionRuns) return kills >= quota && !HasAliveBosses();
-        if (bossArchetype == null || bossArchetype.prefab == null) return true;
+        var first = RushBoss(0);
+        if (first == null || first.prefab == null) return true;
         return bossesSpawnedThisRush >= rushBosses && GetAliveBossCount() == 0;
     }
 
-    private bool ProcessionRuns => processionCorpse != null && processionCorpse.prefab != null;
+    private bool ProcessionRuns => PMain != null && PMain.prefab != null;
+
+    // the map's own procession and rush bosses (Playfield), or the scene's: the Magistrate's
+    private EnemyArchetype PMain => Playfield.Active != null && Playfield.Active.processionMain != null ? Playfield.Active.processionMain : processionCorpse;
+    private EnemyArchetype PFast => Playfield.Active != null && Playfield.Active.processionFast != null ? Playfield.Active.processionFast : processionFire;
+    private EnemyArchetype RushBoss(int i)
+    {
+        var map = Playfield.Active != null ? Playfield.Active.rushBosses : null;
+        if (map != null && map.Length > 0)
+        {
+            var a = map[Mathf.Abs(i) % map.Length];
+            if (a != null && a.prefab != null) return a;
+        }
+        return bossArchetype;
+    }
+    private bool IsRushBoss(EnemyArchetype arch)
+    {
+        if (arch == null) return false;
+        if (arch == bossArchetype) return true;
+        var map = Playfield.Active != null ? Playfield.Active.rushBosses : null;
+        if (map != null) foreach (var a in map) if (a == arch) return true;
+        return false;
+    }
     private int formationIndex;
     private static AudioClip procBell;
 
@@ -1470,7 +1566,7 @@ public class SpawnDirector : MonoBehaviour
         // the rush's whole set of Magistrates comes at once, from all round, each with his retinue
         rushBosses = GetMaxBossCountForWave(currentWave);
         float a0 = Random.value * 360f;
-        for (int i = 0; i < rushBosses; i++) SpawnMagistrate(Rotate(Vector2.right, a0 + 360f * i / rushBosses));
+        for (int i = 0; i < rushBosses; i++) SpawnMagistrate(Rotate(Vector2.right, a0 + 360f * i / rushBosses), i);
     }
 
     private void UpdateProcession()
@@ -1481,7 +1577,7 @@ public class SpawnDirector : MonoBehaviour
         // one who couldn't be placed at the start (walls all round) comes as soon as he can
         if (bossesSpawnedThisRush < rushBosses)
         {
-            SpawnMagistrate(RandomDirection());
+            SpawnMagistrate(RandomDirection(), bossesSpawnedThisRush);
             rushBarDirty = true;
         }
 
@@ -1499,7 +1595,7 @@ public class SpawnDirector : MonoBehaviour
         if (Time.time >= nextTrickle && alive < target / 2)
         {
             nextTrickle = Time.time + 0.6f;
-            Spawn(processionCorpse, true);
+            Spawn(PMain, true);
         }
     }
 
@@ -1510,18 +1606,18 @@ public class SpawnDirector : MonoBehaviour
         switch (f)
         {
             case Formation.Column:
-                Column(processionCorpse, dir, Mathf.Min(room, 6 + 2 * w), 0.85f);
+                Column(PMain, dir, Mathf.Min(room, 6 + 2 * w), 0.85f);
                 break;
             case Formation.Pincer:
                 int half = Mathf.Min(room / 2, 5 + 2 * w);
-                Column(processionCorpse, dir, half, 0.85f);
-                Column(processionCorpse, -dir, half, 0.85f);
+                Column(PMain, dir, half, 0.85f);
+                Column(PMain, -dir, half, 0.85f);
                 break;
             case Formation.Ring:
-                Ring(processionCorpse, Mathf.Min(room, 12 + 4 * w));
+                Ring(PMain, Mathf.Min(room, 12 + 4 * w));
                 break;
             case Formation.Fire:
-                var fire = processionFire != null && processionFire.prefab != null ? processionFire : processionCorpse;
+                var fire = PFast != null && PFast.prefab != null ? PFast : PMain;
                 Flock(fire, dir, Mathf.Min(room, 8 + 2 * w));
                 break;
         }
@@ -1575,12 +1671,21 @@ public class SpawnDirector : MonoBehaviour
         return made;
     }
 
-    // a Magistrate from `dir`, and his retinue in file behind him
-    private void SpawnMagistrate(Vector2 dir)
+    // a rush boss from `dir` (the map's, taken in turn by `index`, or the Magistrate), and his
+    // retinue in file behind him. one whose statue stands near (Huangquan Road's guardians) steps
+    // down from it instead
+    private void SpawnMagistrate(Vector2 dir, int index = 0)
     {
-        if (bossArchetype == null || bossArchetype.prefab == null) return;
+        var arch = RushBoss(index);
+        if (arch == null || arch.prefab == null) return;
         if (!TryEdgePoint(dir, 1.2f, out Vector2 at)) at = GetSpawnPositionNearOffscreenInsideBounds();
-        var go = Spawn(bossArchetype, true, at);
+        if (GuardianStatue.Awaken(arch, playerTransform != null ? (Vector2)playerTransform.position : at, out Vector2 statue))
+        {
+            at = statue;
+            Vector2 toward = playerTransform != null ? (Vector2)playerTransform.position - at : -dir;
+            if (toward.sqrMagnitude > 0.01f) dir = -toward.normalized;
+        }
+        var go = Spawn(arch, true, at);
         if (go == null) return;
         if (go.TryGetComponent(out EnemyHealth h)) h.SetScaled(h.Max * Mathf.Pow(rushBossGrowth, Mathf.Max(0, currentWave - 1)));
         // he raises fewer of the dead in the early rushes: 2 at a time (4 up at once) in the first,
@@ -1598,7 +1703,7 @@ public class SpawnDirector : MonoBehaviour
         for (int i = 0; i < retinue; i++)
         {
             Vector2 p = at + dir * (1.6f + 0.85f * i) + Rotate(dir, 90f) * ((i % 2 == 0 ? 1f : -1f) * 0.45f);
-            if (ValidSpawn(p)) Spawn(processionCorpse, true, p);
+            if (ValidSpawn(p)) Spawn(PMain, true, p);
         }
         RingBell(0.8f);
     }
@@ -1653,7 +1758,7 @@ public class SpawnDirector : MonoBehaviour
     private bool rushBarDirty;
 
     private bool IsBoss(EnemyArchetype arch) =>
-        arch == bossArchetype || arch == finalBossArchetype || arch == secretBossArchetype;
+        IsRushBoss(arch) || arch == finalBossArchetype || arch == secretBossArchetype;
 
     // made during loading, behind the loading screen, so the first waves don't pay for it
     private const int PrewarmPerEnemy = 24;

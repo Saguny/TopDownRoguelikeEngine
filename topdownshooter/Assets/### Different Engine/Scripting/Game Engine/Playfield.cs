@@ -16,6 +16,14 @@ public class Playfield : MonoBehaviour
     [Tooltip("this map's own final boss, e.g. Yama for the Courtyard. empty: the scene's")]
     public EnemyArchetype finalBoss;
 
+    [Header("Final Rush (empty: the scene's, the Magistrate's procession)")]
+    [Tooltip("this map's rush bosses, taken in turn as a rush brings its set")]
+    public EnemyArchetype[] rushBosses;
+    [Tooltip("the procession's column and ring enemy")]
+    public EnemyArchetype processionMain;
+    [Tooltip("the procession's fast flankers")]
+    public EnemyArchetype processionFast;
+
     [Tooltip("where the run begins, from the playfield's centre. used when this map is swapped into a scene")]
     public Vector2 playerStart = new Vector2(0f, -4f);
 
