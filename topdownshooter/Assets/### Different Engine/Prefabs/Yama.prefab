@@ -316,5 +316,5 @@ MonoBehaviour:
   musicFadeOut: 2
   musicFadeIn: 3
   healthPerCurve: 5600
-  crowdDuringFight: 0.3
+  crowdDuringFight: 0
   hoverDistance: 5

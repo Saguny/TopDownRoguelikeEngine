@@ -11,8 +11,9 @@ using UnityEngine;
 //   a card is declared (his face sweeping across, its name under his bar, the wheel of the six
 //   realms turning behind him); breaking it cancels every bullet into sparkles and wen, and one
 //   cleared without being hit pays a bonus in coins. the last card he fights in a rage
-//   his end: he shudders, bursts from within, and goes up in a blast of gold; the horde goes with
-//   him, and his envelope and the run's results follow (RunVictory)
+//   his end: he shudders, bursts from within, and goes up in a blast of gold; his envelope and
+//   the run's results follow (RunVictory)
+// he's fought alone: nothing else spawns once he comes (Crowd During Fight turns the horde back up)
 // no clock runs while he's up (GameLoopController): it's him or the player. his bullets take a
 // fixed share of the player's max health, never scaled with the run (Danmaku), and damage never
 // carries from one phase into the next, so he can't be burst down. his health follows the map's
@@ -35,8 +36,8 @@ public class YamaBoss : MonoBehaviour, IDamageGate
     public float[] phaseShares = { 0.12f, 0.18f, 0.12f, 0.18f, 0.19f, 0.21f };
 
     [Header("The fight")]
-    [Tooltip("how thin the horde runs while he's up: 1 = as usual")]
-    [Range(0f, 1f)] public float crowdDuringFight = 0.3f;
+    [Tooltip("how much of the horde keeps coming while he's up: 0 = none, he's fought alone; 1 = as usual")]
+    [Range(0f, 1f)] public float crowdDuringFight = 0f;
     [Tooltip("how far from the player he keeps")]
     [Min(2f)] public float hoverDistance = 5f;
     [Tooltip("coins for clearing each spell card without being hit (before Greed)")]
@@ -313,7 +314,12 @@ public class YamaBoss : MonoBehaviour, IDamageGate
     private IEnumerator Entrance()
     {
         Vector2 gateAt = basePos + new Vector2(0f, -1.4f);
-        if (director != null) director.PauseSpawning(14f);
+        // he's fought alone: the horde stops for good (or thins out, if the crowd's turned up)
+        if (director != null)
+        {
+            if (crowdDuringFight <= 0f) director.StopSpawning();
+            else director.PauseSpawning(14f);
+        }
         screen.Letterbox(true);
         screen.Dim(0.35f);
         screen.Vignette(new Color(0.55f, 0.05f, 0.1f), 0.35f);
@@ -375,7 +381,7 @@ public class YamaBoss : MonoBehaviour, IDamageGate
         screen.Vignette(new Color(0.55f, 0.05f, 0.1f), 0.15f);
         screen.ShowBar("Yama  -  King of Hell");
         YamaArt.Play("yama_bar", basePos, 0.7f);
-        if (director != null) director.BossCrowd = crowdDuringFight;
+        if (director != null && crowdDuringFight > 0f) director.BossCrowd = crowdDuringFight;
         offset = basePos - Danmaku.PlayerPosition;
         following = true;
         if (hurtbox != null) hurtbox.enabled = true;
