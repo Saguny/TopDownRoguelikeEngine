@@ -79,6 +79,7 @@ public class GameLoopController : MonoBehaviour
             while (elapsed < waveDuration)
             {
                 elapsed += Time.deltaTime;
+                SecondsToRush = waveDuration - elapsed;
                 Tick();
                 // out of time for waves: straight to the final boss
                 if (BossIsDue)
@@ -92,6 +93,7 @@ public class GameLoopController : MonoBehaviour
 
             // the run clock stops for the Final Rush and stays stopped until the next wave starts:
             // the rush, the seal's wave, the wen swept in and the boss's envelope are all extra
+            SecondsToRush = float.MaxValue;
             finalRush = true;
             waveKills = 0;
 
@@ -151,8 +153,13 @@ public class GameLoopController : MonoBehaviour
     // true while a cleared Final Rush waits on its boss's envelope (UIWaveAndTimer says so)
     public static bool AwaitingEnvelope { get; private set; }
 
+    // seconds until this wave's Final Rush begins; very large outside a wave's run up to one
+    public static float SecondsToRush { get; private set; } = float.MaxValue;
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    private static void ResetStatics() => AwaitingEnvelope = false;
+    private static void ResetStatics() { AwaitingEnvelope = false; SecondsToRush = float.MaxValue; }
+
+    private void OnDestroy() => SecondsToRush = float.MaxValue;
 
     private static bool BossEnvelopeWaiting
     {

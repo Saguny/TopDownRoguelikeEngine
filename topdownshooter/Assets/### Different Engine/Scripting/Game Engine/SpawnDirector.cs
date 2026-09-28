@@ -82,6 +82,8 @@ public class SpawnDirector : MonoBehaviour
     [SerializeField] private Vector2 frontSwingEvery = new Vector2(25f, 40f);
     [Tooltip("seconds a wave takes to build up to its full crowd after the break, so a cleared screen doesn't refill all at once")]
     [SerializeField, Min(0f)] private float waveBuildUp = 35f;
+    [Tooltip("seconds before a Final Rush in which the wave's horde stops coming, so the rush doesn't start in an arena already full")]
+    [SerializeField, Min(0f)] private float quietBeforeRush = 5f;
     private float frontAngle, nextSwing, waveStartedAt = -999f;
     [Tooltip("enemies left further behind than this many screen half-diagonals are brought round in front again. 0 turns it off")]
     [SerializeField, Min(0f)] private float recycleDistance = 1.6f;
@@ -887,6 +889,9 @@ public class SpawnDirector : MonoBehaviour
 
         var beat = activeTimeline.BeatAt(minute);
         if (beat == null) return;
+
+        // the last moments before a Final Rush: nothing more of the wave's horde arrives
+        if (GameLoopController.SecondsToRush <= quietBeforeRush) return;
 
         float surge = Time.time < surgeUntil ? surgeCrowd : 1f;
         float crowd = activeTimeline.crowdScale * surge * EvoCrowd * BossCrowd;
