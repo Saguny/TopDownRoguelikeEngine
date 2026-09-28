@@ -86,10 +86,14 @@ public class SpawnDirector : MonoBehaviour
     [Tooltip("enemies costing this much or less (wisps) arrive in a pack instead of one at a time")]
     [SerializeField, Min(0)] private int packMaxCost = 1;
     [Tooltip("how many a pack holds, at the start of the run and once the spawn ramp is done")]
-    [SerializeField] private Vector2Int packSizeEarly = new Vector2Int(3, 5);
-    [SerializeField] private Vector2Int packSizeLate = new Vector2Int(5, 9);
-    [Tooltip("how far a pack's members spread from its middle")]
-    [SerializeField, Min(0f)] private float packSpread = 0.9f;
+    [SerializeField] private Vector2Int packSizeEarly = new Vector2Int(8, 12);
+    [SerializeField] private Vector2Int packSizeLate = new Vector2Int(16, 26);
+    [Tooltip("how far apart a pack's members are: its radius is this x sqrt(size) / 2")]
+    [SerializeField, Min(0f)] private float packSpread = 0.55f;
+    [Tooltip("a swarm of this many or more splits into two flocks crossing from different sides; 0 never splits")]
+    [SerializeField, Min(0)] private int swarmSplitAt = 100;
+    [Tooltip("how long after the first flock the second sets off")]
+    [SerializeField, Min(0f)] private float swarmSplitDelay = 1.2f;
 
     [Header("Opening")]
     [Tooltip("ordinary enemies that spawn while the player is at or below this level die to any hit. 0 turns it off")]
@@ -830,7 +834,9 @@ public class SpawnDirector : MonoBehaviour
             var arch = SpawnTimeline.PickFrom(beat.enemies);
             if (arch == null) break;
 
-            int made = arch.cost <= packMaxCost ? SpawnPack(arch, cap - alive) : Spawn(arch, false) != null ? 1 : 0;
+            int made = arch.cost <= packMaxCost
+                ? SpawnPack(arch, cap - alive, activeTimeline.hardCap - alive)
+                : Spawn(arch, false) != null ? 1 : 0;
             if (made == 0) break;
 
             alive += made;
@@ -838,23 +844,37 @@ public class SpawnDirector : MonoBehaviour
         }
     }
 
-    // small enemies (wisps) come as a pack: a handful bunched around one point off screen, the
-    // bunches growing as the run goes on. returns how many were made
-    private int SpawnPack(EnemyArchetype arch, int room)
+    // small enemies (wisps) come as a flock, like Vampire Survivors' bats: a dense cloud off screen
+    // that pours in all at once, the flocks growing as the run goes on. a flock isn't cut down to
+    // the beat's last few places (only to the hard cap), or late in a beat they'd dwindle to pairs.
+    // returns how many were made
+    private int SpawnPack(EnemyArchetype arch, int room, int hardRoom)
     {
         float ramp = spawnCapRampDuration > 0f ? Mathf.Clamp01(timeElapsed / spawnCapRampDuration) : 1f;
         int least = Mathf.RoundToInt(Mathf.Lerp(packSizeEarly.x, packSizeLate.x, ramp));
         int most = Mathf.RoundToInt(Mathf.Lerp(packSizeEarly.y, packSizeLate.y, ramp));
-        int size = Mathf.Clamp(Random.Range(least, most + 1), 1, Mathf.Max(1, room));
+        int size = Mathf.Min(Random.Range(least, most + 1), Mathf.Max(room, least), hardRoom);
+        if (size <= 0) return 0;
 
+        // the cloud's radius grows with the square root of its size, so it stays as dense; its
+        // middle is pushed out by that much, so none of it appears on screen
+        float radius = packSpread * Mathf.Sqrt(size) * 0.5f;
+        GetView(out Vector2 centre, out _, out _);
         Vector2 middle = GetSpawnPositionNearOffscreenInsideBounds();
-        Rect play = GetPlayRectFromBorders();
+        Vector2 outward = middle - centre;
+        if (outward.sqrMagnitude > 0.0001f) middle += outward.normalized * radius;
+        if (!ValidSpawn(middle)) middle = GetSpawnPositionNearOffscreenInsideBounds();
+
+        // a sunflower fill (each one a golden angle round from the last) with a little jitter: an
+        // even cloud with a soft edge, not a random clump with holes and overlaps
+        float turn = Random.value * Mathf.PI * 2f;
         int made = 0;
         for (int i = 0; i < size; i++)
         {
-            Vector2 at = i == 0 ? middle : middle + Random.insideUnitCircle * packSpread;
-            at.x = Mathf.Clamp(at.x, play.xMin, play.xMax);
-            at.y = Mathf.Clamp(at.y, play.yMin, play.yMax);
+            float r = radius * Mathf.Sqrt((i + 0.5f) / size);
+            float a = turn + i * 2.39996f;
+            Vector2 at = middle + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * r + Random.insideUnitCircle * packSpread * 0.2f;
+            if (!ValidSpawn(at)) at = middle;
             if (Spawn(arch, false, at) != null) made++;
         }
         return made;
@@ -970,15 +990,68 @@ public class SpawnDirector : MonoBehaviour
         return false;
     }
 
-    private IEnumerator Stream(SpawnTimeline.Event e, System.Func<EnemyArchetype> pick, Vector2 start, Vector2 dir, Vector2 side)
+    // a swarm is a flock, like Vampire Survivors' bats: a broad, dense body that pours through in
+    // a couple of seconds whatever its size, thickest down its middle and ragged at its edges. a big
+    // one splits in two, the second flock crossing the first from another side a moment later
+    private IEnumerator Stream(SpawnTimeline.Event e, System.Func<EnemyArchetype> pick, Vector2 start, Vector2 dir, Vector2 side, bool mayFork = true)
     {
-        var wait = new WaitForSeconds(1f / 14f);
-        for (int i = 0; i < e.count; i++)
+        int count = e.count;
+        if (mayFork && swarmSplitAt > 0 && count >= swarmSplitAt)
+        {
+            StartCoroutine(SecondFlock(e, pick, dir, count - count / 2));
+            count /= 2;
+        }
+
+        // wider for more of them, and never so long it trickles
+        float halfWidth = Mathf.Clamp(0.5f + Mathf.Sqrt(count) * 0.2f, 1.1f, 2.8f);
+        float seconds = Mathf.Clamp(count / 40f, 0.9f, 2.4f);
+        const float Tick = 1f / 20f;
+        var wait = new WaitForSeconds(Tick);
+        float owed = 0f;
+        int sent = 0;
+        while (sent < count)
         {
             if (spawningStopped || finalRush) yield break;
-            Vector2 p = start + side * Random.Range(-1.1f, 1.1f) - dir * Random.Range(0f, 0.8f);
-            SendCrosser(pick(), p, dir, e);
+            owed += count * Tick / seconds;
+            for (; owed >= 1f && sent < count; owed -= 1f, sent++)
+            {
+                // two random numbers averaged: most of them down the middle, a few at the edges
+                float across = (Random.value + Random.value - 1f) * halfWidth;
+                Vector2 p = start + side * across - dir * Random.Range(0f, 0.9f);
+                SendCrosser(pick(), p, dir, e);
+            }
             yield return wait;
+        }
+    }
+
+    // the second half of a big swarm, after a beat: aimed through the player from the first free
+    // compass direction at least 90° off the first flock's. if there's nowhere for it to come
+    // from, it doesn't come
+    private IEnumerator SecondFlock(SpawnTimeline.Event e, System.Func<EnemyArchetype> pick, Vector2 firstDir, int count)
+    {
+        yield return new WaitForSeconds(swarmSplitDelay);
+        if (spawningStopped || finalRush || mainCamera == null) yield break;
+
+        GetView(out Vector2 centre, out float halfW, out float halfH);
+        Vector2 target = playerTransform != null ? (Vector2)playerTransform.position : centre;
+        Rect play = GetPlayRectFromBorders();
+        int first = Random.Range(0, 8);
+        for (int k = 0; k < 8; k++)
+        {
+            Vector2 dir = Rotate(Vector2.right, ((first + k * 3) % 8) * 45f);
+            if (Vector2.Dot(dir, firstDir) > 0.1f) continue;
+            Vector2 side = new Vector2(-dir.y, dir.x);
+            float back = Mathf.Abs(dir.x) * halfW + Mathf.Abs(dir.y) * halfH + 1.5f;
+            Vector2 start = centre - dir * back + side * Vector2.Dot(target - centre, side);
+            if (!play.Contains(start)) continue;
+
+            var half = new SpawnTimeline.Event
+            {
+                label = e.label, kind = e.kind, archetype = e.archetype,
+                count = count, speed = e.speed, health = e.health,
+            };
+            yield return Stream(half, pick, start, dir, side, false);
+            yield break;
         }
     }
 
