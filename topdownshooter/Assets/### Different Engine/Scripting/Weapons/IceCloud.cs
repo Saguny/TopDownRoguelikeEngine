@@ -27,6 +27,22 @@ public class IceCloud : Weapon<IceCloudData>
     private readonly Stack<Cloud> spareClouds = new Stack<Cloud>();
     private readonly List<Pile> piles = new List<Pile>();
     private readonly Stack<Pile> sparePiles = new Stack<Pile>();
+    private readonly List<SpriteRenderer> tornadoes = new List<SpriteRenderer>();
+
+    public override void ClearShots()
+    {
+        StopAllCoroutines();
+        foreach (var t in tornadoes) if (t != null) Destroy(t.gameObject);
+        tornadoes.Clear();
+        foreach (var c in clouds)
+        {
+            c.cloud.gameObject.SetActive(false);
+            c.snow.gameObject.SetActive(false);
+            spareClouds.Push(c);
+        }
+        clouds.Clear();
+        for (int i = piles.Count - 1; i >= 0; i--) Release(i);
+    }
     private readonly Dictionary<EnemyHealth, float> nextSnow = new Dictionary<EnemyHealth, float>();
     private readonly Dictionary<EnemyHealth, float> pileImmuneUntil = new Dictionary<EnemyHealth, float>();
     private readonly List<EnemyHealth> touching = new List<EnemyHealth>();
@@ -260,6 +276,7 @@ public class IceCloud : Weapon<IceCloudData>
     {
         if (cam == null) yield break;
         var sr = WeaponFx.Make(Fx, "Frost Tornado", null, WeaponFx.Disc, Data.tornadoColor, Data.tornadoLayer, Data.tornadoOrder);
+        tornadoes.Add(sr);
         Vector2 at = TouchDown();
         Vector2 wander = Random.insideUnitCircle.normalized;
         float spray = 0f, life = Mathf.Max(1f, Data.tornadoSeconds);
@@ -301,6 +318,7 @@ public class IceCloud : Weapon<IceCloudData>
             }
             yield return null;
         }
+        tornadoes.Remove(sr);
         Destroy(sr.gameObject);
     }
 

@@ -33,6 +33,13 @@ public class DragonLine : Weapon<DragonLineData>
     }
 
     private readonly Stack<Dragon> spare = new Stack<Dragon>();
+    private readonly List<Dragon> flying = new List<Dragon>();
+
+    public override void ClearShots()
+    {
+        StopAllCoroutines();
+        for (int i = flying.Count - 1; i >= 0; i--) Give(flying[i]);
+    }
     private readonly List<EnemyHealth> touching = new List<EnemyHealth>();
     private Camera cam;
     private float timer, spiralTimer;
@@ -394,6 +401,7 @@ public class DragonLine : Weapon<DragonLineData>
     private Dragon Take(int count)
     {
         var d = spare.Count > 0 ? spare.Pop() : Build();
+        flying.Add(d);
         while (d.body.Count < count)
             d.body.Add(Part("Body", Data.sortingOrder - 1));
         d.phase = Random.value * 10f;
@@ -425,6 +433,7 @@ public class DragonLine : Weapon<DragonLineData>
 
     private void Give(Dragon d)
     {
+        flying.Remove(d);
         d.Show(false);
         d.line.enabled = false;
         spare.Push(d);

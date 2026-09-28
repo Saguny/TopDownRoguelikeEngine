@@ -23,6 +23,19 @@ public class SevenStarSwords : Weapon<SevenStarSwordsData>
     private readonly List<SpriteRenderer> swords = new List<SpriteRenderer>();
     private readonly List<Star> stars = new List<Star>();
     private readonly Stack<Star> spareStars = new Stack<Star>();
+
+    public override void ClearShots()
+    {
+        for (int i = stars.Count - 1; i >= 0; i--)
+        {
+            var s = stars[i];
+            s.trail.Hide();
+            s.sr.gameObject.SetActive(false);
+            s.target = null;
+            spareStars.Push(s);
+        }
+        stars.Clear();
+    }
     private readonly Dictionary<EnemyHealth, float> nextCut = new Dictionary<EnemyHealth, float>();
     private readonly List<EnemyHealth> touching = new List<EnemyHealth>();
     private readonly List<EnemyHealth> forget = new List<EnemyHealth>();

@@ -538,6 +538,13 @@ public class FlyingSword : Weapon<FlyingSwordData>
         pairs.RemoveAt(index);
     }
 
+    public override void ClearShots()
+    {
+        for (int i = pairs.Count - 1; i >= 0; i--) EndPair(i, false);
+        for (int i = live.Count - 1; i >= 0; i--) Release(i);
+        timer = 0f;
+    }
+
     private void Release(int index)
     {
         var b = live[index];

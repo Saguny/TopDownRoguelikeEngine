@@ -84,6 +84,12 @@ public class CinnabarInkBrush : Weapon<CinnabarInkBrushData>
         Draw(now, life, lv.width * AreaMul);
     }
 
+    public override void ClearShots()
+    {
+        trail.Clear();
+        blasts.Clear();
+    }
+
     protected override void OnDestroy()
     {
         base.OnDestroy();

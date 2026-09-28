@@ -267,6 +267,11 @@ public class PeachTalismans : Weapon<PeachTalismansData>
         Destroy(sr.gameObject);
     }
 
+    public override void ClearShots()
+    {
+        for (int i = live.Count - 1; i >= 0; i--) Release(i, false);
+    }
+
     private void Release(int index, bool crumble)
     {
         var t = live[index];

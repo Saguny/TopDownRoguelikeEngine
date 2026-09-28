@@ -532,6 +532,21 @@ public class TreasureGourd : Weapon<TreasureGourdData>
 
     // ---------------------------------------------------------------- the evolution's sphere
 
+    public override void ClearShots()
+    {
+        foreach (var s in spheres)
+        {
+            s.trail.Hide();
+            s.sr.gameObject.SetActive(false);
+            spareSpheres.Push(s);
+        }
+        spheres.Clear();
+        if (voice != null) voice.Stop();
+        if (flyTrail != null) flyTrail.Hide();
+        phase = Phase.Idle;
+        timer = 0f;
+    }
+
     private void Launch(TreasureGourdData.LevelStats lv)
     {
         int fromBullets = Mathf.Min(swallowed, Data.maxCharge);

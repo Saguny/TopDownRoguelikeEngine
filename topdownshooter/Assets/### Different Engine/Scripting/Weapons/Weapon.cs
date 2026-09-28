@@ -49,6 +49,7 @@ public abstract class Weapon : MonoBehaviour
 
     // a world space holder for the weapon's sprites, so the player's left/right flip doesn't mirror them
     protected Transform Fx { get; private set; }
+    public Transform Effects => Fx;
 
     // this weapon is the character's starting weapon: its signature perks apply (see CharacterData)
     protected virtual bool IsSignature => false;
@@ -95,6 +96,10 @@ public abstract class Weapon : MonoBehaviour
     }
 
     protected virtual void OnLevelChanged() { }
+
+    // every shot of its own in flight or on the ground dropped at once, nothing left to resume: a
+    // Final Rush won puts the weapons away until the next wave (WeaponHold)
+    public virtual void ClearShots() { }
 
     // ---------------------------------------------------------------- helpers
 
