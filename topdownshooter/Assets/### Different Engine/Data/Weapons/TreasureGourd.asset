@@ -94,7 +94,7 @@ MonoBehaviour:
   pullSpeed: 5
   gatherDistance: 1.3
   heldSlow: 0.25
-  turnRate: 150
+  turnRate: 360
   spraySeconds: 0.75
   flameHalfAngle: 17
   burnTick: 0.5
