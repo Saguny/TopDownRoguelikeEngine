@@ -36,22 +36,22 @@ MonoBehaviour:
   levels:
   - damage: 3.5
     radius: 1.65
-    interval: 0.5
+    interval: 0.75
   - damage: 4.2
     radius: 1.65
-    interval: 0.5
+    interval: 0.75
   - damage: 4.2
     radius: 1.9
-    interval: 0.5
+    interval: 0.65
   - damage: 5.2
     radius: 1.9
-    interval: 0.5
+    interval: 0.65
   - damage: 5.2
     radius: 2.2
-    interval: 0.5
+    interval: 0.55
   - damage: 5.2
     radius: 2.2
-    interval: 0.42
+    interval: 0.45
   - damage: 6.6
     radius: 2.5
     interval: 0.42

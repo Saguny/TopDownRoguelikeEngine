@@ -23,27 +23,22 @@ public class Aura : MonoBehaviour
     [SerializeField] private AuraVisual visual;
     private readonly List<Vector2> _hitPoints = new List<Vector2>(16);
 
-    // each enemy has a cooldown of its own: one walking in is shocked straight away and then every
-    // interval while it stays, instead of the whole field pulsing at once. the field is checked a
-    // few times a frame's worth apart, not every frame, to keep the physics query cheap
+    // the whole field pulses at once: every interval, everything inside it is shocked together. an
+    // enemy walking in waits for the next pulse (it used to be shocked the moment it arrived, on a
+    // cooldown of its own, which early on, with everything dying to one hit, killed whatever
+    // touched the field)
     private const float MinInterval = 0.1f;
-    private const float ScanSeconds = 0.05f;
 
     // radius is the aura's own level; the global Area stat multiplies on top
     private float EffectiveRadius => radius * (_stats ? _stats.AreaMul : 1f);
 
     private CircleCollider2D _collider;
     private StatContext _stats;
-    private float _nextScanTime;
+    private float _pulseTimer;
     private readonly List<Collider2D> _hits = new List<Collider2D>(16);
     private ContactFilter2D _filter;
     private bool _filterReady;
-    private readonly HashSet<int> _hitThisScan = new HashSet<int>();
-
-    // when each enemy (by instance id) can next be shocked
-    private readonly Dictionary<int, float> _nextHitFor = new Dictionary<int, float>(128);
-    private readonly List<int> _expired = new List<int>(32);
-    private float _nextPruneTime;
+    private readonly HashSet<int> _hitThisPulse = new HashSet<int>();
 
     private void Awake()
     {
@@ -59,8 +54,7 @@ public class Aura : MonoBehaviour
 
     private void OnEnable()
     {
-        _nextScanTime = 0f;
-        _nextHitFor.Clear();
+        _pulseTimer = 0f;
         PlaySpawnOnce();
     }
 
@@ -68,12 +62,14 @@ public class Aura : MonoBehaviour
     {
         _collider.radius = EffectiveRadius;
 
-        if (Time.time >= _nextScanTime)
+        float interval = Mathf.Max(MinInterval, _stats ? _stats.CooldownFor(UpgradeType.AuraCooldown, damageInterval) : damageInterval);
+        _pulseTimer += Time.deltaTime;
+        if (_pulseTimer >= interval)
         {
-            _nextScanTime = Time.time + ScanSeconds;
-            DamageWithinRadius();
+            _pulseTimer -= interval;
+            if (_pulseTimer > interval) _pulseTimer = 0f;     // after a long stall, one pulse, not a burst
+            Pulse();
         }
-        if (Time.time >= _nextPruneTime) Prune();
 
         if (visual)
         {
@@ -107,14 +103,13 @@ public class Aura : MonoBehaviour
         return _filter;
     }
 
-    private bool DamageWithinRadius()
+    // one pulse: every enemy inside the field, shocked once
+    private bool Pulse()
     {
-        _hitThisScan.Clear();
+        _hitThisPulse.Clear();
         _hitPoints.Clear();
         Physics2D.OverlapCircle(transform.position, EffectiveRadius, Filter(), _hits);
         bool hitSomething = false;
-        float now = Time.time;
-        float interval = Mathf.Max(MinInterval, _stats ? _stats.CooldownFor(UpgradeType.AuraCooldown, damageInterval) : damageInterval);
 
         for (int i = 0; i < _hits.Count; i++)
         {
@@ -126,30 +121,18 @@ public class Aura : MonoBehaviour
 
             // keyed on the enemy, not the collider, so one with two colliders is shocked once
             int id = eh.GetInstanceID();
-            if (!_hitThisScan.Add(id)) continue;
-            if (_nextHitFor.TryGetValue(id, out float next) && now < next) continue;
+            if (!_hitThisPulse.Add(id)) continue;
 
             float dealt = damage * (_stats ? _stats.OC(UpgradeType.AuraDamage) * _stats.MightMul * _stats.ClassMul(AttackClass.Magical) : 1f);
             bool crit = false;
             if (_stats) dealt = _stats.WithCrit(dealt, out crit);
             eh.TakeDamage(dealt, DamageKind.Aura, crit, false, source);
-            _nextHitFor[id] = now + interval;
             if (visual) _hitPoints.Add(c.transform.position);
             hitSomething = true;
         }
 
         if (visual && _hitPoints.Count > 0) visual.Strike(_hitPoints);
         return hitSomething;
-    }
-
-    // forget enemies whose cooldown ran out long ago (dead, pooled or wandered off)
-    private void Prune()
-    {
-        _nextPruneTime = Time.time + 2f;
-        _expired.Clear();
-        foreach (var pair in _nextHitFor)
-            if (Time.time > pair.Value + 1f) _expired.Add(pair.Key);
-        foreach (int id in _expired) _nextHitFor.Remove(id);
     }
 
     private void PlaySpawnOnce()
