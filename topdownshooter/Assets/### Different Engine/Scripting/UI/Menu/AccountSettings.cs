@@ -7,18 +7,20 @@ using UnityEngine.UI;
 // the settings' Account tab: the player's name, and Reset User Data. resetting asks first: the
 // Are You Sure panel grows in from small, Confirm wipes the player's progress (SaveData) and
 // reloads the menu through the loading screen, opening on the main panel; Cancel shrinks it away
-// and nothing happens. anything left empty is found under this object by its name in the scene
+// and nothing happens. anything left empty is found by name: the reset button among the tab's own
+// children, the panel's two buttons inside the panel (Confirm is the panel's ResetUserData or
+// ResetUserDataConfirm, Cancel its Cancel or ResetUserDataCancel)
 public class AccountSettings : MonoBehaviour
 {
     [Tooltip("empty: the child named Account Name. shows the player's name")]
     [SerializeField] private TMP_Text accountName;
-    [Tooltip("empty: the child named ResetUserData")]
+    [Tooltip("empty: the child named ResetUserData outside the AreYouSure panel")]
     [SerializeField] private Button resetButton;
     [Tooltip("empty: the child named AreYouSure")]
     [SerializeField] private GameObject areYouSure;
-    [Tooltip("empty: the child named ResetUserDataConfirm")]
+    [Tooltip("empty: the panel's ResetUserData (or ResetUserDataConfirm)")]
     [SerializeField] private Button confirmButton;
-    [Tooltip("empty: the child named ResetUserDataCancel")]
+    [Tooltip("empty: the panel's Cancel (or ResetUserDataCancel)")]
     [SerializeField] private Button cancelButton;
 
     [Header("Transition")]
@@ -32,11 +34,15 @@ public class AccountSettings : MonoBehaviour
 
     private void Awake()
     {
-        if (accountName == null) accountName = Find<TMP_Text>("Account Name");
-        if (resetButton == null) resetButton = Find<Button>("ResetUserData");
-        if (areYouSure == null) { var t = FindChild("AreYouSure"); if (t != null) areYouSure = t.gameObject; }
-        if (confirmButton == null) confirmButton = Find<Button>("ResetUserDataConfirm");
-        if (cancelButton == null) cancelButton = Find<Button>("ResetUserDataCancel");
+        if (areYouSure == null) { var t = FindChild(transform, "AreYouSure", null); if (t != null) areYouSure = t.gameObject; }
+        var panel = areYouSure != null ? areYouSure.transform : null;
+        if (accountName == null) accountName = Find<TMP_Text>(transform, panel, "Account Name");
+        if (resetButton == null) resetButton = Find<Button>(transform, panel, "ResetUserData");
+        if (panel != null)
+        {
+            if (confirmButton == null) confirmButton = Find<Button>(panel, null, "ResetUserDataConfirm", "ResetUserData", "Confirm");
+            if (cancelButton == null) cancelButton = Find<Button>(panel, null, "ResetUserDataCancel", "Cancel");
+        }
 
         if (accountName != null) accountName.text = PlayerIdentity.Name;
         if (resetButton != null) resetButton.onClick.AddListener(AskFirst);
@@ -105,16 +111,21 @@ public class AccountSettings : MonoBehaviour
         if (group != null) group.alpha = 1f;
     }
 
-    private T Find<T>(string name) where T : Component
+    // the first of `names` found under `root` that isn't inside `skip`, with a T on it
+    private static T Find<T>(Transform root, Transform skip, params string[] names) where T : Component
     {
-        var t = FindChild(name);
-        return t != null ? t.GetComponent<T>() : null;
+        foreach (var name in names)
+        {
+            var t = FindChild(root, name, skip);
+            if (t != null && t.TryGetComponent(out T c)) return c;
+        }
+        return null;
     }
 
-    private Transform FindChild(string name)
+    private static Transform FindChild(Transform root, string name, Transform skip)
     {
-        foreach (var t in GetComponentsInChildren<Transform>(true))
-            if (t.name == name) return t;
+        foreach (var t in root.GetComponentsInChildren<Transform>(true))
+            if (t.name == name && (skip == null || !t.IsChildOf(skip))) return t;
         return null;
     }
 }
