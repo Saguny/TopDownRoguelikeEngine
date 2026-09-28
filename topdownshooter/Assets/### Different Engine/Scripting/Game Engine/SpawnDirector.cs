@@ -95,6 +95,16 @@ public class SpawnDirector : MonoBehaviour
     [Tooltip("how long after the first flock the second sets off")]
     [SerializeField, Min(0f)] private float swarmSplitDelay = 1.2f;
 
+    [Header("Evolutions (the horde answers an evolved weapon)")]
+    [Tooltip("each evolved weapon the player holds adds this share to the crowd: more alive at once and more arriving")]
+    [SerializeField, Min(0f)] private float evoCrowd = 0.6f;
+    [Tooltip("each evolved weapon adds this share to every enemy's health")]
+    [SerializeField, Min(0f)] private float evoHealth = 0.75f;
+    [Tooltip("each evolved weapon raises the timeline's hard cap by this many, so the extra crowd has room")]
+    [SerializeField, Min(0)] private int evoExtraCap = 40;
+    [Tooltip("seconds the horde takes to grow into an evolution, so it swells rather than jumps")]
+    [SerializeField, Min(0.1f)] private float evoRampSeconds = 25f;
+
     [Header("Opening")]
     [Tooltip("ordinary enemies that spawn while the player is at or below this level die to any hit. 0 turns it off")]
     [SerializeField, Min(0)] private int oneShotThroughLevel = 5;
@@ -312,6 +322,7 @@ public class SpawnDirector : MonoBehaviour
         timeElapsed += Time.deltaTime;
         if (rushBarDirty) { rushBarDirty = false; UpdateFinalRushProgressBar(); }
         TrackPlayerHeading();
+        TrackEvolutions();
         if (spawningStopped) return;
 
         // secret boss easter egg roll runs independently of normal spawning
@@ -344,7 +355,7 @@ public class SpawnDirector : MonoBehaviour
             }
         }
 
-        float densityScale = Curve != null ? Curve.DensityAt(DifficultyTime) : 1f;
+        float densityScale = (Curve != null ? Curve.DensityAt(DifficultyTime) : 1f) * EvoCrowd;
         float rushScale = finalRush ? densityScale * 1.2f : densityScale;
 
         int alive = CountAlive();
@@ -509,7 +520,7 @@ public class SpawnDirector : MonoBehaviour
 
         if (go.TryGetComponent(out EnemyHealth h))
         {
-            float hpMul = Curve != null ? Curve.HealthAt(DifficultyTime) : 1f;
+            float hpMul = (Curve != null ? Curve.HealthAt(DifficultyTime) : 1f) * EvoHealth;
             if (rush) hpMul *= finalRushHealthMul;
             // the opening: anything ordinary goes down to one hit while the build is still bare
             h.SetScaled(OneShotOpening && !rush && !IsBoss(arch) ? 1f : arch.baseHealth * hpMul);
@@ -811,8 +822,8 @@ public class SpawnDirector : MonoBehaviour
         if (beat == null) return;
 
         float surge = Time.time < surgeUntil ? surgeCrowd : 1f;
-        float crowd = activeTimeline.crowdScale * surge;
-        int cap = Mathf.Min(activeTimeline.hardCap, Mathf.RoundToInt(beat.cap * crowd));
+        float crowd = activeTimeline.crowdScale * surge * EvoCrowd;
+        int cap = Mathf.Min(HardCap, Mathf.RoundToInt(beat.cap * crowd));
         int minimum = Mathf.Min(cap, Mathf.RoundToInt(beat.minimum * crowd));
         int alive = CountAlive() - SpawnCrossing.Live;
 
@@ -835,7 +846,7 @@ public class SpawnDirector : MonoBehaviour
             if (arch == null) break;
 
             int made = arch.cost <= packMaxCost
-                ? SpawnPack(arch, cap - alive, activeTimeline.hardCap - alive)
+                ? SpawnPack(arch, cap - alive, HardCap - alive)
                 : Spawn(arch, false) != null ? 1 : 0;
             if (made == 0) break;
 
@@ -1145,6 +1156,30 @@ public class SpawnDirector : MonoBehaviour
                 break;
             }
         }
+    }
+
+    // an evolved weapon can hold a whole screen on its own, so each one the player holds brings
+    // more of the horde, and tougher. the pressure eases in over evoRampSeconds after each
+    private int evolutionsHeld;
+    private float evoPressure;
+    private float nextEvoCheck;
+    private readonly List<Weapon> heldWeapons = new List<Weapon>();
+
+    private float EvoCrowd => 1f + evoCrowd * evoPressure;
+    private float EvoHealth => 1f + evoHealth * evoPressure;
+    private int HardCap => activeTimeline.hardCap + Mathf.RoundToInt(evoExtraCap * evoPressure);
+
+    private void TrackEvolutions()
+    {
+        if (Time.time >= nextEvoCheck && playerTransform != null)
+        {
+            nextEvoCheck = Time.time + 0.5f;
+            playerTransform.GetComponentsInChildren(heldWeapons);
+            evolutionsHeld = 0;
+            foreach (var w in heldWeapons)
+                if (w != null && w.Evolved) evolutionsHeld++;
+        }
+        evoPressure = Mathf.MoveTowards(evoPressure, evolutionsHeld, Time.deltaTime / evoRampSeconds);
     }
 
     // where the player's been walking lately, from how far they moved, whatever moves them
