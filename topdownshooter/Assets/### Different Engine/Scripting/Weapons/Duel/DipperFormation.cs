@@ -15,7 +15,10 @@ public class DipperFormation : DuelWeapon
 
     // a cycle: seven lunges 0.28s apart (380 each), a breath, the seven together (350 each), and
     // back: about 5100 every 3.2s, 1600 a second
-    private const float LungeEvery = 0.28f, LungeDamage = 380f, VolleyDamage = 350f;
+    // a cycle runs about 5 s in play (the lunges, every sword home, the gather, the volley and home
+    // again): 7 x 520 + 7 x 480 over it is the Sun-Shooter's Bow's pace, which it had fallen a
+    // quarter behind (playtest: 970 a second against the Bow's 1330, crits aside)
+    private const float LungeEvery = 0.28f, LungeDamage = 520f, VolleyDamage = 480f;
     private const float Gather = 0.45f, OutSpeed = 26f, BackSeconds = 0.36f, VolleyStagger = 0.035f;
 
     // the Dipper as it hangs over the player, in world units: Dubhe, Merak, Phecda, Megrez (the
