@@ -19,13 +19,18 @@ public class CharacterCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     [SerializeField] private Image weaponIcon;
     [Tooltip("optional. switched on while this card's character is picked, e.g. a highlight frame")]
     [SerializeField] private GameObject selectedMark;
+    [Tooltip("the card's own frame (the button's image) turns this colour while its character is picked")]
+    [SerializeField] private Color selectedColor = new Color32(0xff, 0xd2, 0x3c, 0xff);
 
     private CharacterSelectScreen screen;
     private Button button;
+    private Graphic frame;
+    private Color frameColor = Color.white;
 
     private void Awake()
     {
         button = GetComponent<Button>();
+        Frame();
         button.onClick.AddListener(() =>
         {
             if (screen != null && character != null) screen.Pick(character);
@@ -86,6 +91,18 @@ public class CharacterCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public void SetSelected(bool selected)
     {
         if (selectedMark != null) selectedMark.SetActive(selected);
+        var f = Frame();
+        if (f != null) f.color = selected ? selectedColor : frameColor;
+    }
+
+    // the frame and the colour it was styled with, found once
+    private Graphic Frame()
+    {
+        if (frame != null) return frame;
+        if (button == null) button = GetComponent<Button>();
+        frame = button != null && button.targetGraphic != null ? button.targetGraphic : GetComponent<Graphic>();
+        if (frame != null) frameColor = frame.color;
+        return frame;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
