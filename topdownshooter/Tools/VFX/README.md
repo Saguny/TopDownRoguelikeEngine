@@ -90,3 +90,9 @@ there's nothing to set up in Unity:
     node alerts/alerts.js
 
 The strike's sounds are synthesised by `../SFX/thunder.py` (into `Resources/Sfx`).
+
+## The stat and passive icons
+
+`icons/stats.js` draws the character panel's stat icons, which the level up passives share
+(`NewSprites/Sprites/Icons`), in the weapon icons' style. `node icons/stats.js` writes them over
+the same files, so nothing in Unity needs re-pointing, plus `icons/out/stats_preview.png`.
