@@ -203,12 +203,13 @@ public class YamaScreen : MonoBehaviour
         barFill.color = barLocked ? new Color(0.45f, 0.4f, 0.55f) : Color.Lerp(Blood, Gold, 0.15f + 0.1f * Mathf.Sin(Time.unscaledTime * 6f));
     }
 
-    // ---- the spell card: a band of red sweeping across with his face on it, the name sliding in
+    // ---- the spell card: a band of red sweeping across with his face on it, the name sliding in.
+    // given no face (the bosses play PersonaCutIn instead) only the name slides in
 
     private IEnumerator CutIn()
     {
         const float seconds = 1.4f;
-        cutIn.gameObject.SetActive(true);
+        cutIn.gameObject.SetActive(portrait.enabled);
         var group = cutIn.GetComponent<CanvasGroup>();
         card.anchoredPosition = new Vector2(CardOut, CardY);
         cardText.alpha = cardShadow.alpha = 0f;

@@ -573,9 +573,18 @@ public class MengPoBoss : MonoBehaviour, IDamageGate, IFightBoss
         Sound("mp_declare", transform.position, 1f);
         var charge = Art("mp_charge");
         if (charge != null) FxBatch.Play(charge, 8f, E, 2.4f, "Aura", 42);
-        // the cut-in's face at the UI's pixel size, as Yama's is
-        var face = YamaArt.Strip(trueForm ? "MengPo/portrait_true" : "MengPo/portrait", 100f);
-        screen.Declare(card, face != null && face.Length > 0 ? face[0] : null);
+        // Persona's cut-in: her eyes in a torn band, 忘 (forget) brushed beside them; violet, and
+        // the river's cold teal in her true form
+        PersonaCutIn.Play(new PersonaCutIn.Theme
+        {
+            art = trueForm ? "mengpo_true" : "mengpo",
+            fallback = trueForm ? "MengPo/portrait_true" : "MengPo/portrait",
+            fallbackEyes = trueForm ? 0.61f : 0.56f,
+            wedge = trueForm ? new Color(0.2f, 0.62f, 0.7f) : new Color(0.55f, 0.32f, 0.86f),
+            wedgeDark = trueForm ? new Color(0.05f, 0.2f, 0.26f) : new Color(0.18f, 0.08f, 0.33f),
+            glyph = PersonaCutIn.Glyph.Forget,
+        });
+        screen.Declare(card, null);
         screen.Dim(0.2f);
         grade.Set(trueForm ? BossGrade.Look.Rage : BossGrade.Look.Spell, 1.2f);
         grade.Punch(0.5f);

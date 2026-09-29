@@ -117,22 +117,6 @@ Rank *n* costs the first rank's price × *n*^1.5, so first ranks are cheap (a ru
 | Banish | +1 | 1 | 12,000 | 12,000 |
 | Revival | +1 | 1 | 25,000 | 25,000 |
 
----|---|---|---|
-| Max Health | +20 | 5 | 14,000 |
-| Recovery | +0.1/s | 5 | 18,000 |
-| Armor | +1 | 5 | 24,000 |
-| Might | +5% | 5 | 24,000 |
-| Cooldown | −5% | 5 | 27,000 |
-| Area | +5% | 5 | 18,000 |
-| Crit Chance | +2% | 10 | 7,000 |
-| Crit Damage | +5% | 5 | 15,000 |
-| Growth | +10% | 8 | 14,000 |
-| Greed | +10% | 8 | 12,000 |
-| Reroll | +1 | 3 | 30,000 |
-| Skip | +1 | 5 | 18,000 |
-| Banish | +1 | 1 | 72,000 |
-| Revival | +1 | 1 | 180,000 |
-
 ---
 
 ## Fortune envelopes
@@ -173,6 +157,8 @@ When the final boss arrives, all your weapons are put away and your **starting w
 - **Yama, King of Hell** (Courtyard). Touhou-style danmaku over several health bars, with named spell cards. His last phase is a mirror fight with his reflection.
 - **Meng Po, the Lady of Forgetting** (Huangquan). Soup, lanterns and the river's current (walls of bone from upstream), the Crossing corridor, then her true form (Six Paths). Her last card, "Drink, and Forget Everything," is a whirlpool that pulls you toward her while gapped rings pour out. The "forgetting" briefly veils her bullets.
 
+Every spell card opens with a Persona-style **cut-in**: a white tear rips across the screen, the boss's eyes appear in a torn band with a brushed character beside them (Yama 判 "judgement", Meng Po 忘 "forget"), then it shatters away. About a second, and the fight doesn't pause for it.
+
 Every health bar after the first starts fresh: you're drawn back to the middle and the boss returns above you. Then comes a Genshin-style **phase burst**; the last phase gets the biggest.
 
 ---
@@ -194,6 +180,7 @@ Every health bar after the first starts fresh: you're drawn back to the middle a
 |---|---|
 | `Tools/VFX/` | Pixel-art generators (node). `README.md` explains each set; `icons/stats.js` draws the stat and passive icons; `yama/bullets.js` draws the danmaku |
 | `Tools/SFX/` | Sound synthesis (python), e.g. `ui.py`, `burst.py`, `duel.py` |
+| `Resources/CutIn/` | The cut-in's eye art: `yama.png`, `mengpo.png`, `mengpo_true.png` (any size, framed ~3.2:1; see the README there). Without one, the boss's pixel portrait stands in |
 | `Tools/Balance/` | `balance.py` (health curve), `pacing.py` (level curve), `boss.py` |
 | `Tools/Huangquan/` | Huangquan prefabs, archetypes and timeline generators |
 | `Data/Spawning/*Timeline.asset` | Beats (crowd caps, spawn rates, rosters), events, late-evolution pressure |
