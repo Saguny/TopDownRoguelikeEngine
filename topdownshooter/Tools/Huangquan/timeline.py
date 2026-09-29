@@ -9,6 +9,12 @@ numbers (the run's pacing, tuned in playtests); what walks the road changes:
   9:00  jiangshi, the heavies, carried down the road with the rest
   12:00 on: the same cast, the servants and lilies thicker
 
+the ones that shoot (lilies, burners, lanterns) come sparingly until 12:00, the slack going to
+the servants and the jiangshi that only close in, so the middle of a run pressures without
+turning into a bullet hell before the build can take it; 12:00 is halfway back, and from 13:30
+they come as thick as before. their archetypes' Max Alive Early holds them down until 12:00 too
+(prefabs.py)
+
 a soul's pick brings a whole crowd while the others come one to a few, so the weights are per
 pick: with souls at 1 against the rest, about two in three of the bodies on the road are souls.
 the events are recast too: souls drifting across, a ring of paper servants all dashing in at once,
@@ -36,11 +42,11 @@ def main():
     ROSTER = [
         ("Souls on the road", [(soul, 1)]),
         ("Paper servants", [(soul, 1), (servant, 1.2)]),
-        ("The lilies bloom", [(soul, 1), (servant, 1.2), (lily, 1.5)]),
-        ("Spirit money burns", [(soul, 1), (servant, 1.5), (lily, 1.8), (burner, 0.8)]),
-        ("Lanterns on the road", [(soul, 1), (servant, 1.5), (lily, 1.8), (burner, 1), (lantern, 0.25)]),
-        ("Coffin bearers", [(soul, 1.1), (servant, 1.8), (lily, 2), (burner, 1), (lantern, 0.3), (JIANGSHI, 0.8)]),
-        ("Ghost festival", [(soul, 1.2), (servant, 2), (lily, 2.2), (burner, 1.2), (lantern, 0.35), (JIANGSHI, 1)]),
+        ("The lilies bloom", [(soul, 1), (servant, 1.5), (lily, 0.8)]),
+        ("Spirit money burns", [(soul, 1), (servant, 1.9), (lily, 0.9), (burner, 0.4)]),
+        ("Lanterns on the road", [(soul, 1), (servant, 2), (lily, 0.9), (burner, 0.5), (lantern, 0.12)]),
+        ("Coffin bearers", [(soul, 1.1), (servant, 2.3), (lily, 0.9), (burner, 0.45), (lantern, 0.12), (JIANGSHI, 1.2)]),
+        ("Ghost festival", [(soul, 1.2), (servant, 2.2), (lily, 1.5), (burner, 0.8), (lantern, 0.25), (JIANGSHI, 1.1)]),
         ("The river rises", [(soul, 1.2), (servant, 2.2), (lily, 2.4), (burner, 1.2), (lantern, 0.35), (JIANGSHI, 1)]),
         ("The guardians stir", [(soul, 1.3), (servant, 2.4), (lily, 2.6), (burner, 1.3), (lantern, 0.4), (JIANGSHI, 1.2)]),
         ("Paper and fire", [(soul, 1.3), (servant, 2.8), (lily, 2.6), (burner, 1.4), (lantern, 0.4), (JIANGSHI, 1.2)]),

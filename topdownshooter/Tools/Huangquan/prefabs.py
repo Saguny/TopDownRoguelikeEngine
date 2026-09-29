@@ -79,7 +79,7 @@ ENEMIES = [
     dict(name="Spider Lily Demon", look="spider_lily", script="SpiderLilyDemon", speed=0, collider=(0.34, 0, 0.1), death="hq_lily_death",
          art=dict(fps=7, stateFps=14, deathScale=1),
          arch=dict(cost=2, weight=0.35, baseHealth=9, baseSpeed=0, baseDamage=10, armour=0, knockbackResist=1,
-                   physicalTaken=1.3, magicalTaken=0.9, pattern="OnScreen", group=(1, 1), maxAlive=10)),
+                   physicalTaken=1.3, magicalTaken=0.9, pattern="OnScreen", group=(1, 1), maxAlive=10, maxAliveEarly=5, earlyUntilMinute=12)),
     dict(name="Paper Servant", look="paper_servant", script="PaperServant", speed=2, collider=(0.24, 0, -0.05), death="hq_paper_death",
          art=dict(fps=8, stateFps=14, deathScale=1),
          arch=dict(cost=1, weight=0.4, baseHealth=3, baseSpeed=1, baseDamage=12, armour=0, knockbackResist=0.2,
@@ -87,7 +87,7 @@ ENEMIES = [
     dict(name="Hell Money Burner", look="hell_money_burner", script="HellMoneyBurner", speed=2, collider=(0.34, 0, -0.1), death="hq_burner_death",
          art=dict(fps=7, stateFps=12, deathScale=1),
          arch=dict(cost=3, weight=0.22, baseHealth=16, baseSpeed=0.8, baseDamage=10, armour=0.1, knockbackResist=0.5,
-                   physicalTaken=1.0, magicalTaken=1.0, pattern="Edge", group=(1, 1), maxAlive=8)),
+                   physicalTaken=1.0, magicalTaken=1.0, pattern="Edge", group=(1, 1), maxAlive=8, maxAliveEarly=4, earlyUntilMinute=12)),
     dict(name="Soul Guiding Lantern", look="soul_lantern", script="SoulLantern", speed=2, collider=(0.3, 0, 0.1), death="hq_soul_death",
          art=dict(fps=7, stateFps=14, deathScale=1), wen=(4, 8, 5),
          arch=dict(cost=6, weight=0.07, baseHealth=60, baseSpeed=0.55, baseDamage=5, armour=0, knockbackResist=0.8,
@@ -153,7 +153,7 @@ def make_archetype(e, prefab_guid):
              f"  cost: {a['cost']}", f"  weight: {a['weight']}", f"  baseHealth: {a['baseHealth']}", f"  baseSpeed: {a['baseSpeed']}",
              f"  baseDamage: {a['baseDamage']}", f"  armour: {a['armour']}", f"  knockbackResist: {a['knockbackResist']}",
              f"  physicalTaken: {a['physicalTaken']}", f"  magicalTaken: {a['magicalTaken']}",
-             f"  pattern: {PATTERNS[a['pattern']]}", "  group:", f"    x: {a['group'][0]}", f"    y: {a['group'][1]}", f"  maxAlive: {a['maxAlive']}",
+             f"  pattern: {PATTERNS[a['pattern']]}", "  group:", f"    x: {a['group'][0]}", f"    y: {a['group'][1]}", f"  maxAlive: {a['maxAlive']}", f"  maxAliveEarly: {a.get('maxAliveEarly', 0)}", f"  earlyUntilMinute: {a.get('earlyUntilMinute', 0)}",
              f"  contactTickInterval: {a.get('contactTickInterval', 0.5)}"]
     return "\n".join(lines) + "\n"
 

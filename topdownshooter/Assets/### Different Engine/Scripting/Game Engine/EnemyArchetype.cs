@@ -30,6 +30,13 @@ public class EnemyArchetype : ScriptableObject
     public Vector2Int group = new Vector2Int(1, 1);
     [Tooltip("the most of its kind alive at once. 0 = no limit")]
     [Min(0)] public int maxAlive = 0;
+    [Tooltip("a tighter Max Alive early in the run, until the minute below: for the ones that fill the screen with shots (a spider lily, a burner), so the middle of a run doesn't turn into a bullet hell before the player's build can take it. 0 = Max Alive all run")]
+    [Min(0)] public int maxAliveEarly = 0;
+    [Tooltip("the run minute Max Alive Early gives way to Max Alive")]
+    [Min(0f)] public float earlyUntilMinute = 0f;
+
+    // the most of its kind alive at once at this run minute, 0 = no limit
+    public int MaxAliveAt(float minute) => maxAliveEarly > 0 && minute < earlyUntilMinute ? maxAliveEarly : maxAlive;
 
     [Header("Contact Damage")]
     public float contactTickInterval = 0.5f;

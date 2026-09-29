@@ -46,9 +46,9 @@ MonoBehaviour:
     - archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
       weight: 1
     - archetype: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
-      weight: 1.2
-    - archetype: {fileID: 11400000, guid: a3184018aa7a46349a261a70dd4f1048, type: 2}
       weight: 1.5
+    - archetype: {fileID: 11400000, guid: a3184018aa7a46349a261a70dd4f1048, type: 2}
+      weight: 0.8
   - label: 'Spirit money burns'
     fromMinute: 4.5
     minimum: 58
@@ -59,11 +59,11 @@ MonoBehaviour:
     - archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
       weight: 1
     - archetype: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
-      weight: 1.5
+      weight: 1.9
     - archetype: {fileID: 11400000, guid: a3184018aa7a46349a261a70dd4f1048, type: 2}
-      weight: 1.8
+      weight: 0.9
     - archetype: {fileID: 11400000, guid: 990cd3efe98f4eaa86f3a85b3166dc46, type: 2}
-      weight: 0.8
+      weight: 0.4
   - label: 'Lanterns on the road'
     fromMinute: 7.5
     minimum: 88
@@ -74,13 +74,13 @@ MonoBehaviour:
     - archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
       weight: 1
     - archetype: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
-      weight: 1.5
+      weight: 2
     - archetype: {fileID: 11400000, guid: a3184018aa7a46349a261a70dd4f1048, type: 2}
-      weight: 1.8
+      weight: 0.9
     - archetype: {fileID: 11400000, guid: 990cd3efe98f4eaa86f3a85b3166dc46, type: 2}
-      weight: 1
+      weight: 0.5
     - archetype: {fileID: 11400000, guid: 12d74180d23f40ecac7cdcd6ddc30cdb, type: 2}
-      weight: 0.25
+      weight: 0.12
   - label: 'Coffin bearers'
     fromMinute: 9
     minimum: 102
@@ -91,15 +91,15 @@ MonoBehaviour:
     - archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
       weight: 1.1
     - archetype: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
-      weight: 1.8
+      weight: 2.3
     - archetype: {fileID: 11400000, guid: a3184018aa7a46349a261a70dd4f1048, type: 2}
-      weight: 2
+      weight: 0.9
     - archetype: {fileID: 11400000, guid: 990cd3efe98f4eaa86f3a85b3166dc46, type: 2}
-      weight: 1
+      weight: 0.45
     - archetype: {fileID: 11400000, guid: 12d74180d23f40ecac7cdcd6ddc30cdb, type: 2}
-      weight: 0.3
+      weight: 0.12
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
-      weight: 0.8
+      weight: 1.2
   - label: 'Ghost festival'
     fromMinute: 12
     minimum: 120
@@ -110,15 +110,15 @@ MonoBehaviour:
     - archetype: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
       weight: 1.2
     - archetype: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
-      weight: 2
-    - archetype: {fileID: 11400000, guid: a3184018aa7a46349a261a70dd4f1048, type: 2}
       weight: 2.2
+    - archetype: {fileID: 11400000, guid: a3184018aa7a46349a261a70dd4f1048, type: 2}
+      weight: 1.5
     - archetype: {fileID: 11400000, guid: 990cd3efe98f4eaa86f3a85b3166dc46, type: 2}
-      weight: 1.2
+      weight: 0.8
     - archetype: {fileID: 11400000, guid: 12d74180d23f40ecac7cdcd6ddc30cdb, type: 2}
-      weight: 0.35
+      weight: 0.25
     - archetype: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
-      weight: 1
+      weight: 1.1
   - label: 'The river rises'
     fromMinute: 13.5
     minimum: 133

@@ -965,9 +965,10 @@ public class SpawnDirector : MonoBehaviour
 
     private bool AtMost(EnemyArchetype arch)
     {
-        if (arch.maxAlive <= 0 || !capped.TryGetValue(arch, out var list)) return false;
+        int cap = arch.MaxAliveAt(RunMinute);
+        if (cap <= 0 || !capped.TryGetValue(arch, out var list)) return false;
         list.RemoveAll(g => g == null || !g.activeInHierarchy);
-        return list.Count >= arch.maxAlive;
+        return list.Count >= cap;
     }
 
     private void Count(EnemyArchetype arch, GameObject go)
