@@ -3,8 +3,8 @@ using UnityEngine;
 
 // which characters have been bought, saved between runs like the shop's ranks. the catalog's
 // first character and any marked Starts Unlocked are owned from the start; the rest are bought
-// with coins on the select screen, each one dearer than the last: 500, 650, 800 and so on,
-// whichever order they're bought in
+// with coins on the select screen, each one dearer than the last: 10,000, 13,000, 16,000 and so
+// on, whichever order they're bought in
 public static class CharacterUnlocks
 {
     public const int FirstPrice = 10000;
