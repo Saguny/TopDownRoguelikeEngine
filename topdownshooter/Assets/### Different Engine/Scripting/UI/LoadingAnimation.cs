@@ -175,7 +175,10 @@ public class LoadingAnimation : MonoBehaviour
         }
         if (coin != null)
         {
-            Frame(coin, lib.wenSpinJade != null && lib.wenSpinJade.Length > 0 ? lib.wenSpinJade : lib.wenSpinBronze, t * 12f, 8f + end * 4f);
+            // the wen, the currency, turning over (Resources/UI/wen_coin_spin): the pickups' spin
+            // frames are qi now
+            var wen = YamaArt.Strip("UI/wen_coin_spin");
+            Frame(coin, wen != null && wen.Length > 0 ? wen : lib.wenSpinJade, t * 12f, 8f + end * 4f);
             coin.rectTransform.anchoredPosition = (Centre + new Vector2(0f, Mathf.Sin(t * 2.4f) * 6f)) * u;
             float pop = Appear(t, 0f, 0.35f);
             coin.rectTransform.localScale = Vector3.one * (pop < 1f ? Back(pop) : 1f);
