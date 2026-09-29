@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 // the map selection page. one card per map in the MapCatalog: a Toggle on the card, with
 // MapImage, MapName and MapDescription children filled in from the catalog, and exactly one card
-// picked at a time. the endless toggle, remembered and locked until endless is earned. and Start
+// picked at a time, its backdrop yellow. a locked map can't be picked: clicking it buzzes and
+// flashes it red. the endless toggle, remembered and locked until endless is earned. and Start
 // Game, which starts the run behind the loading panel. fields left empty are found by name
 public class MapSelectionMenu : MonoBehaviour
 {
@@ -24,8 +25,15 @@ public class MapSelectionMenu : MonoBehaviour
     [Tooltip("the picked map's card (its backdrop, the toggle's image) turns this colour, like a picked character's")]
     [SerializeField] private Color selectedColor = new Color32(0xff, 0xd2, 0x3c, 0xff);
 
+    [Tooltip("a locked map, clicked, flashes this colour once")]
+    [SerializeField] private Color lockedFlash = new Color32(0xff, 0x3a, 0x3a, 0xff);
+    [SerializeField, Min(0.05f)] private float lockedFlashSeconds = 0.35f;
+    [Tooltip("played when a locked map is clicked. empty: Resources/Sfx/ui_locked")]
+    [SerializeField] private AudioClip lockedSound;
+
     // each card's backdrop colour as it was styled, to go back to when another map is picked
     private readonly Dictionary<Graphic, Color> styled = new Dictionary<Graphic, Color>();
+    private readonly Dictionary<Toggle, Coroutine> flashing = new Dictionary<Toggle, Coroutine>();
 
     private const string EndlessKey = "menu_endless";
     private const string FallbackScene = "Scenes/Courtyard_Map";
@@ -55,6 +63,8 @@ public class MapSelectionMenu : MonoBehaviour
                 if (on) MapSelection.Index = index;
                 Tint(card);
             });
+            if (!card.TryGetComponent(out LockedClick lockedClick)) lockedClick = card.gameObject.AddComponent<LockedClick>();
+            lockedClick.clicked = () => Refuse(card);
         }
 
         if (endlessToggle != null)
@@ -65,6 +75,13 @@ public class MapSelectionMenu : MonoBehaviour
     }
 
     private void OnEnable() => Refresh();
+
+    // a flash cut short by the page closing: the cards take their proper colours again
+    private void OnDisable()
+    {
+        flashing.Clear();
+        foreach (var card in mapCards) if (card != null) Tint(card);
+    }
 
     public void StartGame()
     {
@@ -107,7 +124,8 @@ public class MapSelectionMenu : MonoBehaviour
             if (subtitle != null) subtitle.text = open ? map.subtitle : "???";
 
             card.interactable = open;
-            card.SetIsOnWithoutNotify(i == picked);
+            card.SetIsOnWithoutNotify(open && i == picked);
+            if (card.TryGetComponent(out LockedClick lockedClick)) lockedClick.locked = !open;
             Tint(card);
         }
 
@@ -129,8 +147,42 @@ public class MapSelectionMenu : MonoBehaviour
     {
         var g = card.targetGraphic;
         if (g == null) return;
+        if (flashing.TryGetValue(card, out var running) && running != null) return;   // the flash puts it back itself
         if (!styled.TryGetValue(g, out Color normal)) styled[g] = normal = g.color;
         g.color = card.isOn ? selectedColor : normal;
+    }
+
+    // a locked map clicked: a buzz, and its card flashes red once. nothing is picked
+    private void Refuse(Toggle card)
+    {
+        if (lockedSound == null) lockedSound = Resources.Load<AudioClip>("Sfx/ui_locked");
+        if (lockedSound != null)
+        {
+            if (UISoundManager.Instance != null && UISoundManager.Instance.uiAudioSource != null) UISoundManager.Instance.PlayClick(lockedSound);
+            else
+            {
+                var cam = Camera.main;
+                SfxPlayer.PlayAt(lockedSound, cam != null ? cam.transform.position : Vector3.zero, 0.9f);
+            }
+        }
+        if (card.targetGraphic == null || !isActiveAndEnabled) return;
+        if (flashing.TryGetValue(card, out var running) && running != null) StopCoroutine(running);
+        flashing[card] = StartCoroutine(Flash(card));
+    }
+
+    private System.Collections.IEnumerator Flash(Toggle card)
+    {
+        var g = card.targetGraphic;
+        if (!styled.TryGetValue(g, out Color normal)) styled[g] = normal = g.color;
+        for (float t = 0f; t < lockedFlashSeconds; t += Time.unscaledDeltaTime)
+        {
+            // straight to red, easing back
+            float k = t / lockedFlashSeconds;
+            g.color = Color.Lerp(lockedFlash, card.isOn ? selectedColor : normal, k * k);
+            yield return null;
+        }
+        flashing[card] = null;
+        Tint(card);
     }
 
     // the lock drawn over a locked map's picture, made the first time it's needed
