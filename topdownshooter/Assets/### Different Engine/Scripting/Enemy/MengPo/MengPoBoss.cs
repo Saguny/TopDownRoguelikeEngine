@@ -471,10 +471,23 @@ public class MengPoBoss : MonoBehaviour, IDamageGate, IFightBoss
         invulnerable = true;
         screen.RefillBar();
 
-        if (p.trueForm && !trueForm) yield return Transform();
+        bool transformed = p.trueForm && !trueForm;
+        if (transformed) yield return Transform();
+
+        // every phase after the first begins with a burst of her power (PhaseBurst): the last, her
+        // ultimate. not as her true form breaks out: that's its own moment
+        if (i > 0 && !transformed)
+        {
+            Cast(2, 2.2f);
+            var tier = i == phases.Length - 1 ? BurstTier.Final : p.card != null ? BurstTier.Card : BurstTier.Phase;
+            yield return PhaseBurst.Play(transform, () => E, new BurstTheme
+            {
+                art = "mengpo", main = new Color(0.55f, 0.35f, 0.95f), glow = new Color(0.7f, 0.9f, 1f), sigil = mandala.sprite, stinger = "burst_mengpo",
+            }, tier);
+        }
 
         if (p.card != null) yield return Declare(p.card);
-        else yield return Wait(0.9f);
+        else yield return Wait(i > 0 ? 0.35f : 0.9f);
 
         invulnerable = false;
         int hitsBefore = Danmaku.Hits;

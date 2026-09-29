@@ -454,8 +454,20 @@ public class YamaBoss : MonoBehaviour, IDamageGate, IFightBoss
             grade.Punch(0.9f);
         }
 
+        // every phase after the first begins with a burst of his power (PhaseBurst): the last, his
+        // ultimate
+        if (i > 0)
+        {
+            Cast(1, 2.2f);
+            var tier = i == phases.Length - 1 ? BurstTier.Final : p.card != null ? BurstTier.Card : BurstTier.Phase;
+            yield return PhaseBurst.Play(transform, () => E, new BurstTheme
+            {
+                art = "yama", main = new Color(0.9f, 0.12f, 0.12f), glow = new Color(1f, 0.7f, 0.3f), sigil = wheel.sprite, stinger = "burst_yama",
+            }, tier);
+        }
+
         if (p.card != null) yield return Declare(p.card);
-        else yield return Wait(0.9f);
+        else yield return Wait(i > 0 ? 0.35f : 0.9f);
 
         invulnerable = false;
         int hitsBefore = Danmaku.Hits;

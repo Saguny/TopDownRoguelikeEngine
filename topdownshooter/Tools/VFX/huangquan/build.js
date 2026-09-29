@@ -3,7 +3,7 @@
 // pixel art beside each, so there's nothing to set up in Unity; Meng Po's to Resources/MengPo and
 // the end boss duel's (duel.js) to Resources/Duel:
 //   node huangquan/build.js              all of it
-//   node huangquan/build.js duel         one set: huangquan, mengpo or duel
+//   node huangquan/build.js duel         one set: huangquan, mengpo, duel or burst
 // every strip is cropped to what's drawn in it, the same about its middle on every side (its
 // pivot), and the build stops if anything would be cut off at a frame's edge. out/ has previews
 const fs = require("fs");
@@ -17,6 +17,7 @@ const statues = require("./statues");
 const mengpo = require("./mengpo");
 const mengpoFx = require("./mengpo_fx");
 const duel = require("./duel");
+const burst = require("./burst");
 
 const DEST = path.join(K.RES, "Huangquan");
 const META = path.join(K.RES, "Yama", "bar.png.meta");
@@ -50,7 +51,7 @@ function folder(dest) {
 }
 
 function build() {
-  const sets = [["huangquan", DEST, everything], ["mengpo", path.join(K.RES, "MengPo"), MENGPO], ["duel", path.join(K.RES, "Duel"), duel.makeDuel]];
+  const sets = [["huangquan", DEST, everything], ["mengpo", path.join(K.RES, "MengPo"), MENGPO], ["duel", path.join(K.RES, "Duel"), duel.makeDuel], ["burst", path.join(K.RES, "Burst"), burst.makeBurst]];
   const only = process.argv[2];
   const problems = [];
   for (const [name, dest, make] of sets) if (!only || only === name) writeSet(dest, make(), problems);

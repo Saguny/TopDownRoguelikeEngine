@@ -13,6 +13,15 @@ public class CameraFollow : MonoBehaviour
     private float _shakeAmplitude;
     private Vector2 _shakeSeed;
 
+    // something the camera leans toward (a boss's phase burst, PhaseBurst): the point, and how far
+    // from the player toward it, 0 not at all. while it's set the camera moves on unscaled time, so
+    // it still pushes in while the world is held nearly still
+    public static Vector2 FocusPoint;
+    public static float FocusWeight;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics() { FocusPoint = Vector2.zero; FocusWeight = 0f; }
+
     // shake lives here rather than in its own component because LateUpdate writes
     // transform.position outright, so a separate shaker would be stomped depending on
     // which LateUpdate happened to run second
@@ -34,7 +43,13 @@ public class CameraFollow : MonoBehaviour
             _cameraZ // keep this constant!
         );
 
-        transform.position = Vector3.Lerp(transform.position, targetPos, _smoothSpeed * Time.deltaTime);
+        if (FocusWeight > 0f)
+        {
+            Vector2 lean = Vector2.Lerp(targetPos, FocusPoint, Mathf.Clamp01(FocusWeight));
+            targetPos = new Vector3(lean.x, lean.y, _cameraZ);
+            transform.position = Vector3.Lerp(transform.position, targetPos, 1f - Mathf.Exp(-10f * Time.unscaledDeltaTime));
+        }
+        else transform.position = Vector3.Lerp(transform.position, targetPos, _smoothSpeed * Time.deltaTime);
 
         if (_shakeAmplitude <= 0.0001f) return;
 
