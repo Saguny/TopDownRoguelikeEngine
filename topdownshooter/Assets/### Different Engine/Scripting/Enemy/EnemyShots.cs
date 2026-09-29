@@ -3,7 +3,7 @@ using UnityEngine;
 
 // everything the enemies throw at the player, whatever it's made of, so it can be wiped in one
 // go: the Command Token's shockwave clears every shot on the screen (a bomb, the way Touhou's
-// clears the bullets). each kind of enemy shot keeps its own and signs up here as it comes into
+// clears the bullets), and the Electrical Aura's field those inside it every other pulse. each kind of enemy shot keeps its own and signs up here as it comes into
 // use (Register is safe to call again and again): the danmaku (Danmaku: the bosses' bullets and
 // Huangquan Road's), the Magistrate's corpse fire (EnemyBullet), the burners' embers and their
 // fire (EmberLobs). a new kind of enemy projectile only has to implement IEnemyShots and

@@ -12,6 +12,12 @@ public class Aura : MonoBehaviour
     [System.NonSerialized] public Weapon source;
     [SerializeField] private LayerMask enemyMask;
 
+    [Header("Shots")]
+    [Tooltip("every this many pulses, the field also shocks the enemies' shots inside it out of the air (EnemyShots). 0 = never")]
+    [Min(0)] public int clearShotsEvery = 2;
+    [Tooltip("and never more often than this, in seconds: a quick aura (its levels, the Cooldown stat) can't turn it into a shield")]
+    [Min(0f)] public float clearShotsGap = 1f;
+
     [Header("Animation")]
     [SerializeField] private Animator animator;
     [SerializeField] private string spawnAnimName = "Aura_Spawn";
@@ -39,6 +45,8 @@ public class Aura : MonoBehaviour
     private ContactFilter2D _filter;
     private bool _filterReady;
     private readonly HashSet<int> _hitThisPulse = new HashSet<int>();
+    private int _pulses;
+    private float _nextClear;
 
     private void Awake()
     {
@@ -68,7 +76,9 @@ public class Aura : MonoBehaviour
         {
             _pulseTimer -= interval;
             if (_pulseTimer > interval) _pulseTimer = 0f;     // after a long stall, one pulse, not a burst
-            if (Pulse()) PulseSound();
+            bool hit = Pulse();
+            if (ClearShots() > 0) hit = true;
+            if (hit) PulseSound();
         }
 
         if (visual)
@@ -147,6 +157,15 @@ public class Aura : MonoBehaviour
 
         if (visual && _hitPoints.Count > 0) visual.Strike(_hitPoints);
         return hitSomething;
+    }
+
+    // every so many pulses, the enemies' shots inside the field go too: a smaller, slower cousin of
+    // the Command Token's clear, only ever in reach of the player. how many went
+    private int ClearShots()
+    {
+        if (clearShotsEvery <= 0 || ++_pulses % clearShotsEvery != 0 || Time.time < _nextClear) return 0;
+        _nextClear = Time.time + clearShotsGap;
+        return EnemyShots.Clear(transform.position, EffectiveRadius);
     }
 
     private void PlaySpawnOnce()

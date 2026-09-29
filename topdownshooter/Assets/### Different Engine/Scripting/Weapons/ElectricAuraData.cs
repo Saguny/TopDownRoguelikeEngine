@@ -44,13 +44,14 @@ public class ElectricAuraData : WeaponData<ElectricAuraWeapon>
         Add(into, "Damage", N(Hurt(st, s.damage, AttackClass)));
         Add(into, "Radius", N(Wide(st, s.radius)));
         Add(into, "Pulses every", Sec(Every(st, s.interval, UpgradeType.AuraCooldown)));
+        Add(into, "Clears enemy shots", "every 2nd pulse (1s at most)");
     }
 
     public override string Describe(int level)
     {
         var s = At(level);
         if (level <= 1)
-            return $"A field around you pulses every {s.interval:0.##}s, shocking every enemy inside it for {s.damage:0.#}.";
+            return $"A field around you pulses every {s.interval:0.##}s, shocking every enemy inside it for {s.damage:0.#}. Every second pulse also shocks enemy shots inside it out of the air.";
 
         var was = At(level - 1);
         var changes = new List<string>();
