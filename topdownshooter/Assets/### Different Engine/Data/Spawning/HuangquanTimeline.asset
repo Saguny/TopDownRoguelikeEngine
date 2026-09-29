@@ -15,6 +15,9 @@ MonoBehaviour:
   crowdScale: 1
   hardCap: 600
   waveMinutes: 3
+  lateEvoFromMinute: 12
+  lateEvoHealth: 0.25
+  lateEvoMax: 6
   beats:
   - label: 'Souls on the road'
     fromMinute: 0

@@ -15,7 +15,7 @@ MonoBehaviour:
   prefab: {fileID: 1048871670121432657, guid: e4173f2923bf447283a22285fd653710, type: 3}
   cost: 1
   weight: 0.7
-  baseHealth: 2
+  baseHealth: 4
   baseSpeed: 0.42
   baseDamage: 8
   armour: 0
@@ -24,7 +24,7 @@ MonoBehaviour:
   magicalTaken: 1.2
   pattern: 1
   group:
-    x: 14
-    y: 24
+    x: 10
+    y: 16
   maxAlive: 0
   contactTickInterval: 0.5
