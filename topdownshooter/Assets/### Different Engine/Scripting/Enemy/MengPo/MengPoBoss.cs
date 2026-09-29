@@ -71,6 +71,7 @@ public class MengPoBoss : MonoBehaviour, IDamageGate, IFightBoss
     private float follow = 1.5f, glideUntil, castUntil, nextGhost, nextHitSound, age, sceneAlpha;
     private int castPose, cardsLeft;
     private bool following;
+    private Coroutine forgetting;
 
     // ---- setting up
 
@@ -266,7 +267,12 @@ public class MengPoBoss : MonoBehaviour, IDamageGate, IFightBoss
         // the tile moves a whole tile at a time as the camera does, so its flow never jumps
         float tile = riverFrames != null && riverFrames.Length > 0 ? riverFrames[0].bounds.size.x : 2.25f;
         river.transform.position = new Vector2(Mathf.Round(camX / tile) * tile, bridgeAt.y + RiverBelow.y);
-        if (riverFrames != null && riverFrames.Length > 0) river.sprite = YamaArt.Frame(riverFrames, age, PlayerMovement.Drift.x < -0.1f ? -10f : 10f);
+        // it flows the way its current carries the player (the art flows right; left, played backwards)
+        if (riverFrames != null && riverFrames.Length > 0)
+        {
+            int n = riverFrames.Length, k = (int)(age * 10f) % n;
+            river.sprite = riverFrames[PlayerMovement.Drift.x < -0.1f ? n - 1 - k : k];
+        }
         var rc = river.color; rc.a = sceneAlpha; river.color = rc;
         var bc = bridge.color; bc.a = sceneAlpha; bridge.color = bc;
         if (mandala.color.a > 0f)
@@ -475,6 +481,8 @@ public class MengPoBoss : MonoBehaviour, IDamageGate, IFightBoss
         var run = StartCoroutine(p.pattern());
         while (!broke) yield return null;
         StopCoroutine(run);
+        // a forgetting under way ends with the phase, or it'd veil the next one
+        if (forgetting != null) { StopCoroutine(forgetting); forgetting = null; }
         Danmaku.Veil = 0f;
         PlayerMovement.Drift = Vector2.zero;
         invulnerable = true;
@@ -736,7 +744,7 @@ public class MengPoBoss : MonoBehaviour, IDamageGate, IFightBoss
                 Danmaku.Fire(E, Danmaku.AimAt(E) + UnityEngine.Random.Range(-12f, 12f),
                     Shot.Of(BulletType.BigOrb, BulletColor.Jade, 2.6f).Accel(-1f, 0.6f).Burst(1.25f, 14, BulletType.Rice, BulletColor.Violet, 2.3f));
             }
-            if (forget <= 0f) { forget = 5f; StartCoroutine(Forget(1.3f)); }
+            if (forget <= 0f) { forget = 5f; forgetting = StartCoroutine(Forget(1.3f)); }
             yield return Wait(0.12f);
         }
     }
@@ -922,7 +930,7 @@ public class MengPoBoss : MonoBehaviour, IDamageGate, IFightBoss
                     .Burst(UnityEngine.Random.Range(0.9f, 1.4f), late ? 10 : 8, BulletType.Rice, BulletColor.Azure, 2f));
                 Sound("mp_fling", at, 0.35f, 1.3f);
             }
-            if (forget <= 0f) { forget = late ? 3f : 3.8f; StartCoroutine(Forget(late ? 1.1f : 0.9f)); Cast(2, 0.6f); }
+            if (forget <= 0f) { forget = late ? 3f : 3.8f; forgetting = StartCoroutine(Forget(late ? 1.1f : 0.9f)); Cast(2, 0.6f); }
             yield return Wait(0.1f);
         }
     }
