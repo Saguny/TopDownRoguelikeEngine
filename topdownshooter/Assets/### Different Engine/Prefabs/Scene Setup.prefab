@@ -569,6 +569,12 @@ MonoBehaviour:
   maxSpawnCooldownLate: 0.05
   timeline: {fileID: 11400000, guid: ae986a71d27641dcb727583eb9504367, type: 2}
   aheadBias: 0.25
+  frontShare: 0.75
+  frontSpread: 55
+  frontDrift: 6
+  frontSwingEvery: {x: 25, y: 40}
+  waveBuildUp: 35
+  quietBeforeRush: 5
   recycleDistance: 1.6
   secondsBetweenEvents: 2
   eliteSize: 1.25
@@ -579,14 +585,22 @@ MonoBehaviour:
   packSizeEarly: {x: 3, y: 5}
   packSizeLate: {x: 16, y: 26}
   packSpread: 0.55
+  swarmSplitAt: 100
+  swarmSplitDelay: 1.2
+  evoCrowd: 0.06
+  evoHealth: 0.1
+  evoExtraCap: 15
+  evoWenCut: 0.1
+  evoPressureMax: 4
+  evoRampSeconds: 45
+  oneShotThroughLevel: 5
   processionCorpse: {fileID: 11400000, guid: 187c5bf6e8c4b3f43a3d9d6137a16095, type: 2}
   processionFire: {fileID: 11400000, guid: a6c44b6c397bceb489f23c104d9c121c, type: 2}
   rushCrowd: 30
   rushCrowdGrowth: 1.3
   formationEvery: 7
+  magistratesPerRush: 010000000100000001000000020000000200000003000000030000000300000003000000
   rushBossGrowth: 1.35
-  oneShotThroughLevel: 5
-  quietAfterFinalBoss: 4
 --- !u!114 &5356734906009019570
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -825,6 +839,7 @@ MonoBehaviour:
   waveText: {fileID: 8751331125113502834}
   normalColor: {r: 0, g: 0, b: 0, a: 0}
   rushColor: {r: 1, g: 0, b: 0, a: 0}
+  frozenColor: {r: 0.6, g: 0.85, b: 1, a: 1}
 --- !u!114 &9172027434806120503
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8156,12 +8171,8 @@ PrefabInstance:
       objectReference: {fileID: 3560786718057372961}
     - target: {fileID: 5138785705691985010, guid: 7f5a0da687fa1b8499aa31f236632248, type: 3}
       propertyPath: allUpgrades.Array.size
-      value: 34
+      value: 35
       objectReference: {fileID: 0}
-    - target: {fileID: 5138785705691985010, guid: 7f5a0da687fa1b8499aa31f236632248, type: 3}
-      propertyPath: 'allUpgrades.Array.data[33]'
-      value: 
-      objectReference: {fileID: 11400000, guid: 5d2c8e4f7a1b4c6e9f3a0b2d4c6e8a19, type: 2}
     - target: {fileID: 5138785705691985010, guid: 7f5a0da687fa1b8499aa31f236632248, type: 3}
       propertyPath: 'allUpgrades.Array.data[0]'
       value: 
@@ -8233,27 +8244,31 @@ PrefabInstance:
     - target: {fileID: 5138785705691985010, guid: 7f5a0da687fa1b8499aa31f236632248, type: 3}
       propertyPath: 'allUpgrades.Array.data[22]'
       value: 
-      objectReference: {fileID: 11400000, guid: 8cc83e81a7b2890553175b0d04f6a23b, type: 2}
+      objectReference: {fileID: 11400000, guid: 0745d00680bd480e96236e526fcb1169, type: 2}
     - target: {fileID: 5138785705691985010, guid: 7f5a0da687fa1b8499aa31f236632248, type: 3}
       propertyPath: 'allUpgrades.Array.data[23]'
       value: 
-      objectReference: {fileID: 11400000, guid: 24434a26d67c32f08dc655388a71cc28, type: 2}
+      objectReference: {fileID: 11400000, guid: 8cc83e81a7b2890553175b0d04f6a23b, type: 2}
     - target: {fileID: 5138785705691985010, guid: 7f5a0da687fa1b8499aa31f236632248, type: 3}
       propertyPath: 'allUpgrades.Array.data[24]'
       value: 
-      objectReference: {fileID: 11400000, guid: 72cbeb34df017f74284a5abd87285ec2, type: 2}
+      objectReference: {fileID: 11400000, guid: 24434a26d67c32f08dc655388a71cc28, type: 2}
     - target: {fileID: 5138785705691985010, guid: 7f5a0da687fa1b8499aa31f236632248, type: 3}
       propertyPath: 'allUpgrades.Array.data[25]'
       value: 
-      objectReference: {fileID: 11400000, guid: d6c37f56b4ad50bb5b2f23efa0c872cf, type: 2}
+      objectReference: {fileID: 11400000, guid: 72cbeb34df017f74284a5abd87285ec2, type: 2}
     - target: {fileID: 5138785705691985010, guid: 7f5a0da687fa1b8499aa31f236632248, type: 3}
       propertyPath: 'allUpgrades.Array.data[26]'
       value: 
-      objectReference: {fileID: 11400000, guid: df54d5af811c4ca8be11e35d9f51f18a, type: 2}
+      objectReference: {fileID: 11400000, guid: d6c37f56b4ad50bb5b2f23efa0c872cf, type: 2}
     - target: {fileID: 5138785705691985010, guid: 7f5a0da687fa1b8499aa31f236632248, type: 3}
       propertyPath: 'allUpgrades.Array.data[27]'
       value: 
-      objectReference: {fileID: 11400000, guid: 9949200c23b69924191e4aca011072ce, type: 2}
+      objectReference: {fileID: 11400000, guid: df54d5af811c4ca8be11e35d9f51f18a, type: 2}
+    - target: {fileID: 5138785705691985010, guid: 7f5a0da687fa1b8499aa31f236632248, type: 3}
+      propertyPath: 'allUpgrades.Array.data[33]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 42d6a117291763fd41ad22cd1ff7247e, type: 2}
     - target: {fileID: 6236575731635123124, guid: 7f5a0da687fa1b8499aa31f236632248, type: 3}
       propertyPath: m_LocalScale.x
       value: 1

@@ -14,11 +14,11 @@ GameObject:
   - component: {fileID: 8759562005920372017}
   m_Layer: 13
   m_Name: Ghost Lantern
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7967451653084421236
 Transform:
   m_ObjectHideFlags: 0
@@ -157,11 +157,11 @@ GameObject:
   - component: {fileID: 8846044474872950131}
   m_Layer: 13
   m_Name: Tablet
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &447483003434012409
 Transform:
   m_ObjectHideFlags: 0
@@ -507,11 +507,11 @@ GameObject:
   - component: {fileID: 7031307145490806213}
   m_Layer: 13
   m_Name: Grave
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4708659956650315975
 Transform:
   m_ObjectHideFlags: 0
@@ -750,11 +750,11 @@ GameObject:
   - component: {fileID: 1170359276080557621}
   m_Layer: 13
   m_Name: Grave
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4590667559718916428
 Transform:
   m_ObjectHideFlags: 0
@@ -884,11 +884,11 @@ GameObject:
   - component: {fileID: 6380536435653294516}
   m_Layer: 13
   m_Name: Grave
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3673592453403781208
 Transform:
   m_ObjectHideFlags: 0
@@ -1128,11 +1128,11 @@ GameObject:
   - component: {fileID: 4143378489897234319}
   m_Layer: 13
   m_Name: Withered Tree
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6715627927530269625
 Transform:
   m_ObjectHideFlags: 0
@@ -1465,11 +1465,11 @@ GameObject:
   - component: {fileID: 2246439720432535573}
   m_Layer: 13
   m_Name: Tablet
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3348380238635059463
 Transform:
   m_ObjectHideFlags: 0
@@ -1599,11 +1599,11 @@ GameObject:
   - component: {fileID: 7113978594647998654}
   m_Layer: 13
   m_Name: Boulder
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6354370688874727695
 Transform:
   m_ObjectHideFlags: 0
@@ -2034,11 +2034,11 @@ GameObject:
   - component: {fileID: 4313211114847154734}
   m_Layer: 13
   m_Name: Tablet
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &868651520990777740
 Transform:
   m_ObjectHideFlags: 0
@@ -2168,11 +2168,11 @@ GameObject:
   - component: {fileID: 4039439570284729846}
   m_Layer: 13
   m_Name: Tablet
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5114171840971694292
 Transform:
   m_ObjectHideFlags: 0
@@ -2389,11 +2389,11 @@ GameObject:
   - component: {fileID: 3528102745004873420}
   m_Layer: 13
   m_Name: Tablet
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &9114008151754952693
 Transform:
   m_ObjectHideFlags: 0
@@ -2524,11 +2524,11 @@ GameObject:
   - component: {fileID: 5487347864519220533}
   m_Layer: 13
   m_Name: Withered Tree
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5844119431844633555
 Transform:
   m_ObjectHideFlags: 0
@@ -2726,11 +2726,11 @@ GameObject:
   - component: {fileID: 2592118169316655449}
   m_Layer: 13
   m_Name: Ghost Lantern
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7412658370957971892
 Transform:
   m_ObjectHideFlags: 0
@@ -3355,11 +3355,11 @@ GameObject:
   - component: {fileID: 4803774657236787713}
   m_Layer: 13
   m_Name: Tablet
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4909442894810622934
 Transform:
   m_ObjectHideFlags: 0
@@ -3597,11 +3597,11 @@ GameObject:
   - component: {fileID: 4192005828873611051}
   m_Layer: 13
   m_Name: Withered Tree
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8253033842876987292
 Transform:
   m_ObjectHideFlags: 0
@@ -3849,11 +3849,11 @@ GameObject:
   - component: {fileID: 8761788585982334961}
   m_Layer: 13
   m_Name: Tablet
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4131691480006481347
 Transform:
   m_ObjectHideFlags: 0
@@ -4232,6 +4232,21 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 3.3, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &7300000000000000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4320141695412094619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6047903b3bde4367b3d6b89e01afefc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  guardian: {fileID: 11400000, guid: 1059a2af538546d38292c3f3243a8b08, type: 2}
+  kind: ox
+  wakeReach: 1.4
 --- !u!1 &4569212401384376365
 GameObject:
   m_ObjectHideFlags: 0
@@ -4245,11 +4260,11 @@ GameObject:
   - component: {fileID: 5805044618494393109}
   m_Layer: 13
   m_Name: Boulder
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3564663483040636865
 Transform:
   m_ObjectHideFlags: 0
@@ -4523,11 +4538,11 @@ GameObject:
   - component: {fileID: 549221128316599982}
   m_Layer: 13
   m_Name: Boulder
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &888285598330750021
 Transform:
   m_ObjectHideFlags: 0
@@ -4657,11 +4672,11 @@ GameObject:
   - component: {fileID: 8027964459633678315}
   m_Layer: 13
   m_Name: Grave
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3068503154026523521
 Transform:
   m_ObjectHideFlags: 0
@@ -4792,11 +4807,11 @@ GameObject:
   - component: {fileID: 4070573988005262332}
   m_Layer: 13
   m_Name: Ghost Lantern
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &814872058407459886
 Transform:
   m_ObjectHideFlags: 0
@@ -5149,11 +5164,11 @@ GameObject:
   - component: {fileID: 8418413414159749338}
   m_Layer: 13
   m_Name: Grave
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2924723469031525278
 Transform:
   m_ObjectHideFlags: 0
@@ -5390,11 +5405,11 @@ GameObject:
   - component: {fileID: 3792793595732192229}
   m_Layer: 13
   m_Name: Boulder
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6587804352236352332
 Transform:
   m_ObjectHideFlags: 0
@@ -5633,11 +5648,11 @@ GameObject:
   - component: {fileID: 5931813061593139311}
   m_Layer: 13
   m_Name: Tablet
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2431787678247971008
 Transform:
   m_ObjectHideFlags: 0
@@ -6000,11 +6015,11 @@ GameObject:
   - component: {fileID: 4399357124840159264}
   m_Layer: 13
   m_Name: Ghost Lantern
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5425052604027242208
 Transform:
   m_ObjectHideFlags: 0
@@ -6250,11 +6265,11 @@ GameObject:
   - component: {fileID: 1732634589839791081}
   m_Layer: 13
   m_Name: Boulder
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4514766056720846524
 Transform:
   m_ObjectHideFlags: 0
@@ -6385,11 +6400,11 @@ GameObject:
   - component: {fileID: 6995677768621889037}
   m_Layer: 13
   m_Name: Withered Tree
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6279956029392819974
 Transform:
   m_ObjectHideFlags: 0
@@ -6897,11 +6912,11 @@ GameObject:
   - component: {fileID: 1616512538305765738}
   m_Layer: 13
   m_Name: Withered Tree
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7279226916208240740
 Transform:
   m_ObjectHideFlags: 0
@@ -7450,11 +7465,11 @@ GameObject:
   - component: {fileID: 5522340967662494162}
   m_Layer: 13
   m_Name: Boulder
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &236498814702109429
 Transform:
   m_ObjectHideFlags: 0
@@ -7625,13 +7640,13 @@ MonoBehaviour:
   west: {fileID: 1989930531827918955}
   spawnTimeline: {fileID: 11400000, guid: 116d2d63dd594e9689d719ec787e6b7e, type: 2}
   difficulty: {fileID: 11400000, guid: 21b5fed46a435f046824afdafb8f17f1, type: 2}
-  playerStart: {x: 0, y: -4}
   finalBoss: {fileID: 11400000, guid: 47e4d828ea4349f19a8990884930cad6, type: 2}
   rushBosses:
   - {fileID: 11400000, guid: 1059a2af538546d38292c3f3243a8b08, type: 2}
   - {fileID: 11400000, guid: 6da1b8d69dfe4328b9f971b5c6087e94, type: 2}
   processionMain: {fileID: 11400000, guid: 08029b58eeef477da55f7ac5da55aea5, type: 2}
   processionFast: {fileID: 11400000, guid: c1ac66743bdc4a78a8c2150871c27b12, type: 2}
+  playerStart: {x: 0, y: -4}
 --- !u!1 &6616076253459072930
 GameObject:
   m_ObjectHideFlags: 0
@@ -7645,11 +7660,11 @@ GameObject:
   - component: {fileID: 1885096745983651594}
   m_Layer: 13
   m_Name: Tablet
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8552080242015984715
 Transform:
   m_ObjectHideFlags: 0
@@ -7889,11 +7904,11 @@ GameObject:
   - component: {fileID: 4996531677546172544}
   m_Layer: 13
   m_Name: Ghost Lantern
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8303199010675260093
 Transform:
   m_ObjectHideFlags: 0
@@ -8172,6 +8187,21 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 3.3, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &7300000000000000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7017048526203511570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6047903b3bde4367b3d6b89e01afefc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  guardian: {fileID: 11400000, guid: 6da1b8d69dfe4328b9f971b5c6087e94, type: 2}
+  kind: horse
+  wakeReach: 1.4
 --- !u!1 &7043151249487964955
 GameObject:
   m_ObjectHideFlags: 0
@@ -8186,11 +8216,11 @@ GameObject:
   - component: {fileID: 8569842740021538617}
   m_Layer: 13
   m_Name: Withered Tree
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4469641173521083191
 Transform:
   m_ObjectHideFlags: 0
@@ -8330,11 +8360,11 @@ GameObject:
   - component: {fileID: 6907658194045398678}
   m_Layer: 13
   m_Name: Ghost Lantern
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2203107286188416276
 Transform:
   m_ObjectHideFlags: 0
@@ -8473,11 +8503,11 @@ GameObject:
   - component: {fileID: 3976112828231270790}
   m_Layer: 13
   m_Name: Boulder
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3550822804063047758
 Transform:
   m_ObjectHideFlags: 0
@@ -8608,11 +8638,11 @@ GameObject:
   - component: {fileID: 291661860308816514}
   m_Layer: 13
   m_Name: Withered Tree
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2968025969109760760
 Transform:
   m_ObjectHideFlags: 0
@@ -8751,11 +8781,11 @@ GameObject:
   - component: {fileID: 8386462140819480464}
   m_Layer: 13
   m_Name: Grave
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3855355269021180476
 Transform:
   m_ObjectHideFlags: 0
@@ -9072,11 +9102,11 @@ GameObject:
   - component: {fileID: 3588307638508318673}
   m_Layer: 13
   m_Name: Ghost Lantern
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6793724420076502492
 Transform:
   m_ObjectHideFlags: 0
@@ -9456,11 +9486,11 @@ GameObject:
   - component: {fileID: 5796607814889862095}
   m_Layer: 13
   m_Name: Boulder
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2855014243002042350
 Transform:
   m_ObjectHideFlags: 0
@@ -9590,11 +9620,11 @@ GameObject:
   - component: {fileID: 8454771872403245417}
   m_Layer: 13
   m_Name: Grave
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2918008943126775182
 Transform:
   m_ObjectHideFlags: 0
@@ -9832,11 +9862,11 @@ GameObject:
   - component: {fileID: 7053570272410705895}
   m_Layer: 13
   m_Name: Ghost Lantern
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1672493551328821808
 Transform:
   m_ObjectHideFlags: 0
@@ -9975,11 +10005,11 @@ GameObject:
   - component: {fileID: 450153780293566200}
   m_Layer: 13
   m_Name: Boulder
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6970246979074460
 Transform:
   m_ObjectHideFlags: 0
@@ -10109,11 +10139,11 @@ GameObject:
   - component: {fileID: 1830895426171932638}
   m_Layer: 13
   m_Name: Tablet
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5176958529831400527
 Transform:
   m_ObjectHideFlags: 0
@@ -10243,11 +10273,11 @@ GameObject:
   - component: {fileID: 1409824887243226410}
   m_Layer: 13
   m_Name: Grave
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &67607172836342879
 Transform:
   m_ObjectHideFlags: 0
@@ -10511,11 +10541,11 @@ GameObject:
   - component: {fileID: 1071075208267489174}
   m_Layer: 13
   m_Name: Tablet
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5441354979596221157
 Transform:
   m_ObjectHideFlags: 0
@@ -10645,11 +10675,11 @@ GameObject:
   - component: {fileID: 6541505085352566090}
   m_Layer: 13
   m_Name: Boulder
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3366076410769506637
 Transform:
   m_ObjectHideFlags: 0
@@ -10888,11 +10918,11 @@ GameObject:
   - component: {fileID: 4693317154950423779}
   m_Layer: 13
   m_Name: Tablet
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7551198910290418195
 Transform:
   m_ObjectHideFlags: 0
@@ -11009,33 +11039,3 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.56216216, y: 0.21081081}
   m_EdgeRadius: 0
---- !u!114 &7300000000000000001
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4320141695412094619}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6047903b3bde4367b3d6b89e01afefc0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  guardian: {fileID: 11400000, guid: 1059a2af538546d38292c3f3243a8b08, type: 2}
-  kind: ox
-  wakeReach: 1.4
---- !u!114 &7300000000000000002
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7017048526203511570}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6047903b3bde4367b3d6b89e01afefc0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  guardian: {fileID: 11400000, guid: 6da1b8d69dfe4328b9f971b5c6087e94, type: 2}
-  kind: horse
-  wakeReach: 1.4
