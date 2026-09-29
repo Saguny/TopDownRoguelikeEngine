@@ -13,9 +13,7 @@ public class DipperFormation : DuelWeapon
     public override Color Tint => new Color(0.66f, 0.92f, 1f);
     public override string Pillar => "duel_pillar_azure";
 
-    // a cycle: seven lunges 0.28s apart (380 each), a breath, the seven together (350 each), and
-    // back: about 5100 every 3.2s, 1600 a second
-    // a cycle runs about 5 s in play (the lunges, every sword home, the gather, the volley and home
+    // a cycle: seven lunges 0.28s apart, a breath, the seven together, and back. it runs about 5 s in play (the lunges, every sword home, the gather, the volley and home
     // again): 7 x 520 + 7 x 480 over it is the Sun-Shooter's Bow's pace, which it had fallen a
     // quarter behind (playtest: 970 a second against the Bow's 1330, crits aside)
     private const float LungeEvery = 0.28f, LungeDamage = 520f, VolleyDamage = 480f;
