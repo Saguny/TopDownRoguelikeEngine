@@ -70,7 +70,7 @@ public struct Shot
 // share of the player's max health, whatever the run's difficulty, then a moment's invulnerability,
 // so nobody is ever killed in one hit (or in a burst of them). a phase's
 // end cancels everything into sparkles and wen. made on first use
-public class Danmaku : MonoBehaviour
+public class Danmaku : MonoBehaviour, IEnemyShots
 {
     private struct B
     {
@@ -146,10 +146,12 @@ public class Danmaku : MonoBehaviour
         mr.sortingOrder = 200;
         mr.shadowCastingMode = ShadowCastingMode.Off;
         mr.receiveShadows = false;
+        EnemyShots.Register(this);
     }
 
     private void OnDestroy()
     {
+        EnemyShots.Unregister(this);
         if (instance == this) instance = null;
         if (mesh != null) Destroy(mesh);
         if (material != null) Destroy(material);
@@ -232,6 +234,9 @@ public class Danmaku : MonoBehaviour
         }
         return swallowed;
     }
+
+    // a clear of every enemy shot (EnemyShots): these go the way a cancel does
+    public int ClearWithin(Vector2 centre, float radius, bool drops) => CancelWithin(centre, radius, drops);
 
     private int CancelWithin(Vector2 centre, float radius, bool drops)
     {

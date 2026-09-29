@@ -6,7 +6,7 @@ using UnityEngine;
 // for a couple of seconds that hurts to stand in (a share of the player's max health a tick, like
 // the bosses' bullets, so it never scales into a one-shot). one manager for all of them, made on
 // first use; its sprites are pooled
-public class EmberLobs : MonoBehaviour
+public class EmberLobs : MonoBehaviour, IEnemyShots
 {
     private const float ArcHeight = 2.2f;
     private const float TickSeconds = 0.5f;
@@ -53,10 +53,12 @@ public class EmberLobs : MonoBehaviour
         shadowArt = s != null && s.Length > 0 ? s[0] : null;
         GameEvents.OnFinalRushEnded += ClearAll;
         UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+        EnemyShots.Register(this);
     }
 
     private void OnDestroy()
     {
+        EnemyShots.Unregister(this);
         GameEvents.OnFinalRushEnded -= ClearAll;
         UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
         if (instance == this) instance = null;
@@ -89,6 +91,33 @@ public class EmberLobs : MonoBehaviour
         foreach (var p in pools) Give(p.sr);
         embers.Clear();
         pools.Clear();
+    }
+
+    // a clear of every enemy shot (EnemyShots): embers put out in the air, before they land, and
+    // the fire on the ground put out
+    public int ClearWithin(Vector2 centre, float radius, bool drops)
+    {
+        int n = 0;
+        for (int i = embers.Count - 1; i >= 0; i--)
+        {
+            var e = embers[i];
+            Vector2 at = e.body != null ? (Vector2)e.body.transform.position : e.to;
+            if (!EnemyShots.Within(at, centre, radius) && !EnemyShots.Within(e.to, centre, radius)) continue;
+            EnemyShots.Sparkle(at);
+            Give(e.body); Give(e.shadow); Give(e.mark);
+            embers.RemoveAt(i);
+            n++;
+        }
+        for (int i = pools.Count - 1; i >= 0; i--)
+        {
+            var p = pools[i];
+            if (!EnemyShots.Within(p.at, centre, radius)) continue;
+            EnemyShots.Sparkle(p.at);
+            Give(p.sr);
+            pools.RemoveAt(i);
+            n++;
+        }
+        return n;
     }
 
     private SpriteRenderer Take(string layer, int order)

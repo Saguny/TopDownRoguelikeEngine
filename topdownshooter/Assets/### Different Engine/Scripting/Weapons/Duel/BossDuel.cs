@@ -7,7 +7,8 @@ using UnityEngine;
 // and the character's starting weapon comes back in a form only this fight has (DuelWeapon): the
 // Bow as the Sun-Shooter's Bow, the Seven Star Swords as the Big Dipper's formation, the Peach
 // Talismans as the Peach Wood Decree, its name along the bottom of the screen. one clean weapon
-// against his danmaku, instead of six evolutions' worth of noise over it
+// against his danmaku, instead of six evolutions' worth of noise over it. the Command Token
+// stays: its shockwave is the duel's bomb, clearing his bullets off the screen
 public class BossDuel : MonoBehaviour
 {
     private const float PutAwaySeconds = 0.85f, PillarFps = 18f;

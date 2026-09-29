@@ -7,9 +7,10 @@ using UnityEngine;
 // meteors) goes out in a quick cascade of little gold seal-bursts from the player outward, a bell
 // ticking higher as it goes, as the spirit seal's wave rolls out over the horde (SealWave). no
 // weapon fires again until the next wave starts (or the final boss comes). an end boss's duel
-// (BossDuel) puts them all away the same way, the Command Token too, for the whole fight: only
-// the duel's own weapon fires, and one taken from a level up meanwhile is put away with the
-// rest. it makes itself
+// (BossDuel) puts them all away the same way for the whole fight: only the duel's own weapon
+// fires, and one taken from a level up meanwhile is put away with the rest. the Command Token
+// stays, both times: it's an ability, not a weapon, and in the duel it's the bomb that clears
+// the boss's bullets (EnemyShots). it makes itself
 public class WeaponHold : MonoBehaviour
 {
     private const int MostPops = 140;
@@ -64,14 +65,14 @@ public class WeaponHold : MonoBehaviour
 
     private void OnWaveStarted(int wave) => Release();
 
-    private void OnRushEnded(int wave) => PutAway(false);
+    private void OnRushEnded(int wave) => PutAway();
 
     // the end boss's duel: everything put away until the run's over
     public static void Duel()
     {
         if (instance == null) return;
         Dueling = true;
-        instance.PutAway(true);
+        instance.PutAway();
     }
 
     // a weapon taken during the duel is put away as it comes
@@ -83,7 +84,7 @@ public class WeaponHold : MonoBehaviour
         if (player == null) return;
         foreach (var w in player.GetComponentsInChildren<Weapon>())
         {
-            if (w == null || !w.enabled || w is DuelWeapon) continue;
+            if (w == null || !w.enabled || w is DuelWeapon || w is CommandToken) continue;
             w.ClearShots();
             w.enabled = false;
             held.Add(w);
@@ -93,7 +94,7 @@ public class WeaponHold : MonoBehaviour
         Hold(player.GetComponentInChildren<AOEAttack>());
     }
 
-    private void PutAway(bool everything)
+    private void PutAway()
     {
         var player = GameObject.FindGameObjectWithTag("Player");
         if (player == null) return;
@@ -103,7 +104,7 @@ public class WeaponHold : MonoBehaviour
         // where every shot is, before they go
         foreach (var w in player.GetComponentsInChildren<Weapon>())
         {
-            if (w == null || !w.enabled || w is DuelWeapon || (w is CommandToken && !everything)) continue;
+            if (w == null || !w.enabled || w is DuelWeapon || w is CommandToken) continue;
             Collect(w);
             w.ClearShots();
             w.enabled = false;

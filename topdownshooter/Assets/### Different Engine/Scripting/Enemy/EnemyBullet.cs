@@ -27,7 +27,11 @@ public class EnemyBullet : MonoBehaviour
         live.Clear();
     }
 
-    private void OnEnable() => live.Add(this);
+    private void OnEnable()
+    {
+        live.Add(this);
+        EnemyShots.Register(Shots);
+    }
     private void OnDisable() => live.Remove(this);
 
     public float Damage => damage;
@@ -41,6 +45,27 @@ public class EnemyBullet : MonoBehaviour
 
     // caught and gone, without hurting anyone
     public void Swallow() => ObjectPool.Recycle(gameObject);
+
+    // all of them, for a clear of every enemy shot (EnemyShots)
+    private static readonly Clearer Shots = new Clearer();
+    private sealed class Clearer : IEnemyShots
+    {
+        public int ClearWithin(Vector2 centre, float radius, bool drops)
+        {
+            int n = 0;
+            // a swallowed bullet leaves the list as it goes
+            for (int i = live.Count - 1; i >= 0; i--)
+            {
+                if (i >= live.Count) continue;
+                var b = live[i];
+                if (b == null || !EnemyShots.Within(b.transform.position, centre, radius)) continue;
+                EnemyShots.Sparkle(b.transform.position);
+                b.Swallow();
+                n++;
+            }
+            return n;
+        }
+    }
 
     public static void Fire(GameObject prefab, Vector2 at, Vector2 velocity, float damage)
     {

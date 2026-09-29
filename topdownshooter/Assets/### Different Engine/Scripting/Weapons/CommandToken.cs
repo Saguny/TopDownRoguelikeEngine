@@ -4,7 +4,8 @@ using UnityEngine;
 
 // an ability taken from a level up like a weapon (it doesn't fill a weapon slot): once it has
 // charged, its key (E) stamps seals onto the screen one at a time, big to small, then they explode into a shockwave that hits every enemy
-// on screen, and nothing new spawns for a moment after. with a Cast Animation prefab set, that
+// on screen, clears every enemy shot on it (the danmaku, the corpse fire, the embers: anything
+// signed up to EnemyShots), and nothing new spawns for a moment after. with a Cast Animation prefab set, that
 // prefab plays instead and says when the hit lands. CommandTokenHUD shows the charge
 public class CommandToken : Weapon<CommandTokenData>
 {
@@ -184,6 +185,9 @@ public class CommandToken : Weapon<CommandTokenData>
     private void HitEverythingOnScreen(Camera cam, CommandTokenData.LevelStats lv)
     {
         float damage = lv.damage * Might;
+
+        // a bomb: every enemy shot on the screen wiped with it
+        EnemyShots.ClearOnScreen(cam);
 
         // and the screen stays clear for a moment after the hit
         if (SpawnDirector.Active != null) SpawnDirector.Active.PauseSpawning(Data.spawnPauseSeconds);
