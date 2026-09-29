@@ -80,6 +80,8 @@ public class SpawnTimeline : ScriptableObject
     [Min(0f)] public float lateEvoHealth = 0.25f;
     [Tooltip("and this many evolutions are answered (the director's own is 4)")]
     [Min(0f)] public float lateEvoMax = 6f;
+    [Tooltip("from this minute every ordinary enemy spawns empowered (Empowered): bigger, tougher, harder hitting, outlined in crimson, like an elite without the envelope. 0 = never")]
+    [Min(0f)] public float empoweredFromMinute = 24f;
 
     public List<Beat> beats = new List<Beat>();
     public List<Event> events = new List<Event>();

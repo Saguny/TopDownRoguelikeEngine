@@ -593,6 +593,11 @@ public class SpawnDirector : MonoBehaviour
 
     private GameObject Spawn(EnemyArchetype arch, bool rush) => Spawn(arch, rush, GetSpawnPositionNearOffscreenInsideBounds());
 
+    // late in the run every ordinary enemy comes in empowered (Empowered); an elite being made is
+    // left plain first, its own promotion is enough
+    private bool Empowering => activeTimeline != null && activeTimeline.empoweredFromMinute > 0f && RunMinute >= activeTimeline.empoweredFromMinute;
+    private bool makingElite;
+
     private GameObject Spawn(EnemyArchetype arch, bool rush, Vector2 pos)
     {
         // regular enemies come from a pool and go back to it when they die; bosses carry per
@@ -601,13 +606,14 @@ public class SpawnDirector : MonoBehaviour
             ? Instantiate(arch.prefab, pos, Quaternion.identity)
             : ObjectPool.For(arch.prefab).Get(pos, Quaternion.identity);
         Count(arch, go);
+        bool empower = Empowering && !makingElite && !IsBoss(arch);
 
         if (go.TryGetComponent(out EnemyHealth h))
         {
             float hpMul = (Curve != null ? Curve.HealthAt(DifficultyTime) : 1f) * EvoHealth;
             if (rush) hpMul *= finalRushHealthMul;
             // the opening: anything ordinary goes down to one hit while the build is still bare
-            h.SetScaled(OneShotOpening && !rush && !IsBoss(arch) ? 1f : arch.baseHealth * hpMul);
+            h.SetScaled(OneShotOpening && !rush && !IsBoss(arch) ? 1f : arch.baseHealth * hpMul * (empower ? Empowered.Health : 1f));
             h.evoHealth = EvoHealth;
             h.wenShare = EvoWen;
             h.armour = arch.armour;
@@ -620,19 +626,26 @@ public class SpawnDirector : MonoBehaviour
             float speedMul = Curve != null ? Curve.SpeedAt(DifficultyTime) : 1f;
             m.SetSpeedMultiplier(speedMul * arch.baseSpeed);
             m.knockbackResist = IsBoss(arch) ? 1f : arch.knockbackResist;
+            if (empower) m.knockbackResist = Mathf.Max(m.knockbackResist, Empowered.KnockbackResist);
         }
 
         if (go.TryGetComponent(out EnemyContactDamage d))
         {
             float dmgMul = Curve != null ? Curve.DamageAt(DifficultyTime) : 1f;
-            d.SetDamageMultiplier(dmgMul * arch.baseDamage);
+            d.SetDamageMultiplier(dmgMul * arch.baseDamage * (empower ? Empowered.Damage : 1f));
         }
 
         if (go.TryGetComponent(out EnemyContactDamage contact))
         {
             contact.tickInterval = arch.contactTickInterval;
-            float dps = (Curve != null ? Curve.DamageAt(DifficultyTime) : 1f) * arch.baseDamage;
+            float dps = (Curve != null ? Curve.DamageAt(DifficultyTime) : 1f) * arch.baseDamage * (empower ? Empowered.Damage : 1f);
             contact.damagePerTick = dps * contact.tickInterval;
+        }
+
+        if (empower && !go.TryGetComponent(out Empowered _))
+        {
+            go.transform.localScale *= Empowered.Size;
+            go.AddComponent<Empowered>();
         }
 
         return go;
@@ -1279,7 +1292,9 @@ public class SpawnDirector : MonoBehaviour
             var arch = pick();
             if (arch == null || arch.prefab == null) continue;
 
+            makingElite = true;
             var go = Spawn(arch, false);
+            makingElite = false;
             if (go == null) continue;
 
             EliteOutline.Promote(go, eliteSize, eliteHealth, eliteWenDrops);
@@ -1331,6 +1346,8 @@ public class SpawnDirector : MonoBehaviour
     // evoPressureMax of them. the pressure eases in over evoRampSeconds after each
     private int evolutionsHeld;
     private float evoPressure;
+    // the evolved weapons the player holds right now (Huangquan's lilies fire faster for each)
+    public int EvolutionsHeld => evolutionsHeld;
     private float nextEvoCheck;
     private readonly List<Weapon> heldWeapons = new List<Weapon>();
 

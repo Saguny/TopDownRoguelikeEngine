@@ -70,8 +70,10 @@ public class SpiderLilyDemon : MonoBehaviour
     private void Fire()
     {
         Vector2 at = (Vector2)transform.position + new Vector2(0f, 0.2f);
-        var orb = Shot.Of(BulletType.Orb, BulletColor.Red, orbSpeed)
-            .Accel(-0.35f, orbSpeed * 0.6f).Life(orbLife).Hurts(Hq.Hurt(orbDamage)).Silent();
+        // the more of their weapons the player has evolved, the faster the petals fly
+        float speed = Hq.ByEvolutions(orbSpeed, 0.12f, 1.7f);
+        var orb = Shot.Of(BulletType.Orb, BulletColor.Red, speed)
+            .Accel(-0.35f, speed * 0.6f).Life(orbLife).Hurts(Hq.Hurt(orbDamage)).Silent();
         Danmaku.Ring(at, orbs, ringAngle, orb);
         ringAngle += ringTurn;
         var bloom = YamaArt.Strip("Huangquan/lily_bloom");

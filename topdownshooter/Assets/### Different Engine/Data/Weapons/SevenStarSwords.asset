@@ -56,9 +56,9 @@ MonoBehaviour:
   orbitSpeed: 120
   swordSize: 0.7
   contactInterval: 0.5
-  starInterval: 1.3
+  starInterval: 1.5
   starDamage: 10
-  starsPerSword: 8
+  starsPerSword: 6
   starSpeed: 7
   starTurn: 240
   starRange: 12

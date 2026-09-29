@@ -12,6 +12,7 @@ The project lives in `topdownshooter/`; game code and data are under `Assets/###
 | **Waves** | 3 minutes each. The run clock runs during a wave and stops for everything between waves. |
 | **Final Rush** | At the end of every wave, a ring of spirit seals rises around the player; you can't leave it. The rush's bosses come in on the far side of the ring. Beat them to win the rush. |
 | **After a rush** | A seal wave wipes the horde, all qi on the ground is pulled in, and the rush boss drops a fortune envelope. The next wave waits until you open it. |
+| **Empowered horde** | From 24:00 (when most players are maxed out) every ordinary enemy spawns empowered: 1.15× size, 3× health, 1.5× damage, steadier against knockback, outlined in crimson. Like an elite, but without the envelope. |
 | **Final boss** | Wave 10, or at 28:00 on the run clock at the latest. After the last rush you're healed to full. |
 | **End of the night** | At 30:00 the Wuchang (the black and white guards of the dead) come for the player; that counts as surviving. Beating the final boss wins the run. |
 | **Endless** | Unlocks after finishing 5 normal runs. Enemy scaling has no limit, overcharge picks appear (see below), bombardment strikes rain down, and your best time is recorded. |

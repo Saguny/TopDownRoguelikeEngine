@@ -36,6 +36,10 @@ public static class Hq
     // (SpawnDirector.ShotGrowth): a lily's orb takes 5% at the start, some 13% by 20:00
     public static float Hurt(float share) => share * (SpawnDirector.Active != null ? SpawnDirector.Active.ShotGrowth : 1f);
 
+    // a speed grown for every evolved weapon the player holds, by `perEvolution` each, up to `most`
+    public static float ByEvolutions(float speed, float perEvolution, float most) =>
+        speed * Mathf.Min(most, 1f + perEvolution * (SpawnDirector.Active != null ? SpawnDirector.Active.EvolutionsHeld : 0));
+
     public static bool FindPlayer(out Vector2 at)
     {
         if (player == null)
