@@ -21,6 +21,11 @@ public class MapSelectionMenu : MonoBehaviour
     [SerializeField] private GameObject loadingPanel;
     [Tooltip("empty: the scene the MainMenu component starts")]
     [SerializeField] private string gameSceneName;
+    [Tooltip("the picked map's card (its backdrop, the toggle's image) turns this colour, like a picked character's")]
+    [SerializeField] private Color selectedColor = new Color32(0xff, 0xd2, 0x3c, 0xff);
+
+    // each card's backdrop colour as it was styled, to go back to when another map is picked
+    private readonly Dictionary<Graphic, Color> styled = new Dictionary<Graphic, Color>();
 
     private const string EndlessKey = "menu_endless";
     private const string FallbackScene = "Scenes/Courtyard_Map";
@@ -43,7 +48,13 @@ public class MapSelectionMenu : MonoBehaviour
             if (mapCards[i] == null) continue;
             int index = i;
             mapCards[i].group = group;
-            mapCards[i].onValueChanged.AddListener(on => { if (on) MapSelection.Index = index; });
+            var card = mapCards[i];
+            if (card.targetGraphic != null) styled[card.targetGraphic] = card.targetGraphic.color;
+            card.onValueChanged.AddListener(on =>
+            {
+                if (on) MapSelection.Index = index;
+                Tint(card);
+            });
         }
 
         if (endlessToggle != null)
@@ -97,6 +108,7 @@ public class MapSelectionMenu : MonoBehaviour
 
             card.interactable = open;
             card.SetIsOnWithoutNotify(i == picked);
+            Tint(card);
         }
 
         bool unlocked = RunProgress.EndlessUnlocked;
@@ -111,6 +123,14 @@ public class MapSelectionMenu : MonoBehaviour
             endlessLockText.text = unlocked ? string.Empty : $"finish {left} more run{(left == 1 ? "" : "s")} to unlock";
         }
         if (startButton != null) startButton.interactable = !SceneLoader.Busy;
+    }
+
+    private void Tint(Toggle card)
+    {
+        var g = card.targetGraphic;
+        if (g == null) return;
+        if (!styled.TryGetValue(g, out Color normal)) styled[g] = normal = g.color;
+        g.color = card.isOn ? selectedColor : normal;
     }
 
     // the lock drawn over a locked map's picture, made the first time it's needed
