@@ -3,7 +3,9 @@ using UnityEngine;
 // the cut-in's frames (PersonaCutIn), painted pixel by pixel into one 480x270 buffer: the tear, the
 // band opening, the eyes in it with its torn edges and wedge of colour, the character brushed on,
 // the flash, the band sliced apart and its shards flying off. no Unity objects: only colours and
-// sums, so it can be run and looked at outside the game
+// sums, so it can be run and looked at outside the game. it's painted every frame on the CPU, so
+// only what's near the band is touched: each column is walked across the band's reach alone, the
+// band's shape comes from a table, and the character only fills its own box
 public class CutInPainter
 {
     public const int W = 480, H = 270;          // the frame, in art pixels (4x at 1080p)
@@ -17,13 +19,31 @@ public class CutInPainter
     private readonly bool[] ink = new bool[W * H];
     private Color32[] px => Pixels;
 
+    // the band's half height (Half) for every whole u it can be looked up at, the shatter's strips
+    // slid as far as they go included
+    private const int HalfReach = 720;
+    private static readonly float[] halfAt = BuildHalf();
+    private const int Strips = 5;
+    private readonly float[] stripDu = new float[Strips], stripDv = new float[Strips];
+
     // ---------------------------------------------------------------- one frame
 
     private static float Hash(int x, int y) { unchecked { uint h = (uint)(x * 374761393 + y * 668265263); h = (h ^ (h >> 13)) * 1274126177u; return (h & 0xffff) / 65535f; } }
     private static float Ease(float k) => 1f - (1f - k) * (1f - k) * (1f - k);
 
     // the band's half height along its length: widest just right of centre, thinning to threads at the edges
-    private static float Half(float u) { float s = (u - 30f) / (W * 0.62f); return Thick * Mathf.Max(0.06f, 1f - Mathf.Pow(Mathf.Abs(s), 2.2f)); }
+    private static float HalfOf(float u) { float s = (u - 30f) / (W * 0.62f); return Thick * Mathf.Max(0.06f, 1f - Mathf.Pow(Mathf.Abs(s), 2.2f)); }
+    private static float[] BuildHalf()
+    {
+        var t = new float[HalfReach * 2 + 1];
+        for (int i = 0; i < t.Length; i++) t[i] = HalfOf(i - HalfReach);
+        return t;
+    }
+    private static float Half(float u)
+    {
+        int i = (int)(u + HalfReach + 0.5f);
+        return halfAt[i < 0 ? 0 : i >= halfAt.Length ? halfAt.Length - 1 : i];
+    }
     // the torn edge: a ragged few pixels, changing as the edge boils
     private static float Rag(float u, int side, int boil) => 2.5f + 4f * Hash(Mathf.FloorToInt(u / 3f) + boil * 131, side * 977 + boil);
 
@@ -46,11 +66,32 @@ public class CutInPainter
         // the push-in: the face grows a little and drifts left while it's held
         float zoom = 1f + 0.06f * kHold, drift = -10f * kHold;
 
-        for (int y = 0; y < H; y++)
-            for (int x = 0; x < W; x++)
+        // the strips' slides this frame, and how far across the band (v) anything is drawn at all
+        float reachLo, reachHi;
+        if (tearing) { reachLo = -10f; reachHi = 10f; }
+        else if (opening) { reachLo = -Thick - 4f; reachHi = Thick + 4f; }
+        else if (!shattering) { reachLo = -Thick - 16f; reachHi = Thick + 16f; }
+        else
+        {
+            for (int i = 0; i < Strips; i++)
+            {
+                float dir = i % 2 == 0 ? 1f : -1f;
+                stripDu[i] = dir * Mathf.Pow(kShat, 1.5f) * W * 0.45f + kShat * W * 0.18f;
+                stripDv[i] = kShat * (20f + i * 9f);
+            }
+            reachLo = -Thick - 6f; reachHi = Thick + 6f + stripDv[Strips - 1];
+        }
+
+        for (int x = 0; x < W; x++)
+        {
+            // the rows of this column within reach of the band: v = -dx s + dy c
+            float colDx = x + 0.5f - cx;
+            int y0 = Mathf.Max(0, Mathf.FloorToInt(cy + (reachLo + colDx * s) / c - 0.5f));
+            int y1 = Mathf.Min(H - 1, Mathf.CeilToInt(cy + (reachHi + colDx * s) / c - 0.5f));
+            for (int y = y0; y <= y1; y++)
             {
                 // band space: u along it, v across it (up positive)
-                float dx = x + 0.5f - cx, dy = y + 0.5f - cy;
+                float dx = colDx, dy = y + 0.5f - cy;
                 float u = dx * c + dy * s, v = -dx * s + dy * c;
                 Color32 col = default;
 
@@ -80,6 +121,7 @@ public class CutInPainter
                 }
                 px[y * W + x] = col;
             }
+        }
 
         // the debris: shards of the band flying off to the top right, thinning out
         if (shattering)
@@ -144,14 +186,13 @@ public class CutInPainter
         if (k > 0f)
         {
             // which strip this pixel comes from: five strips across the band, each sliding its own way
-            int strips = 5;
-            for (int i = 0; i < strips; i++)
+            const float across = 2f * Thick / Strips;
+            for (int i = 0; i < Strips; i++)
             {
-                float dir = i % 2 == 0 ? 1f : -1f;
-                float du = dir * Mathf.Pow(k, 1.5f) * W * 0.45f + k * W * 0.18f;
-                float dv = k * (20f + i * 9f);
-                float ou = u - du, ov = v - dv;
-                float edge0 = -Thick + (2f * Thick / strips) * i, edge1 = edge0 + 2f * Thick / strips;
+                float ov = v - stripDv[i];
+                float edge0 = -Thick + across * i, edge1 = edge0 + across;
+                if (ov < edge0 - 4f || ov >= edge1 + 4f) continue;          // nowhere near it, jagged or not
+                float ou = u - stripDu[i];
                 float jag = (Hash(Mathf.FloorToInt(ou / 4f), i * 31) - 0.5f) * 8f;
                 if (ov >= edge0 + jag && ov < edge1 + jag)
                 {
@@ -221,10 +262,13 @@ public class CutInPainter
     private void DrawGlyph(PersonaCutIn.Glyph glyph, float kInk, float fade, float gx, float gy, float size, Color32 white, Color32 black, int boil)
     {
         var strokes = glyph == PersonaCutIn.Glyph.Judge ? Judge : Forget;
-        System.Array.Clear(ink, 0, ink.Length);
         int n = strokes.Length;
         float written = kInk * n;                      // strokes done, and how far into the next
         float left = gx - size * 0.5f, topY = gy + size * 0.5f;
+        // the character's box, its brush's reach round it: all it touches
+        int bx0 = Mathf.Max(1, Mathf.FloorToInt(left - 12f)), bx1 = Mathf.Min(W - 2, Mathf.CeilToInt(left + size + 12f));
+        int by0 = Mathf.Max(1, Mathf.FloorToInt(topY - size - 12f)), by1 = Mathf.Min(H - 2, Mathf.CeilToInt(topY + 12f));
+        for (int y = by0 - 1; y <= by1 + 1; y++) System.Array.Clear(ink, y * W + bx0 - 1, bx1 - bx0 + 3);
         for (int si = 0; si < n && si < written; si++)
         {
             var st = strokes[si];
@@ -244,7 +288,7 @@ public class CutInPainter
                 for (int yy = Mathf.FloorToInt(py0 - r); yy <= py0 + r; yy++)
                     for (int xx = Mathf.FloorToInt(px0 - r); xx <= px0 + r; xx++)
                     {
-                        if (xx < 0 || yy < 0 || xx >= W || yy >= H) continue;
+                        if (xx < bx0 || yy < by0 || xx > bx1 || yy > by1) continue;
                         if ((xx + 0.5f - px0) * (xx + 0.5f - px0) + (yy + 0.5f - py0) * (yy + 0.5f - py0) > r * r) continue;
                         // dry brush: a few hairs of the stroke's tail left bare
                         if (t > 0.7f && Hash(xx, yy) < (t - 0.7f) * 1.2f) continue;
@@ -253,8 +297,8 @@ public class CutInPainter
             }
         }
         // white brushwork in a black outline, shredding away with the band
-        for (int y = 1; y < H - 1; y++)
-            for (int x = 1; x < W - 1; x++)
+        for (int y = by0; y <= by1; y++)
+            for (int x = bx0; x <= bx1; x++)
             {
                 int i = y * W + x;
                 if (fade > 0f && Hash(x / 2 + 5, y / 2) < fade * 1.2f - 0.2f) continue;
