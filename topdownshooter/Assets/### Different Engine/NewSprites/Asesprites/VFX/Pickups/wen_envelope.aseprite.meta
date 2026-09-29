@@ -4,7 +4,7 @@ ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
   serializedVersion: 2
-  userData: c5bbd7560278da96d8b1c3dd9f59dad8
+  userData: a24268353649326b52d1f7491fe3cb5c
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 62a9f0aa5b59740cfbadc7e5f9823bb0, type: 3}
@@ -125,7 +125,7 @@ ScriptedImporter:
   animatedSpriteImportData:
   - name: wen_envelope
     originalName: 
-    pivot: {x: 0.5, y: 0.5294118}
+    pivot: {x: 0.53333336, y: 0.4666667}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -134,7 +134,7 @@ ScriptedImporter:
       x: 4
       y: 4
       width: 15
-      height: 17
+      height: 15
     spriteID: 0a59c44187b5e004aa87a7798e6f00b0
     spriteBone: []
     spriteOutline: []
@@ -143,7 +143,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 4, y: 4}
+    uvTransform: {x: 4, y: 3}
   spriteSheetImportData: []
   asepriteLayers:
   - layerIndex: 0
@@ -164,8 +164,8 @@ ScriptedImporter:
       cellRect:
         x: 0
         y: 0
-        width: 15
-        height: 18
+        width: 16
+        height: 16
       spriteId: 0a59c44187b5e004aa87a7798e6f00b0
     linkedCells: []
     parentIndex: -1
@@ -185,5 +185,5 @@ ScriptedImporter:
   generatePhysicsShape: 0
   secondarySpriteTextures: []
   spritePackingTag: 
-  canvasSize: {x: 15, y: 18}
+  canvasSize: {x: 16, y: 16}
   previousTextureSize: {x: 32, y: 32}
