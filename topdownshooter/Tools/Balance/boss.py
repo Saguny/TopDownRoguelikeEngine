@@ -9,6 +9,8 @@ no measure of them. all before the player's stats (Might, crit and the rest shor
 he's fought as a duel now (BossDuel): the player's weapons are put away and the starting weapon
 comes back in a duel form (DuelWeapon), each of which is set to the damage a second this works
 out for six evolved weapons, about 1600, so the health below still gives the fight its length.
+the build only adds a little to it (DuelWeapon.BuildFactor: a quarter of Might and the attack
+class, +40% at most, crits a flat x1.5), so a strong build shortens the fight by a third at most.
 
     python boss.py              the table and the health it comes to
     python boss.py --apply      writes it into Prefabs/Yama.prefab

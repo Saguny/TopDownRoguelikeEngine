@@ -3,9 +3,9 @@ using UnityEngine;
 // the end boss's duel (BossDuel): every weapon is put away and the character's starting weapon
 // comes back as a form only this fight has, drawn clean so his danmaku stays readable through it.
 // it goes for the boss while he can be hurt, else the nearest enemy in reach. its pace is its own
-// (the Cooldown stat doesn't touch it); Might, its attack class and crits do. each is set for
-// about 1600 damage a second on him before the player's stats: what six evolved weapons did to
-// him, so his health stands as it was (Tools/Balance/boss.py)
+// (the Cooldown stat doesn't touch it), and the build only counts for a little (BuildFactor): the
+// duel is won dodging, not in the build. each is set for about 1600 damage a second on him:
+// what six evolved weapons did to him, so his health stands as it was (Tools/Balance/boss.py)
 public abstract class DuelWeapon : Weapon
 {
     public const string Layer = "Aura";
@@ -64,8 +64,19 @@ public abstract class DuelWeapon : Weapon
         return col;
     }
 
-    // a hit with Might on it (Hit adds the attack class and the crit). true when it killed
-    protected bool Strike(EnemyHealth e, float damage, bool ignoreArmor = false) => e != null && Hit(e, damage * Might, ignoreArmor);
+    // the build counts for a little: a quarter of what Might and the attack class add, and never
+    // more than +40%. a maxed build multiplied the duel's damage by five and took a phase in seconds
+    private const float BuildShare = 0.25f, MostBuild = 1.4f, DuelCrit = 1.5f;
+    protected float BuildFactor => Mathf.Clamp(1f + BuildShare * (Might * ClassMul - 1f), 1f, MostBuild);
+
+    // a hit at the duel's own rate: the build's small share, and a crit at the player's chance but
+    // always x1.5, whatever the crit passives say. true when it killed
+    protected bool Strike(EnemyHealth e, float damage, bool ignoreArmor = false)
+    {
+        if (e == null) return false;
+        bool crit = Stats != null && Random.value < Stats.CritChanceTotal;
+        return e.TakeDamage(damage * BuildFactor * (crit ? DuelCrit : 1f), DamageKind.Weapon, crit, ignoreArmor, this);
+    }
 
     // its art, Resources/Duel (Tools/VFX/huangquan/duel.js), at the world's pixel size
     protected static Sprite[] Art(string name) => YamaArt.Strip("Duel/" + name);

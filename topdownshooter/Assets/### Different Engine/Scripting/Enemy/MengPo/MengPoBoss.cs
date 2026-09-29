@@ -596,8 +596,8 @@ public class MengPoBoss : MonoBehaviour, IDamageGate, IFightBoss
             grade.Set(Mood, 1.5f);
             if (clean)
             {
-                int coins = Coins.WithGreed(spellBonus != null && card < spellBonus.Length ? spellBonus[card] : 500);
-                Coins.Add(coins);
+                // a gift, so it counts in the run's coins (the HUD's counter, the end screen) as well as the wallet
+                int coins = Coins.Gift(spellBonus != null && card < spellBonus.Length ? spellBonus[card] : 500);
                 screen.Bonus($"Spell Card Bonus!  +{coins} coins", new Color(0.8f, 0.9f, 1f));
                 Sound("yama_bonus", transform.position, 0.9f);
             }
@@ -785,7 +785,8 @@ public class MengPoBoss : MonoBehaviour, IDamageGate, IFightBoss
         while (true)
         {
             float dt = Time.deltaTime;
-            PlayerMovement.Drift = new Vector2(dir * currentStrength, 0f);
+            // as much faster as her bullets are in the duel, so the faster player still has to fight it
+            PlayerMovement.Drift = new Vector2(dir * currentStrength * Danmaku.SpeedScale, 0f);
             turn += dt; wall += dt; drop += dt; streak += dt;
             if (turn >= 6f)
             {

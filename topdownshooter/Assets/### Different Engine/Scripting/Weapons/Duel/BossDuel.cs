@@ -13,6 +13,10 @@ public class BossDuel : MonoBehaviour
 {
     private const float PutAwaySeconds = 0.85f, PillarFps = 18f;
 
+    // the duel's footing: the player at +80% move speed whatever their build (the Move Speed
+    // passive neither adds to it nor falls short of it), and the boss's bullets faster to match
+    public const float PlayerSpeed = 1.8f, BulletSpeed = 1.4f;
+
     private static BossDuel instance;
 
     // the boss the duel is with
@@ -29,6 +33,8 @@ public class BossDuel : MonoBehaviour
         // a scene object: it goes with the run
         instance = new GameObject("Boss Duel").AddComponent<BossDuel>();
         Boss = boss.GetComponent<EnemyHealth>();
+        PlayerMovement.SpeedOverride = PlayerSpeed;
+        Danmaku.SpeedScale = BulletSpeed;
         instance.StartCoroutine(instance.Run(player));
     }
 
@@ -37,6 +43,8 @@ public class BossDuel : MonoBehaviour
         if (instance != this) return;
         instance = null;
         Boss = null;
+        PlayerMovement.SpeedOverride = 0f;
+        Danmaku.SpeedScale = 1f;
     }
 
     private IEnumerator Run(GameObject player)

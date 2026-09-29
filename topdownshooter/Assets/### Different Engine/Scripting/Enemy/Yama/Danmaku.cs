@@ -114,6 +114,8 @@ public class Danmaku : MonoBehaviour, IEnemyShots
     // (still there, still hurting, only just to be seen, flickering), so the player has to
     // remember where they were
     public static float Veil;
+    // every bullet's speed times this (an end boss's duel makes them faster)
+    public static float SpeedScale = 1f;
     public static event System.Action<Vector2> PlayerHit;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -123,6 +125,7 @@ public class Danmaku : MonoBehaviour, IEnemyShots
         Hits = Grazes = 0;
         ShowHitbox = false;
         Veil = 0f;
+        SpeedScale = 1f;
         PlayerHit = null;
     }
 
@@ -339,7 +342,7 @@ public class Danmaku : MonoBehaviour, IEnemyShots
                 b.angle = Mathf.MoveTowardsAngle(b.angle, want, b.s.home * dt);
             }
             float rad = b.angle * Mathf.Deg2Rad;
-            b.pos += new Vector2(Mathf.Cos(rad), Mathf.Sin(rad)) * (b.speed * dt);
+            b.pos += new Vector2(Mathf.Cos(rad), Mathf.Sin(rad)) * (b.speed * SpeedScale * dt);
 
             if (!havePlayer) continue;
             Vector2 off = b.pos - me;

@@ -125,12 +125,14 @@ public static class Coins
     // the run it comes
     public static int WithGreed(int amount) => Mathf.Max(0, Mathf.RoundToInt(amount * greedMultiplier));
 
-    public static void Gift(int amount)
+    // what it paid, after Greed; counted in this run's coins earned (the HUD's counter, the end screen)
+    public static int Gift(int amount)
     {
         int paid = WithGreed(amount);
-        if (paid <= 0) return;
+        if (paid <= 0) return 0;
         Add(paid);
         EarnedThisRun += paid;
+        return paid;
     }
 
 #if UNITY_EDITOR

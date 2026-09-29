@@ -387,6 +387,20 @@ public class YamaScreen : MonoBehaviour
         cardText = Text("Name", card, 40f, new Color(1f, 0.93f, 0.85f), false);
         cardText.alignment = TextAlignmentOptions.Right;
         cardText.alpha = cardShadow.alpha = 0f;
+        // the name keeps to the card, its right edge in from the screen's: its holder fills the
+        // card (it was 1800 wide about the card's middle, so right-aligned text ran off the
+        // screen), and a long name shrinks to fit rather than running out of it
+        foreach (var t in new[] { cardText, cardShadow })
+        {
+            var holder = (RectTransform)t.rectTransform.parent;
+            holder.anchorMin = Vector2.zero;
+            holder.anchorMax = Vector2.one;
+            holder.sizeDelta = Vector2.zero;
+            holder.anchoredPosition = Vector2.zero;
+            t.enableAutoSizing = true;
+            t.fontSizeMax = 40f;
+            t.fontSizeMin = 24f;
+        }
         var underline = Fill("Underline", card, new Color(0.85f, 0.2f, 0.25f, 0.9f));
         underline.rectTransform.anchorMin = new Vector2(0.35f, 0f);
         underline.rectTransform.anchorMax = new Vector2(1f, 0f);

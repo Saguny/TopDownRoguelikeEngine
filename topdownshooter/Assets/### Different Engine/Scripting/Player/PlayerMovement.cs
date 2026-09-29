@@ -26,9 +26,11 @@ public class PlayerMovement : MonoBehaviour
     // something carrying the player along whatever they do, units a second (Meng Po's river of
     // forgetting): added to their own movement
     public static Vector2 Drift;
+    // when above 0, the move speed multiplier outright, whatever the stats say (an end boss's duel)
+    public static float SpeedOverride;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    private static void ResetStatics() => Drift = Vector2.zero;
+    private static void ResetStatics() { Drift = Vector2.zero; SpeedOverride = 0f; }
 
     private void Awake()
     {
@@ -58,7 +60,8 @@ public class PlayerMovement : MonoBehaviour
         Vector2 dir = _moveInput.sqrMagnitude > 1f ? _moveInput.normalized : _moveInput;
 
         // target velocity and smooth acceleration/deceleration
-        Vector2 desiredVel = dir * (_speed * (_stats ? _stats.MoveSpeedTotal : 1f)) + Drift;
+        float speedMul = SpeedOverride > 0f ? SpeedOverride : _stats ? _stats.MoveSpeedTotal : 1f;
+        Vector2 desiredVel = dir * (_speed * speedMul) + Drift;
         _rb.linearVelocity = Vector2.SmoothDamp(_rb.linearVelocity, desiredVel, ref _velocitySmoothRef, _accelTime);
 
         // flip from velocity when there's horizontal motion (their own, not a drift carrying them)
