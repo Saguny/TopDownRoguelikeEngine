@@ -117,6 +117,8 @@ public class DevTools : MonoBehaviour
 
         GUI.enabled = loop != null && !loop.InFinalRush && loop.RunSeconds < PlaytestAt;
         if (GUILayout.Button("Playtest: 8:50, level 25, a typical build")) PlaytestLoadout();
+        GUI.enabled = loop != null && !GameMode.IsEndless && !loop.InFinalRush && !loop.FinalBossStarted;
+        if (GUILayout.Button($"Duel test: maxed build, final boss in {DuelLead:0}s")) DuelTest();
         GUI.enabled = true;
 
         // maps: picking one restarts the scene on it
@@ -249,6 +251,52 @@ public class DevTools : MonoBehaviour
             for (int guard = 0; guard < 16 && u.Level < level && u.CanOffer; guard++) inventory.TakeUpgrade(u);
         }
         if (health != null) health.Heal(health.Max);
+    }
+
+    // the end boss's duel (BossDuel), to try: a full, maxed build first (six weapons and six
+    // passives, every one at its cap, evolutions and all, and the Command Token for its bomb), so
+    // putting them away shows as it would at the end of a strong run; then the clock set so the
+    // map's final boss comes a few seconds later. the character's starting weapon is one of the
+    // six, whatever was held already is kept
+    private const float DuelLead = 5f;
+
+    private void DuelTest()
+    {
+        if (loop == null || director == null || inventory == null) return;
+
+        int picks = 0;
+        FillAndMax(UpgradeCategory.Weapon, inventory.WeaponSlots, ref picks);
+        FillAndMax(UpgradeCategory.Passive, inventory.PassiveSlots, ref picks);
+        foreach (var u in inventory.RunUpgrades)
+            if (u != null && !u.TakesSlot) Max(u, ref picks);
+        inventory.SetLevel(Mathf.Max(inventory.CurrentLevel, 1 + picks));
+
+        float was = loop.RunSeconds;
+        if (loop.JumpToFinalBoss(DuelLead)) director.SkipTime(loop.RunSeconds - was);
+        if (health != null) health.Heal(health.Max);
+    }
+
+    // what's held of a kind levelled to its cap, then new ones taken and maxed until its slots are full
+    private void FillAndMax(UpgradeCategory kind, int slots, ref int picks)
+    {
+        var all = inventory.RunUpgrades.Where(u => u != null && u.TakesSlot && u.Category == kind).ToList();
+        int held = 0;
+        foreach (var u in all.Where(u => u.Level > 0)) { Max(u, ref picks); held++; }
+        foreach (var u in all.Where(u => u.Level == 0))
+        {
+            if (slots > 0 && held >= slots) break;
+            Max(u, ref picks);
+            held++;
+        }
+    }
+
+    private void Max(UpgradeData u, ref int picks)
+    {
+        for (int guard = 0; guard < 32 && u.CanOffer && !u.IsAtCap; guard++)
+        {
+            inventory.TakeUpgrade(u);
+            picks++;
+        }
     }
 
     private void SetSpeed(float s)

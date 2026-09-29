@@ -28,18 +28,23 @@ public class GameLoopController : MonoBehaviour
     private float totalRun;
     private Coroutine loop;
     private float jumpElapsed = -1f;     // dev tools: where in its wave a jump lands
+    private bool bossStarted;
 
     private void OnEnable()
     {
         GameEvents.OnEnemyKilled += OnEnemyKilled;
         GameEvents.OnSecretBossSpawned += OnSecretBossSpawned;
+        GameEvents.OnFinalBossStarted += OnFinalBossStarted;
     }
 
     private void OnDisable()
     {
         GameEvents.OnEnemyKilled -= OnEnemyKilled;
         GameEvents.OnSecretBossSpawned -= OnSecretBossSpawned;
+        GameEvents.OnFinalBossStarted -= OnFinalBossStarted;
     }
+
+    private void OnFinalBossStarted() => bossStarted = true;
 
     private void Start()
     {
@@ -183,6 +188,27 @@ public class GameLoopController : MonoBehaviour
     // the wave starts its Final Rush, same as waiting would
     public float RunSeconds => totalRun;
     public bool InFinalRush => finalRush;
+    public bool FinalBossStarted => bossStarted;
+    // the run minute the final boss comes by, for the dev tools
+    public float FinalBossDueSeconds => finalBossByMinute * 60f;
+
+    // dev tools: straight to the end of a normal run, the final boss `lead` seconds away. the clock
+    // is set just short of when it's due, in the last wave before its own, far enough from that
+    // wave's end that no Final Rush comes first. false when there's no final boss to jump to
+    public bool JumpToFinalBoss(float lead)
+    {
+        if (GameMode.IsEndless || finalRush || bossStarted) return false;
+        lead = Mathf.Clamp(lead, 0.5f, waveDuration - 2f);
+        float at = FinalBossDueSeconds - lead;
+        if (at <= totalRun) return false;
+        waveIndex = Mathf.Max(0, finalWave - 2);
+        jumpElapsed = waveDuration - lead - 1f;
+        totalRun = at;
+        if (loop != null) StopCoroutine(loop);
+        loop = StartCoroutine(Loop());
+        GameEvents.OnRunTimeChanged?.Invoke(totalRun);
+        return true;
+    }
 
     // dev tools: the run clock set to `seconds`, in the wave that holds it, as if played to there.
     // not during a Final Rush (its spawner and envelope are mid-way)
