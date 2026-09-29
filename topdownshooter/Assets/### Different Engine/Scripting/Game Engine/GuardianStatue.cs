@@ -68,7 +68,8 @@ public class GuardianStatue : MonoBehaviour
     }
 
     // wakes the statue holding this guardian, if it's near enough the player; where the guardian steps down
-    public static bool Awaken(EnemyArchetype guardian, Vector2 player, out Vector2 at)
+    // fits: optional, whether where he'd step down will do (inside the rush's ring)
+    public static bool Awaken(EnemyArchetype guardian, Vector2 player, out Vector2 at, System.Predicate<Vector2> fits = null)
     {
         at = default;
         if (guardian == null) return false;
@@ -79,15 +80,18 @@ public class GuardianStatue : MonoBehaviour
         foreach (var s in all)
         {
             if (s == null || s.Woken || s.guardian != guardian) continue;
+            if (fits != null && !fits((Vector2)s.transform.position + Vector2.down * StepDown)) continue;
             float d = ((Vector2)s.transform.position - player).magnitude;
             if (d <= reach * s.wakeReach && d < bestD) { best = s; bestD = d; }
         }
         if (best == null) return false;
         best.Wake();
         // he steps down in front of his plinth
-        at = (Vector2)best.transform.position + Vector2.down * 2.9f;
+        at = (Vector2)best.transform.position + Vector2.down * StepDown;
         return true;
     }
+
+    private const float StepDown = 2.9f;
 
     private void Wake()
     {

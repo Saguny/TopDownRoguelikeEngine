@@ -1495,6 +1495,8 @@ public class SpawnDirector : MonoBehaviour
         finalRushQuota = Mathf.Max(1, quota);
         ResetFinalRushProgress();
 
+        // the ring first: the rush's bosses are placed inside it
+        if (FinalRushArenaController.Instance != null) FinalRushArenaController.Instance.Raise();
         if (ProcessionRuns) BeginProcession();
         else TrySpawnInitialBoss();
     }
@@ -1691,17 +1693,20 @@ public class SpawnDirector : MonoBehaviour
         return made;
     }
 
-    // a rush boss from `dir` (the map's, taken in turn by `index`, or the Magistrate), and his
-    // retinue in file behind him. one whose statue stands near (Huangquan Road's guardians) steps
-    // down from it instead
+    // a rush boss (the map's, taken in turn by `index`, or the Magistrate) and his retinue in file
+    // behind him. he comes in at the far side of the ring from the player, `dir` from its centre
+    // when the player stands in the middle of it, and is held inside it (FinalRushBound). one whose
+    // statue stands inside the ring (Huangquan Road's guardians) steps down from it instead
     private void SpawnMagistrate(Vector2 dir, int index = 0)
     {
         // a map with more than one takes turns by rush too: Huangquan's first rush is Ox-Head's,
         // its second Horse-Face's, its fourth both
         var arch = RushBoss(index + Mathf.Max(0, currentWave - 1));
         if (arch == null || arch.prefab == null) return;
-        if (!TryEdgePoint(dir, 1.2f, out Vector2 at)) at = GetSpawnPositionNearOffscreenInsideBounds();
-        if (GuardianStatue.Awaken(arch, playerTransform != null ? (Vector2)playerTransform.position : at, out Vector2 statue))
+        Vector2 at;
+        if (FarInRing(ref dir, out Vector2 far)) at = far;
+        else if (!TryEdgePoint(dir, 1.2f, out at)) at = GetSpawnPositionNearOffscreenInsideBounds();
+        if (GuardianStatue.Awaken(arch, playerTransform != null ? (Vector2)playerTransform.position : at, out Vector2 statue, FinalRushBound.Inside))
         {
             at = statue;
             Vector2 toward = playerTransform != null ? (Vector2)playerTransform.position - at : -dir;
@@ -1709,6 +1714,7 @@ public class SpawnDirector : MonoBehaviour
         }
         var go = Spawn(arch, true, at);
         if (go == null) return;
+        if (!go.TryGetComponent(out FinalRushBound _) && go.TryGetComponent(out Rigidbody2D _)) go.AddComponent<FinalRushBound>();
         if (go.TryGetComponent(out EnemyHealth h)) h.SetScaled(h.Max * Mathf.Pow(rushBossGrowth, Mathf.Max(0, currentWave - 1)));
         // he raises fewer of the dead in the early rushes: 2 at a time (4 up at once) in the first,
         // 3 (6) in the second, his full count from the third
@@ -1728,6 +1734,28 @@ public class SpawnDirector : MonoBehaviour
             if (ValidSpawn(p)) Spawn(PMain, true, p);
         }
         RingBell(0.8f);
+    }
+
+    // the point of the ring furthest from the player, just inside its edge: straight across from
+    // them through its centre, or along `dir` while they stand in the middle. a wall or the map's
+    // edge there moves it round the ring a little, then in toward the middle. dir comes back as the
+    // way from the centre out to it, for his retinue to file in behind him
+    private bool FarInRing(ref Vector2 dir, out Vector2 at)
+    {
+        at = default;
+        if (!FinalRushBound.TryArea(out Vector2 centre, out float radius)) return false;
+        Vector2 away = playerTransform != null ? centre - (Vector2)playerTransform.position : Vector2.zero;
+        Vector2 baseDir = away.sqrMagnitude > 1f ? away.normalized : (dir.sqrMagnitude > 0.0001f ? dir.normalized : Vector2.right);
+        for (float inward = 0f; inward <= radius * 0.6f; inward += 1.5f)
+            foreach (float turn in new[] { 0f, 15f, -15f, 30f, -30f, 50f, -50f })
+            {
+                Vector2 d = Rotate(baseDir, turn), p = centre + d * (radius - inward);
+                if (!ValidSpawn(p)) continue;
+                at = p;
+                dir = d;
+                return true;
+            }
+        return false;
     }
 
     // the priest's hand bell: a formation is coming

@@ -8,6 +8,7 @@ public class FinalRushArenaController : MonoBehaviour
     [SerializeField] private Transform playerOverride;
 
     private FinalRushArena activeArena;
+    private int raisedFrame = -1;
 
     public bool HasArena => activeArena != null;
     public Vector3 Center => activeArena != null ? activeArena.transform.position : Vector3.zero;
@@ -36,9 +37,13 @@ public class FinalRushArenaController : MonoBehaviour
         GameEvents.OnFinalRushEnded -= HandleFinalRushEnded;
     }
 
-    private void HandleFinalRushStarted(int waveIndex, int quota)
+    private void HandleFinalRushStarted(int waveIndex, int quota) => Raise();
+
+    // the ring goes up round the player. the spawner calls this too before it places the rush's
+    // bosses inside it, whichever of them hears the rush begin first; the ring only goes up once
+    public void Raise()
     {
-        if (arenaPrefab == null)
+        if (arenaPrefab == null || raisedFrame == Time.frameCount)
             return;
 
         if (activeArena != null)
@@ -62,6 +67,7 @@ public class FinalRushArenaController : MonoBehaviour
         var arenaInstance = Instantiate(arenaPrefab);
         arenaInstance.Initialize(playerTransform.position);
         activeArena = arenaInstance;
+        raisedFrame = Time.frameCount;
     }
 
     private void HandleFinalRushEnded(int waveIndex)

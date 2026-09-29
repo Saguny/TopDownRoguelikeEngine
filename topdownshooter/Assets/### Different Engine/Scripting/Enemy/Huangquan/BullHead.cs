@@ -207,7 +207,9 @@ public class BullHead : MonoBehaviour
         Vector2 target = Apart(me, player);
         to = target - me;
         dir = to.sqrMagnitude > 0.01f ? to.normalized : Vector2.right;
-        float length = Mathf.Min(longestCharge, to.magnitude + overshoot);
+        // never out through the rush's ring of seals: the lane stops short of it
+        float length = Mathf.Min(longestCharge, to.magnitude + overshoot, FinalRushBound.ToEdge(me, dir));
+        if (length < 1.5f) return false;
         laneStart = me;
         chargeEnd = length;
         charging.Add(this);
