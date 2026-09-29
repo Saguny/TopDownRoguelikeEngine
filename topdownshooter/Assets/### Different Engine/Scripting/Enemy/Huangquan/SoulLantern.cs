@@ -162,7 +162,7 @@ public class SoulLantern : MonoBehaviour
     {
         Vector2 at = me + new Vector2(0f, 0.3f);
         var wisp = Shot.Of(BulletType.Orb, BulletColor.Jade, wispSpeed)
-            .Home(wispTurn, wispHoming).Life(wispHoming + 3f).Hurts(wispDamage).Silent();
+            .Home(wispTurn, wispHoming).Life(wispHoming + 3f).Hurts(Hq.Hurt(wispDamage)).Silent();
         Danmaku.Fire(at, Danmaku.AimAt(at) + Random.Range(-40f, 40f), wisp);
         var puff = YamaArt.Strip("Huangquan/wisp_puff");
         if (puff != null) FxBatch.Play(puff, 16f, at, 1f, "Aura", 41);

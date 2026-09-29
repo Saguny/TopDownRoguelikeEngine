@@ -126,7 +126,7 @@ public class HorseFace : MonoBehaviour
         until = Time.time + rest;
         if (halo != null) halo.gameObject.SetActive(false);
         Vector2 at = Lantern;
-        var orb = Shot.Of(BulletType.Orb, BulletColor.Azure, orbSpeed).Life(orbLife).Hurts(orbDamage).Silent();
+        var orb = Shot.Of(BulletType.Orb, BulletColor.Azure, orbSpeed).Life(orbLife).Hurts(Hq.Hurt(orbDamage)).Silent();
         Danmaku.Ring(at, orbs, ringAngle, orb);
         ringAngle += 180f / orbs;
         if (pulseArt != null) FxBatch.Play(pulseArt, 20f, at, 1.4f, "Aura", 23);

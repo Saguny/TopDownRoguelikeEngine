@@ -280,6 +280,20 @@ public class SpawnDirector : MonoBehaviour
     // the running map's difficulty, or this spawner's own when the map has none
     private DifficultyCurve Curve => DifficultyCurve.For(curve);
 
+    // how much harder the horde hits now than at the start of the run (the curve's damage), for
+    // what hurts as a share of the player's health instead of by contact: Huangquan Road's orbs,
+    // embers and wisps grow with the run the way a touch does. at most MostShotGrowth
+    public const float MostShotGrowth = 4f;
+    public float ShotGrowth
+    {
+        get
+        {
+            var c = Curve;
+            if (c == null) return 1f;
+            return Mathf.Clamp(c.DamageAt(DifficultyTime) / Mathf.Max(0.01f, c.DamageAt(0f)), 1f, MostShotGrowth);
+        }
+    }
+
     // the run's time is up (RunTimeLimit): nothing more spawns and the horde goes, inside out
     public void EndOfTime()
     {

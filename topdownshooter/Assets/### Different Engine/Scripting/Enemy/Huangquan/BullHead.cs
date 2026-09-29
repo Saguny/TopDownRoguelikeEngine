@@ -343,7 +343,8 @@ public class BullHead : MonoBehaviour
             var ph = Hq.PlayerHealth;
             if (ph != null && !ph.IsDead)
             {
-                ph.TakeDamage(ph.Max * hitShare);
+                // grows with the run like the road's shots, never more than half their health
+                ph.TakeDamage(ph.Max * Mathf.Min(0.5f, Hq.Hurt(hitShare)));
                 Juice.Shake(0.3f);
                 Hq.Sound("hq_bull_gore", player, 0.8f, 0.2f);
             }

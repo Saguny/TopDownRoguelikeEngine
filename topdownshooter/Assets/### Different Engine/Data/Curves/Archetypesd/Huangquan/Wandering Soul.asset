@@ -17,7 +17,7 @@ MonoBehaviour:
   weight: 0.7
   baseHealth: 4
   baseSpeed: 0.42
-  baseDamage: 8
+  baseDamage: 11
   armour: 0
   knockbackResist: 0
   physicalTaken: 0.85

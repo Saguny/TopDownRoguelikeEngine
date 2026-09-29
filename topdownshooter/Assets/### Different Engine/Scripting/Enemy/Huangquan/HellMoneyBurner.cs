@@ -117,7 +117,7 @@ public class HellMoneyBurner : MonoBehaviour
         {
             float a = centre + (i - (embers - 1) * 0.5f) * fanSpread;
             Vector2 land = me + Hq.Dir(a) * reach * Random.Range(0.92f, 1.08f);
-            EmberLobs.Lob(hand, land, flight * Random.Range(0.95f, 1.05f), poolSeconds, poolRadius, poolDamage);
+            EmberLobs.Lob(hand, land, flight * Random.Range(0.95f, 1.05f), poolSeconds, poolRadius, Hq.Hurt(poolDamage));
         }
         Hq.Sound("hq_burner_throw", me, 0.45f, 0.12f);
     }

@@ -32,6 +32,10 @@ public static class Hq
 
     private static void OnRushEnded(int wave) => Danmaku.Cancel(false);
 
+    // a hit that takes a share of the player's max health, grown with the run like contact damage
+    // (SpawnDirector.ShotGrowth): a lily's orb takes 5% at the start, some 13% by 20:00
+    public static float Hurt(float share) => share * (SpawnDirector.Active != null ? SpawnDirector.Active.ShotGrowth : 1f);
+
     public static bool FindPlayer(out Vector2 at)
     {
         if (player == null)

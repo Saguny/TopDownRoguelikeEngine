@@ -71,7 +71,7 @@ public class SpiderLilyDemon : MonoBehaviour
     {
         Vector2 at = (Vector2)transform.position + new Vector2(0f, 0.2f);
         var orb = Shot.Of(BulletType.Orb, BulletColor.Red, orbSpeed)
-            .Accel(-0.35f, orbSpeed * 0.6f).Life(orbLife).Hurts(orbDamage).Silent();
+            .Accel(-0.35f, orbSpeed * 0.6f).Life(orbLife).Hurts(Hq.Hurt(orbDamage)).Silent();
         Danmaku.Ring(at, orbs, ringAngle, orb);
         ringAngle += ringTurn;
         var bloom = YamaArt.Strip("Huangquan/lily_bloom");
