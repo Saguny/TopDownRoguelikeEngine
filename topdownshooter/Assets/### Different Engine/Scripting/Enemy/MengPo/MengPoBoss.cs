@@ -785,8 +785,8 @@ public class MengPoBoss : MonoBehaviour, IDamageGate, IFightBoss
         while (true)
         {
             float dt = Time.deltaTime;
-            // as much faster as her bullets are in the duel, so the faster player still has to fight it
-            PlayerMovement.Drift = new Vector2(dir * currentStrength * Danmaku.SpeedScale, 0f);
+            // stronger in the duel, so the faster player still has to fight it
+            PlayerMovement.Drift = new Vector2(dir * currentStrength * (BossDuel.Active ? BossDuel.CurrentScale : 1f), 0f);
             turn += dt; wall += dt; drop += dt; streak += dt;
             if (turn >= 6f)
             {

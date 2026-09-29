@@ -14,8 +14,9 @@ public class BossDuel : MonoBehaviour
     private const float PutAwaySeconds = 0.85f, PillarFps = 18f;
 
     // the duel's footing: the player at +80% move speed whatever their build (the Move Speed
-    // passive neither adds to it nor falls short of it), and the boss's bullets faster to match
-    public const float PlayerSpeed = 1.8f, BulletSpeed = 1.4f;
+    // passive neither adds to it nor falls short of it), and the boss's bullets twice as fast to
+    // match. Meng Po's river current is only a little stronger: doubled, it would carry the player
+    public const float PlayerSpeed = 1.8f, BulletSpeed = 2f, CurrentScale = 1.4f;
 
     private static BossDuel instance;
 
@@ -119,5 +120,7 @@ public class BossDuel : MonoBehaviour
         weapon.Init(asset);
         weapon.SetLevel(Mathf.Max(1, asset.EvolutionLevel));
         weapon.enabled = true;
+        // and the player lights up with it, blazing white-blue for the rest of the fight
+        DuelOutline.On(player);
     }
 }

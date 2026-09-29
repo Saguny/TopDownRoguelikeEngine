@@ -18,6 +18,9 @@ public class WeaponHold : MonoBehaviour
 
     private static WeaponHold instance;
     private readonly List<Behaviour> held = new List<Behaviour>();
+    // what's switched off whole while held: the Electrical Aura's field, ring and all (disabling
+    // only its Aura left its ring drawn)
+    private readonly List<GameObject> hidden = new List<GameObject>();
     private readonly List<Vector2> pops = new List<Vector2>(256);
     private Sprite[] burst;
     private AudioClip tick;
@@ -59,6 +62,7 @@ public class WeaponHold : MonoBehaviour
     private void OnSceneLoaded(UnityEngine.SceneManagement.Scene s, UnityEngine.SceneManagement.LoadSceneMode m)
     {
         held.Clear();
+        hidden.Clear();
         Holding = false;
         Dueling = false;
     }
@@ -148,12 +152,20 @@ public class WeaponHold : MonoBehaviour
         if (b == null || !b.enabled) return;
         b.enabled = false;
         held.Add(b);
+        // the aura's field is an object of its own under the player: out of sight with it
+        if (b is Aura && !b.CompareTag("Player") && b.gameObject.activeSelf)
+        {
+            b.gameObject.SetActive(false);
+            hidden.Add(b.gameObject);
+        }
     }
 
     private void Release()
     {
         if (Dueling) return;
         StopAllCoroutines();
+        foreach (var go in hidden) if (go != null) go.SetActive(true);
+        hidden.Clear();
         foreach (var b in held) if (b != null) b.enabled = true;
         held.Clear();
         Holding = false;

@@ -47,6 +47,8 @@ public class YamaScreen : MonoBehaviour
     private Image portrait;
     private TMP_Text cardText, cardShadow;
     private RectTransform card;
+    // the card's place: its top just under the boss bar (whose bottom is at -96), and where it slides in from
+    private const float CardY = -104f, CardOut = 1500f;
     private TMP_Text bonusText, titleText, subtitleText, duelTag, duelName, duelLine;
 
     private void Awake()
@@ -202,7 +204,7 @@ public class YamaScreen : MonoBehaviour
         const float seconds = 1.4f;
         cutIn.gameObject.SetActive(true);
         var group = cutIn.GetComponent<CanvasGroup>();
-        card.anchoredPosition = new Vector2(900f, -120f);
+        card.anchoredPosition = new Vector2(CardOut, CardY);
         cardText.alpha = cardShadow.alpha = 0f;
         for (float t = 0f; t < seconds; t += Time.unscaledDeltaTime)
         {
@@ -212,14 +214,14 @@ public class YamaScreen : MonoBehaviour
             portrait.rectTransform.anchoredPosition = Vector2.Lerp(new Vector2(1100f, -520f), new Vector2(-1100f, 520f), s);
             band.anchoredPosition = Vector2.Lerp(new Vector2(700f, -330f), new Vector2(-700f, 330f), s * 0.6f + 0.2f);
             group.alpha = k < 0.1f ? k / 0.1f : k > 0.85f ? (1f - k) / 0.15f : 1f;
-            // the card's name slides in once the face has crossed
+            // the card's name slides in from the right once the face has crossed
             float c = Mathf.Clamp01((k - 0.3f) / 0.35f);
-            card.anchoredPosition = new Vector2(Mathf.Lerp(900f, -40f, Ease(c)), -120f);
+            card.anchoredPosition = new Vector2(Mathf.Lerp(CardOut, 0f, Ease(c)), CardY);
             cardText.alpha = cardShadow.alpha = c;
             yield return null;
         }
         cutIn.gameObject.SetActive(false);
-        card.anchoredPosition = new Vector2(-40f, -120f);
+        card.anchoredPosition = new Vector2(0f, CardY);
         cardText.alpha = cardShadow.alpha = 1f;
     }
 
@@ -228,7 +230,7 @@ public class YamaScreen : MonoBehaviour
         for (float t = 0f; t < 0.5f; t += Time.unscaledDeltaTime)
         {
             float k = Ease(t / 0.5f);
-            card.anchoredPosition = new Vector2(Mathf.Lerp(-40f, 900f, k), -120f);
+            card.anchoredPosition = new Vector2(Mathf.Lerp(0f, CardOut, k), CardY);
             cardText.alpha = cardShadow.alpha = 1f - k;
             yield return null;
         }
@@ -377,15 +379,16 @@ public class YamaScreen : MonoBehaviour
         cutIn.gameObject.SetActive(false);
 
         card = Box("Card", over);
-        card.anchorMin = card.anchorMax = new Vector2(1f, 1f);
-        card.pivot = new Vector2(1f, 1f);
+        // under his bar, in the middle: the top right is the HUD's (the counters, the Attributes panel)
+        card.anchorMin = card.anchorMax = new Vector2(0.5f, 1f);
+        card.pivot = new Vector2(0.5f, 1f);
         card.sizeDelta = new Vector2(1100f, 60f);
-        card.anchoredPosition = new Vector2(900f, -120f);
+        card.anchoredPosition = new Vector2(CardOut, CardY);
         cardShadow = Text("Shadow", card, 40f, Ink, false);
-        cardShadow.alignment = TextAlignmentOptions.Right;
+        cardShadow.alignment = TextAlignmentOptions.Center;
         cardShadow.rectTransform.anchoredPosition = new Vector2(3f, -3f);
         cardText = Text("Name", card, 40f, new Color(1f, 0.93f, 0.85f), false);
-        cardText.alignment = TextAlignmentOptions.Right;
+        cardText.alignment = TextAlignmentOptions.Center;
         cardText.alpha = cardShadow.alpha = 0f;
         // the name keeps to the card, its right edge in from the screen's: its holder fills the
         // card (it was 1800 wide about the card's middle, so right-aligned text ran off the
@@ -402,8 +405,8 @@ public class YamaScreen : MonoBehaviour
             t.fontSizeMin = 24f;
         }
         var underline = Fill("Underline", card, new Color(0.85f, 0.2f, 0.25f, 0.9f));
-        underline.rectTransform.anchorMin = new Vector2(0.35f, 0f);
-        underline.rectTransform.anchorMax = new Vector2(1f, 0f);
+        underline.rectTransform.anchorMin = new Vector2(0.2f, 0f);
+        underline.rectTransform.anchorMax = new Vector2(0.8f, 0f);
         underline.rectTransform.sizeDelta = new Vector2(0f, 4f);
         underline.transform.SetSiblingIndex(0);
     }
