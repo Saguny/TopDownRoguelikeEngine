@@ -905,34 +905,96 @@ public class MengPoBoss : MonoBehaviour, IDamageGate, IFightBoss
         }
     }
 
-    // her last card: bowls raining down all over the view, breaking into soup; lotus spirals
-    // turning off her; the forgetting coming faster; harder as she weakens
+    // her last card: the bowl becomes the whirlpool of the Wangchuan, and every soul is drawn in to
+    // drink. the player is pulled toward her (harder as she weakens, never onto her); rings of soup
+    // pour off the bowl's rim, one gap in each, and the gap turns round her ring by ring, so
+    // reaching the next means circling her against the pull; bowls still rain down all over the
+    // view; and the forgetting veils it all now and then, so the gap has to be remembered. late,
+    // the rings come doubled, turning apart, and lotus seeds follow the player
     private IEnumerator LastBowl()
     {
-        float bowl = 0f, forget = 1.8f, spin = 0f;
+        const int n = 30, gapBullets = 3;
+        float ring = 0.4f, bowl = 1f, forget = 3.6f, seeds = 1.5f, gapAt = UnityEngine.Random.value * 360f;
+        int turn = 1, rings = 0;
         var cam = Camera.main;
+        var mist = Art("mist_puff");
+        float mistTick = 0f;
+        Sound("mp_current", Danmaku.PlayerPosition, 0.9f, 0.8f);
         while (true)
         {
+            float dt = Time.deltaTime;
             float span = Mathf.Max(1f, top - floor);
             bool late = (hp.Current - floor) / span < 0.4f;
-            bowl += 0.1f; forget -= 0.1f;
-            // lotus spirals
-            for (int a = 0; a < 3; a++)
-                Danmaku.Fire(E, spin + a * 120f, Shot.Of(BulletType.Orb, BulletColor.Jade, 1.9f).Turn(late ? 26f : 18f).Life(9f).Silent());
-            spin += late ? 17f : 12f;
-            if (bowl >= (late ? 0.45f : 0.7f) && cam != null)
+
+            // the pull: toward her, easing off close in so it never pins the player to her
+            Vector2 toHer = (Vector2)transform.position - Danmaku.PlayerPosition;
+            float d = toHer.magnitude;
+            float pull = (late ? 2.6f : 1.9f) * (BossDuel.Active ? BossDuel.CurrentScale : 1f) * Mathf.Clamp01((d - 1.6f) / 1.6f);
+            PlayerMovement.Drift = d > 0.01f ? toHer / d * pull : Vector2.zero;
+            // mist drawn past the player toward her
+            mistTick += dt;
+            if (mistTick >= 0.3f && mist != null)
             {
-                bowl = 0f;
+                mistTick = 0f;
+                FxBatch.Play(mist, 14f, Danmaku.PlayerPosition - toHer.normalized * 2.5f + UnityEngine.Random.insideUnitCircle * 2f, 0.8f, "Player", -2);
+            }
+
+            // the rings, and their gap turning round her
+            ring -= dt;
+            if (ring <= 0f)
+            {
+                ring = late ? 0.48f : 0.62f;
+                PourRing(n, gapBullets, gapAt, BulletColor.Azure, 1.7f, 12f * turn);
+                if (late) PourRing(n, gapBullets, gapAt + 180f, BulletColor.Violet, 1.4f, -12f * turn);
+                gapAt += 29f * turn;
+                if (++rings % 7 == 0) turn = -turn;
+                Cast(1, 0.3f);
+                Sound("mp_glide", transform.position, 0.3f, 1.3f);
+            }
+
+            // bowls raining down all over the view, breaking where they land
+            bowl -= dt;
+            if (bowl <= 0f && cam != null)
+            {
+                bowl = late ? 0.85f : 1.15f;
                 float h = cam.orthographicSize, w = h * cam.aspect;
                 Vector2 c = cam.transform.position;
                 Vector2 at = c + new Vector2(UnityEngine.Random.Range(-w + 1f, w - 1f), h - 0.5f);
-                // it hangs a moment, falls, and breaks where it lands
                 Danmaku.Fire(at, -90f, Shot.Of(BulletType.BigOrb, BulletColor.Violet, 0.5f).Delay(0.5f).Accel(4f, 0f, 5f)
-                    .Burst(UnityEngine.Random.Range(0.9f, 1.4f), late ? 10 : 8, BulletType.Rice, BulletColor.Azure, 2f));
+                    .Burst(UnityEngine.Random.Range(0.9f, 1.4f), 8, BulletType.Rice, BulletColor.Azure, 2f));
                 Sound("mp_fling", at, 0.35f, 1.3f);
             }
-            if (forget <= 0f) { forget = late ? 3f : 3.8f; forgetting = StartCoroutine(Forget(late ? 1.1f : 0.9f)); Cast(2, 0.6f); }
-            yield return Wait(0.1f);
+
+            // late: lotus seeds that follow the player a while
+            if (late)
+            {
+                seeds -= dt;
+                if (seeds <= 0f)
+                {
+                    seeds = 1.8f;
+                    Cast(2, 0.4f);
+                    float aim = Danmaku.AimAt(E);
+                    for (int i = 0; i < 4; i++)
+                        Danmaku.Fire(E, aim - 60f + i * 40f, Shot.Of(BulletType.Orb, BulletColor.Jade, 2.2f).Home(55f, 1.4f).Life(7f));
+                }
+            }
+
+            // the forgetting
+            forget -= dt;
+            if (forget <= 0f) { forget = late ? 3.4f : 4.2f; forgetting = StartCoroutine(Forget(late ? 1.1f : 0.9f)); Cast(2, 0.6f); }
+            yield return null;
+        }
+    }
+
+    // a ring of soup off the bowl's rim with one gap in it, every bullet swirling the same way
+    private void PourRing(int n, int gap, float gapAt, BulletColor color, float speed, float swirl)
+    {
+        float step = 360f / n;
+        for (int i = 0; i < n; i++)
+        {
+            float a = gapAt + step * (i + 0.5f * gap + 0.5f);
+            if (i >= n - gap) continue;
+            Danmaku.Fire(E, a, Shot.Of(BulletType.Orb, color, speed).Turn(swirl).Life(10f).Silent());
         }
     }
 }

@@ -60,7 +60,8 @@ public class YamaBoss : MonoBehaviour, IDamageGate, IFightBoss
 
     private EnemyHealth hp;
     private SpawnDirector director;
-    private SpriteRenderer body, halo, gate, wheel;
+    private SpriteRenderer body, halo, gate, wheel, reflection;
+    private float reflectionAlpha;
     private Collider2D hurtbox;
     private YamaScreen screen;
     private BossGrade grade;
@@ -137,6 +138,10 @@ public class YamaBoss : MonoBehaviour, IDamageGate, IFightBoss
         if (w != null) wheel.sprite = w[0];
         wheel.transform.localScale = Vector3.one * 2.4f;
         wheel.color = new Color(0.9f, 0.5f, 1f, 0f);
+        // his reflection in the Mirror of Retribution, for his last card
+        reflection = Loose("Reflection", "Aura", 40);
+        reflection.flipY = true;
+        reflection.enabled = false;
         gate = Loose("Gate of Hell", "Background", 999);
         gate.transform.localScale = Vector3.one * 1.6f;
         gate.enabled = false;
@@ -245,6 +250,15 @@ public class YamaBoss : MonoBehaviour, IDamageGate, IFightBoss
         {
             wheel.transform.position = transform.position;
             wheel.transform.rotation = Quaternion.Euler(0f, 0f, age * (rage ? -22f : 12f));
+        }
+
+        if (reflection.enabled)
+        {
+            // on the far side of the player, upside down as in still water, flickering violet
+            reflection.transform.position = Mirrored(transform.position);
+            reflection.sprite = body.sprite;
+            float flicker = 0.85f + 0.15f * Mathf.Sin(age * 17f);
+            reflection.color = new Color(0.72f, 0.45f, 1f, reflectionAlpha * 0.8f * flicker);
         }
 
         for (int i = 0; i < ghosts.Count; i++)
@@ -448,6 +462,7 @@ public class YamaBoss : MonoBehaviour, IDamageGate, IFightBoss
         var run = StartCoroutine(p.pattern());
         while (!broke) yield return null;
         StopCoroutine(run);
+        reflection.enabled = false;
         invulnerable = true;
         yield return Break(p, Danmaku.Hits == hitsBefore);
     }
@@ -519,6 +534,7 @@ public class YamaBoss : MonoBehaviour, IDamageGate, IFightBoss
 
     private IEnumerator Death()
     {
+        reflection.enabled = false;
         dying = true;
         invulnerable = true;
         Danmaku.Cancel(true);
@@ -718,36 +734,91 @@ public class YamaBoss : MonoBehaviour, IDamageGate, IFightBoss
         }
     }
 
-    // the mirror shows the player their own path: marks open where they were a moment ago and burst,
-    // so standing still is death; hellfire aimed at them, and bone rings as he weakens
+    // a point's mirror image through the player, kept on the screen
+    private Vector2 Mirrored(Vector2 p)
+    {
+        Vector2 player = Danmaku.PlayerPosition, m = 2f * player - p;
+        var cam = Camera.main;
+        if (cam == null || !cam.orthographic) return m;
+        float h = cam.orthographicSize - 1f, w = cam.orthographicSize * cam.aspect - 1f;
+        Vector2 c = cam.transform.position;
+        return new Vector2(Mathf.Clamp(m.x, c.x - w, c.x + w), Mathf.Clamp(m.y, c.y - h, c.y + h));
+    }
+
+    // the Mirror of Retribution, that shows the dead every sin they did: his reflection rises out of
+    // it on the far side of the player, upside down as in still water, and they're caught between
+    // the two. both loose spirals, his violet and its bone, turning against each other into a
+    // weave; both throw hellfire at the player at once, from either side; the path the player took
+    // bursts behind them, quicker than ever; and once he's half down, he and his reflection trade
+    // places every few seconds, and everything comes from the other side
     private IEnumerator Mirror()
     {
+        // the reflection rising
+        reflection.enabled = true;
+        reflectionAlpha = 0f;
+        YamaArt.Play("yama_gate", Mirrored(transform.position), 0.9f, 1.2f);
+        screen.Flash(new Color(0.75f, 0.5f, 1f), 0.35f, 0.5f);
+        for (float t = 0f; t < 0.8f; t += Time.deltaTime) { reflectionAlpha = t / 0.8f; yield return null; }
+        reflectionAlpha = 1f;
+
         var trail = new List<Vector2>(64);
-        float mark = 0f, shot = 0f, ring = 0f;
+        float mark = 0f, pincer = 1.2f, swap = 0f, spin = UnityEngine.Random.value * 360f, sound = 0f;
         while (true)
         {
+            const float step = 0.08f;
+            float span = Mathf.Max(1f, top - floor);
+            bool late = (hp.Current - floor) / span < 0.5f;
+            Vector2 m = Mirrored(E);
+
+            // the weave: two arms off each of them, turning opposite ways
+            for (int a = 0; a < 2; a++)
+            {
+                Danmaku.Fire(E, spin + a * 180f, Shot.Of(BulletType.Rice, BulletColor.Violet, 1.9f).Life(8f).Silent());
+                Danmaku.Fire(m, -spin + a * 180f + 90f, Shot.Of(BulletType.Rice, BulletColor.Bone, 1.9f).Life(8f).Silent());
+            }
+            spin += late ? 12.5f : 9.5f;
+            sound += step;
+            if (sound >= 0.24f) { sound = 0f; YamaArt.Play("yama_shot", transform.position, 0.22f, 1.15f); }
+
+            // the path they took, bursting behind them
             trail.Add(Danmaku.PlayerPosition);
             if (trail.Count > 30) trail.RemoveAt(0);
-            mark += 0.1f; shot += 0.1f; ring += 0.1f;
-            if (mark >= 0.35f && trail.Count >= 15)
+            mark += step;
+            if (mark >= (late ? 0.24f : 0.32f) && trail.Count >= 14)
             {
                 mark = 0f;
-                Vector2 was = trail[trail.Count - 14] + UnityEngine.Random.insideUnitCircle * 0.3f;
-                Danmaku.Fire(was, 0f, Shot.Of(BulletType.BigOrb, BulletColor.Violet, 0f).Delay(0.7f).Burst(0.02f, 8, BulletType.Rice, BulletColor.Violet, 1.7f).Life(1f));
+                Vector2 was = trail[trail.Count - 12] + UnityEngine.Random.insideUnitCircle * 0.3f;
+                Danmaku.Fire(was, 0f, Shot.Of(BulletType.BigOrb, BulletColor.Violet, 0f).Delay(0.6f).Burst(0.02f, 8, BulletType.Rice, BulletColor.Violet, 1.7f).Life(1f).Silent());
             }
-            if (shot >= 1.3f)
+
+            // hellfire from both sides at once
+            pincer -= step;
+            if (pincer <= 0f)
             {
-                shot = 0f;
+                pincer = late ? 1.6f : 2.1f;
                 Cast(2);
-                Danmaku.Fan(E, Danmaku.AimAt(E), 3, 24f, Shot.Of(BulletType.Flame, BulletColor.Red, 3.6f));
+                Danmaku.Fan(E, Danmaku.AimAt(E), 5, 36f, Shot.Of(BulletType.Flame, BulletColor.Red, 3.4f));
+                Danmaku.Fan(m, Danmaku.AimAt(m), 5, 36f, Shot.Of(BulletType.Flame, BulletColor.Violet, 3.4f).Silent());
             }
-            float span = Mathf.Max(1f, top - floor);
-            if (ring >= 2.2f && (hp.Current - floor) / span < 0.5f)
+
+            // half down: he and the reflection trade places, and the fight turns round
+            if (late)
             {
-                ring = 0f;
-                Danmaku.Ring(E, 24, UnityEngine.Random.value * 360f, Shot.Of(BulletType.Orb, BulletColor.Bone, 1.6f));
+                swap += step;
+                if (swap >= 4.2f)
+                {
+                    swap = 0f;
+                    Ghost();
+                    offset = -offset;
+                    basePos = Danmaku.PlayerPosition + offset;
+                    transform.position = basePos;
+                    Ghost();
+                    YamaArt.Play("yama_dash", transform.position, 0.6f, 0.8f);
+                    screen.Flash(new Color(0.75f, 0.5f, 1f), 0.25f, 0.35f);
+                    Juice.Shake(0.2f);
+                }
             }
-            yield return Wait(0.1f);
+            yield return Wait(step);
         }
     }
 }
