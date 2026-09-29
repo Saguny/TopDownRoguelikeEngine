@@ -32,13 +32,15 @@ public abstract class WeaponData : UpgradeData
     // spells and summoned things Magical
     public virtual AttackClass AttackClass => AttackClass.Physical;
     public override string CategoryLabel => $"{Category} ({AttackClass})";
-    public override Sprite CardIcon => NextPickEvolves && evolvedIcon != null ? evolvedIcon : icon;
-    public override Sprite[] CardIconFrames => NextPickEvolves && evolvedIcon != null ? evolvedIconFrames : iconFrames;
+    public override Sprite CardIcon => (NextPickEvolves || Evolved) && evolvedIcon != null ? evolvedIcon : icon;
+    public override Sprite[] CardIconFrames => (NextPickEvolves || Evolved) && evolvedIcon != null ? evolvedIconFrames : iconFrames;
+    public override Sprite HeldIcon => Evolved && evolvedIcon != null ? evolvedIcon : icon;
     public override int MaxLevel => Mathf.Max(1, LevelCount);
 
     // the level that is the evolution, or 0 for a weapon that doesn't evolve
     public virtual int EvolutionLevel => 0;
     public bool NextPickEvolves => EvolutionLevel > 0 && Level + 1 == EvolutionLevel;
+    public bool Evolved => EvolutionLevel > 0 && Level >= EvolutionLevel;
 
     public string GetEvolvedTitle() => string.IsNullOrEmpty(evolvedTitle) ? "Evolved " + GetBaseTitle() : evolvedTitle;
 

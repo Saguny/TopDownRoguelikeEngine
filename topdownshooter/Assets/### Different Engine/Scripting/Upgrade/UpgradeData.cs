@@ -54,6 +54,8 @@ public class UpgradeData : ScriptableObject
     // what the level up card shows for the next pick; weapons show their evolved art on the evolution
     public virtual Sprite CardIcon => icon;
     public virtual Sprite[] CardIconFrames => iconFrames;
+    // what it shows once held (the level up screen's loadout); an evolved weapon shows its evolved art
+    public virtual Sprite HeldIcon => icon;
     // weapons take their level count from their level table instead
     public virtual int MaxLevel => maxLevel;
     public bool IsAtCap => level >= MaxLevel;

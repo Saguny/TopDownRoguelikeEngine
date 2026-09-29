@@ -123,7 +123,7 @@ public class LoadoutPanel : MonoBehaviour
         s.root.transform.localScale = s.scale;
 
         bool preview = u == previewing;
-        var sprite = preview ? u.CardIcon : u.icon;
+        var sprite = preview ? u.CardIcon : u.HeldIcon;
         if (s.icon != null)
         {
             s.icon.sprite = sprite;
