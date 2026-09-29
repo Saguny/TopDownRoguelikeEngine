@@ -47,7 +47,7 @@ public class YamaScreen : MonoBehaviour
     private Image portrait;
     private TMP_Text cardText, cardShadow;
     private RectTransform card;
-    private TMP_Text bonusText, titleText, subtitleText;
+    private TMP_Text bonusText, titleText, subtitleText, duelTag, duelName, duelLine;
 
     private void Awake()
     {
@@ -84,6 +84,16 @@ public class YamaScreen : MonoBehaviour
         subtitleText = Text("Subtitle", over, 40f, new Color(1f, 0.9f, 0.8f), true);
         subtitleText.rectTransform.anchoredPosition = new Vector2(0f, -60f);
         titleText.alpha = subtitleText.alpha = 0f;
+
+        // the duel's weapon, along the bottom letterbox bar
+        duelTag = Text("Duel Tag", over, 24f, new Color(0.75f, 0.7f, 0.72f), true);
+        duelTag.rectTransform.anchoredPosition = new Vector2(0f, -422f);
+        duelTag.characterSpacing = 30f;
+        duelName = Text("Duel Name", over, 50f, Gold, true);
+        duelName.rectTransform.anchoredPosition = new Vector2(0f, -462f);
+        duelLine = Text("Duel Line", over, 24f, new Color(1f, 0.92f, 0.85f), true);
+        duelLine.rectTransform.anchoredPosition = new Vector2(0f, -506f);
+        duelTag.alpha = duelName.alpha = duelLine.alpha = 0f;
 
         flash = Fill("Flash", over, new Color(1f, 1f, 1f, 0f));
     }
@@ -142,6 +152,9 @@ public class YamaScreen : MonoBehaviour
     public void Bonus(string text, Color c) { StopCoroutine(nameof(ShowBonus)); bonusText.text = text; bonusText.color = c; StartCoroutine(nameof(ShowBonus)); }
 
     public void Title(string title, string subtitle, float seconds) => StartCoroutine(ShowTitle(title, subtitle, seconds));
+
+    // the end boss's duel: the weapon it's fought with, its name in its colour
+    public void Duel(string weapon, string line, Color c) => StartCoroutine(ShowDuel(weapon, line, c));
 
     // the fight's over: everything it put up fades away
     public void EndFight()
@@ -251,6 +264,27 @@ public class YamaScreen : MonoBehaviour
             yield return null;
         }
         titleText.alpha = subtitleText.alpha = 0f;
+    }
+
+    private IEnumerator ShowDuel(string weapon, string line, Color c)
+    {
+        const float seconds = 3.2f;
+        duelTag.text = "- DUEL -";
+        duelName.text = weapon;
+        duelName.color = Color.Lerp(c, Color.white, 0.2f);
+        duelLine.text = line;
+        for (float t = 0f; t < seconds; t += Time.unscaledDeltaTime)
+        {
+            float fade = t > seconds - 0.5f ? (seconds - t) / 0.5f : 1f;
+            float k = Ease(Mathf.Clamp01(t / 0.4f));
+            duelName.characterSpacing = Mathf.Lerp(40f, 6f, k) + t * 2f;
+            duelName.rectTransform.localScale = Vector3.one * Mathf.Lerp(1.3f, 1f, k);
+            duelName.alpha = Mathf.Min(1f, t / 0.2f) * fade;
+            duelTag.alpha = Mathf.Clamp01((t - 0.15f) / 0.3f) * fade;
+            duelLine.alpha = Mathf.Clamp01((t - 0.45f) / 0.4f) * fade;
+            yield return null;
+        }
+        duelTag.alpha = duelName.alpha = duelLine.alpha = 0f;
     }
 
     private static float Ease(float k) { k = Mathf.Clamp01(k); return 1f - (1f - k) * (1f - k) * (1f - k); }

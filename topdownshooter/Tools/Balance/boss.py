@@ -6,6 +6,10 @@ ones are measured (the benchmark's single target, weapon_dps.csv); the ones that
 go are worked out from their evolved stats below, since the benchmark's small circling dummy is
 no measure of them. all before the player's stats (Might, crit and the rest shorten the fight).
 
+he's fought as a duel now (BossDuel): the player's weapons are put away and the starting weapon
+comes back in a duel form (DuelWeapon), each of which is set to the damage a second this works
+out for six evolved weapons, about 1600, so the health below still gives the fight its length.
+
     python boss.py              the table and the health it comes to
     python boss.py --apply      writes it into Prefabs/Yama.prefab
 """

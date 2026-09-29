@@ -30,7 +30,7 @@ public class YamaBoss : MonoBehaviour, IDamageGate, IFightBoss
     [Min(0.1f)] public float musicFadeIn = 3f;
 
     [Header("Health")]
-    [Tooltip("his whole health. set for a fight of about 2:30 against six evolved weapons (Tools/Balance/boss.py works it out and writes it here); a weaker build takes longer, and it's him or you")]
+    [Tooltip("his whole health. set for a fight of about 2:30 against six evolved weapons (Tools/Balance/boss.py works it out and writes it here). he's fought as a duel (BossDuel), with one duel weapon set to do what those six did; a weaker build takes longer, and it's him or you")]
     [Min(1f)] public float health = 205000f;
     [Tooltip("each phase's share of his health, in order: Verdict, Ledger, Tribute, Naihe, Ten Courts, Mirror")]
     public float[] phaseShares = { 0.12f, 0.18f, 0.12f, 0.18f, 0.19f, 0.21f };

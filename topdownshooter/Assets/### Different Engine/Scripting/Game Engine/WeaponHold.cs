@@ -6,7 +6,10 @@ using UnityEngine;
 // flight or lying on the ground (blades, stars, talismans, spheres, dragons, clouds, ink, arrows,
 // meteors) goes out in a quick cascade of little gold seal-bursts from the player outward, a bell
 // ticking higher as it goes, as the spirit seal's wave rolls out over the horde (SealWave). no
-// weapon fires again until the next wave starts (or the final boss comes). it makes itself
+// weapon fires again until the next wave starts (or the final boss comes). an end boss's duel
+// (BossDuel) puts them all away the same way, the Command Token too, for the whole fight: only
+// the duel's own weapon fires, and one taken from a level up meanwhile is put away with the
+// rest. it makes itself
 public class WeaponHold : MonoBehaviour
 {
     private const int MostPops = 140;
@@ -19,9 +22,13 @@ public class WeaponHold : MonoBehaviour
     private AudioClip tick;
 
     public static bool Holding { get; private set; }
+    // an end boss's duel: held until the run's over
+    public static bool Dueling { get; private set; }
+    private const float SweepEvery = 0.25f;
+    private float sweep;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    private static void ResetStatics() { instance = null; Holding = false; }
+    private static void ResetStatics() { instance = null; Holding = false; Dueling = false; }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void Create()
@@ -52,11 +59,41 @@ public class WeaponHold : MonoBehaviour
     {
         held.Clear();
         Holding = false;
+        Dueling = false;
     }
 
     private void OnWaveStarted(int wave) => Release();
 
-    private void OnRushEnded(int wave)
+    private void OnRushEnded(int wave) => PutAway(false);
+
+    // the end boss's duel: everything put away until the run's over
+    public static void Duel()
+    {
+        if (instance == null) return;
+        Dueling = true;
+        instance.PutAway(true);
+    }
+
+    // a weapon taken during the duel is put away as it comes
+    private void Update()
+    {
+        if (!Dueling || (sweep -= Time.deltaTime) > 0f) return;
+        sweep = SweepEvery;
+        var player = GameObject.FindGameObjectWithTag("Player");
+        if (player == null) return;
+        foreach (var w in player.GetComponentsInChildren<Weapon>())
+        {
+            if (w == null || !w.enabled || w is DuelWeapon) continue;
+            w.ClearShots();
+            w.enabled = false;
+            held.Add(w);
+        }
+        Hold(player.GetComponentInChildren<AutoShooter>());
+        Hold(player.GetComponentInChildren<Aura>());
+        Hold(player.GetComponentInChildren<AOEAttack>());
+    }
+
+    private void PutAway(bool everything)
     {
         var player = GameObject.FindGameObjectWithTag("Player");
         if (player == null) return;
@@ -66,7 +103,7 @@ public class WeaponHold : MonoBehaviour
         // where every shot is, before they go
         foreach (var w in player.GetComponentsInChildren<Weapon>())
         {
-            if (w == null || !w.enabled || w is CommandToken) continue;
+            if (w == null || !w.enabled || w is DuelWeapon || (w is CommandToken && !everything)) continue;
             Collect(w);
             w.ClearShots();
             w.enabled = false;
@@ -114,6 +151,7 @@ public class WeaponHold : MonoBehaviour
 
     private void Release()
     {
+        if (Dueling) return;
         StopAllCoroutines();
         foreach (var b in held) if (b != null) b.enabled = true;
         held.Clear();

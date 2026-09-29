@@ -300,7 +300,8 @@ public class SpawnDirector : MonoBehaviour
         var mapBoss = Playfield.Active != null ? Playfield.Active.finalBoss : null;
         var arch = mapBoss != null ? mapBoss : finalBossArchetype != null ? finalBossArchetype : bossArchetype;
 
-        // a boss with a fight of its own (Yama, Meng Po): it comes in its own way and runs the fight
+        // a boss with a fight of its own (Yama, Meng Po): it comes in its own way and runs the fight,
+        // and it's a duel: the player's weapons put away, their starting one in its duel form
         if (arch != null && arch.prefab != null && arch.prefab.TryGetComponent(out IFightBoss _))
         {
             bossFight = true;
@@ -310,6 +311,7 @@ public class SpawnDirector : MonoBehaviour
             activeBosses.Add(go);
             EnvelopeCarrier.Attach(go, EnvelopeSource.FinalBoss);
             go.GetComponent<IFightBoss>().Begin(this, arch);
+            BossDuel.Begin(go);
             return;
         }
 
