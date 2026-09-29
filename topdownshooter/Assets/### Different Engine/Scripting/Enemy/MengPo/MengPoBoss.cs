@@ -801,11 +801,15 @@ public class MengPoBoss : MonoBehaviour, IDamageGate, IFightBoss
     }
 
     // the river's current carries the player downstream, turning every few seconds; walls of bone
-    // ride it across the screen, a gap in each; drops of soup fall at the player
+    // ride it across the screen, a gap in each; drops of soup fall at the player. the walls only
+    // ever come from one side: as the current turns, the ones still crossing wash away, and a
+    // moment passes before the first from the other side, so the player never stands between two
+    // walls closing in. each gap is within reach of the last, the way Touhou's walls are threaded
     private IEnumerator Current()
     {
         var current = Art("current");
         float dir = UnityEngine.Random.value < 0.5f ? -1f : 1f, turn = 0f, wall = 0f, drop = 0f, streak = 0f;
+        float gap = 0f;
         Sound("mp_current", Danmaku.PlayerPosition, 0.8f);
         while (true)
         {
@@ -817,6 +821,10 @@ public class MengPoBoss : MonoBehaviour, IDamageGate, IFightBoss
             {
                 turn = 0f;
                 dir = -dir;
+                // the old walls sink as the river turns, and it gives the player a breath
+                Danmaku.Cancel(false);
+                wall = -0.6f;
+                drop = -0.4f;
                 Sound("mp_current", Danmaku.PlayerPosition, 0.8f, 0.9f);
                 screen.Flash(new Color(0.5f, 0.6f, 1f), 0.12f, 0.3f);
             }
@@ -832,10 +840,11 @@ public class MengPoBoss : MonoBehaviour, IDamageGate, IFightBoss
                 var cam = Camera.main;
                 float h = cam != null ? cam.orthographicSize : 6f, w = cam != null ? h * cam.aspect : 10f;
                 Vector2 c = cam != null ? (Vector2)cam.transform.position : Danmaku.PlayerPosition;
-                float gap = UnityEngine.Random.Range(-h + 1.5f, h - 1.5f);
+                // the gap wanders from the last one's, never out of reach of it
+                gap = Mathf.Clamp(gap + UnityEngine.Random.Range(-2.4f, 2.4f), -h + 1.8f, h - 1.8f);
                 for (float y = -h; y <= h; y += 0.55f)
                 {
-                    if (Mathf.Abs(y - gap) < 1.1f) continue;
+                    if (Mathf.Abs(y - gap) < 1.35f) continue;
                     Danmaku.Fire(c + new Vector2(-dir * (w + 0.5f), y), dir > 0f ? 0f : 180f, Shot.Of(BulletType.Orb, BulletColor.Bone, 2.6f).Life(10f).Silent());
                 }
                 Sound("mp_river", c, 0.35f, 1.2f);

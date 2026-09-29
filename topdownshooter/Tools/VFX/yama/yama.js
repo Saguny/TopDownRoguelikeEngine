@@ -310,65 +310,8 @@ function makeHalo() {
 }
 
 // ================================================================ the danmaku
-// every bullet has a dark rim so it reads over any floor, a lit body, and a white-hot core
-const COLOURS = [
-  [P.R0, P.R2, P.R3, P.W],       // red
-  [P.G0, P.G1, P.G2, P.W],       // gold
-  [P.V1, P.V3, P.V5, P.W],       // violet
-  [P.A1, P.A2, P.A4, P.W],       // azure
-  [P.J1, P.J2, P.J4, P.W],       // jade
-  [P.S2, P.CR1, P.CR2, P.W],     // bone
-];
-const CELL = 32;
-
-function bullet(type, col) {
-  const im = img(CELL, CELL), c = 15.5, [dk, md, lt, wh] = COLOURS[col];
-  const dot = (x, y, v) => put(im, x, y, v > 0.8 ? wh : v > 0.55 ? lt : v > 0.25 ? md : dk);
-  for (let y = 0; y < CELL; y++) for (let x = 0; x < CELL; x++) {
-    const dx = x + 0.5 - 16, dy = y + 0.5 - 16;
-    let v = -1;
-    if (type === 0) {               // orb: small and round
-      const d = Math.hypot(dx, dy);
-      if (d < 5) v = d < 1.8 ? 1 : d < 3 ? 0.7 : d < 4.1 ? 0.4 : 0.1;
-    } else if (type === 1) {        // rice: a grain along its flight
-      const d = Math.hypot(dx / 5.5, dy / 2.8);
-      if (d < 1) v = d < 0.35 ? 1 : d < 0.62 ? 0.7 : d < 0.82 ? 0.4 : 0.1;
-    } else if (type === 2) {        // talisman: a paper strip with a glyph on it
-      if (Math.abs(dx) < 7 && Math.abs(dy) < 3.5) {
-        const rim = Math.abs(dx) > 6 || Math.abs(dy) > 2.5;
-        const glyph = Math.abs(dy) < 0.8 && Math.abs(dx) < 4.5 || (Math.abs(dx) < 0.8 && Math.abs(dy) < 2.5) || (Math.abs(dx - 3) < 0.8 && Math.abs(dy) < 1.8);
-        v = rim ? 0.1 : glyph ? 0.4 : 0.9;
-        if (!rim && !glyph && bayer(x, y) < 0.3) v = 0.7;
-      }
-    } else if (type === 3) {        // coin: cash with a square hole
-      const d = Math.hypot(dx, dy);
-      if (d < 5.5 && !(Math.abs(dx) < 1.2 && Math.abs(dy) < 1.2)) {
-        const hole = Math.abs(dx) < 2.2 && Math.abs(dy) < 2.2;
-        v = d > 4.6 ? 0.1 : hole ? 0.4 : dx + dy < -2 ? 1 : 0.7;
-      }
-    } else if (type === 4) {        // flame: a soul flame streaming back from its head
-      const t = dx;                                        // +x is ahead
-      const w = t > 0 ? Math.sqrt(Math.max(0, 1 - (t / 4.5) ** 2)) * 3.6 : 3.6 * Math.max(0, 1 + t / 10) + Math.sin(t * 1.3) * 0.6;
-      if (Math.abs(dy) < w && t > -10 && t < 4.5) {
-        const k = Math.abs(dy) / Math.max(0.5, w), back = Math.max(0, -t) / 10;
-        v = (1 - k) * 0.9 + 0.25 - back * 0.7;
-        if (Math.abs(dy) > w - 1) v = 0.1;
-      }
-    } else if (type === 5) {        // big orb: a white heart in a wide glow
-      const d = Math.hypot(dx, dy);
-      if (d < 12.5) v = d < 5 ? 1 : d < 7.5 ? 0.7 : d < 10.5 ? 0.4 : 0.1;
-      if (d >= 10.5 && d < 12.5 && bayer(x, y) > 0.55) v = -1;
-    }
-    if (v >= 0) dot(x, y, v);
-  }
-  return im;
-}
-
-function makeBullets() {
-  const atlas = img(CELL * 6, CELL * 6);
-  for (let t = 0; t < 6; t++) for (let c = 0; c < 6; c++) D.blit(atlas, bullet(t, c), c * CELL, t * CELL);
-  return atlas;
-}
+// the bullets have a generator of their own (bullets.js): Touhou's white cores and vivid glows
+const { makeBullets } = require("./bullets");
 
 // ================================================================ the gate of hell
 // cracks racing round in a circle, the ground inside falling away into a pit of red dark, fire
