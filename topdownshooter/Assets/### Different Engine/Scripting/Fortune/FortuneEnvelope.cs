@@ -29,9 +29,11 @@ public class FortuneEnvelope : MonoBehaviour
     public static int Upgrades(EnvelopeRarity r) => r == EnvelopeRarity.Legendary ? 5 : r == EnvelopeRarity.Rare ? 3 : 1;
 
     // the coins in it, before Greed: a roll between its rarity's least and most, the way Vampire
-    // Survivors' chests pay gold. envelopes are the only place coins come from
+    // Survivors' chests pay gold. envelopes are the only place coins come from, and there are few:
+    // one a Final Rush (only its last boss drops one), the elites', the final boss's, some 15 in a
+    // full run, which with the String of Wen once maxed comes to about 13k
     public static Vector2Int CoinRange(EnvelopeRarity r) =>
-        r == EnvelopeRarity.Legendary ? new Vector2Int(600, 1000) : r == EnvelopeRarity.Rare ? new Vector2Int(250, 450) : new Vector2Int(100, 200);
+        r == EnvelopeRarity.Legendary ? new Vector2Int(1000, 1600) : r == EnvelopeRarity.Rare ? new Vector2Int(400, 700) : new Vector2Int(150, 300);
     public static int RollCoins(EnvelopeRarity r)
     {
         var range = CoinRange(r);

@@ -87,7 +87,7 @@ Attack class: arrows and blades are **Physical**, talismans, spells and summons 
 | Piercing | arrows, stars and flying swords go through +1 enemy | 3 |
 | Pickup Radius | +5% | 7 |
 
-**Level-up tools:** Reroll, Skip and Banish, charges bought in the shop. When everything is maxed, the level-up offers gifts instead: a **String of Wen** (150 coins before Greed) or a **Peach of Immortality** (heals 30%).
+**Level-up tools:** Reroll, Skip and Banish, charges bought in the shop. When everything is maxed, the level-up offers gifts instead: a **String of Wen** (200 coins before Greed) or a **Peach of Immortality** (heals 30%).
 
 ---
 
@@ -124,11 +124,11 @@ Red envelopes dropped by elites, rush bosses and final bosses, opened with a rev
 
 | Rarity | Coins (before Greed) | Upgrades |
 |---|---|---|
-| Common | 100–200 | 1 |
-| Rare | 250–450 | 3 |
-| Legendary | 600–1,000 | 5 |
+| Common | 150–300 | 1 |
+| Rare | 400–700 | 3 |
+| Legendary | 1,000–1,600 | 5 |
 
-An upgrade slot with nothing left to level pays a String of Wen (150) instead. Odds by source: elites mostly common, rush bosses 45% common / 42% rare / 13% legendary, final bosses 35% rare / 65% legendary.
+An upgrade slot with nothing left to level pays a String of Wen (200) instead. A Final Rush drops one envelope, from the last of its bosses to fall, so a full run holds about 15. Odds by source: elites mostly common, rush bosses 45% common / 42% rare / 13% legendary, final bosses 35% rare / 65% legendary.
 
 ---
 

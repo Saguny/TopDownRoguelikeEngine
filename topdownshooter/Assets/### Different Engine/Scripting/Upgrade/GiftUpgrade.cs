@@ -11,8 +11,8 @@ public class GiftUpgrade : UpgradeData
 {
     [Header("Gift")]
     public GiftKind kind;
-    // coins are envelopes' now (a common pays 100 to 200): the bag is a common envelope's worth
-    public const int DefaultCoins = 150;
+    // coins are envelopes' now (a common pays 150 to 300): the bag is a common envelope's worth
+    public const int DefaultCoins = 200;
 
     [Tooltip("coins paid, before Greed")]
     [Min(0)] public int coins = DefaultCoins;
