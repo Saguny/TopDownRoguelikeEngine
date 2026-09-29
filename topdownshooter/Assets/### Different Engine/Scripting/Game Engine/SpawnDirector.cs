@@ -62,8 +62,8 @@ public class SpawnDirector : MonoBehaviour
     [SerializeField] private float maxSpawnCooldownLate = 0.05f;
 
     [Header("Timeline (Vampire Survivors style)")]
-    [Tooltip("who comes when. empty uses the playfield's own timeline; with neither, the budget spawner above runs as before. " +
-             "the Final Rush, bosses and the secret boss work the same either way")]
+    [Tooltip("who comes when on a map that has no timeline of its own (every map's Playfield brings its own, and it wins). " +
+             "with neither, the budget spawner above runs as before. the Final Rush, bosses and the secret boss work the same either way")]
     [SerializeField] private SpawnTimeline timeline;
     [Tooltip("share of spawns placed on the side the player is walking toward, so running away runs into the horde")]
     [SerializeField, Range(0f, 1f)] private float aheadBias = 0.25f;
@@ -209,8 +209,9 @@ public class SpawnDirector : MonoBehaviour
         // a playfield in the scene brings its own walls; they replace whatever Map Bounds holds
         if (Playfield.Active != null && Playfield.Active.HasBounds) mapBounds = Playfield.Active.Bounds;
 
-        // and its own schedule, unless this spawner was given one
-        activeTimeline = timeline != null ? timeline : Playfield.Active != null ? Playfield.Active.spawnTimeline : null;
+        // and its own schedule: the map's who-comes-when is its own (Huangquan Road's dead aren't the
+        // courtyard's); this spawner's is only for a map without one
+        activeTimeline = Playfield.Active != null && Playfield.Active.spawnTimeline != null ? Playfield.Active.spawnTimeline : timeline;
         ResetEvents();
 
         PrewarmPools();

@@ -7,7 +7,7 @@ public class Playfield : MonoBehaviour
 {
     public BoxCollider2D north, south, east, west;
 
-    [Tooltip("who comes when on this stage. the SpawnDirector's own Timeline overrides it")]
+    [Tooltip("who comes when on this stage. it wins over the SpawnDirector's own Timeline, which is only for a map without one")]
     public SpawnTimeline spawnTimeline;
 
     [Tooltip("how tough its enemies get over the run and how fast levels come. empty uses the scene's")]
