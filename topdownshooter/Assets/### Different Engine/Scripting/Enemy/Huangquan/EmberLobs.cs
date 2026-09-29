@@ -6,7 +6,7 @@ using UnityEngine;
 // for a couple of seconds that hurts to stand in (a share of the player's max health a tick, like
 // the bosses' bullets, so it never scales into a one-shot). one manager for all of them, made on
 // first use; its sprites are pooled
-public class EmberLobs : MonoBehaviour, IEnemyShots
+public class EmberLobs : MonoBehaviour, IEnemyShots, IHardyEnemyShots
 {
     private const float ArcHeight = 2.2f;
     private const float TickSeconds = 0.5f;

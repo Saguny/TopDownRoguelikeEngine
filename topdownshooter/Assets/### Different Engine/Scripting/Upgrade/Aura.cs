@@ -16,7 +16,9 @@ public class Aura : MonoBehaviour
     [Tooltip("every this many pulses, the field also shocks the enemies' shots inside it out of the air (EnemyShots). 0 = never")]
     [Min(0)] public int clearShotsEvery = 2;
     [Tooltip("and never more often than this, in seconds: a quick aura (its levels, the Cooldown stat) can't turn it into a shield")]
-    [Min(0f)] public float clearShotsGap = 1f;
+    [Min(0f)] public float clearShotsGap = 1.5f;
+    [Tooltip("how far from the player it reaches for shots, units, however wide the field has grown: a maxed aura with maxed Area would otherwise never let a shot through")]
+    [Min(0f)] public float clearShotsReach = 2f;
 
     [Header("Animation")]
     [SerializeField] private Animator animator;
@@ -165,7 +167,7 @@ public class Aura : MonoBehaviour
     {
         if (clearShotsEvery <= 0 || ++_pulses % clearShotsEvery != 0 || Time.time < _nextClear) return 0;
         _nextClear = Time.time + clearShotsGap;
-        return EnemyShots.Clear(transform.position, EffectiveRadius);
+        return EnemyShots.Clear(transform.position, Mathf.Min(EffectiveRadius, clearShotsReach), weak: true);
     }
 
     private void PlaySpawnOnce()

@@ -15,6 +15,10 @@ public interface IEnemyShots
     int ClearWithin(Vector2 centre, float radius, bool drops);
 }
 
+// shots too heavy for a weak clear (the Electrical Aura's): only a bomb (the Command Token) puts
+// them out. Huangquan Road's burners' embers and their fire on the ground
+public interface IHardyEnemyShots { }
+
 public static class EnemyShots
 {
     private static readonly List<IEnemyShots> sources = new List<IEnemyShots>();
@@ -29,14 +33,16 @@ public static class EnemyShots
 
     public static void Unregister(IEnemyShots source) => sources.Remove(source);
 
-    // every enemy shot within `radius` of `centre`. how many went
-    public static int Clear(Vector2 centre, float radius, bool drops = false)
+    // every enemy shot within `radius` of `centre`. weak: a lesser clear (the aura's), which the
+    // hardy kinds shrug off. how many went
+    public static int Clear(Vector2 centre, float radius, bool drops = false, bool weak = false)
     {
         int n = 0;
         for (int i = sources.Count - 1; i >= 0; i--)
         {
             // a source that's been destroyed without signing off
             if (sources[i] == null || (sources[i] is Object o && o == null)) { sources.RemoveAt(i); continue; }
+            if (weak && sources[i] is IHardyEnemyShots) continue;
             n += sources[i].ClearWithin(centre, radius, drops);
         }
         return n;
