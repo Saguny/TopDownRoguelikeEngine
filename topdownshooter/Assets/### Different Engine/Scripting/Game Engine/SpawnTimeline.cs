@@ -73,6 +73,14 @@ public class SpawnTimeline : ScriptableObject
     [Tooltip("only for the graph above: where the wave lines go (GameLoopController's wave length)")]
     [Min(0.5f)] public float waveMinutes = 3f;
 
+    [Header("Late evolutions (the horde answering a full build of them)")]
+    [Tooltip("from this run minute the horde answers evolved weapons harder than SpawnDirector's own evolution pressure: more health for each and all of them counted, easing in over a minute. 0 = never (the director's own all run)")]
+    [Min(0f)] public float lateEvoFromMinute = 0f;
+    [Tooltip("from then on, each evolved weapon adds this share to every enemy's health (the director's own is 0.1)")]
+    [Min(0f)] public float lateEvoHealth = 0.25f;
+    [Tooltip("and this many evolutions are answered (the director's own is 4)")]
+    [Min(0f)] public float lateEvoMax = 6f;
+
     public List<Beat> beats = new List<Beat>();
     public List<Event> events = new List<Event>();
 

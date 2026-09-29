@@ -39,7 +39,11 @@ public class DragonLine : Weapon<DragonLineData>
     {
         StopAllCoroutines();
         for (int i = flying.Count - 1; i >= 0; i--) Give(flying[i]);
+        coiling = false;
     }
+
+    // one coiling dragon at a time: the next waits until this one's gone, then its own cooldown
+    private bool coiling;
     private readonly List<EnemyHealth> touching = new List<EnemyHealth>();
     private Camera cam;
     private float timer, spiralTimer;
@@ -58,7 +62,7 @@ public class DragonLine : Weapon<DragonLineData>
         if (Data.IsEvolved(Level) && !spiralPrimed)
         {
             spiralPrimed = true;
-            spiralTimer = Mathf.Max(0f, Cooldown(Data.evolvedCooldown) - 1f);
+            spiralTimer = Mathf.Max(0f, Data.evolvedCooldown - 1f);
         }
     }
 
@@ -82,8 +86,10 @@ public class DragonLine : Weapon<DragonLineData>
         }
         else
         {
-            spiralTimer += dt;
-            if (spiralTimer >= Cooldown(Data.evolvedCooldown))
+            // the cooldown only runs with no dragon out, and it's the evolution's own: the Cooldown
+            // stat doesn't shorten it (two or three coiling at once did ten times any other evolution)
+            if (!coiling) spiralTimer += dt;
+            if (!coiling && spiralTimer >= Data.evolvedCooldown)
             {
                 spiralTimer = 0f;
                 StartCoroutine(Coil());
@@ -182,6 +188,7 @@ public class DragonLine : Weapon<DragonLineData>
     private IEnumerator Coil()
     {
         if (cam == null) yield break;
+        coiling = true;
         // a much longer dragon, and bigger: more segments, each scaled up, spaced to overlap
         int count = Mathf.Max(1, Data.evolvedSegments - 1);
         var d = Take(count);
@@ -236,6 +243,7 @@ public class DragonLine : Weapon<DragonLineData>
         }
 
         Give(d);
+        coiling = false;
     }
 
     private void HitEvery(Vector2 at, float radius, Dictionary<EnemyHealth, float> next, float damage, float now, Vector2 centre, bool shove)

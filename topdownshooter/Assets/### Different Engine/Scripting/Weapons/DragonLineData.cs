@@ -55,8 +55,8 @@ public class DragonLineData : WeaponData<DragonLine>
     public float bodyRadius = 0.35f;
 
     [Header("Evolution: the coiling dragon (it flies no more lines, only this)")]
-    [Tooltip("seconds between spirals, before Cooldown")]
-    public float evolvedCooldown = 6f;
+    [Tooltip("seconds from one coiling dragon dying out to the next setting off: only one coils at a time, and the Cooldown stat doesn't shorten it")]
+    public float evolvedCooldown = 10f;
     [Tooltip("damage of the fire it spits, before Might. the head hits for Evolved Head Multiplier times this")]
     public float fireDamage = 110f;
     [Min(1f)] public float evolvedHeadMultiplier = 1.5f;
@@ -125,7 +125,7 @@ public class DragonLineData : WeaponData<DragonLine>
             Add(into, "Head damage", N(Hurt(st, fireDamage * evolvedHeadMultiplier, AttackClass)));
             Add(into, "Coil damage", N(Hurt(st, coilDamage, AttackClass)));
             Add(into, "Segments", evolvedSegments.ToString());
-            Add(into, "Cooldown", Sec(Every(st, evolvedCooldown)));
+            Add(into, "Cooldown", Sec(evolvedCooldown) + " after each");
             return;
         }
         var s = At(level);
@@ -138,7 +138,7 @@ public class DragonLineData : WeaponData<DragonLine>
     public override string Describe(int level)
     {
         if (IsEvolved(level))
-            return $"Evolution: no more lines. Every {evolvedCooldown:0}s a great dragon coils out from the middle of the screen, shoving enemies back and spitting fire for {fireDamage:0}. Its head hits for {fireDamage * evolvedHeadMultiplier:0}.";
+            return $"Evolution: no more lines. A great dragon coils out from the middle of the screen, shoving enemies back and spitting fire for {fireDamage:0}; its head hits for {fireDamage * evolvedHeadMultiplier:0}. {evolvedCooldown:0}s after it's gone, the next.";
 
         var s = At(level);
         if (level <= 1)

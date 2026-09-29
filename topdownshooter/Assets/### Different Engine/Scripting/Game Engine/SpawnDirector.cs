@@ -116,7 +116,9 @@ public class SpawnDirector : MonoBehaviour
     // an evolution is the payoff, as in Vampire Survivors: a spike of power the run is meant to
     // enjoy. the horde only leans on it a little (Vampire Survivors doesn't at all), and never past
     // a handful of evolutions' worth, so a full build of them mows the screen down as it should.
-    // the health curve (fitted to measured weapon damage, Tools/Balance) is the run's real pressure
+    // the health curve (fitted to measured weapon damage, Tools/Balance) is the run's real pressure.
+    // a map's timeline can have the horde answer them harder from a set minute (its Late
+    // Evolutions): the Courtyard's from 14:00, where a full build of them was AFK-able
     [Header("Evolutions (the horde leans on an evolved weapon, a little)")]
     [Tooltip("each evolved weapon the player holds adds this share to the crowd: more alive at once and more arriving")]
     [SerializeField, Min(0f)] private float evoCrowd = 0.06f;
@@ -1319,7 +1321,21 @@ public class SpawnDirector : MonoBehaviour
     private readonly List<Weapon> heldWeapons = new List<Weapon>();
 
     private float EvoCrowd => 1f + evoCrowd * evoPressure;
-    private float EvoHealth => 1f + evoHealth * evoPressure;
+    private float EvoHealth => 1f + Mathf.Lerp(evoHealth, LateEvoHealth, LateEvo) * evoPressure;
+
+    // the timeline's late evolutions (SpawnTimeline.lateEvoFromMinute): from that minute, easing in
+    // over one, each evolution counts for more health and every one of them is answered. not
+    // through a Final Rush: the rushes keep the pressure they were tuned with
+    private float LateEvo
+    {
+        get
+        {
+            if (activeTimeline == null || activeTimeline.lateEvoFromMinute <= 0f || finalRush) return 0f;
+            return Mathf.Clamp01(RunMinute - activeTimeline.lateEvoFromMinute);
+        }
+    }
+    private float LateEvoHealth => activeTimeline != null ? activeTimeline.lateEvoHealth : evoHealth;
+    private float EvoMax => Mathf.Lerp(evoPressureMax, activeTimeline != null ? Mathf.Max(evoPressureMax, activeTimeline.lateEvoMax) : evoPressureMax, LateEvo);
     // more of them and tougher, but each worth less wen (and so fewer coins): an evolution
     // shouldn't also speed up the level ups and the shop
     private float EvoWen => Mathf.Pow(1f - evoWenCut, evoPressure);
@@ -1335,7 +1351,7 @@ public class SpawnDirector : MonoBehaviour
             foreach (var w in heldWeapons)
                 if (w != null && w.Evolved) evolutionsHeld++;
         }
-        float target = Mathf.Min(evolutionsHeld, evoPressureMax);
+        float target = Mathf.Min(evolutionsHeld, EvoMax);
         evoPressure = Mathf.MoveTowards(evoPressure, target, Time.deltaTime / evoRampSeconds);
     }
 

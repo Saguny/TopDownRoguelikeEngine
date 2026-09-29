@@ -75,7 +75,7 @@ MonoBehaviour:
   weaveFrequency: 0.22
   headRadius: 0.55
   bodyRadius: 0.35
-  evolvedCooldown: 6
+  evolvedCooldown: 10
   fireDamage: 110
   evolvedHeadMultiplier: 1.5
   coilDamage: 40
