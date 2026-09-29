@@ -42,7 +42,7 @@ public class ElectricAuraData : WeaponData<ElectricAuraWeapon>
     {
         var s = At(level);
         Add(into, "Damage", N(Hurt(st, s.damage, AttackClass)));
-        Add(into, "Radius", N(Wide(st, s.radius)));
+        Add(into, "Radius", N(s.radius * Aura.AreaFor(st)));
         Add(into, "Pulses every", Sec(Every(st, s.interval, UpgradeType.AuraCooldown)));
         Add(into, "Clears enemy shots", "every 2nd pulse (1s at most)");
     }

@@ -37,8 +37,13 @@ public class Aura : MonoBehaviour
     // touched the field)
     private const float MinInterval = 0.1f;
 
-    // radius is the aura's own level; the global Area stat multiplies on top
-    private float EffectiveRadius => radius * (_stats ? _stats.AreaMul : 1f);
+    // Area grows the field by +40% at most, whatever the stat says: a maxed aura with maxed Area
+    // filled the screen
+    public const float MaxAreaMul = 1.4f;
+    public static float AreaFor(StatContext stats) => stats ? Mathf.Min(stats.AreaMul, MaxAreaMul) : 1f;
+
+    // radius is the aura's own level; the global Area stat multiplies on top, up to MaxAreaMul
+    private float EffectiveRadius => radius * AreaFor(_stats);
 
     private CircleCollider2D _collider;
     private StatContext _stats;
