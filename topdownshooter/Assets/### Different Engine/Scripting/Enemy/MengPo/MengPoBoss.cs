@@ -469,6 +469,17 @@ public class MengPoBoss : MonoBehaviour, IDamageGate, IFightBoss
         yield return BossDuel.Regroup();
     }
 
+    // the same, in an instant, as a spell card's cut-in lands: both of them simply there
+    private void Snap()
+    {
+        Ghost();
+        offset = BossDuel.Above;
+        following = true;
+        basePos = BossDuel.Home + BossDuel.Above;
+        transform.position = basePos;
+        BossDuel.Snap();
+    }
+
     private IEnumerator RunPhase(int i)
     {
         var p = phases[i];
@@ -480,8 +491,9 @@ public class MengPoBoss : MonoBehaviour, IDamageGate, IFightBoss
         screen.RefillBar();
 
         // a fresh start for every health bar after the first: the player back in the middle of the
-        // duel, the boss gliding in above them, as it all began
-        if (i > 0) yield return Regroup();
+        // duel, the boss above them, as it all began. a card's cut-in hides the jump (Declare);
+        // without one they glide there
+        if (i > 0 && p.card == null) yield return Regroup();
 
         bool transformed = p.trueForm && !trueForm;
         if (transformed) yield return Transform();
@@ -498,7 +510,7 @@ public class MengPoBoss : MonoBehaviour, IDamageGate, IFightBoss
             }, tier);
         }
 
-        if (p.card != null) yield return Declare(p.card);
+        if (p.card != null) yield return Declare(p.card, i > 0);
         else yield return Wait(i > 0 ? 0.35f : 0.9f);
 
         invulnerable = false;
@@ -567,7 +579,7 @@ public class MengPoBoss : MonoBehaviour, IDamageGate, IFightBoss
         }
     }
 
-    private IEnumerator Declare(string card)
+    private IEnumerator Declare(string card, bool regroup)
     {
         Cast(2, 1.3f);
         Sound("mp_declare", transform.position, 1f);
@@ -583,14 +595,14 @@ public class MengPoBoss : MonoBehaviour, IDamageGate, IFightBoss
             wedge = trueForm ? new Color(0.2f, 0.62f, 0.7f) : new Color(0.55f, 0.32f, 0.86f),
             wedgeDark = trueForm ? new Color(0.05f, 0.2f, 0.26f) : new Color(0.18f, 0.08f, 0.33f),
             glyph = PersonaCutIn.Glyph.Forget,
-        });
+        }, regroup ? Snap : (System.Action)null);
         screen.Declare(card, null);
         screen.Dim(0.2f);
         grade.Set(trueForm ? BossGrade.Look.Rage : BossGrade.Look.Spell, 1.2f);
         grade.Punch(0.5f);
         Juice.Shake(0.18f);
         StartCoroutine(FadeMandala(0.45f, 0.6f));
-        yield return Wait(1.5f);
+        yield return Wait(1.7f);          // the band has mostly broken away by then
     }
 
     private IEnumerator FadeMandala(float to, float seconds)

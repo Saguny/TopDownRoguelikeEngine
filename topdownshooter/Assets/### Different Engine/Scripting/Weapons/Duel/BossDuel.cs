@@ -83,6 +83,21 @@ public class BossDuel : MonoBehaviour
         PlayerMovement.Held = false;
     }
 
+    // the same fresh start in an instant, for a spell card's cut-in to hide: the player simply is
+    // back in the middle, a puff of light where they were and where they land
+    public static void Snap()
+    {
+        var player = GameObject.FindGameObjectWithTag("Player");
+        if (player == null || !player.TryGetComponent(out Rigidbody2D rb) || !Active) return;
+        var puff = YamaArt.Frames("cancel");
+        if (puff != null) FxBatch.Play(puff, 22f, rb.position, 1.4f, "Aura", 201);
+        PlayerMovement.Drift = Vector2.zero;
+        rb.position = Home;
+        rb.linearVelocity = Vector2.zero;
+        player.transform.position = Home;
+        if (puff != null) FxBatch.Play(puff, 22f, Home, 1.4f, "Aura", 201);
+    }
+
     private IEnumerator Run(GameObject player)
     {
         WeaponHold.Duel();

@@ -7,7 +7,8 @@ using UnityEngine.UI;
 // of their colour to one side; a brushed character is written beside them stroke by stroke as the
 // screen flashes white; the band holds, pushing in; then it's sliced into strips that slide apart,
 // shred, and fly off the top right in shards. about a second, on unscaled time, gameplay going on
-// behind it.
+// behind it. whatever should happen unseen (the duel's regroup) happens as the eyes land, under
+// the flash
 //
 // it's drawn as pixel art: every frame composited on the CPU into one 480x270 texture shown over
 // the whole screen, point filtered. the eyes come from Resources/CutIn/<name> (any size, PNG; it's
@@ -39,11 +40,11 @@ public class PersonaCutIn : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetStatics() { instance = null; faces.Clear(); }
 
-    public static void Play(Theme theme)
+    public static void Play(Theme theme, System.Action onLand = null)
     {
         if (instance == null) instance = Build();
         instance.StopAllCoroutines();
-        instance.StartCoroutine(instance.Run(theme));
+        instance.StartCoroutine(instance.Run(theme, onLand));
     }
 
     private static PersonaCutIn Build()
@@ -129,7 +130,7 @@ public class PersonaCutIn : MonoBehaviour
 
     // ---------------------------------------------------------------- the run
 
-    private IEnumerator Run(Theme t)
+    private IEnumerator Run(Theme t, System.Action onLand)
     {
         var face = Face(t);
         image.enabled = true;
@@ -137,11 +138,13 @@ public class PersonaCutIn : MonoBehaviour
         for (float time = 0f; time < CutInPainter.End; time += Time.unscaledDeltaTime)
         {
             Cover();
+            if (onLand != null && time >= CutInPainter.Lands) { onLand(); onLand = null; }
             painter.Draw(t.glyph, t.wedge, t.wedgeDark, face, time);
             tex.SetPixels32(painter.Pixels);
             tex.Apply(false);
             yield return null;
         }
+        onLand?.Invoke();
         image.enabled = false;
     }
 

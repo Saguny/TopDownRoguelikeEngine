@@ -441,6 +441,17 @@ public class YamaBoss : MonoBehaviour, IDamageGate, IFightBoss
         yield return BossDuel.Regroup();
     }
 
+    // the same, in an instant, as a spell card's cut-in lands: both of them simply there
+    private void Snap()
+    {
+        Ghost();
+        offset = BossDuel.Above;
+        following = true;
+        basePos = BossDuel.Home + BossDuel.Above;
+        transform.position = basePos;
+        BossDuel.Snap();
+    }
+
     private IEnumerator RunPhase(int i)
     {
         var p = phases[i];
@@ -452,8 +463,9 @@ public class YamaBoss : MonoBehaviour, IDamageGate, IFightBoss
         screen.RefillBar();
 
         // a fresh start for every health bar after the first: the player back in the middle of the
-        // duel, the boss gliding in above them, as it all began
-        if (i > 0) yield return Regroup();
+        // duel, the boss above them, as it all began. a card's cut-in hides the jump (Declare);
+        // without one they glide there
+        if (i > 0 && p.card == null) yield return Regroup();
 
         if (p.rage && !rage)
         {
@@ -478,7 +490,7 @@ public class YamaBoss : MonoBehaviour, IDamageGate, IFightBoss
             }, tier);
         }
 
-        if (p.card != null) yield return Declare(p.card);
+        if (p.card != null) yield return Declare(p.card, i > 0);
         else yield return Wait(i > 0 ? 0.35f : 0.9f);
 
         invulnerable = false;
@@ -491,7 +503,7 @@ public class YamaBoss : MonoBehaviour, IDamageGate, IFightBoss
         yield return Break(p, Danmaku.Hits == hitsBefore);
     }
 
-    private IEnumerator Declare(string card)
+    private IEnumerator Declare(string card, bool regroup)
     {
         Cast(1, 1.3f);
         YamaArt.Play("yama_declare", transform.position, 1f);
@@ -503,14 +515,14 @@ public class YamaBoss : MonoBehaviour, IDamageGate, IFightBoss
             art = "yama", fallback = "Yama/portrait", fallbackEyes = 0.58f,
             wedge = new Color(0.77f, 0.16f, 0.21f), wedgeDark = new Color(0.33f, 0.04f, 0.08f),
             glyph = PersonaCutIn.Glyph.Judge,
-        });
+        }, regroup ? Snap : (System.Action)null);
         screen.Declare(card, null);
         screen.Dim(0.2f);
         grade.Set(rage ? BossGrade.Look.Rage : BossGrade.Look.Spell, 1.2f);
         grade.Punch(0.5f);
         Juice.Shake(0.18f);
         StartCoroutine(FadeWheel(0.4f, 0.6f));
-        yield return Wait(1.5f);
+        yield return Wait(1.7f);          // the band has mostly broken away by then
     }
 
     private IEnumerator FadeWheel(float to, float seconds)

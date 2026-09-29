@@ -10,7 +10,8 @@ public class CutInPainter
     public const int FW = 480, FH = 150;        // the eyes, in band space
     private const float Tilt = 7f;              // degrees the band leans, rising to the right
     private const float Thick = 50f;            // the band's half height at its widest
-    public const float Tear = 0.16f, Open = 0.08f, Hold = 0.62f, Shatter = 0.84f, End = 1f;
+    public const float Tear = 0.16f, Open = 0.08f, Hold = 1.35f, Shatter = 1.75f, End = 1.95f;
+    public const float Lands = Tear + Open;     // the eyes are there: the white flash
 
     public readonly Color32[] Pixels = new Color32[W * H];
     private readonly bool[] ink = new bool[W * H];
