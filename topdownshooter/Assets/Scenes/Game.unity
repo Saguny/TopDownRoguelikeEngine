@@ -6615,6 +6615,7 @@ GameObject:
   - component: {fileID: 523663382}
   - component: {fileID: 523663381}
   - component: {fileID: 523663380}
+  - component: {fileID: 523663383}
   m_Layer: 5
   m_Name: SavedToPanel
   m_TagString: Untagged
@@ -6724,6 +6725,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 523663378}
   m_CullTransparentMesh: 1
+--- !u!114 &523663383
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 523663378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85397d7a7c1f49f19ec38ba9b5c135d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  text: {fileID: 339155524}
+  format: 'Run saved to: "{0}"'
+  failed: Couldn't save the run
+  showSeconds: 5
+  fadeSeconds: 0.3
+  slide: 40
 --- !u!1 &535102291
 GameObject:
   m_ObjectHideFlags: 0
@@ -21666,9 +21685,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 155342034}
-        m_TargetAssemblyTypeName: GameOverScreen, Assembly-CSharp
-        m_MethodName: ExitButton
+      - m_Target: {fileID: 523663383}
+        m_TargetAssemblyTypeName: RunLogPopup, Assembly-CSharp
+        m_MethodName: LogRun
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -22118,6 +22137,9 @@ MonoBehaviour:
     highlightBest: 1
   bestColor: {r: 0.92, g: 0.16, b: 0.16, a: 1}
   sortByDps: 0
+  fitAbove: {fileID: 438781995}
+  fitMargin: 8
+  minGap: 4
 --- !u!1 &1662347113
 GameObject:
   m_ObjectHideFlags: 0

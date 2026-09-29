@@ -28,6 +28,7 @@ public class GameOverScreen : MonoBehaviour
 
     // death and victory can't both land, and a run is only counted once
     public bool Shown { get; private set; }
+    public bool Won { get; private set; }
 
     public void ShowDefeat() => Show(false);
     public void ShowVictory() => Show(true);
@@ -36,6 +37,7 @@ public class GameOverScreen : MonoBehaviour
     {
         if (Shown) return;
         Shown = true;
+        Won = won;
         RunStats.EndRun();
 
         // a finished run counts towards Endless (it may be the one that unlocks it; the unlock

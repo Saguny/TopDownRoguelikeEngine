@@ -9,7 +9,9 @@ using UnityEngine.UI;
 // columns: an icon column with a Grid Layout Group, whose cell size and spacing set the height of
 // a row and the gap between rows, and text columns, each showing one stat. the text columns are
 // templates: every row gets its own copy, centred on its icon, so a column can't drift from the
-// icons however its font spaces lines. the row with the highest DPS is picked out in red
+// icons however its font spaces lines. the row with the highest DPS is picked out in red. a long
+// run's list is squeezed to stay above whatever comes under it (Fit Above): the gaps close up
+// first, then the rows and their text shrink
 public class WeaponStatsList : MonoBehaviour
 {
     public enum Show { Name, Dps, Damage, Kills, Level, Share, TimeHeld }
@@ -34,6 +36,12 @@ public class WeaponStatsList : MonoBehaviour
     [SerializeField] private Color bestColor = new Color(0.92f, 0.16f, 0.16f);
     [Tooltip("highest DPS at the top. off: the order they were taken, each evolution under its weapon")]
     [SerializeField] private bool sortByDps;
+    [Tooltip("optional: the rows are squeezed to end above this (e.g. the Unlocks: title). empty = the icon column's own bottom")]
+    [SerializeField] private RectTransform fitAbove;
+    [Tooltip("the space kept between the last row and what it fits above")]
+    [SerializeField, Min(0f)] private float fitMargin = 8f;
+    [Tooltip("the smallest gap between rows before the rows themselves shrink")]
+    [SerializeField, Min(0f)] private float minGap = 4f;
 
     private readonly List<GameObject> made = new List<GameObject>();
 
@@ -59,12 +67,30 @@ public class WeaponStatsList : MonoBehaviour
             top = grid.padding.top;
             grid.enabled = false;
         }
-        float step = cell.y + gap;
 
         // rows run down from the icon column's top, or the first text column's without icons
         RectTransform from = icons;
         foreach (var c in columns) if (from == null && c.text != null) from = c.text.rectTransform;
         if (from == null) return;
+
+        // squeezed into the room there is: the gaps close up first, then the rows shrink
+        float scale = 1f;
+        if (rows.Count > 0)
+        {
+            float room = Room(from) - top;
+            int n = rows.Count;
+            if (n * cell.y + (n - 1) * gap > room)
+            {
+                gap = n > 1 ? Mathf.Clamp((room - n * cell.y) / (n - 1), Mathf.Min(minGap, gap), gap) : gap;
+                float fits = (room - (n - 1) * gap) / n;
+                if (fits < cell.y)
+                {
+                    scale = Mathf.Max(0.5f, fits / cell.y);
+                    cell *= scale;
+                }
+            }
+        }
+        float step = cell.y + gap;
 
         // the placeholders stay in the editor, out of the way at runtime
         foreach (var c in columns) if (c.text != null) c.text.gameObject.SetActive(false);
@@ -78,8 +104,17 @@ public class WeaponStatsList : MonoBehaviour
 
             float rowY = from.TransformPoint(new Vector3(0f, from.rect.yMax - offset, 0f)).y;
             foreach (var c in columns)
-                if (c.text != null) MakeText(c, record, i, rowY, cell.y, record == best);
+                if (c.text != null) MakeText(c, record, i, rowY, cell.y, scale, record == best);
         }
+    }
+
+    // how far down from the top of the column the rows may run
+    private float Room(RectTransform from)
+    {
+        if (fitAbove == null) return from.rect.height;
+        Vector3 edge = fitAbove.TransformPoint(new Vector3(0f, fitAbove.rect.yMax, 0f));
+        float below = from.InverseTransformPoint(edge).y;
+        return Mathf.Max(0f, from.rect.yMax - below - fitMargin);
     }
 
     private void MakeIcon(WeaponRecord record, Vector2 cell, float offset)
@@ -99,14 +134,17 @@ public class WeaponStatsList : MonoBehaviour
     }
 
     // a copy of the column's text for one row, its middle on the row's
-    private void MakeText(Column column, WeaponRecord record, int index, float rowY, float height, bool isBest)
+    private void MakeText(Column column, WeaponRecord record, int index, float rowY, float height, float scale, bool isBest)
     {
         var text = Instantiate(column.text, column.text.transform.parent);
         text.name = $"{column.text.name} {index + 1}";
         text.gameObject.SetActive(true);
+        text.enableAutoSizing = false;
+        text.fontSize = column.text.fontSize * scale;
 
+        // never shorter than a line of its text, or the ellipsis would eat the whole row
         var rt = text.rectTransform;
-        rt.sizeDelta = new Vector2(rt.sizeDelta.x, height);
+        rt.sizeDelta = new Vector2(rt.sizeDelta.x, Mathf.Max(height, text.fontSize * 1.3f));
         Vector3 middle = rt.TransformPoint(rt.rect.center);
         rt.position += new Vector3(0f, rowY - middle.y, 0f);
 
