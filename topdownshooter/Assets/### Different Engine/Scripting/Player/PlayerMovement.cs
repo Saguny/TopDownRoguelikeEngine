@@ -28,9 +28,12 @@ public class PlayerMovement : MonoBehaviour
     public static Vector2 Drift;
     // when above 0, the move speed multiplier outright, whatever the stats say (an end boss's duel)
     public static float SpeedOverride;
+    // while set, the player's own input and any drift do nothing: something else is moving them
+    // (the duel drawing them back to its middle between the boss's health bars, BossDuel.Regroup)
+    public static bool Held;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    private static void ResetStatics() { Drift = Vector2.zero; SpeedOverride = 0f; }
+    private static void ResetStatics() { Drift = Vector2.zero; SpeedOverride = 0f; Held = false; }
 
     private void Awake()
     {
@@ -55,6 +58,13 @@ public class PlayerMovement : MonoBehaviour
         float moved = (at - _lastPosition).magnitude;
         if (moved < 1f) RunStats.Walked(moved);
         _lastPosition = at;
+
+        if (Held)
+        {
+            _rb.linearVelocity = Vector2.zero;
+            _velocitySmoothRef = Vector2.zero;
+            return;
+        }
 
         // normalize so diagonals aren't faster
         Vector2 dir = _moveInput.sqrMagnitude > 1f ? _moveInput.normalized : _moveInput;

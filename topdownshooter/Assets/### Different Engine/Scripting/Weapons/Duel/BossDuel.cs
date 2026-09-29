@@ -23,9 +23,13 @@ public class BossDuel : MonoBehaviour
     // the boss the duel is with
     public static EnemyHealth Boss { get; private set; }
     public static bool Active => instance != null;
+    // the duel's middle: where the player stood as the boss came. he comes in above it
+    public static Vector2 Home { get; private set; }
+    // how far above the player the boss comes in, and keeps to until he moves
+    public static readonly Vector2 Above = new Vector2(0f, 4.6f);
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    private static void ResetStatics() { instance = null; Boss = null; }
+    private static void ResetStatics() { instance = null; Boss = null; Home = default; }
 
     public static void Begin(GameObject boss)
     {
@@ -34,6 +38,7 @@ public class BossDuel : MonoBehaviour
         // a scene object: it goes with the run
         instance = new GameObject("Boss Duel").AddComponent<BossDuel>();
         Boss = boss.GetComponent<EnemyHealth>();
+        Home = player.transform.position;
         PlayerMovement.SpeedOverride = PlayerSpeed;
         Danmaku.SpeedScale = BulletSpeed;
         instance.StartCoroutine(instance.Run(player));
@@ -45,7 +50,37 @@ public class BossDuel : MonoBehaviour
         instance = null;
         Boss = null;
         PlayerMovement.SpeedOverride = 0f;
+        PlayerMovement.Held = false;
         Danmaku.SpeedScale = 1f;
+    }
+
+    // between the boss's health bars, a fresh start: the player drawn back to the middle of the
+    // duel, easing in, trailing light, while the boss (who sets his own keep back to Above) glides
+    // in over them. the bullets are already gone by then (each break cancels them)
+    public static IEnumerator Regroup(float seconds = 0.6f)
+    {
+        var player = GameObject.FindGameObjectWithTag("Player");
+        if (player == null || !player.TryGetComponent(out Rigidbody2D rb) || !Active) yield break;
+        Vector2 from = rb.position;
+        if ((from - Home).sqrMagnitude < 0.04f) yield break;
+        PlayerMovement.Held = true;
+        PlayerMovement.Drift = Vector2.zero;
+        var trail = YamaArt.Frames("cancel");
+        float nextTrail = 0f;
+        for (float t = 0f; t < seconds; t += Time.deltaTime)
+        {
+            if (rb == null) break;
+            float k = t / seconds, e = k * k * (3f - 2f * k);
+            rb.MovePosition(Vector2.Lerp(from, Home, e));
+            if (trail != null && t >= nextTrail)
+            {
+                nextTrail = t + 0.05f;
+                FxBatch.Play(trail, 22f, rb.position, 1f, "Aura", 201);
+            }
+            yield return null;
+        }
+        if (rb != null) rb.position = Home;
+        PlayerMovement.Held = false;
     }
 
     private IEnumerator Run(GameObject player)

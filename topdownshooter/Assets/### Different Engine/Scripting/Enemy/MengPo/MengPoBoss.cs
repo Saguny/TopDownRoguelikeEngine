@@ -461,6 +461,14 @@ public class MengPoBoss : MonoBehaviour, IDamageGate, IFightBoss
         }
     }
 
+    private IEnumerator Regroup()
+    {
+        offset = BossDuel.Above;
+        following = true;
+        glideUntil = Time.time + 0.9f;
+        yield return BossDuel.Regroup();
+    }
+
     private IEnumerator RunPhase(int i)
     {
         var p = phases[i];
@@ -470,6 +478,10 @@ public class MengPoBoss : MonoBehaviour, IDamageGate, IFightBoss
         broke = false;
         invulnerable = true;
         screen.RefillBar();
+
+        // a fresh start for every health bar after the first: the player back in the middle of the
+        // duel, the boss gliding in above them, as it all began
+        if (i > 0) yield return Regroup();
 
         bool transformed = p.trueForm && !trueForm;
         if (transformed) yield return Transform();
