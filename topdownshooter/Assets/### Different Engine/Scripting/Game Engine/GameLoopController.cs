@@ -44,7 +44,18 @@ public class GameLoopController : MonoBehaviour
         GameEvents.OnFinalBossStarted -= OnFinalBossStarted;
     }
 
-    private void OnFinalBossStarted() => bossStarted = true;
+    private void OnFinalBossStarted()
+    {
+        bossStarted = true;
+        HealToFull();   // a boss that comes on the clock, with no rush before it, too
+    }
+
+    private static void HealToFull()
+    {
+        var player = GameObject.FindGameObjectWithTag("Player");
+        if (player == null || !player.TryGetComponent(out PlayerHealth health) || health.IsDead) return;
+        if (health.Current < health.Max) health.Heal(health.Max - health.Current);
+    }
 
     private void Start()
     {
@@ -114,6 +125,8 @@ public class GameLoopController : MonoBehaviour
             // won: nothing more spawns until the next wave, the spirit seal's wave rolls out and
             // seals the horde (SealWave), and once it has passed, the wen pours in
             GameEvents.OnFinalRushEnded?.Invoke(waveIndex + 1);
+            // the last rush won: the player goes into the final boss whole
+            if (!GameMode.IsEndless && (waveIndex + 2 >= finalWave || BossIsDue)) HealToFull();
             GameEvents.OnPurgeEnemiesWithFx?.Invoke(subjectiveDeathFx);
             yield return null;
             while (SealWave.Running) yield return null;

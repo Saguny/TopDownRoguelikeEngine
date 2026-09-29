@@ -123,7 +123,8 @@ public class CommandTokenHUD : MonoBehaviour
         var canvasGo = new GameObject("Command Token Prompt", typeof(Canvas), typeof(CanvasScaler));
         var canvas = canvasGo.GetComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = 40;
+        // under the scene's own canvases (order 0): the level up and pause screens cover it
+        canvas.sortingOrder = -1;
         var scaler = canvasGo.GetComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1920f, 1080f);

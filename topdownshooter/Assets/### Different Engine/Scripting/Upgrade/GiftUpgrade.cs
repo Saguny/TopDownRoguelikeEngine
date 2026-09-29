@@ -12,7 +12,7 @@ public class GiftUpgrade : UpgradeData
     [Header("Gift")]
     public GiftKind kind;
     [Tooltip("coins paid, before Greed")]
-    [Min(0)] public int coins = 25;
+    [Min(0)] public int coins = 2500;
     [Tooltip("share of max health restored")]
     [Range(0f, 1f)] public float healShare = 0.3f;
 
