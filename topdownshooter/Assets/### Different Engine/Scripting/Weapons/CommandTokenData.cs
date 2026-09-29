@@ -16,7 +16,7 @@ public class CommandTokenData : WeaponData<CommandToken>
         public float cooldown;
         [Tooltip("seconds the enemies it doesn't kill are stunned for. 0 = none")]
         public float stunSeconds;
-        [Tooltip("the shockwave also pulls every wen on the map to the player")]
+        [Tooltip("the shockwave also pulls every piece of qi on the map to the player")]
         public bool pullsWen;
     }
 
@@ -99,7 +99,7 @@ public class CommandTokenData : WeaponData<CommandToken>
         Add(into, "Damage (whole screen)", N(Hurt(st, s.damage, AttackClass)));
         Add(into, "Recharge", Sec(Every(st, s.cooldown)));
         if (s.stunSeconds > 0f) Add(into, "Stun", Sec(s.stunSeconds));
-        if (s.pullsWen) Add(into, "Pulls wen", "yes");
+        if (s.pullsWen) Add(into, "Pulls qi", "yes");
         Add(into, "Spawns paused for", Sec(spawnPauseSeconds));
     }
 
@@ -113,7 +113,7 @@ public class CommandTokenData : WeaponData<CommandToken>
         if (s.damage != was.damage) changes.Add($"The shockwave hits for {s.damage:0}.");
         if (s.cooldown != was.cooldown) changes.Add($"Recharges in {s.cooldown:0}s.");
         if (s.stunSeconds > was.stunSeconds) changes.Add($"Enemies it doesn't kill are stunned for {s.stunSeconds:0.#}s.");
-        if (s.pullsWen && !was.pullsWen) changes.Add("It pulls every wen on the map to you.");
+        if (s.pullsWen && !was.pullsWen) changes.Add("It pulls every piece of qi on the map to you.");
         return changes.Count > 0 ? string.Join(" ", changes) : "A stronger shockwave.";
     }
 }

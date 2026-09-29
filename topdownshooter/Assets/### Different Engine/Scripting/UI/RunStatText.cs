@@ -56,7 +56,7 @@ public class RunStatText : MonoBehaviour
             case Stat.LowestHealth: return $"{RunStats.LowestHealth * 100f:0}%";
             case Stat.RevivalsUsed: return RunStats.RevivalsUsed.ToString();
             case Stat.WenPickedUp: return RunStats.Short(RunStats.WenPickedUp);
-            case Stat.CoinsEarned: return Coins.EarnedThisRun.ToString();       // wen, envelopes and gifts, after Greed
+            case Stat.CoinsEarned: return Coins.EarnedThisRun.ToString();       // envelopes and gifts, after Greed
         }
         return string.Empty;
     }

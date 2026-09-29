@@ -25,9 +25,30 @@ public struct EnvelopeReward
 // shown when it's opened
 public class FortuneEnvelope : MonoBehaviour
 {
-    // how many of the pool's upgrades each rarity gives, and its coins before Greed
+    // how many of the pool's upgrades each rarity gives
     public static int Upgrades(EnvelopeRarity r) => r == EnvelopeRarity.Legendary ? 5 : r == EnvelopeRarity.Rare ? 3 : 1;
-    public static int CoinsFor(EnvelopeRarity r) => r == EnvelopeRarity.Legendary ? 100 : r == EnvelopeRarity.Rare ? 40 : 15;
+
+    // the coins in it, before Greed: a roll between its rarity's least and most, the way Vampire
+    // Survivors' chests pay gold. envelopes are the only place coins come from
+    public static Vector2Int CoinRange(EnvelopeRarity r) =>
+        r == EnvelopeRarity.Legendary ? new Vector2Int(600, 1000) : r == EnvelopeRarity.Rare ? new Vector2Int(250, 450) : new Vector2Int(100, 200);
+    public static int RollCoins(EnvelopeRarity r)
+    {
+        var range = CoinRange(r);
+        return Random.Range(range.x, range.y + 1);
+    }
+
+    // a clean spell card's bonus in the final boss's duel goes into the envelope it drops
+    public static int FinalBonus { get; private set; }
+    public static void AddFinalBonus(int coins) => FinalBonus += Mathf.Max(0, coins);
+    // the coins an envelope from `source` holds on top of its roll: the final boss's, the bonus
+    public static int TakeBonus(EnvelopeSource source)
+    {
+        if (source != EnvelopeSource.FinalBoss) return 0;
+        int b = FinalBonus;
+        FinalBonus = 0;
+        return b;
+    }
 
     // the odds, common / rare / legendary, by who dropped it
     public static EnvelopeRarity Roll(EnvelopeSource source)
@@ -58,6 +79,7 @@ public class FortuneEnvelope : MonoBehaviour
     {
         lying.Clear();
         runSeconds = 0f;
+        FinalBonus = 0;
         GameEvents.OnRunTimeChanged -= OnRunTime;
         GameEvents.OnRunTimeChanged += OnRunTime;
     }

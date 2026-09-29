@@ -174,7 +174,9 @@ function makePeach() {
 // node extras.js [names...]: every element, or only the ones named
 function build() {
   const only = process.argv.slice(2);
-  const elements = [makeDeath(true), makeDeath(false), ...makeWen(), makePeach(), makeWenSpin()]
+  // the pickups the horde drops (wen_bronze, wen_jade, wen_envelope, wen_spin) are qi now, drawn by
+  // pickups/qi.js; makeWen and makeWenSpin are the coins they were, kept for reference
+  const elements = [makeDeath(true), makeDeath(false), makePeach()]
     .filter(e => !only.length || only.includes(e.name));
   const out = path.join(__dirname, "out");
   fs.rmSync(out, { recursive: true, force: true });

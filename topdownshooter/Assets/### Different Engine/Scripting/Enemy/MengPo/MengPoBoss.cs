@@ -38,8 +38,8 @@ public class MengPoBoss : MonoBehaviour, IDamageGate, IFightBoss
     [Header("The fight")]
     [Range(0f, 1f)] public float crowdDuringFight = 0f;
     [Min(2f)] public float hoverDistance = 5f;
-    [Tooltip("coins for clearing each spell card without being hit (before Greed)")]
-    public int[] spellBonus = { 9000, 12000, 15000, 19000, 25000 };
+    [Tooltip("coins for clearing each spell card without being hit, added to the envelope the boss drops (before Greed)")]
+    public int[] spellBonus = { 450, 600, 750, 950, 1250 };
     [Tooltip("how hard the river's current carries the player, units a second")]
     public float currentStrength = 2.4f;
 
@@ -621,9 +621,10 @@ public class MengPoBoss : MonoBehaviour, IDamageGate, IFightBoss
             grade.Set(Mood, 1.5f);
             if (clean)
             {
-                // a gift, so it counts in the run's coins (the HUD's counter, the end screen) as well as the wallet
-                int coins = Coins.Gift(spellBonus != null && card < spellBonus.Length ? spellBonus[card] : 500);
-                screen.Bonus($"Spell Card Bonus!  +{coins} coins", new Color(0.8f, 0.9f, 1f));
+                // coins come out of envelopes: the bonus goes into the one the boss drops
+                int coins = Coins.WithGreed(spellBonus != null && card < spellBonus.Length ? spellBonus[card] : 400);
+                FortuneEnvelope.AddFinalBonus(spellBonus != null && card < spellBonus.Length ? spellBonus[card] : 400);
+                screen.Bonus($"Spell Card Bonus!  +{coins} coins in her envelope", new Color(0.8f, 0.9f, 1f));
                 Sound("yama_bonus", transform.position, 0.9f);
             }
             else screen.Bonus("Bonus Failed", new Color(0.7f, 0.65f, 0.75f));

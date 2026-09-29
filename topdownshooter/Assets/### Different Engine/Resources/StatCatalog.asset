@@ -147,7 +147,7 @@ MonoBehaviour:
     decimals: 0
     higherIsBetter: 1
     showInPanel: 1
-    tooltip: Range for pulling in wen and pickups.
+    tooltip: Range for pulling in qi and pickups.
   - id: 13
     label: Growth
     icon: {fileID: 0}
@@ -157,7 +157,7 @@ MonoBehaviour:
     decimals: 0
     higherIsBetter: 1
     showInPanel: 1
-    tooltip: Extra wen from kills and pickups.
+    tooltip: Extra qi from kills and pickups.
   - id: 14
     label: Greed
     icon: {fileID: 0}
@@ -167,7 +167,7 @@ MonoBehaviour:
     decimals: 0
     higherIsBetter: 1
     showInPanel: 0
-    tooltip: Extra shop currency from each run. Turn on once the currency exists.
+    tooltip: Extra coins from every fortune envelope.
   - id: 15
     label: Revival
     icon: {fileID: 0}

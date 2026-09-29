@@ -31,5 +31,5 @@ MonoBehaviour:
   overchargeCeiling: 1
   overchargeHalfStacks: 8
   kind: 0
-  coins: 2500
+  coins: 150
   healShare: 0.3

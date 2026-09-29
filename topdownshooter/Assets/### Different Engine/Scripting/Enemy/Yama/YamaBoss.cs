@@ -40,8 +40,8 @@ public class YamaBoss : MonoBehaviour, IDamageGate, IFightBoss
     [Range(0f, 1f)] public float crowdDuringFight = 0f;
     [Tooltip("how far from the player he keeps")]
     [Min(2f)] public float hoverDistance = 5f;
-    [Tooltip("coins for clearing each spell card without being hit (before Greed)")]
-    public int[] spellBonus = { 8000, 11000, 14000, 20000 };
+    [Tooltip("coins for clearing each spell card without being hit, added to the envelope the boss drops (before Greed)")]
+    public int[] spellBonus = { 400, 550, 700, 1000 };
 
     // ---- the phases
 
@@ -543,9 +543,10 @@ public class YamaBoss : MonoBehaviour, IDamageGate, IFightBoss
             grade.Set(Mood, 1.5f);
             if (clean)
             {
-                // a gift, so it counts in the run's coins (the HUD's counter, the end screen) as well as the wallet
-                int coins = Coins.Gift(spellBonus != null && card < spellBonus.Length ? spellBonus[card] : 500);
-                screen.Bonus($"Spell Card Bonus!  +{coins} coins", new Color(1f, 0.85f, 0.35f));
+                // coins come out of envelopes: the bonus goes into the one the boss drops
+                int coins = Coins.WithGreed(spellBonus != null && card < spellBonus.Length ? spellBonus[card] : 400);
+                FortuneEnvelope.AddFinalBonus(spellBonus != null && card < spellBonus.Length ? spellBonus[card] : 400);
+                screen.Bonus($"Spell Card Bonus!  +{coins} coins in his envelope", new Color(1f, 0.85f, 0.35f));
                 YamaArt.Play("yama_bonus", transform.position, 0.9f);
             }
             else screen.Bonus("Bonus Failed", new Color(0.7f, 0.65f, 0.75f));

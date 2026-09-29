@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-// every wen on the ground, as data: a position and whether the magnet has it, per kind of pickup.
+// every piece of qi on the ground (the dead's qi: it fills the level bar, nothing else), as data: a position and whether the magnet has it, per kind of pickup.
 // one loop a frame pulls them in and collects the ones that reach the player, and each kind is
 // drawn as a single mesh, so thousands of coins are one draw call and no objects at all. what's
 // collected in a frame is paid out in one go: one AddWen, one counter update, one sound.
@@ -82,6 +82,12 @@ public class PickupSystem : MonoBehaviour
 
     public static void Ensure() => Get();
 
+    // what share of kills drop qi with this many enemies alive: all of them in a thin crowd, fewer
+    // and fewer as it thickens (each worth the more for it, EnemyHealth), never under a tenth.
+    // a screen of 300 drops a piece for one kill in seven or so, not a carpet
+    public const int CrowdFrom = 40;
+    public static float CrowdShare(int alive) => alive <= CrowdFrom ? 1f : Mathf.Max(0.1f, (float)CrowdFrom / alive);
+
     // ---- dropping, and the helpers dev tools and the stress test use
 
     public static void Drop(GameObject prefab, Vector3 at)
@@ -97,10 +103,11 @@ public class PickupSystem : MonoBehaviour
         sys.Add(kind, at, kind.wen);
     }
 
-    // wen worth this much, as one piece whose kind shows its worth: bronze, jade or a red envelope,
-    // like Vampire Survivors' blue, green and red gems. once too much is lying about, new wen goes
-    // into one red envelope instead, which keeps growing until it's picked up. without the library's
-    // tiers it's dropped as the given prefab
+    // qi worth this much, as one piece whose kind shows its worth: a spark, a jade bead or a dragon
+    // pearl, like Vampire Survivors' blue, green and red gems. once too much is lying about, new qi
+    // goes into one pearl instead, which keeps growing until it's picked up. without the library's
+    // tiers it's dropped as the given prefab. (named for the wen they were before coins went to the
+    // envelopes)
     public static void DropWen(Vector3 at, int worth, GameObject fallback = null)
     {
         var sys = Get();
@@ -382,10 +389,10 @@ public class PickupSystem : MonoBehaviour
                 }
             }
             else if (sound != null) SfxPlayer.PlayAt(sound, player, volume);
-            // a jade wen or an envelope says what it was worth
+            // a qi bead or a dragon pearl says what it was worth
             var lib = VfxLibrary.Get;
             if (lib != null && biggest > lib.bronzeUpTo)
-                PixelNumbers.Show(player + Vector2.up * 0.9f, biggest, false, biggest > lib.jadeUpTo ? new Color(1f, 0.45f, 0.4f) : new Color(0.55f, 0.95f, 0.8f), 1);
+                PixelNumbers.Show(player + Vector2.up * 0.9f, biggest, false, biggest > lib.jadeUpTo ? new Color(1f, 0.82f, 0.3f) : new Color(0.55f, 0.95f, 0.8f), 1);
         }
         if (sweepOver) EndSweep();
     }

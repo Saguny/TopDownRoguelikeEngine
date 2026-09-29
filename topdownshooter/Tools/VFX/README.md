@@ -96,3 +96,10 @@ The strike's sounds are synthesised by `../SFX/thunder.py` (into `Resources/Sfx`
 `icons/stats.js` draws the character panel's stat icons, which the level up passives share
 (`NewSprites/Sprites/Icons`), in the weapon icons' style. `node icons/stats.js` writes them over
 the same files, so nothing in Unity needs re-pointing, plus `icons/out/stats_preview.png`.
+
+## Qi pickups
+
+`pickups/qi.js` draws the pickups the horde drops (XP only; coins come from fortune envelopes):
+the azure qi spark, the jade qi bead and the dragon pearl, plus the level up's rain frames. It
+writes straight over `Asesprites/VFX/Pickups/wen_*.aseprite` (the old names, so every prefab keeps
+its sprites): `node pickups/qi.js`.

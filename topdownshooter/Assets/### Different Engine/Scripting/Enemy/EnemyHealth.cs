@@ -376,16 +376,20 @@ public class EnemyHealth : MonoBehaviour, IHealth
             if (inv != null && wen > 0) inv.AddWen(wen);
         }
 
+        // the thicker the horde, the fewer drop, each worth all the more: the same qi, far less of
+        // it lying about (PickupSystem.CrowdShare)
+        float share = PickupSystem.CrowdShare(EnemyRegistry.Count);
         if (wenDropPrefab != null &&
             (minWen > 0 || maxWen > 0) &&
-            UnityEngine.Random.value <= wenDropChance)
+            UnityEngine.Random.value <= wenDropChance * share)
         {
             int count = Mathf.Clamp(UnityEngine.Random.Range(minWen, maxWen + 1), 0, 999);
-            // one piece of wen showing what it's worth, the way Vampire Survivors drops one gem
+            // one piece of qi showing what it's worth, the way Vampire Survivors drops one gem
             var p = transform.position;
             p.x += UnityEngine.Random.Range(-0.2f, 0.2f);
             p.y += UnityEngine.Random.Range(-0.2f, 0.2f);
-            int worth = Scaled(count * WenEach);
+            float owed = Scaled(count * WenEach) / share;
+            int worth = Mathf.FloorToInt(owed) + (UnityEngine.Random.value < owed - Mathf.Floor(owed) ? 1 : 0);
             if (worth > 0) PickupSystem.DropWen(p, worth, wenDropPrefab);
         }
 

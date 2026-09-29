@@ -11,8 +11,11 @@ public class GiftUpgrade : UpgradeData
 {
     [Header("Gift")]
     public GiftKind kind;
+    // coins are envelopes' now (a common pays 100 to 200): the bag is a common envelope's worth
+    public const int DefaultCoins = 150;
+
     [Tooltip("coins paid, before Greed")]
-    [Min(0)] public int coins = 2500;
+    [Min(0)] public int coins = DefaultCoins;
     [Tooltip("share of max health restored")]
     [Range(0f, 1f)] public float healShare = 0.3f;
 

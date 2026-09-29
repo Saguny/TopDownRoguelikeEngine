@@ -372,8 +372,7 @@ public class PlayerInventory : MonoBehaviour
             }
             if (pick == null)
             {
-                Coins.Gift(GiftCoins);
-                given.Add(EnvelopeReward.Coins(Coins.WithGreed(GiftCoins)));
+                given.Add(EnvelopeReward.Coins(Coins.FromEnvelope(GiftCoins)));
                 continue;
             }
 
@@ -392,7 +391,7 @@ public class PlayerInventory : MonoBehaviour
         get
         {
             if (coinsGift == null) coinsGift = FindGift(GiftKind.Coins);
-            return coinsGift != null ? coinsGift.coins : 25;
+            return coinsGift != null ? coinsGift.coins : GiftUpgrade.DefaultCoins;
         }
     }
 

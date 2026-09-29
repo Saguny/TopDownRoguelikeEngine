@@ -15,8 +15,8 @@ MonoBehaviour:
   id: 'growth'
   title: 'Growth'
   icon: {fileID: 0}
-  description: '{0} more experience from Wen per level.'
+  description: '{0} more qi from kills and pickups per level.'
   stat: 13
   perRank: 0.1
   maxRank: 8
-  baseCost: 24000
+  baseCost: 14000

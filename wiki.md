@@ -11,18 +11,20 @@ The project lives in `topdownshooter/`; game code and data are under `Assets/###
 |---|---|
 | **Waves** | 3 minutes each. The run clock runs during a wave and stops for everything between waves. |
 | **Final Rush** | At the end of every wave, a ring of spirit seals rises around the player; you can't leave it. The rush's bosses come in on the far side of the ring. Beat them to win the rush. |
-| **After a rush** | A seal wave wipes the horde, all wen on the ground is pulled in, and the rush boss drops a fortune envelope. The next wave waits until you open it. |
+| **After a rush** | A seal wave wipes the horde, all qi on the ground is pulled in, and the rush boss drops a fortune envelope. The next wave waits until you open it. |
 | **Final boss** | Wave 10, or at 28:00 on the run clock at the latest. After the last rush you're healed to full. |
 | **End of the night** | At 30:00 the Wuchang (the black and white guards of the dead) come for the player; that counts as surviving. Beating the final boss wins the run. |
 | **Endless** | Unlocks after finishing 5 normal runs. Enemy scaling has no limit, overcharge picks appear (see below), bombardment strikes rain down, and your best time is recorded. |
 
-**Wen** is both XP and money. Every kill gives 1 wen (times Growth), and enemies drop more. Wen fills the level bar, and the same wen is banked as **coins** for the shop.
+**Qi** is XP. Every kill gives 1 qi (times Growth), and some enemies drop more as pickups in three tiers: azure **qi sparks**, jade **qi beads** and golden **dragon pearls**. The thicker the crowd, the fewer pieces drop, each worth more. Qi only fills the level bar.
+
+**Coins** (wen, the currency) come only from **fortune envelopes**, plus the String of Wen gift once you're maxed. The HUD's coin counter shows what this run's envelopes have paid.
 
 ---
 
 ## Characters
 
-Each starts with a weapon that has a **signature** bonus. Characters after the first cost coins: 10,000, then 3,000 more for each one bought.
+Each starts with a weapon that has a **signature** bonus. Characters after the first cost coins: 6,000, then 1,800 more for each one bought.
 
 | Character | Starting weapon | Signature |
 |---|---|---|
@@ -85,13 +87,13 @@ Attack class: arrows and blades are **Physical**, talismans, spells and summons 
 | Piercing | arrows, stars and flying swords go through +1 enemy | 3 |
 | Pickup Radius | +5% | 7 |
 
-**Level-up tools:** Reroll, Skip and Banish, charges bought in the shop. When everything is maxed, the level-up offers gifts instead: a **String of Wen** (2,500 coins before Greed) or a **Peach of Immortality** (heals 30%).
+**Level-up tools:** Reroll, Skip and Banish, charges bought in the shop. When everything is maxed, the level-up offers gifts instead: a **String of Wen** (150 coins before Greed) or a **Peach of Immortality** (heals 30%).
 
 ---
 
 ## Stats
 
-Max Health, Recovery, Armor, Move Speed, Might, Cooldown, Area, Weapon Speed, Arrow Count, Pierce, Crit Chance, Crit Damage, Magnet, Growth (more wen), Greed (more coins), Revival, Reroll, Skip, Banish, Armour Piercing.
+Max Health, Recovery, Armor, Move Speed, Might, Cooldown, Area, Weapon Speed, Arrow Count, Pierce, Crit Chance, Crit Damage, Magnet, Growth (more qi), Greed (more coins from envelopes), Revival, Reroll, Skip, Banish, Armour Piercing.
 
 ## Shop (permanent upgrades, bought with coins)
 
@@ -99,26 +101,34 @@ Each rank costs its base × the rank number.
 
 | Upgrade | Per rank | Ranks | Base cost |
 |---|---|---|---|
-| Max Health | +20 | 5 | 24,000 |
-| Recovery | +0.1/s | 5 | 30,000 |
-| Armor | +1 | 5 | 40,000 |
-| Might | +5% | 5 | 40,000 |
-| Cooldown | −5% | 5 | 45,000 |
-| Area | +5% | 5 | 30,000 |
-| Crit Chance | +2% | 10 | 12,000 |
-| Crit Damage | +5% | 5 | 25,000 |
-| Growth | +10% | 8 | 24,000 |
-| Greed | +10% | 8 | 20,000 |
-| Reroll | +1 | 3 | 50,000 |
-| Skip | +1 | 5 | 30,000 |
-| Banish | +1 | 1 | 120,000 |
-| Revival | +1 | 1 | 300,000 |
+| Max Health | +20 | 5 | 14,000 |
+| Recovery | +0.1/s | 5 | 18,000 |
+| Armor | +1 | 5 | 24,000 |
+| Might | +5% | 5 | 24,000 |
+| Cooldown | −5% | 5 | 27,000 |
+| Area | +5% | 5 | 18,000 |
+| Crit Chance | +2% | 10 | 7,000 |
+| Crit Damage | +5% | 5 | 15,000 |
+| Growth | +10% | 8 | 14,000 |
+| Greed | +10% | 8 | 12,000 |
+| Reroll | +1 | 3 | 30,000 |
+| Skip | +1 | 5 | 18,000 |
+| Banish | +1 | 1 | 72,000 |
+| Revival | +1 | 1 | 180,000 |
 
 ---
 
 ## Fortune envelopes
 
-Red envelopes dropped by elites, rush bosses and final bosses, opened with a reveal sequence. They pay out levels, **evolutions** (the only way to get one), or, when nothing's left to level, gifts. Rarities: common, rare, legendary.
+Red envelopes dropped by elites, rush bosses and final bosses, opened with a reveal sequence. They give upgrades (1 / 3 / 5 by rarity) and **evolutions** (the only way to get one), and they are the **only source of coins**:
+
+| Rarity | Coins (before Greed) | Upgrades |
+|---|---|---|
+| Common | 100–200 | 1 |
+| Rare | 250–450 | 3 |
+| Legendary | 600–1,000 | 5 |
+
+An upgrade slot with nothing left to level pays a String of Wen (150) instead. Odds by source: elites mostly common, rush bosses 45% common / 42% rare / 13% legendary, final bosses 35% rare / 65% legendary.
 
 ---
 
@@ -135,7 +145,7 @@ Red envelopes dropped by elites, rush bosses and final bosses, opened with a rev
 - **Horse-Face** (Huangquan). Keeps his distance and pulses rings of twelve slow spirit orbs in a steady rhythm.
 
 ### Final bosses: duels
-When the final boss arrives, all your weapons are put away and your **starting weapon** returns in a duel-only form. You move at +80% speed and the boss's bullets fly at twice their speed. You keep the Command Token as a bomb. Your build only adds up to +40% damage. Clean spell cards (no hits taken) pay a coin bonus.
+When the final boss arrives, all your weapons are put away and your **starting weapon** returns in a duel-only form. You move at +80% speed and the boss's bullets fly at twice their speed. You keep the Command Token as a bomb. Your build only adds up to +40% damage. Clean spell cards (no hits taken) add a coin bonus to the envelope the boss drops (Yama 400–1,000 a card, Meng Po 450–1,250).
 
 | Starting weapon | Duel form |
 |---|---|
@@ -170,5 +180,5 @@ Every health bar after the first starts fresh: you're drawn back to the middle a
 | `Tools/Balance/` | `balance.py` (health curve), `pacing.py` (level curve), `boss.py` |
 | `Tools/Huangquan/` | Huangquan prefabs, archetypes and timeline generators |
 | `Data/Spawning/*Timeline.asset` | Beats (crowd caps, spawn rates, rosters), events, late-evolution pressure |
-| `Data/Curves/*Difficulty.asset` | Enemy health, speed, damage and the wen needed per level |
+| `Data/Curves/*Difficulty.asset` | Enemy health, speed, damage and the qi needed per level |
 | Game over → **Log This Run** | Writes a run report to `%USERPROFILE%\AppData\LocalLow\OFF-BY-ONE\Wanjian\Runs` |

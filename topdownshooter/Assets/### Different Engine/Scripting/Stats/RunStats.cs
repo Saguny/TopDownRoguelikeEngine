@@ -80,13 +80,13 @@ public static class RunStats
 
     // ---------------------------------------------------------------- reported by the game
 
-    // wen that reached the player: a pickup touched, or swept in at the end of a wave. kills
-    // that pay wen straight into the level bar don't count; they never hit the ground
+    // qi that reached the player: a pickup touched, or swept in at the end of a wave. it fills the
+    // level bar and nothing else (coins come out of envelopes). kills that pay qi straight into the
+    // level bar don't count; they never hit the ground
     public static void PickedUpWen(int amount)
     {
         if (amount <= 0) return;
         WenPickedUp += amount;
-        Coins.Earn(amount);
         Changed?.Invoke();
     }
 
@@ -185,7 +185,7 @@ public static class RunStats
         s.AppendLine($"Kills {Kills}, elites {EliteKills}, bosses {BossKills}");
         s.AppendLine($"Health lost {HealthLost:0} in {HitsTaken} hits, {DamageBlocked:0} blocked by armour, lowest {LowestHealth * 100f:0}%");
         s.AppendLine($"Healed {Healed:0} ({HealsPickedUp} pickups), regenerated {Regenerated:0.#}, revivals used {RevivalsUsed}");
-        s.AppendLine($"Wen picked up {WenPickedUp}, walked {DistanceWalked:0}");
+        s.AppendLine($"Qi gathered {WenPickedUp}, coins {Coins.EarnedThisRun} ({Coins.FromEnvelopesThisRun} from envelopes), walked {DistanceWalked:0}");
         if (unlocks.Count > 0) s.AppendLine("Unlocked: " + string.Join(", ", unlocks));
         foreach (var w in weapons)
             s.AppendLine($"  {(w.Evolved ? "> " : "")}{w.Title} Lv {w.Level}: {Short(w.Damage)} ({w.Share * 100f:0}%), {w.Dps:0} dps over {Clock(w.Seconds)}, {w.LiveDps:0} now, {w.PeakDps:0} at best, {w.Kills} kills");

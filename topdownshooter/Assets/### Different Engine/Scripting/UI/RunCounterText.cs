@@ -1,10 +1,9 @@
 using TMPro;
 using UnityEngine;
 
-// a HUD number for this run: kills, wen picked up, or the coins the run has earned for the shop.
-// put it on the text and pick which. next to a coin, it has to be Coins Earned: wen are coins too
-// in the fiction but aren't the shop's, and a wen count next to a coin read as coins, far more
-// than reached the shop (a player saw 2.9k and found 1.1k)
+// a HUD number for this run: kills, qi gathered, or coins. put it on the text and pick which.
+// Coins Earned shows what the run's fortune envelopes have paid, the only place coins come from
+// (the level up's String of Wen shows on the end screen, not here)
 [RequireComponent(typeof(TMP_Text))]
 public class RunCounterText : MonoBehaviour
 {
@@ -36,7 +35,7 @@ public class RunCounterText : MonoBehaviour
     private void OnEnable()
     {
         RunStats.Changed += MarkDirty;
-        Coins.Changed += MarkDirty;     // envelopes and gifts pay coins without a pickup
+        Coins.Changed += MarkDirty;     // envelopes pay coins without a pickup
         Show();
     }
 
@@ -61,7 +60,7 @@ public class RunCounterText : MonoBehaviour
     {
         int value = counter == Counter.Kills ? RunStats.Kills
             : counter == Counter.WenPickedUp ? RunStats.WenPickedUp
-            : Coins.EarnedThisRun;
+            : Coins.FromEnvelopesThisRun;
         if (value == shown) return;
         if (value > shown && shown >= 0) punchTime = 0.12f;
         shown = value;

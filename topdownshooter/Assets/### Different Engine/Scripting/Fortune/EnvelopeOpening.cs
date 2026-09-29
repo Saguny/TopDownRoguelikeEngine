@@ -49,7 +49,7 @@ public class EnvelopeOpening : MonoBehaviour
         var player = GameObject.FindGameObjectWithTag("Player");
         if (player != null && player.TryGetComponent(out PlayerInventory inventory) && inventory.EnvelopeWouldBeEmpty(evolves))
         {
-            PayOut(rarity, inventory);
+            PayOut(rarity, source, inventory);
             return;
         }
         waiting.Enqueue((rarity, source, evolves));
@@ -59,14 +59,14 @@ public class EnvelopeOpening : MonoBehaviour
     private static AudioClip payOutSound;
 
     // the String of Wen for every upgrade it held, and its own coins
-    private static void PayOut(EnvelopeRarity rarity, PlayerInventory inventory)
+    private static void PayOut(EnvelopeRarity rarity, EnvelopeSource source, PlayerInventory inventory)
     {
-        int coins = inventory.GiftCoins * FortuneEnvelope.Upgrades(rarity) + FortuneEnvelope.CoinsFor(rarity);
-        Coins.Gift(coins);
+        int coins = inventory.GiftCoins * FortuneEnvelope.Upgrades(rarity) + FortuneEnvelope.RollCoins(rarity) + FortuneEnvelope.TakeBonus(source);
+        int paid = Coins.FromEnvelope(coins);
         Vector2 at = inventory.transform.position;
         if (payOutSound == null) payOutSound = Resources.Load<AudioClip>("Sfx/coins_total");
         if (payOutSound != null) SfxPlayer.PlayAt(payOutSound, at, 0.9f);
-        PixelNumbers.Show(at + Vector2.up * 1.3f, Coins.WithGreed(coins), true, new Color(1f, 0.85f, 0.3f), 2);
+        PixelNumbers.Show(at + Vector2.up * 1.3f, paid, true, new Color(1f, 0.85f, 0.3f), 2);
     }
 
     // ---------------------------------------------------------------- parts
@@ -264,8 +264,7 @@ public class EnvelopeOpening : MonoBehaviour
         var player = GameObject.FindGameObjectWithTag("Player");
         var inventory = player != null ? player.GetComponent<PlayerInventory>() : null;
         var rewards = inventory != null ? inventory.OpenEnvelope(FortuneEnvelope.Upgrades(rarity), what.evolves) : new List<EnvelopeReward>();
-        int coins = Coins.WithGreed(FortuneEnvelope.CoinsFor(rarity));
-        Coins.Gift(FortuneEnvelope.CoinsFor(rarity));
+        int coins = Coins.FromEnvelope(FortuneEnvelope.RollCoins(rarity) + FortuneEnvelope.TakeBonus(what.source));
         foreach (var r in rewards) if (r.IsCoins) coins += r.coins;
 
         ResetStage();

@@ -2,11 +2,11 @@ using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-// the coin wallet the upgrade shop spends from, saved between runs. wen the player picks up in a
-// run pays coins, scaled by the run's Greed and by how far into the run it is: the further in,
-// the less each wen is worth, because late wen come in far greater numbers and worth (a single
-// 30 minute run used to pay out 40k). fractions carry over so small amounts still add up (see
-// RunStats.PickedUpWen)
+// the coin wallet (wen, the currency) the upgrade shop spends from, saved between runs. coins come
+// only out of fortune envelopes, Vampire Survivors' way: each rarity pays a roll between its own
+// min and max (FortuneEnvelope.RollCoins), times the run's Greed. the qi the horde drops fills the
+// level bar and nothing else. the one other source is the level up's String of Wen, the gift it
+// offers once there's nothing left to level
 public static class Coins
 {
     private const string Key = "coins";
@@ -65,24 +65,20 @@ public static class Coins
 
     // ---- earning ----
     private static float greedMultiplier = 1f;
-    private static float carry;
 
-    // a wen picked up pays one coin (a jade wen what it's worth, 2), times Greed, all run long. the
-    // shop's prices are set for that: a full normal run pays tens of thousands
-    private static float runSeconds;
-
-    // coins this run has paid so far, for the end screen (RunStatText's Coins Earned)
+    // coins this run has paid so far, envelopes and gifts, for the end screen (RunStatText's Coins
+    // Earned); and those out of envelopes alone, for the HUD's counter
     public static int EarnedThisRun { get; private set; }
+    public static int FromEnvelopesThisRun { get; private set; }
 
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetStatics()
     {
         Changed = null;
-        carry = 0f;
         greedMultiplier = 1f;
-        runSeconds = 0f;
         EarnedThisRun = 0;
+        FromEnvelopesThisRun = 0;
         balance = -1;
         unsaved = false;
     }
@@ -94,38 +90,31 @@ public static class Coins
         SceneManager.sceneLoaded += OnSceneLoaded;
         Application.quitting -= Save;
         Application.quitting += Save;
-        GameEvents.OnRunTimeChanged -= OnRunTime;
-        GameEvents.OnRunTimeChanged += OnRunTime;
     }
-
-    private static void OnRunTime(float seconds) => runSeconds = seconds;
 
     // Greed is read as each scene loads, so a run earns at the rate it started with
     private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         greedMultiplier = 1f + Mathf.Max(0f, StatSheet.ForRun()[StatId.Greed]);
-        runSeconds = 0f;
         EarnedThisRun = 0;
+        FromEnvelopesThisRun = 0;
         Save();
     }
 
-    // wen picked up pays a coin each, times Greed
-    public static void Earn(int wen)
-    {
-        if (wen <= 0) return;
-        carry += wen * greedMultiplier;
-        int whole = Mathf.FloorToInt(carry);
-        if (whole <= 0) return;
-        carry -= whole;
-        Add(whole);
-        EarnedThisRun += whole;
-    }
-
-    // a set amount, as a fortune envelope or a level up's gift pays it: times Greed, whenever in
-    // the run it comes
+    // a set amount, times Greed
     public static int WithGreed(int amount) => Mathf.Max(0, Mathf.RoundToInt(amount * greedMultiplier));
 
-    // what it paid, after Greed; counted in this run's coins earned (the HUD's counter, the end screen)
+    // what a fortune envelope pays, after Greed: the HUD's counter shows these alone
+    public static int FromEnvelope(int amount)
+    {
+        int paid = Gift(amount);
+        FromEnvelopesThisRun += paid;
+        if (paid > 0) Changed?.Invoke();
+        return paid;
+    }
+
+    // the level up's String of Wen: what it paid, after Greed; in the run's coins earned (the end
+    // screen) but not the HUD's envelope counter
     public static int Gift(int amount)
     {
         int paid = WithGreed(amount);
