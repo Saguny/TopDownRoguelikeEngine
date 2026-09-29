@@ -354,8 +354,22 @@ public class MengPoBoss : MonoBehaviour, IDamageGate, IFightBoss
 
     // ================================================================ the fight
 
+    // Persona's cut-in for her cards: her eyes in a torn band, 忘 (forget) brushed beside them;
+    // violet, and the river's cold teal in her true form
+    private static PersonaCutIn.Theme CutIn(bool trueForm) => new PersonaCutIn.Theme
+    {
+        art = trueForm ? "mengpo_true" : "mengpo",
+        fallback = trueForm ? "MengPo/portrait_true" : "MengPo/portrait",
+        fallbackEyes = trueForm ? 0.61f : 0.56f,
+        wedge = trueForm ? new Color(0.2f, 0.62f, 0.7f) : new Color(0.55f, 0.32f, 0.86f),
+        wedgeDark = trueForm ? new Color(0.05f, 0.2f, 0.26f) : new Color(0.18f, 0.08f, 0.33f),
+        glyph = PersonaCutIn.Glyph.Forget,
+    };
+
     private IEnumerator Fight()
     {
+        PersonaCutIn.Prepare(CutIn(false));       // both forms baked while she makes her entrance
+        PersonaCutIn.Prepare(CutIn(true));
         yield return Entrance();
         for (int i = 0; i < phases.Length; i++) yield return RunPhase(i);
         yield return Death();
@@ -585,17 +599,7 @@ public class MengPoBoss : MonoBehaviour, IDamageGate, IFightBoss
         Sound("mp_declare", transform.position, 1f);
         var charge = Art("mp_charge");
         if (charge != null) FxBatch.Play(charge, 8f, E, 2.4f, "Aura", 42);
-        // Persona's cut-in: her eyes in a torn band, 忘 (forget) brushed beside them; violet, and
-        // the river's cold teal in her true form
-        PersonaCutIn.Play(new PersonaCutIn.Theme
-        {
-            art = trueForm ? "mengpo_true" : "mengpo",
-            fallback = trueForm ? "MengPo/portrait_true" : "MengPo/portrait",
-            fallbackEyes = trueForm ? 0.61f : 0.56f,
-            wedge = trueForm ? new Color(0.2f, 0.62f, 0.7f) : new Color(0.55f, 0.32f, 0.86f),
-            wedgeDark = trueForm ? new Color(0.05f, 0.2f, 0.26f) : new Color(0.18f, 0.08f, 0.33f),
-            glyph = PersonaCutIn.Glyph.Forget,
-        }, regroup ? Snap : (System.Action)null);
+        PersonaCutIn.Play(CutIn(trueForm), regroup ? Snap : (System.Action)null);
         screen.Declare(card, null);
         screen.Dim(0.2f);
         grade.Set(trueForm ? BossGrade.Look.Rage : BossGrade.Look.Spell, 1.2f);

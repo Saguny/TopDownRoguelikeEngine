@@ -318,8 +318,17 @@ public class YamaBoss : MonoBehaviour, IDamageGate, IFightBoss
 
     // ================================================================ the fight
 
+    // Persona's cut-in for his cards: his eyes in a torn band, 判 (judgement) brushed beside them
+    private static readonly PersonaCutIn.Theme CutIn = new PersonaCutIn.Theme
+    {
+        art = "yama", fallback = "Yama/portrait", fallbackEyes = 0.58f,
+        wedge = new Color(0.77f, 0.16f, 0.21f), wedgeDark = new Color(0.33f, 0.04f, 0.08f),
+        glyph = PersonaCutIn.Glyph.Judge,
+    };
+
     private IEnumerator Fight()
     {
+        PersonaCutIn.Prepare(CutIn);              // baked while he makes his entrance
         yield return Entrance();
         for (int i = 0; i < phases.Length; i++) yield return RunPhase(i);
         yield return Death();
@@ -509,13 +518,7 @@ public class YamaBoss : MonoBehaviour, IDamageGate, IFightBoss
         YamaArt.Play("yama_declare", transform.position, 1f);
         var charge = YamaArt.Frames("charge");
         if (charge != null) FxBatch.Play(charge, 8f, E, 2.4f, "Aura", 42);
-        // Persona's cut-in: his eyes in a torn band, 判 (judgement) brushed beside them
-        PersonaCutIn.Play(new PersonaCutIn.Theme
-        {
-            art = "yama", fallback = "Yama/portrait", fallbackEyes = 0.58f,
-            wedge = new Color(0.77f, 0.16f, 0.21f), wedgeDark = new Color(0.33f, 0.04f, 0.08f),
-            glyph = PersonaCutIn.Glyph.Judge,
-        }, regroup ? Snap : (System.Action)null);
+        PersonaCutIn.Play(CutIn, regroup ? Snap : (System.Action)null);
         screen.Declare(card, null);
         screen.Dim(0.2f);
         grade.Set(rage ? BossGrade.Look.Rage : BossGrade.Look.Spell, 1.2f);

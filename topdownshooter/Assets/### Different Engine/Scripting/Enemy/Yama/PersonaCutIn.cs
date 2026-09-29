@@ -10,8 +10,10 @@ using UnityEngine.UI;
 // behind it. whatever should happen unseen (the duel's regroup) happens as the eyes land, under
 // the flash
 //
-// it's drawn as pixel art: every frame composited on the CPU into one 480x270 texture shown over
-// the whole screen, point filtered. the eyes come from Resources/CutIn/<name> (any size, PNG; it's
+// it's drawn as pixel art, 480x270 frames shown over the whole screen, point filtered. painting a
+// frame is too slow to do while it plays, so the boss has it baked when the fight starts (Prepare):
+// every frame painted on a worker thread, then handed to the GPU a few at a time, and the cut-in
+// is only a flipbook. asked for one that isn't ready, it paints live instead. the eyes come from Resources/CutIn/<name> (any size, PNG; it's
 // fitted to cover the band, the face a little right of centre), so art can be dropped in without
 // touching code. without one, the boss's own 112px portrait stands in, cropped to its eyes
 public class PersonaCutIn : MonoBehaviour
@@ -31,14 +33,75 @@ public class PersonaCutIn : MonoBehaviour
 
     private const int W = CutInPainter.W, H = CutInPainter.H, FW = CutInPainter.FW, FH = CutInPainter.FH;
 
+    public const int Fps = 30;
+    private static int FrameCount => Mathf.CeilToInt(CutInPainter.End * Fps);
+
     private static PersonaCutIn instance;
     private RawImage image;
     private Texture2D tex;
     private readonly CutInPainter painter = new CutInPainter();
+
+    // a cut-in baked ahead: its frames painted (off the main thread), then uploaded one by one
+    private class Baked
+    {
+        public Color32[][] pixels;
+        public Texture2D[] frames;
+        public volatile bool painted;
+        public bool Ready => frames != null && frames[frames.Length - 1] != null;
+    }
+    private readonly System.Collections.Generic.Dictionary<string, Baked> baked = new System.Collections.Generic.Dictionary<string, Baked>();
+    private static string Key(Theme t) => t.art + "|" + t.fallback + "|" + t.glyph + "|" + ColorUtility.ToHtmlStringRGB(t.wedge) + ColorUtility.ToHtmlStringRGB(t.wedgeDark);
     private static readonly System.Collections.Generic.Dictionary<string, Color32[]> faces = new System.Collections.Generic.Dictionary<string, Color32[]>();
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetStatics() { instance = null; faces.Clear(); }
+
+    // bakes a cut-in ahead of its first card; called as the fight starts
+    public static void Prepare(Theme theme)
+    {
+        if (instance == null) instance = Build();
+        string key = Key(theme);
+        if (instance.baked.ContainsKey(key)) return;
+        var bake = new Baked();
+        instance.baked[key] = bake;
+        var face = Face(theme);                   // reading the art back needs the main thread
+        System.Threading.Tasks.Task.Run(() =>
+        {
+            try
+            {
+                var p = new CutInPainter();
+                var all = new Color32[FrameCount][];
+                for (int i = 0; i < all.Length; i++)
+                {
+                    p.Draw(theme.glyph, theme.wedge, theme.wedgeDark, face, i / (float)Fps);
+                    all[i] = (Color32[])p.Pixels.Clone();
+                }
+                bake.pixels = all;
+            }
+            catch (System.Exception e) { Debug.LogException(e); }   // no flipbook: it'll paint live
+            bake.painted = true;
+        });
+        instance.StartCoroutine(instance.Upload(bake));
+    }
+
+    // the painted frames onto the GPU, a few a frame so it doesn't hitch; their CPU copies let go
+    private IEnumerator Upload(Baked bake)
+    {
+        while (!bake.painted) yield return null;
+        if (bake.pixels == null) yield break;
+        var frames = new Texture2D[bake.pixels.Length];
+        for (int i = 0; i < frames.Length; i++)
+        {
+            var f = new Texture2D(W, H, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp, name = "Cut-In " + i };
+            f.SetPixels32(bake.pixels[i]);
+            f.Apply(false, true);
+            bake.pixels[i] = null;
+            frames[i] = f;
+            if (i % 4 == 3) yield return null;
+        }
+        bake.pixels = null;
+        bake.frames = frames;
+    }
 
     public static void Play(Theme theme, System.Action onLand = null)
     {
@@ -69,6 +132,8 @@ public class PersonaCutIn : MonoBehaviour
     private void OnDestroy()
     {
         if (tex != null) Destroy(tex);
+        foreach (var b in baked.Values)
+            if (b.frames != null) foreach (var f in b.frames) if (f != null) Destroy(f);
         if (instance == this) instance = null;
     }
 
@@ -132,16 +197,23 @@ public class PersonaCutIn : MonoBehaviour
 
     private IEnumerator Run(Theme t, System.Action onLand)
     {
-        var face = Face(t);
+        baked.TryGetValue(Key(t), out var bake);
+        bool flipbook = bake != null && bake.Ready;
+        var face = flipbook ? null : Face(t);
+        image.texture = tex;
         image.enabled = true;
         if (!string.IsNullOrEmpty(t.sound)) YamaArt.Play(t.sound, Camera.main != null ? (Vector2)Camera.main.transform.position : Vector2.zero, 0.9f);
         for (float time = 0f; time < CutInPainter.End; time += Time.unscaledDeltaTime)
         {
             Cover();
             if (onLand != null && time >= CutInPainter.Lands) { onLand(); onLand = null; }
-            painter.Draw(t.glyph, t.wedge, t.wedgeDark, face, time);
-            tex.SetPixels32(painter.Pixels);
-            tex.Apply(false);
+            if (flipbook) image.texture = bake.frames[Mathf.Min(bake.frames.Length - 1, (int)(time * Fps))];
+            else
+            {
+                painter.Draw(t.glyph, t.wedge, t.wedgeDark, face, time);
+                tex.SetPixels32(painter.Pixels);
+                tex.Apply(false);
+            }
             yield return null;
         }
         onLand?.Invoke();
