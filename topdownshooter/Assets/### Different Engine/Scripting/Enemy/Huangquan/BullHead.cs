@@ -6,10 +6,11 @@ using UnityEngine;
 // half their speed; then he stops, flashes red and paws the ground while a lane of red chevrons
 // shows the line he'll take (0.8 s), straight at where the player stood when he stopped, and
 // charges down it. anything of the horde in his way is trampled flat, its number shown in the
-// hostile red-violet rather than the player's colours. he runs on past, and when he
-// hits a wall or the charge runs out he's stunned for 1.5 s, stars round his horns, taking 20% more
-// damage: the moment to hit him. two of them never charge down the same line: a second lane
-// parallel and close to one already shown is moved aside, so they come as a pair of lanes
+// hostile red-violet rather than the player's colours. he runs on past, skids to a halt wheeling
+// round, and comes straight back at them off the skid with a shorter warning; after the second
+// charge he marches again. only a wall stops him short: he's dazed a moment, stars round his horns,
+// taking 20% more damage. two of them never charge down the same line: a second lane parallel and
+// close to one already shown is moved aside, so they come as a pair of lanes
 [RequireComponent(typeof(EnemyMovement))]
 [RequireComponent(typeof(EnemyHealth))]
 public class BullHead : MonoBehaviour
@@ -36,17 +37,29 @@ public class BullHead : MonoBehaviour
     [Tooltip("two lanes closer than this and nearly parallel: the second is moved aside by it")]
     public float laneGap = 2.4f;
 
-    [Header("stun")]
-    public float stun = 1.5f;
-    [Tooltip("damage he takes while stunned, times usual")]
-    public float stunnedTaken = 1.2f;
+    [Header("after a charge")]
+    [Tooltip("seconds he skids to a halt and wheels round when a charge runs out")]
+    public float skid = 0.4f;
+    [Tooltip("charges in a row before he marches again: each after the first comes off the skid")]
+    [Min(1)] public int chain = 2;
+    [Tooltip("the warning before a charge off the skid")]
+    public float chainTelegraph = 0.45f;
+    [Tooltip("seconds he's dazed after running into a wall")]
+    public float wallDaze = 0.7f;
+    [Tooltip("damage he takes while dazed, times usual")]
+    public float dazedTaken = 1.2f;
 
-    private enum State { March, Telegraph, Charge, Stun }
+    private enum State { March, Telegraph, Charge, Skid, Daze }
     private State state;
-    private float until, chargeEnd;
-    private Vector2 dir, laneStart, lastPos;
-    private int stalls;
+    private float until, chargeEnd, warning;
+    private Vector2 dir, laneStart;
+    private int chargesLeft;
     private bool hitPlayer;
+    // the wall check: how far he got over a short window of the charge. the swarm moves him on
+    // physics steps, so a frame or two without moving is only a frame without a step, not a wall
+    private Vector2 windowFrom;
+    private float windowStart;
+    private const float Window = 0.15f;
 
     private EnemyMovement move;
     private EnemyHealth health;
@@ -119,7 +132,7 @@ public class BullHead : MonoBehaviour
 
     private void Begin(State s, float seconds)
     {
-        if (state == State.Stun && s != State.Stun) Taken(1f);
+        if (state == State.Daze && s != State.Daze) Taken(1f);
         state = s;
         until = Time.time + seconds;
     }
@@ -130,7 +143,8 @@ public class BullHead : MonoBehaviour
         switch (state)
         {
             case State.March:
-                if (now >= until) TryTelegraph();
+                if (now >= until && !TryTelegraph(telegraph))
+                    until = now + 0.4f;   // too far, or another bull only just began: march on a moment
                 break;
 
             case State.Telegraph:
@@ -140,7 +154,7 @@ public class BullHead : MonoBehaviour
                 // flashing red, faster as the charge comes
                 if (art != null && art.Renderer != null)
                 {
-                    float k = 1f - (until - now) / telegraph;
+                    float k = 1f - (until - now) / warning;
                     float blink = Mathf.PingPong(now * Mathf.Lerp(6f, 16f, k), 1f);
                     art.Renderer.color = Color.Lerp(rest, new Color(1f, 0.25f, 0.2f, 1f), blink);
                 }
@@ -151,28 +165,44 @@ public class BullHead : MonoBehaviour
                 Charge(now);
                 break;
 
-            case State.Stun:
-                move.Drive(Vector2.zero, 0.1f);
+            case State.Skid:
+            {
+                // sliding to a halt along the line, dust flying, turning to face them again
+                float left = Mathf.Clamp01((until - now) / skid);
+                move.Drive(dir * (Hq.PlayerBaseSpeed * chargeSpeed * 0.45f * left * left), 0.1f, ghost: true);
+                if (Hq.FindPlayer(out Vector2 p)) move.Face(p - (Vector2)transform.position, 0.1f);
+                if (dustArt != null && Random.value < 0.5f * left)
+                    FxBatch.Play(dustArt, 18f, (Vector2)transform.position + Vector2.down * Feet + Random.insideUnitCircle * 0.3f, 1f, "Enemy", 1);
                 if (now >= until)
                 {
-                    Begin(State.March, Random.Range(marchBetween.x, marchBetween.y));
-                    if (art != null) art.Stop();
+                    Ghost(false);
+                    if (chargesLeft <= 0 || !TryTelegraph(chainTelegraph)) March();
                 }
+                break;
+            }
+
+            case State.Daze:
+                move.Drive(Vector2.zero, 0.1f);
+                if (now >= until) March();
                 break;
         }
     }
 
-    private void TryTelegraph()
+    private void March()
     {
-        if (!Hq.FindPlayer(out Vector2 player)) return;
+        chargesLeft = 0;
+        if (art != null) art.Stop();
+        Begin(State.March, Random.Range(marchBetween.x, marchBetween.y));
+    }
+
+    private bool TryTelegraph(float seconds)
+    {
+        if (!Hq.FindPlayer(out Vector2 player)) return false;
         Vector2 me = transform.position;
         Vector2 to = player - me;
-        // too far to charge, or another bull only just began: march on a moment
-        if (to.magnitude > chargeFrom || Time.time - lastTelegraph < 0.6f)
-        {
-            until = Time.time + 0.4f;
-            return;
-        }
+        if (to.magnitude > chargeFrom || Time.time - lastTelegraph < 0.6f) return false;
+        // a fresh run of charges from the march; off a skid, the next in the run
+        if (state == State.March) chargesLeft = chain;
         lastTelegraph = Time.time;
         Vector2 target = Apart(me, player);
         to = target - me;
@@ -181,13 +211,15 @@ public class BullHead : MonoBehaviour
         laneStart = me;
         chargeEnd = length;
         charging.Add(this);
+        warning = seconds;
         if (art != null)
         {
             rest = art.Renderer != null ? art.Renderer.color : Color.white;
-            art.Play("telegraph", telegraph, loop: true);
+            art.Play("telegraph", seconds, loop: true);
         }
         Hq.Sound("hq_bull_snort", me, 0.7f, 0.2f);
-        Begin(State.Telegraph, telegraph);
+        Begin(State.Telegraph, seconds);
+        return true;
     }
 
     // where to aim so this lane isn't another bull's: a lane nearly parallel and close to one
@@ -212,7 +244,7 @@ public class BullHead : MonoBehaviour
     {
         if (lane == null) return;
         if (!lane.gameObject.activeSelf) lane.gameObject.SetActive(true);
-        float k = 1f - Mathf.Clamp01((until - now) / telegraph);
+        float k = 1f - Mathf.Clamp01((until - now) / warning);
         lane.sprite = YamaArt.Frame(laneArt, now, 14f);
         float width = lane.sprite.bounds.size.y;
         lane.size = new Vector2(chargeEnd * Mathf.Clamp01(k * 3f), width);
@@ -226,8 +258,9 @@ public class BullHead : MonoBehaviour
         if (art != null && art.Renderer != null) art.Renderer.color = rest;
         if (lane != null) lane.gameObject.SetActive(false);
         hitPlayer = false;
-        stalls = 0;
-        lastPos = transform.position;
+        chargesLeft--;
+        windowFrom = transform.position;
+        windowStart = Time.time;
         Ghost(true);
         float speed = Hq.PlayerBaseSpeed * chargeSpeed;
         float seconds = chargeEnd / speed;
@@ -261,11 +294,13 @@ public class BullHead : MonoBehaviour
         Vector2 me = transform.position;
         float speed = Hq.PlayerBaseSpeed * chargeSpeed;
 
-        // a wall: he's moved almost nothing for a couple of frames though he's charging
-        float moved = (me - lastPos).magnitude;
-        lastPos = me;
-        stalls = moved < speed * Time.deltaTime * 0.3f ? stalls + 1 : 0;
-        if (stalls >= 2) { Crash(me, true); return; }
+        // a wall: over a whole window he's got a fifth of the way he should have
+        if (now - windowStart >= Window)
+        {
+            if ((me - windowFrom).magnitude < speed * (now - windowStart) * 0.2f) { Crash(me, true); return; }
+            windowFrom = me;
+            windowStart = now;
+        }
 
         // the horde in his path goes under his hooves
         under.Clear();
@@ -324,26 +359,29 @@ public class BullHead : MonoBehaviour
         return Mathf.RoundToInt(a / 22.5f) % 8;
     }
 
-    // the charge over: into a wall (a crash), or run out (a skid). stunned either way
+    // the charge over: into a wall (a crash, dazed a moment), or run out (a skid, and round again)
     private void Crash(Vector2 me, bool wall)
     {
         charging.Remove(this);
-        Ghost(false);
         move.StopDrive();
-        if (wall)
+        if (!wall)
         {
-            if (crashArt != null) FxBatch.Play(crashArt, 20f, me + dir * 0.6f, 1.2f, "Aura", 25);
-            Hq.Sound("hq_bull_crash", me, 0.9f, 0.1f, 1f, 0.03f);
-            Juice.Shake(0.35f);
+            Hq.Sound("hq_bull_skid", me, 0.6f, 0.1f);
+            if (art != null) art.Stop();
+            Begin(State.Skid, skid);
+            return;
         }
-        else Hq.Sound("hq_bull_skid", me, 0.6f, 0.1f);
-        if (art != null) art.Play("stun", stun, loop: true);
+        Ghost(false);
+        if (crashArt != null) FxBatch.Play(crashArt, 20f, me + dir * 0.6f, 1.2f, "Aura", 25);
+        Hq.Sound("hq_bull_crash", me, 0.9f, 0.1f, 1f, 0.03f);
+        Juice.Shake(0.35f);
+        if (art != null) art.Play("stun", wallDaze, loop: true);
         Hq.Sound("hq_bull_dazed", me, 0.5f, 0.3f);
-        Taken(stunnedTaken);
-        Begin(State.Stun, stun);
+        Taken(dazedTaken);
+        Begin(State.Daze, wallDaze);
     }
 
-    // his damage taken while stunned, on top of what his kind takes
+    // his damage taken while dazed, on top of what his kind takes
     private float takenMul = 1f;
     private void Taken(float mul)
     {
