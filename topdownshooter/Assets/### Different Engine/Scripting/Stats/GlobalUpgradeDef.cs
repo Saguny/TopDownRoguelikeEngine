@@ -18,10 +18,13 @@ public class GlobalUpgradeDef : ScriptableObject
     [Min(1)] public int maxRank = 5;
 
     [Header("Cost")]
-    [Tooltip("price of the first rank; rank n costs this times n")]
+    [Tooltip("price of the first rank; rank n costs this times n to the power 1.5 (rounded to 50)")]
     [Min(0)] public int baseCost = 100;
 
-    public int CostOfRank(int rank) => baseCost * Mathf.Max(1, rank);
+    // cheap to start, steep to finish: a run that ends at 15:00 (a few envelopes, some 2,500
+    // coins) buys a first rank or two; maxing one takes a good many full runs
+    public const float Steepness = 1.5f;
+    public int CostOfRank(int rank) => Mathf.RoundToInt(baseCost * Mathf.Pow(Mathf.Max(1, rank), Steepness) / 50f) * 50;
 
     // the amount one rank adds, as the stat panel writes it: +20, +5%, -5%, +0.05x
     public string AmountPerRank(StatCatalog catalog)

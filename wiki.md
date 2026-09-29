@@ -97,10 +97,26 @@ Max Health, Recovery, Armor, Move Speed, Might, Cooldown, Area, Weapon Speed, Ar
 
 ## Shop (permanent upgrades, bought with coins)
 
-Each rank costs its base × the rank number.
+Rank *n* costs the first rank's price × *n*^1.5, so first ranks are cheap (a run that ends around 15:00 buys one or two) and the last ones are steep.
 
-| Upgrade | Per rank | Ranks | Base cost |
-|---|---|---|---|
+| Upgrade | Per rank | Ranks | First rank | All ranks |
+|---|---|---|---|---|
+| Max Health | +20 | 5 | 1,200 | 33,850 |
+| Recovery | +0.1/s | 5 | 1,500 | 42,300 |
+| Armor | +1 | 5 | 2,000 | 56,400 |
+| Might | +5% | 5 | 2,000 | 56,400 |
+| Cooldown | −5% | 5 | 2,500 | 70,500 |
+| Area | +5% | 5 | 1,500 | 42,300 |
+| Crit Chance | +2% | 10 | 800 | 114,100 |
+| Crit Damage | +5% | 5 | 1,800 | 50,750 |
+| Growth | +10% | 8 | 1,000 | 84,100 |
+| Greed | +10% | 8 | 1,000 | 84,100 |
+| Reroll | +1 | 3 | 3,000 | 27,100 |
+| Skip | +1 | 5 | 1,500 | 42,300 |
+| Banish | +1 | 1 | 12,000 | 12,000 |
+| Revival | +1 | 1 | 25,000 | 25,000 |
+
+---|---|---|---|
 | Max Health | +20 | 5 | 14,000 |
 | Recovery | +0.1/s | 5 | 18,000 |
 | Armor | +1 | 5 | 24,000 |
