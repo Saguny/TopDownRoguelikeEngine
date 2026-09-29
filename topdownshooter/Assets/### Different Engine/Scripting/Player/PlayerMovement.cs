@@ -23,6 +23,13 @@ public class PlayerMovement : MonoBehaviour
     private int _facingSign = -1;                // 1 = right, -1 = left
     private Vector2 _lastPosition;              // for the run's distance walked
 
+    // something carrying the player along whatever they do, units a second (Meng Po's river of
+    // forgetting): added to their own movement
+    public static Vector2 Drift;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics() => Drift = Vector2.zero;
+
     private void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
@@ -51,14 +58,15 @@ public class PlayerMovement : MonoBehaviour
         Vector2 dir = _moveInput.sqrMagnitude > 1f ? _moveInput.normalized : _moveInput;
 
         // target velocity and smooth acceleration/deceleration
-        Vector2 desiredVel = dir * (_speed * (_stats ? _stats.MoveSpeedTotal : 1f));
+        Vector2 desiredVel = dir * (_speed * (_stats ? _stats.MoveSpeedTotal : 1f)) + Drift;
         _rb.linearVelocity = Vector2.SmoothDamp(_rb.linearVelocity, desiredVel, ref _velocitySmoothRef, _accelTime);
 
-        // flip from velocity when there's horizontal motion
-        if (Mathf.Abs(_rb.linearVelocity.x) > 0.001f)
+        // flip from velocity when there's horizontal motion (their own, not a drift carrying them)
+        float ownX = _rb.linearVelocity.x - Drift.x;
+        if (Mathf.Abs(ownX) > 0.001f)
         {
             // mirror the art only when moving against the way it's drawn
-            _facingSign = (_rb.linearVelocity.x > 0) == _artFacesRight ? 1 : -1;
+            _facingSign = (ownX > 0) == _artFacesRight ? 1 : -1;
             transform.localScale = new Vector3(Mathf.Abs(_originalScale.x) * _facingSign, _originalScale.y, _originalScale.z);
 
             if (firePoint != null)

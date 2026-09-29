@@ -165,6 +165,37 @@ public class BossGrade : MonoBehaviour
         foreach (var p in profiles) if (p != null) Destroy(p);
     }
 
+    // the underworld's light is the fire's by default (Yama's courts); Meng Po's is the mist's:
+    // lilac in the shadows and moonlit azure in the highlights, a cold vignette, bloom tinted pale
+    // blue, and her true form's rage jade and violet rather than blood
+    public enum Theme { Fire, Mist }
+
+    public void SetTheme(Theme theme)
+    {
+        bool mist = theme == Theme.Mist;
+        void Tone(V which, Color filter, Color shadows, Color highlights, Color vignette, Color? bloom = null)
+        {
+            var p = profiles[(int)which];
+            if (p == null) return;
+            if (p.TryGet(out ColorAdjustments c)) c.colorFilter.Override(filter);
+            if (p.TryGet(out SplitToning s)) { s.shadows.Override(shadows); s.highlights.Override(highlights); }
+            if (p.TryGet(out Vignette v)) v.color.Override(vignette);
+            if (bloom.HasValue && p.TryGet(out Bloom b)) b.tint.Override(bloom.Value);
+        }
+        if (mist)
+        {
+            Tone(V.Fight, new Color(0.86f, 0.9f, 1f), new Color(0.22f, 0.14f, 0.45f), new Color(0.7f, 0.86f, 1f), new Color(0.05f, 0.04f, 0.2f), new Color(0.6f, 0.78f, 1f));
+            Tone(V.Spell, new Color(0.8f, 0.86f, 1f), new Color(0.2f, 0.08f, 0.5f), new Color(0.75f, 0.7f, 1f), new Color(0.08f, 0.02f, 0.22f));
+            Tone(V.Rage, new Color(0.82f, 0.95f, 0.95f), new Color(0.28f, 0.02f, 0.42f), new Color(0.55f, 1f, 0.9f), new Color(0.12f, 0f, 0.25f));
+        }
+        else
+        {
+            Tone(V.Fight, new Color(1f, 0.86f, 0.86f), new Color(0.35f, 0.1f, 0.5f), new Color(1f, 0.62f, 0.4f), new Color(0.2f, 0f, 0.05f), new Color(1f, 0.55f, 0.45f));
+            Tone(V.Spell, new Color(0.9f, 0.8f, 1f), new Color(0.25f, 0.05f, 0.55f), new Color(0.9f, 0.55f, 1f), new Color(0.12f, 0f, 0.2f));
+            Tone(V.Rage, new Color(1f, 0.7f, 0.68f), new Color(0.5f, 0f, 0.05f), new Color(1f, 0.5f, 0.3f), new Color(0.35f, 0f, 0.02f));
+        }
+    }
+
     // eases into a look over `seconds`
     public void Set(Look look, float seconds = 1.5f)
     {

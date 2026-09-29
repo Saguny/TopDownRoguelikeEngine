@@ -502,4 +502,4 @@ function makeFx(poses = {}) {
   return fx;
 }
 
-module.exports = { makeFx, ghost };
+module.exports = { makeFx, ghost, burst };

@@ -12,11 +12,15 @@ const mobs = require("./mobs");
 const guardians = require("./guardians");
 const fx = require("./fx");
 const statues = require("./statues");
+const mengpo = require("./mengpo");
+const mengpoFx = require("./mengpo_fx");
 
 const DEST = path.join(K.RES, "Huangquan");
 const META = path.join(K.RES, "Yama", "bar.png.meta");
-// tiled end to end by the game, so drawn edge to edge on purpose
-const TILED = new Set(["charge_lane"]);
+// tiled end to end by the game, or cut-ins filling their frame: drawn edge to edge on purpose
+const TILED = new Set(["charge_lane", "river", "portrait", "portrait_true"]);
+// Meng Po's own, in Resources/MengPo
+const MENGPO = () => Object.assign({}, mengpo.makeMengPo(), mengpoFx.makeMengPoFx());
 
 function everything() {
   const m = mobs.makeMobs(), bull = guardians.makeBull(), horse = guardians.makeHorse();
@@ -36,13 +40,23 @@ function meta(file) {
   fs.writeFileSync(m, text);
 }
 
+function folder(dest) {
+  fs.mkdirSync(dest, { recursive: true });
+  if (!fs.existsSync(dest + ".meta"))
+    fs.writeFileSync(dest + ".meta", fs.readFileSync(path.join(K.RES, "UI.meta"), "utf8").replace(/guid: [0-9a-f]+/, "guid: " + require("crypto").randomBytes(16).toString("hex")));
+}
+
 function build() {
-  fs.mkdirSync(DEST, { recursive: true });
+  const sets = [[DEST, everything()], [path.join(K.RES, "MengPo"), MENGPO()]];
+  const problems = [];
+  for (const [dest, all] of sets) writeSet(dest, all, problems);
+  if (problems.length) { console.error("\n" + problems.join("\n")); process.exit(1); }
+}
+
+function writeSet(DEST, all, problems) {
+  folder(DEST);
   const preview = path.join(__dirname, "out");
   fs.mkdirSync(preview, { recursive: true });
-  if (!fs.existsSync(DEST + ".meta")) fs.copyFileSync(path.join(K.RES, "UI.meta"), DEST + ".meta"), fs.writeFileSync(DEST + ".meta",
-    fs.readFileSync(DEST + ".meta", "utf8").replace(/guid: [0-9a-f]+/, "guid: " + require("crypto").randomBytes(16).toString("hex")));
-  const all = everything(), problems = [];
   for (const [name, raw] of Object.entries(all)) {
     const frames = TILED.has(name) ? raw : K.fit(raw);
     if (!TILED.has(name)) {
@@ -56,9 +70,8 @@ function build() {
     meta(file);
     const scale = frames[0].w <= 24 ? 8 : frames[0].w <= 56 ? 5 : frames[0].w <= 100 ? 3 : 2;
     png.encode(png.preview(frames, scale, [40, 34, 46], Math.min(frames.length, 8), 2), path.join(preview, `sheet_${name}.png`));
-    console.log(`${name.padEnd(28)} ${frames[0].w}x${frames[0].h} x${frames.length}`);
+    console.log(`${path.basename(DEST)}/${name.padEnd(24)} ${frames[0].w}x${frames[0].h} x${frames.length}`);
   }
-  if (problems.length) { console.error("\n" + problems.join("\n")); process.exit(1); }
 }
 
 if (require.main === module) build();

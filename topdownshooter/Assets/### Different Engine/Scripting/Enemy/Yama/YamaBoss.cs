@@ -20,7 +20,7 @@ using UnityEngine;
 // about 2:30 against six evolved weapons (Tools/Balance/boss.py). art and sounds from Resources
 // (YamaArt); his music is the Boss Music slot below
 [RequireComponent(typeof(EnemyHealth))]
-public class YamaBoss : MonoBehaviour, IDamageGate
+public class YamaBoss : MonoBehaviour, IDamageGate, IFightBoss
 {
     [Header("Music")]
     [Tooltip("the fight's own music: the run's music fades out as he comes and this fades in, looping, until he falls. empty: the run's music carries on")]

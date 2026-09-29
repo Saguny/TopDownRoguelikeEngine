@@ -110,6 +110,10 @@ public class Danmaku : MonoBehaviour
     public static int Grazes { get; private set; }
     // shown while a boss is up, even between volleys
     public static bool ShowHitbox;
+    // Meng Po's forgetting: 0 every bullet as it is, 1 all of them faded to ghosts of themselves
+    // (still there, still hurting, only just to be seen, flickering), so the player has to
+    // remember where they were
+    public static float Veil;
     public static event System.Action<Vector2> PlayerHit;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -118,6 +122,7 @@ public class Danmaku : MonoBehaviour
         instance = null;
         Hits = Grazes = 0;
         ShowHitbox = false;
+        Veil = 0f;
         PlayerHit = null;
     }
 
@@ -407,6 +412,8 @@ public class Danmaku : MonoBehaviour
             }
             float spin = b.s.type == BulletType.Coin ? b.age * 420f
                 : b.s.type == BulletType.Orb || b.s.type == BulletType.BigOrb ? 0f : b.angle;
+            // forgotten: a faint ghost of itself, each one flickering on its own beat
+            if (Veil > 0f) alpha *= Mathf.Lerp(1f, 0.16f + 0.1f * Mathf.Sin(b.age * 23f + i), Veil);
             Quad(i, b.pos, spin, half * scale, c * cellUv, (5 - t) * cellUv, cellUv, (byte)(alpha * 255f));
         }
         if (marker)

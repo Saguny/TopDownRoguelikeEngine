@@ -7626,6 +7626,7 @@ MonoBehaviour:
   spawnTimeline: {fileID: 11400000, guid: 116d2d63dd594e9689d719ec787e6b7e, type: 2}
   difficulty: {fileID: 11400000, guid: 21b5fed46a435f046824afdafb8f17f1, type: 2}
   playerStart: {x: 0, y: -4}
+  finalBoss: {fileID: 11400000, guid: 47e4d828ea4349f19a8990884930cad6, type: 2}
   rushBosses:
   - {fileID: 11400000, guid: 1059a2af538546d38292c3f3243a8b08, type: 2}
   - {fileID: 11400000, guid: 6da1b8d69dfe4328b9f971b5c6087e94, type: 2}
