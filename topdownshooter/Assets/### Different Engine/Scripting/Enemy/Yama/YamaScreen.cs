@@ -47,8 +47,11 @@ public class YamaScreen : MonoBehaviour
     private Image portrait;
     private TMP_Text cardText, cardShadow;
     private RectTransform card;
-    // the card's place: its top just under the boss bar (whose bottom is at -96), and where it slides in from
-    private const float CardY = -104f, CardOut = 1500f;
+    // the bar at the bottom of the screen, in the middle, and the phase's name just over it: the
+    // boss's own in a plain phase, the card's in a spell card (sliding in over it from the right).
+    // the top of the screen is the HUD's (the wave, the clock, the counters)
+    private const float BarY = 40f, BarHidden = -120f, CardY = BarY + 16f * Px + 8f, CardOut = 1500f;
+    private float nameAlpha = 1f, nameAlphaTarget = 1f;
     private TMP_Text bonusText, titleText, subtitleText, duelTag, duelName, duelLine;
 
     private void Awake()
@@ -187,9 +190,12 @@ public class YamaScreen : MonoBehaviour
         barTop.rectTransform.sizeDelta = new Vector2(0f, h);
         barBottom.rectTransform.sizeDelta = new Vector2(0f, h);
 
-        // the bar drops in from above, its fill sweeping up on a new phase and the trail chasing damage
+        // the bar rises in from below, its fill sweeping up on a new phase and the trail chasing damage
         barShown = Mathf.MoveTowards(barShown, barShownTarget, dt * 2.5f);
-        bar.anchoredPosition = new Vector2(0f, Mathf.Lerp(120f, -48f, 1f - (1f - barShown) * (1f - barShown)));
+        bar.anchoredPosition = new Vector2(0f, Mathf.Lerp(BarHidden, BarY, 1f - (1f - barShown) * (1f - barShown)));
+        // the boss's name over it gives way to a card's
+        nameAlpha = Mathf.MoveTowards(nameAlpha, nameAlphaTarget, dt * 4f);
+        barName.alpha = nameAlpha;
         fillNow = fillTarget > fillNow ? Mathf.MoveTowards(fillNow, fillTarget, dt * 0.9f) : fillTarget;
         trailNow = trailNow < fillNow ? fillNow : Mathf.MoveTowards(trailNow, fillNow, dt * 0.45f);
         barFill.rectTransform.sizeDelta = new Vector2(BarInnerWidth * fillNow, barFill.rectTransform.sizeDelta.y);
@@ -206,6 +212,7 @@ public class YamaScreen : MonoBehaviour
         var group = cutIn.GetComponent<CanvasGroup>();
         card.anchoredPosition = new Vector2(CardOut, CardY);
         cardText.alpha = cardShadow.alpha = 0f;
+        nameAlphaTarget = 0f;
         for (float t = 0f; t < seconds; t += Time.unscaledDeltaTime)
         {
             float k = t / seconds;
@@ -227,6 +234,7 @@ public class YamaScreen : MonoBehaviour
 
     private IEnumerator SlideCardOut()
     {
+        nameAlphaTarget = 1f;
         for (float t = 0f; t < 0.5f; t += Time.unscaledDeltaTime)
         {
             float k = Ease(t / 0.5f);
@@ -296,9 +304,9 @@ public class YamaScreen : MonoBehaviour
     private void BuildBar()
     {
         bar = Box("Boss Bar", over);
-        bar.anchorMin = bar.anchorMax = new Vector2(0.5f, 1f);
-        bar.pivot = new Vector2(0.5f, 1f);
-        bar.anchoredPosition = new Vector2(0f, 120f);
+        bar.anchorMin = bar.anchorMax = new Vector2(0.5f, 0f);
+        bar.pivot = new Vector2(0.5f, 0f);
+        bar.anchoredPosition = new Vector2(0f, BarHidden);
         bar.sizeDelta = new Vector2(256f * Px, 16f * Px);
 
         var back = Fill("Back", bar, new Color(0.08f, 0.03f, 0.07f, 0.92f));
@@ -316,21 +324,26 @@ public class YamaScreen : MonoBehaviour
         frame.raycastTarget = false;
         if (frame.sprite == null) frame.enabled = false;
 
-        barName = Text("Name", bar, 34f, new Color(1f, 0.9f, 0.75f), false);
-        barName.alignment = TextAlignmentOptions.BottomLeft;
-        barName.rectTransform.anchorMin = barName.rectTransform.anchorMax = new Vector2(0f, 1f);
-        barName.rectTransform.pivot = new Vector2(0f, 0f);
-        barName.rectTransform.sizeDelta = new Vector2(700f, 50f);
-        barName.rectTransform.anchoredPosition = new Vector2(8f, 2f);
+        // the boss's name, over the bar in the middle. its holder spans the bar, so the name keeps to
+        // it (the holder was 1800 wide about the bar's middle, which put the name at the far left of
+        // the screen)
+        barName = Text("Name", bar, 36f, new Color(1f, 0.9f, 0.75f), true);
+        var nameHolder = (RectTransform)barName.rectTransform.parent;
+        nameHolder.anchorMin = new Vector2(0f, 1f);
+        nameHolder.anchorMax = new Vector2(1f, 1f);
+        nameHolder.pivot = new Vector2(0.5f, 0f);
+        nameHolder.sizeDelta = new Vector2(300f, 60f);
+        nameHolder.anchoredPosition = new Vector2(0f, 8f);
+        barName.alignment = TextAlignmentOptions.Center;
 
-        // the spell cards left: gold diamonds to the right of the name
+        // the spell cards left: gold diamonds off the bar's right end, level with it, clear of any name
         for (int i = 0; i < 6; i++)
         {
             var d = new GameObject("Card " + i, typeof(RectTransform), typeof(Image)).GetComponent<Image>();
             d.rectTransform.SetParent(bar, false);
-            d.rectTransform.anchorMin = d.rectTransform.anchorMax = new Vector2(1f, 1f);
+            d.rectTransform.anchorMin = d.rectTransform.anchorMax = new Vector2(1f, 0.5f);
             d.rectTransform.sizeDelta = new Vector2(16f, 16f);
-            d.rectTransform.anchoredPosition = new Vector2(-18f - i * 26f, 20f);
+            d.rectTransform.anchoredPosition = new Vector2(22f + i * 26f, 0f);
             d.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 45f);
             d.color = Gold;
             d.raycastTarget = false;
@@ -379,9 +392,9 @@ public class YamaScreen : MonoBehaviour
         cutIn.gameObject.SetActive(false);
 
         card = Box("Card", over);
-        // under his bar, in the middle: the top right is the HUD's (the counters, the Attributes panel)
-        card.anchorMin = card.anchorMax = new Vector2(0.5f, 1f);
-        card.pivot = new Vector2(0.5f, 1f);
+        // over his bar at the bottom, in the middle, where his name gives way to it
+        card.anchorMin = card.anchorMax = new Vector2(0.5f, 0f);
+        card.pivot = new Vector2(0.5f, 0f);
         card.sizeDelta = new Vector2(1100f, 60f);
         card.anchoredPosition = new Vector2(CardOut, CardY);
         cardShadow = Text("Shadow", card, 40f, Ink, false);
