@@ -18,10 +18,14 @@ public class CommandTokenData : WeaponData<CommandToken>
         public float stunSeconds;
         [Tooltip("the shockwave also pulls every piece of qi on the map to the player")]
         public bool pullsWen;
+        [Tooltip("on top of the damage, this share of each ordinary enemy's max health (not bosses or elites), so a late level still clears a tough horde. 0 = none")]
+        [Range(0f, 1f)] public float healthShare;
     }
 
     // a screen clear, so its levels buy utility rather than damage: flat damage fades from a wipe
-    // to a softener as enemy health grows, while the stun and the wen pull stay useful
+    // to a softener as enemy health grows, while the stun and the qi pull stay useful. the late
+    // levels (an ability, it's still offered with every slot full) cut a share of each ordinary
+    // enemy's health, so it keeps up with the horde however tough it gets
     [Header("Levels (the first entry is the unlock)")]
     public LevelStats[] levels =
     {
@@ -29,6 +33,10 @@ public class CommandTokenData : WeaponData<CommandToken>
         new LevelStats { damage = 40, cooldown = 50f },
         new LevelStats { damage = 40, cooldown = 50f, stunSeconds = 1.5f },
         new LevelStats { damage = 40, cooldown = 50f, stunSeconds = 1.5f, pullsWen = true },
+        new LevelStats { damage = 40, cooldown = 45f, stunSeconds = 1.5f, pullsWen = true, healthShare = 0.25f },
+        new LevelStats { damage = 40, cooldown = 45f, stunSeconds = 2f, pullsWen = true, healthShare = 0.4f },
+        new LevelStats { damage = 40, cooldown = 40f, stunSeconds = 2f, pullsWen = true, healthShare = 0.55f },
+        new LevelStats { damage = 40, cooldown = 35f, stunSeconds = 2.5f, pullsWen = true, healthShare = 0.7f },
     };
 
     [Tooltip("seconds after it's picked before it's first ready")]
@@ -86,7 +94,10 @@ public class CommandTokenData : WeaponData<CommandToken>
 
     public override int LevelCount => levels.Length;
 
-    // an ability rather than a weapon: taking it from a level up doesn't fill a weapon slot
+    // an ability, not a weapon: it fills no slot, so a full row of weapons doesn't keep it out of
+    // the level up
+    public override UpgradeCategory Category => UpgradeCategory.Ability;
+    public override string CategoryLabel => "Ability";
     public override bool TakesSlot => false;
 
     public LevelStats At(int level) =>
@@ -100,6 +111,7 @@ public class CommandTokenData : WeaponData<CommandToken>
         Add(into, "Recharge", Sec(Every(st, s.cooldown)));
         if (s.stunSeconds > 0f) Add(into, "Stun", Sec(s.stunSeconds));
         if (s.pullsWen) Add(into, "Pulls qi", "yes");
+        if (s.healthShare > 0f) Add(into, "Cuts (ordinary enemies)", $"{s.healthShare * 100f:0}% of max health");
         Add(into, "Spawns paused for", Sec(spawnPauseSeconds));
     }
 
@@ -114,6 +126,7 @@ public class CommandTokenData : WeaponData<CommandToken>
         if (s.cooldown != was.cooldown) changes.Add($"Recharges in {s.cooldown:0}s.");
         if (s.stunSeconds > was.stunSeconds) changes.Add($"Enemies it doesn't kill are stunned for {s.stunSeconds:0.#}s.");
         if (s.pullsWen && !was.pullsWen) changes.Add("It pulls every piece of qi on the map to you.");
+        if (s.healthShare > was.healthShare) changes.Add($"It also cuts {s.healthShare * 100f:0}% of every ordinary enemy's max health.");
         return changes.Count > 0 ? string.Join(" ", changes) : "A stronger shockwave.";
     }
 }

@@ -90,7 +90,7 @@ public class LoadoutPanel : MonoBehaviour
         }
 
         // a pick that isn't held yet shows as a faded slot at the end of its row
-        if (previewing != null && previewing.Level == 0)
+        if (previewing != null && previewing.Level == 0 && previewing.TakesSlot)
         {
             if (previewing.Category == UpgradeCategory.Weapon) Show(weaponSlots, weaponsGrid, weapons++, previewing, true);
             else Show(passiveSlots, passivesGrid, passives++, previewing, true);

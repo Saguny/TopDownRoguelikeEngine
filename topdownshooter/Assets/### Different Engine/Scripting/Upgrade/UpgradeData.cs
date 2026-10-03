@@ -1,7 +1,9 @@
 using UnityEngine;
 
-// what a level up card is: a weapon to take or level up, or a passive that helps every weapon
-public enum UpgradeCategory { Weapon, Passive }
+// what a level up card is: a weapon to take or level up, a passive that helps every weapon, or an
+// ability (the Command Token): something every character can carry that fills no slot, so it can
+// still be taken and levelled with every weapon and passive slot full
+public enum UpgradeCategory { Weapon, Passive, Ability }
 
 [CreateAssetMenu(menuName = "Rogue/Upgrade Data", fileName = "Upgrade_")]
 public class UpgradeData : ScriptableObject

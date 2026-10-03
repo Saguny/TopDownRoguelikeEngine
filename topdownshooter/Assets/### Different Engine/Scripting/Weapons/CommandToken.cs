@@ -201,7 +201,12 @@ public class CommandToken : Weapon<CommandTokenData>
         {
             if (go == null || !go.TryGetComponent(out EnemyHealth e)) continue;
             if (cam != null && !OnScreen(go.transform.position, cam)) continue;
-            bool killed = Hit(e, damage);
+            // the late levels cut a share of an ordinary enemy's health; a boss or an elite only
+            // takes the flat hit
+            float dealt = damage;
+            if (lv.healthShare > 0f && go.GetComponent<BossMarker>() == null && go.GetComponent<EliteOutline>() == null && go.GetComponent<IFightBoss>() == null)
+                dealt += e.Max * lv.healthShare;
+            bool killed = Hit(e, dealt);
             if (!killed && lv.stunSeconds > 0f && go.TryGetComponent(out EnemyMovement move))
                 move.ApplySlow(0f, lv.stunSeconds);
         }

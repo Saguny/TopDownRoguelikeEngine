@@ -38,18 +38,42 @@ MonoBehaviour:
     cooldown: 60
     stunSeconds: 0
     pullsWen: 0
+    healthShare: 0
   - damage: 40
     cooldown: 50
     stunSeconds: 0
     pullsWen: 0
+    healthShare: 0
   - damage: 40
     cooldown: 50
     stunSeconds: 1.5
     pullsWen: 0
+    healthShare: 0
   - damage: 40
     cooldown: 50
     stunSeconds: 1.5
     pullsWen: 1
+    healthShare: 0
+  - damage: 40
+    cooldown: 45
+    stunSeconds: 1.5
+    pullsWen: 1
+    healthShare: 0.25
+  - damage: 40
+    cooldown: 45
+    stunSeconds: 2
+    pullsWen: 1
+    healthShare: 0.4
+  - damage: 40
+    cooldown: 40
+    stunSeconds: 2
+    pullsWen: 1
+    healthShare: 0.55
+  - damage: 40
+    cooldown: 35
+    stunSeconds: 2.5
+    pullsWen: 1
+    healthShare: 0.7
   firstShotDelay: 2
   activationKey: 101
   spawnPauseSeconds: 1.5
