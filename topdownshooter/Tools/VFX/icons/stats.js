@@ -21,6 +21,8 @@
 //   reroll           Reroll           the fortune sticks' cup, one stick leaping out
 //   skip             Skip             two jade chevrons, wind trailing them
 //   banish           Banish           a yellow sealing talisman, a violet ghost fleeing it
+//   ticket           a credit         a red temple ticket, tilted: notched sides, a gold border, a
+//                                     torn-off stub along a perforation, a gold seal stamped on it
 // node icons/stats.js writes them over the placeholders (same files, so every reference keeps
 // working) and out/stats_preview.png
 const fs = require("fs");
@@ -630,6 +632,44 @@ function banish() {
   return I.im;
 }
 
+function ticket() {
+  const I = new Icon();
+  // the ticket in its own frame, tilted up to the right: u along it, v across it
+  const a = 0.36, c = Math.cos(a), s = Math.sin(a), cx = 16, cy = 16;
+  const uv = (x, y) => [(x - cx) * c - (y - cy) * s, (x - cx) * s + (y - cy) * c];
+  const HU = 13.2, HV = 7.6, STUB = 5.6;                          // half length, half width, the stub's line
+  const body = (x, y) => {
+    const [u, v] = uv(x, y);
+    if (Math.abs(u) > HU || Math.abs(v) > HV) return false;
+    // the notches bitten out of both ends' middles, and round corners
+    if (Math.hypot(Math.abs(u) - HU, v) < 2.4) return false;
+    if (Math.abs(u) > HU - 1.2 && Math.abs(v) > HV - 1.2) return false;
+    return true;
+  };
+  I.part(body, R.red, {
+    light: [-0.5, -0.85],
+    tone: (x, y, t, k) => {
+      const [u, v] = uv(x + 0.5, y + 0.5);
+      if (Math.abs(Math.abs(u - STUB) - 0) < 0.55) return (Math.round(v * 1.2) % 2 === 0) ? OUT : undefined;   // the perforation
+      // the gold border just inside the edge, broken by the notches
+      const edge = Math.min(HU - Math.abs(u), HV - Math.abs(v));
+      if (edge > 1.1 && edge < 2.0 && Math.hypot(Math.abs(u) - HU, v) > 3.4) return R.gold[k >= 2 ? 3 : 2];
+      // the seal on the main part: a round gold stamp, a cross of red cut through it
+      const su = u + 3.6, sv = v, sd = Math.hypot(su, sv);
+      if (sd < 3.9) {
+        if (sd < 2.7 && (Math.abs(su) < 0.6 || Math.abs(sv) < 0.6)) return R.red[1];
+        return R.gold[sd > 3.1 ? 2 : sd < 1.6 ? 4 : 3];
+      }
+      // the stub's three dots
+      if (u > STUB + 1.5 && Math.abs(u - (STUB + HU) / 2 - 0.5) < 0.7 && [-3, 0, 3].some(d => Math.abs(v - d) < 0.7)) return R.gold[3];
+    },
+  });
+  I.outline();
+  I.sparkle(5, 6, 2, CREAM, true);
+  I.sparkle(27, 26, 1, R.gold[3]);
+  return I.im;
+}
+
 // ---------------------------------------------------------------- writing them out
 
 const DEST = path.join(__dirname, "..", "..", "..", "Assets", "### Different Engine", "NewSprites", "Sprites", "Icons");
@@ -638,6 +678,7 @@ const ICONS = [
   ["might", might], ["cooldownnecklace 1", cooldown], ["area", area], ["speed", weaponSpeed],
   ["pierce", armourPiercing], ["piercing", piercing], ["magnet-export", magnet], ["growth", growth],
   ["greedl", greed], ["revival", revival], ["reroll", reroll], ["skip", skip], ["banish", banish],
+  ["ticket", ticket],
 ];
 
 function main() {

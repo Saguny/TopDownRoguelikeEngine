@@ -176,24 +176,54 @@ public class PlayerInventory : MonoBehaviour
         if (progressBarGradient) progressBarGradient.Celebrate();
 
         var offers = RollOffers();
+        CountPity(offers);
         // nothing left to level: the two gifts
         if (offers.Count == 0) offers.AddRange(GiftsOffered());
 
         upgradeMenuUI.Open(offers, ChooseFromMenu, CurrentLevel - pendingLevelUps, Tools());
     }
 
-    // the cards the pool can offer right now, weighted, without repeats
+    // the cards the pool can offer right now, weighted, without repeats. a favoured item whose pity
+    // has run out (RunCredits) takes the first card
     private List<UpgradeData> RollOffers(int count = 3)
     {
         var pool = OfferPool();
         var picked = new List<UpgradeData>();
-        for (int i = 0; i < count && pool.Count > 0; i++)
+        foreach (var kv in favourDry)
+            if (picked.Count < count && kv.Key.Level == 0 && kv.Value >= RunCredits.PityAfter(RunCredits.ActiveStacks(kv.Key)) && pool.Remove(kv.Key))
+                picked.Add(kv.Key);
+        for (int i = picked.Count; i < count && pool.Count > 0; i++)
         {
             int index = PickWeighted(pool);
             picked.Add(pool[index]);
             pool.RemoveAt(index);
         }
         return picked;
+    }
+
+    // ---------------------------------------------------------------- favoured (RunCredits)
+
+    // this run's favoured items not yet taken, and the level ups in a row each could have come up
+    // in without showing. shown, or taken, and its count starts again
+    private readonly Dictionary<UpgradeData, int> favourDry = new Dictionary<UpgradeData, int>();
+
+    private void CountPity(List<UpgradeData> offers)
+    {
+        if (favourDry.Count == 0) return;
+        var pool = OfferPool();
+        var keys = new List<UpgradeData>(favourDry.Keys);
+        foreach (var u in keys)
+        {
+            if (u.Level > 0 || offers.Contains(u)) favourDry[u] = 0;
+            else if (pool.Contains(u)) favourDry[u]++;      // it could have come up and didn't
+        }
+    }
+
+    // the level ups left before a favoured item is sure to be offered, for the UI. -1: not favoured
+    public int PityLeft(UpgradeData u)
+    {
+        if (u == null || !favourDry.TryGetValue(u, out int dry)) return -1;
+        return Mathf.Max(0, RunCredits.PityAfter(RunCredits.ActiveStacks(u)) - dry);
     }
 
     private List<UpgradeData> OfferPool()
@@ -469,6 +499,8 @@ public class PlayerInventory : MonoBehaviour
         taken.Clear();
         pendingLevelUps = 0;
         banished.Clear();
+        var favoured = new List<UpgradeData>(favourDry.Keys);
+        foreach (var u in favoured) favourDry[u] = 0;
         rerollsLeft = -1;
         UpdateProgress();
         if (stats != null) stats.ResetStats();
@@ -523,7 +555,7 @@ public class PlayerInventory : MonoBehaviour
     {
         float w = u.IsOvercharging ? OverchargeWeight : 1f;
         if (u.Level > 0) w *= 1f + heldWeaponBonus;
-        return w;
+        return w * RunCredits.WeightFor(u);       // a credit spent on it before the run
     }
 
     private void BuildRuntimeUpgrades()
@@ -544,6 +576,12 @@ public class PlayerInventory : MonoBehaviour
             runtimeUpgrades.Add(inst);
             runtimeFor[src] = inst;
         }
+
+        // the credits spent before the run go on its copies
+        RunCredits.BeginRun();
+        favourDry.Clear();
+        foreach (var u in runtimeUpgrades)
+            if (RunCredits.IsFavoured(u)) favourDry[u] = 0;
     }
 
 #if UNITY_EDITOR

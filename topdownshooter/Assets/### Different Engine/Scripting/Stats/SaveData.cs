@@ -6,7 +6,7 @@ using UnityEngine;
 // computer rather than to the save
 public static class SaveData
 {
-    private static readonly string[] FloatSettings = { GameSettings.MasterKey, GameSettings.MusicKey, GameSettings.SfxKey };
+    private static readonly string[] FloatSettings = { GameSettings.MasterKey, GameSettings.MusicKey, GameSettings.SfxKey, "player_shot_opacity" };
     private static readonly string[] IntSettings = { "vsync", "show_blood", "res_width", "res_height", "window_mode" };
 
     public static void ResetProgress()

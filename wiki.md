@@ -63,7 +63,7 @@ Timeline events add swarms, stampedes, encirclements and elites (elites drop for
 | **Cinnabar Ink Brush** | A giant brush at your heels paints burning cinnabar wherever you walk | Calligraphic Seal Grid (close a loop of ink: everything inside is wiped out) |
 | **Electrical Aura** | A close-range support field; every other pulse it also clears enemy shots within 2 units. Area grows it by +40% at most | — |
 | **Meteorite** | Meteors crash down on the horde | — |
-| **Command Token** (**E**) | A shockwave that hits every enemy on screen and clears every enemy shot (the game's "bomb"). Doesn't take a weapon slot | — |
+| **Command Token** (**E**) | An **ability**: a shockwave that hits every enemy on screen and clears every enemy shot (the game's "bomb"). Takes no slot, so it's still offered with every slot full. 8 levels: shorter recharge, a stun, a qi pull, and from level 5 it also cuts 25–70% of each ordinary enemy's max health (not bosses or elites) | — |
 | *Ice Cloud* | Snow clouds that freeze the horde (currently out of the level-up pool) | Frost Tornado |
 
 Attack class: arrows and blades are **Physical**, talismans, spells and summons **Magical**. Some enemies take more of one than the other.
@@ -119,6 +119,17 @@ Rank *n* costs the first rank's price × *n*^1.5, so first ranks are cheap (a ru
 
 ---
 
+## Credits
+
+Tickets banked between runs, **3 at most**. A run that's won, or lasts 10:00 on the run clock, earns one (if there's room). Before a run, spend credits on weapons, passives or the Command Token; you can put several on one item. For that run only:
+
+- the item is drawn a little more often in level ups and envelopes: **+15% per credit**
+- **pity**: if it could have come up but didn't for 6 level ups in a row (5 with 2 credits, 4 with 3), the next level up shows it. This lasts until you take it
+
+Credits are spent when the run starts. Taking one back off an item before then returns it.
+
+---
+
 ## Fortune envelopes
 
 Red envelopes dropped by elites, rush bosses and final bosses, opened with a reveal sequence. They give upgrades (1 / 3 / 5 by rarity) and **evolutions** (the only way to get one), and they are the **only source of coins**:
@@ -160,6 +171,13 @@ When the final boss arrives, all your weapons are put away and your **starting w
 Every spell card opens with a Persona-style **cut-in**: a white tear rips across the screen, the boss's eyes appear in a torn band with a brushed character beside them (Yama 判 "judgement", Meng Po 忘 "forget"), then it shatters away. About a second, and the fight doesn't pause for it.
 
 Every health bar after the first starts fresh: you're drawn back to the middle and the boss returns above you. Then comes a Genshin-style **phase burst**; the last phase gets the biggest.
+
+---
+
+## Options
+
+- **Player shot opacity** (20–100%): draws your own weapons see-through, so enemy shots read through a busy screen.
+- Your health bar only shows after you've been hurt, and fades a moment after you're back to full. Taking a hit flashes the screen's edges red, harder for bigger hits; under 35% health the edges pulse like a heartbeat.
 
 ---
 

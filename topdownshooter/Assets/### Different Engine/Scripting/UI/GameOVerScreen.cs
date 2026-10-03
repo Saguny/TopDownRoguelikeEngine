@@ -45,6 +45,9 @@ public class GameOverScreen : MonoBehaviour
         if (GameMode.IsEndless) ShowBest();
         else RunProgress.RecordNormalRun();
 
+        // a run that went the distance (or was won) earns a credit to favour an item next time
+        RunCredits.EarnFromRun(won, RunStats.RunClock);
+
         var screen = won && victoryPanel != null ? victoryPanel : panel;
         if (screen != null)
         {
