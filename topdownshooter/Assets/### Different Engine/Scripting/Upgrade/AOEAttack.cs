@@ -156,6 +156,7 @@ public class AOEAttack : MonoBehaviour
                 spawnPos,
                 Quaternion.AngleAxis(worldAngleDeg, Vector3.forward)
             );
+            PlayerShots.Tag(proj, false);
 
             if (proj.TryGetComponent(out AOEProjectile aoe))
             {

@@ -66,10 +66,15 @@ public abstract class Weapon : MonoBehaviour
 
     public virtual void Init(WeaponData data) => Asset = data;
 
+    // its sprites fade with the Player Shot Opacity option (PlayerShots). not the Command Token's
+    // seals and shockwave: they're a moment, not clutter
+    protected virtual bool FadesWithShots => true;
+
     protected virtual void Awake()
     {
         Stats = GetComponentInParent<StatContext>();
         Fx = new GameObject(GetType().Name + " (fx)").transform;
+        if (FadesWithShots) PlayerShots.AddRoot(Fx);
     }
 
     // a weapon switched off (the player went down) takes its swords, talismans and stars with it
@@ -85,6 +90,7 @@ public abstract class Weapon : MonoBehaviour
 
     protected virtual void OnDestroy()
     {
+        PlayerShots.RemoveRoot(Fx);
         if (Fx != null) Destroy(Fx.gameObject);
     }
 

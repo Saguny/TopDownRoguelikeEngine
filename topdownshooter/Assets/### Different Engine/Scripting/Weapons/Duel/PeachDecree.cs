@@ -151,7 +151,7 @@ public class PeachDecree : DuelWeapon
                 t.stuck = true;
                 t.trail.Hide();
                 stuckCount++;
-                FxBatch.Play(spark, 22f, goal, 1f, Layer, Order + 2);
+                FxBatch.PlayShot(spark, 22f, goal, 1f, Layer, Order + 2);
                 Sound("decree_stick", goal, 0.4f, 0.9f + stuckCount * 0.04f);
                 Strike(bound, Impact);
                 if (bound == null || !Hittable(bound)) return;
@@ -182,7 +182,7 @@ public class PeachDecree : DuelWeapon
     {
         Vector2 at = AimAt(bound);
         Strike(bound, Decree);
-        FxBatch.Play(blast, 18f, at, 1.6f, Layer, Order + 4);
+        FxBatch.PlayShot(blast, 18f, at, 1.6f, Layer, Order + 4);
         Sound("decree_blast", at, 1f, Random.Range(0.97f, 1.03f));
         Juice.Shake(0.28f);
         Juice.Freeze(0.04f);
@@ -202,7 +202,7 @@ public class PeachDecree : DuelWeapon
     {
         foreach (var t in ring)
         {
-            if (crumble && t.sr.gameObject.activeSelf) FxBatch.Play(ash, 14f, t.sr.transform.position, 1f, Layer, Order + 1);
+            if (crumble && t.sr.gameObject.activeSelf) FxBatch.PlayShot(ash, 14f, t.sr.transform.position, 1f, Layer, Order + 1);
             t.trail.Hide();
             t.sr.gameObject.SetActive(false);
             spare.Push(t);

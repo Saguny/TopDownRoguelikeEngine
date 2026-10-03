@@ -27,6 +27,8 @@ public class CommandToken : Weapon<CommandTokenData>
     public KeyCode Key => Data != null ? Data.activationKey : KeyCode.E;
     public Sprite Icon => Asset != null ? Asset.icon : null;
 
+    protected override bool FadesWithShots => false;
+
     // fired as the key is pressed and the cast begins
     public static System.Action OnUsed;
 

@@ -92,8 +92,9 @@ public class AutoShooter : MonoBehaviour
         if (pool == null) return;
 
         var go = pool.Get(transform.position, Quaternion.identity);
+        PlayerShots.Tag(go);
         ArrowShine.Set(go, Shine);
-        if (looseFx != null) FxOneShot.Play(looseFx, transform.position + (Vector3)(dir * 0.35f), FxOneShot.Angle(dir));
+        if (looseFx != null) FxOneShot.PlayShot(looseFx, transform.position + (Vector3)(dir * 0.35f), FxOneShot.Angle(dir));
         float speed = baseArrowSpeed * (stats ? stats.arrowSpeedMul * stats.WeaponSpeedMul : 1f);
         float damage = baseArrowDamage * (stats ? stats.arrowDamageMul * stats.OC(UpgradeType.ArrowDamage) * stats.MightMul * stats.ClassMul(AttackClass.Physical) : 1f);
 

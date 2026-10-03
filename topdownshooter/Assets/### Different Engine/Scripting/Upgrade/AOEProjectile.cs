@@ -105,10 +105,11 @@ public class AOEProjectile : MonoBehaviour
         if (impactEffectPrefab != null)
         {
             if (impactEffectPrefab.TryGetComponent(out FxOneShot _))
-                FxOneShot.Play(impactEffectPrefab, at, 0f, impactVisualScale);
+                FxOneShot.PlayShot(impactEffectPrefab, at, 0f, impactVisualScale);
             else
             {
                 GameObject fx = Instantiate(impactEffectPrefab, at, Quaternion.identity);
+                PlayerShots.Tag(fx, false);
                 fx.transform.localScale = Vector3.one * impactVisualScale;
                 Destroy(fx, impactEffectDuration);
             }

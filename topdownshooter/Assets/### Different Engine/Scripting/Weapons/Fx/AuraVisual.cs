@@ -41,6 +41,7 @@ public class AuraVisual : MonoBehaviour
         ring = go.AddComponent<SpriteRenderer>();
         ring.sortingLayerName = sortingLayer;
         ring.sortingOrder = ringOrder;
+        PlayerShots.Tag(ring);
     }
 
     private void OnEnable() => grown = growSeconds > 0f ? 0f : 1f;
@@ -75,7 +76,7 @@ public class AuraVisual : MonoBehaviour
             // a random few when there are more hits than strikes
             int pick = UnityEngine.Random.Range(k, zapAt.Count);
             (zapAt[k], zapAt[pick]) = (zapAt[pick], zapAt[k]);
-            FxOneShot.Play(zapFx, zapAt[k]);
+            FxOneShot.PlayShot(zapFx, zapAt[k]);
         }
     }
 

@@ -102,7 +102,7 @@ public class Projectile : MonoBehaviour
         float dealt = crit ? damage * critMultiplier : damage;
 
         eh.TakeDamage(dealt, DamageKind.Arrow, crit, false, source);
-        if (hitFx != null) FxOneShot.Play(hitFx, transform.position, FxOneShot.Angle(dir));
+        if (hitFx != null) FxOneShot.PlayShot(hitFx, transform.position, FxOneShot.Angle(dir));
 
         if (pierceLeft > 0)
         {

@@ -27,6 +27,14 @@ public class FxOneShot : MonoBehaviour
         return go;
     }
 
+    // the same for one of the player's weapons: it fades with their shots (PlayerShots)
+    public static GameObject PlayShot(GameObject prefab, Vector3 at, float angle = 0f, float scale = 1f)
+    {
+        var go = Play(prefab, at, angle, scale);
+        PlayerShots.Tag(go);
+        return go;
+    }
+
     // the angle, in degrees, of a direction
     public static float Angle(Vector2 dir) => Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
 }

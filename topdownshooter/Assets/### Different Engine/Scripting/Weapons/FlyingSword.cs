@@ -171,7 +171,7 @@ public class FlyingSword : Weapon<FlyingSwordData>
         b.streak.widthMultiplier = Data.trailWidth * AreaMul;
 
         // the snap: a flash where it appears, pointing the way it goes
-        if (Data.launchFx != null) FxOneShot.Play(Data.launchFx, from, FxOneShot.Angle(b.dir), AreaMul);
+        if (Data.launchFx != null) FxOneShot.PlayShot(Data.launchFx, from, FxOneShot.Angle(b.dir), AreaMul);
         live.Add(b);
         return b;
     }
@@ -244,7 +244,7 @@ public class FlyingSword : Weapon<FlyingSwordData>
 
             if (b.spent)
             {
-                if (Data.sparkFx != null) FxOneShot.Play(Data.sparkFx, b.pos, FxOneShot.Angle(b.dir));
+                if (Data.sparkFx != null) FxOneShot.PlayShot(Data.sparkFx, b.pos, FxOneShot.Angle(b.dir));
                 return true;
             }
             Vector2 hitAt = e.transform.position;
@@ -276,7 +276,7 @@ public class FlyingSword : Weapon<FlyingSwordData>
         b.speed = Mathf.Min(Data.maxSpeed * SpeedMul, b.speed * (1f + Data.bounceAcceleration));
         b.pop = 1f;
         b.hitAt.Clear();
-        if (Data.sparkFx != null) FxOneShot.Play(Data.sparkFx, at, FxOneShot.Angle(b.dir));
+        if (Data.sparkFx != null) FxOneShot.PlayShot(Data.sparkFx, at, FxOneShot.Angle(b.dir));
         Juice.Shake(b.cage ? 0.04f : 0.02f);
 
         if (b.bouncesLeft <= 0)
@@ -299,7 +299,7 @@ public class FlyingSword : Weapon<FlyingSwordData>
     // a spent blade reaching an edge: an ordinary one breaks off there, a master blade anchors
     private bool Finish(Blade b)
     {
-        if (Data.sparkFx != null) FxOneShot.Play(Data.sparkFx, b.pos, FxOneShot.Angle(b.dir));
+        if (Data.sparkFx != null) FxOneShot.PlayShot(Data.sparkFx, b.pos, FxOneShot.Angle(b.dir));
         if (!b.cage) return true;
         Anchor(b);
         return false;
@@ -488,7 +488,7 @@ public class FlyingSword : Weapon<FlyingSwordData>
             {
                 p.arcs -= 1f;
                 if (Data.sparkFx != null)
-                    FxOneShot.Play(Data.sparkFx, Vector2.Lerp(from, to, Random.value) + Random.insideUnitCircle * Data.laserWidth * 0.3f, Random.Range(0f, 360f), Random.Range(0.5f, 0.9f));
+                    FxOneShot.PlayShot(Data.sparkFx, Vector2.Lerp(from, to, Random.value) + Random.insideUnitCircle * Data.laserWidth * 0.3f, Random.Range(0f, 360f), Random.Range(0.5f, 0.9f));
             }
         }
     }
@@ -531,7 +531,7 @@ public class FlyingSword : Weapon<FlyingSwordData>
         foreach (var b in new[] { p.a, p.b })
         {
             if (b == null) continue;
-            if (shatter && b.embedded && Data.shatterFx != null) FxOneShot.Play(Data.shatterFx, b.sr.transform.position, FxOneShot.Angle(b.dir), AreaMul);
+            if (shatter && b.embedded && Data.shatterFx != null) FxOneShot.PlayShot(Data.shatterFx, b.sr.transform.position, FxOneShot.Angle(b.dir), AreaMul);
             b.pair = null;
         }
         if (shatter && p.laserAge >= 0f) Juice.Shake(0.1f);

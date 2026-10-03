@@ -186,10 +186,10 @@ public class SunShooterBow : DuelWeapon
         Strike(a.target, a.damage);
         if (!a.sun)
         {
-            FxBatch.Play(spark, 24f, a.pos, 1f, Layer, Order + 3);
+            FxBatch.PlayShot(spark, 24f, a.pos, 1f, Layer, Order + 3);
             return;
         }
-        FxBatch.Play(burst, 18f, a.pos, a.ninth ? 2f : 1.3f, Layer, Order + 4);
+        FxBatch.PlayShot(burst, 18f, a.pos, a.ninth ? 2f : 1.3f, Layer, Order + 4);
         Sound(a.ninth ? "sun_ninth" : "sun_hit", a.pos, a.ninth ? 1f : 0.8f, Random.Range(0.96f, 1.04f));
         Juice.Shake(a.ninth ? 0.35f : 0.12f);
         Knock(a.pos, a.dir);

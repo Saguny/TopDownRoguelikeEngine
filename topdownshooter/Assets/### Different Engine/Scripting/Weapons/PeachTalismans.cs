@@ -275,7 +275,7 @@ public class PeachTalismans : Weapon<PeachTalismansData>
     private void Release(int index, bool crumble)
     {
         var t = live[index];
-        if (crumble && Data.ashFx != null) FxOneShot.Play(Data.ashFx, t.sr.transform.position, t.sr.transform.eulerAngles.z);
+        if (crumble && Data.ashFx != null) FxOneShot.PlayShot(Data.ashFx, t.sr.transform.position, t.sr.transform.eulerAngles.z);
         t.trail.Hide();
         t.sr.gameObject.SetActive(false);
         spare.Push(t);

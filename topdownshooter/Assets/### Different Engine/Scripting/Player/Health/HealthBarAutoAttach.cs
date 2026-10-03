@@ -25,7 +25,7 @@ public class HealthBarAutoAttach : MonoBehaviour
     public string barSortingLayer = "HUD";
     public int backOrder = 300;
     [Tooltip("hidden while at full health")]
-    public bool hideWhenFull;
+    public bool hideWhenFull = true;
 
     private void Start()
     {

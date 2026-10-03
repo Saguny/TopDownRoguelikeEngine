@@ -162,7 +162,7 @@ public class CinnabarInkBrush : Weapon<CinnabarInkBrushData>
         flameTimer -= 1f;
         var b = trail[trail.Count - 1 - Random.Range(0, wet)];
         // the flame's base is 6 pixels under its canvas centre
-        FxBatch.Play(Data.flameFrames, Data.flameFps, b.at + Random.insideUnitCircle * 0.1f + new Vector2(0f, 6f / WeaponFxPixels), 1f, Data.brushLayer, Data.brushOrder - 1);
+        FxBatch.PlayShot(Data.flameFrames, Data.flameFps, b.at + Random.insideUnitCircle * 0.1f + new Vector2(0f, 6f / WeaponFxPixels), 1f, Data.brushLayer, Data.brushOrder - 1);
     }
 
     private const float WeaponFxPixels = 28.46f;
@@ -218,7 +218,7 @@ public class CinnabarInkBrush : Weapon<CinnabarInkBrushData>
         // the seal where the loop closed round, as big as the loop, and blasts rippling out from it
         float size = Mathf.Sqrt(Area(loop));
         if (Data.sealFrames != null && Data.sealFrames.Length > 0)
-            FxBatch.Play(Data.sealFrames, Data.sealFps, centre, Mathf.Clamp(size / Data.sealArtSize, 1f, 2.4f), Data.blastLayer, Data.blastOrder + 1);
+            FxBatch.PlayShot(Data.sealFrames, Data.sealFps, centre, Mathf.Clamp(size / Data.sealArtSize, 1f, 2.4f), Data.blastLayer, Data.blastOrder + 1);
         float far = Mathf.Max(0.01f, Mathf.Max((max - centre).magnitude, (min - centre).magnitude));
         int made = 0;
         for (float y = min.y; y <= max.y && made < Data.maxBlasts; y += Data.blastSpacing)
@@ -247,10 +247,10 @@ public class CinnabarInkBrush : Weapon<CinnabarInkBrushData>
             if (b.scale < 0f)
             {
                 if (Data.flameFrames != null && Data.flameFrames.Length > 0)
-                    FxBatch.Play(Data.flameFrames, Data.flameFps, b.at + new Vector2(0f, 6f / WeaponFxPixels), 1.4f, Data.blastLayer, Data.blastOrder);
+                    FxBatch.PlayShot(Data.flameFrames, Data.flameFps, b.at + new Vector2(0f, 6f / WeaponFxPixels), 1.4f, Data.blastLayer, Data.blastOrder);
             }
             else if (Data.blastFrames != null && Data.blastFrames.Length > 0)
-                FxBatch.Play(Data.blastFrames, Data.blastFps, b.at, b.scale, Data.blastLayer, Data.blastOrder);
+                FxBatch.PlayShot(Data.blastFrames, Data.blastFps, b.at, b.scale, Data.blastLayer, Data.blastOrder);
         }
     }
 
@@ -292,6 +292,7 @@ public class CinnabarInkBrush : Weapon<CinnabarInkBrushData>
             brush.transform.SetParent(Fx, false);
             brush.sortingLayerName = Data.brushLayer;
             brush.sortingOrder = Data.brushOrder;
+            PlayerShots.Tag(brush);
         }
         brush.sprite = Data.brushFrames[(int)(now * Data.brushFps) % Data.brushFrames.Length];
 
@@ -317,8 +318,8 @@ public class CinnabarInkBrush : Weapon<CinnabarInkBrushData>
             mesh.MarkDynamic();
             go.AddComponent<MeshFilter>().sharedMesh = mesh;
             var mr = go.AddComponent<MeshRenderer>();
-            var shader = Shader.Find("Rogue/Sprite Batch");
-            mr.sharedMaterial = new Material(shader != null ? shader : Shader.Find("Sprites/Default")) { mainTexture = Data.dabFrames[0].texture, name = "Cinnabar Ink" };
+            mr.sharedMaterial = PlayerShots.BatchMaterial(Data.dabFrames[0].texture, "Cinnabar Ink")
+                ?? new Material(Shader.Find("Sprites/Default")) { mainTexture = Data.dabFrames[0].texture, name = "Cinnabar Ink" };
             mr.sortingLayerName = Data.trailLayer;
             mr.sortingOrder = Data.trailOrder;
             mr.shadowCastingMode = ShadowCastingMode.Off;

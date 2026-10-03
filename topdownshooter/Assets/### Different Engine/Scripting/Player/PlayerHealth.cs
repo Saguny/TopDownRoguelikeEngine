@@ -113,6 +113,9 @@ public class PlayerHealth : MonoBehaviour, IHealth
         UpdateHudBar();
     }
 
+    // hurt shows at the screen's edges (DamageVignette)
+    private void Start() => DamageVignette.Ensure(this);
+
     private void OnEnable()
     {
         PushHealthChanged();

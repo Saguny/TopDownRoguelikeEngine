@@ -328,7 +328,7 @@ public class IceCloud : Weapon<IceCloudData>
         EnemiesIn(at, radius, touching);
         foreach (var e in touching)
         {
-            if (Data.frostBurstFx != null) FxOneShot.Play(Data.frostBurstFx, e.transform.position);
+            if (Data.frostBurstFx != null) FxOneShot.PlayShot(Data.frostBurstFx, e.transform.position);
             if (!Hit(e, Data.sprayDamage * Might)) Frost.Apply(e, Data.sprayFreezeSeconds, Data.iceFrames, Data.iceFps);
         }
         for (int i = 0; i < Data.sprayPiles; i++) DropPile(at + Random.insideUnitCircle * radius * 0.8f);
@@ -336,7 +336,7 @@ public class IceCloud : Weapon<IceCloudData>
         // gusts of snow bursting all over the field it sprays, not only on the enemies it catches
         if (Data.frostBurstFx != null)
             for (int i = 0; i < Data.sprayGusts; i++)
-                FxOneShot.Play(Data.frostBurstFx, at + Random.insideUnitCircle * radius, Random.Range(0f, 360f), Random.Range(0.8f, 1.4f));
+                FxOneShot.PlayShot(Data.frostBurstFx, at + Random.insideUnitCircle * radius, Random.Range(0f, 360f), Random.Range(0.8f, 1.4f));
         Juice.Shake(0.08f);
     }
 

@@ -32,10 +32,18 @@ public class FxBatch : MonoBehaviour
     private static void ResetStatics() => instance = null;
 
     public static void Play(Sprite[] frames, float fps, Vector2 at, float scale = 1f, string layer = "Aura", int order = 3)
+        => Play(frames, fps, at, scale, layer, order, false);
+
+    // one of the player's weapons' effects: it fades with their shots (PlayerShots). an
+    // animation's batch is made by whichever comes first, so a set of frames is one or the other
+    public static void PlayShot(Sprite[] frames, float fps, Vector2 at, float scale = 1f, string layer = "Aura", int order = 3)
+        => Play(frames, fps, at, scale, layer, order, true);
+
+    private static void Play(Sprite[] frames, float fps, Vector2 at, float scale, string layer, int order, bool shot)
     {
         if (frames == null || frames.Length == 0 || frames[0] == null || !Application.isPlaying) return;
         if (instance == null) instance = new GameObject("FxBatch").AddComponent<FxBatch>();
-        var k = instance.KindFor(frames, fps, layer, order);
+        var k = instance.KindFor(frames, fps, layer, order, shot);
         if (k == null) return;
 
         if (k.count == k.pos.Length)
@@ -50,7 +58,7 @@ public class FxBatch : MonoBehaviour
         k.count++;
     }
 
-    private Kind KindFor(Sprite[] frames, float fps, string layer, int order)
+    private Kind KindFor(Sprite[] frames, float fps, string layer, int order, bool shot)
     {
         if (byFrames.TryGetValue(frames, out var k)) return k;
         var shader = Shader.Find("Rogue/Sprite Batch");
@@ -76,7 +84,7 @@ public class FxBatch : MonoBehaviour
         k.mesh.MarkDynamic();
         go.AddComponent<MeshFilter>().sharedMesh = k.mesh;
         var mr = go.AddComponent<MeshRenderer>();
-        mr.sharedMaterial = new Material(shader) { mainTexture = tex, name = go.name };
+        mr.sharedMaterial = (shot ? PlayerShots.BatchMaterial(tex, go.name) : null) ?? new Material(shader) { mainTexture = tex, name = go.name };
         mr.sortingLayerName = layer;
         mr.sortingOrder = order;
         mr.shadowCastingMode = ShadowCastingMode.Off;

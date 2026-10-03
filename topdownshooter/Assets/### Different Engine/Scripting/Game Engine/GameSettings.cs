@@ -19,6 +19,7 @@ public static class GameSettings
     private const string WidthKey = "res_width";
     private const string HeightKey = "res_height";
     private const string WindowModeKey = "window_mode";
+    private const string ShotOpacityKey = "player_shot_opacity";
 
     public static float MasterVolume
     {
@@ -66,6 +67,18 @@ public static class GameSettings
     {
         get => PlayerPrefs.GetInt(BloodKey, 1) == 1;
         set => PlayerPrefs.SetInt(BloodKey, value ? 1 : 0);
+    }
+
+    // how solid the player's own weapons are drawn, 1 as made down to 0.2 (PlayerShots), so the
+    // enemies' shots can be read through a screen full of them. an options slider sets it
+    public static float PlayerShotOpacity
+    {
+        get => PlayerPrefs.GetFloat(ShotOpacityKey, 1f);
+        set
+        {
+            PlayerPrefs.SetFloat(ShotOpacityKey, Mathf.Clamp(value, PlayerShots.MinOpacity, 1f));
+            PlayerShots.Apply(PlayerShotOpacity);
+        }
     }
 
     // the window size last picked in the options, or the current one if nothing was picked.
@@ -126,6 +139,7 @@ public static class GameSettings
         mixer = null;
         QualitySettings.vSyncCount = VSync ? 1 : 0;
         AudioListener.volume = MasterVolume / 100f;
+        PlayerShots.Apply(PlayerShotOpacity);
 
         SceneManager.sceneLoaded -= OnSceneLoaded;
         SceneManager.sceneLoaded += OnSceneLoaded;

@@ -356,7 +356,7 @@ public class TreasureGourd : Weapon<TreasureGourdData>
             to = target - gourdPos;
             aim = to.sqrMagnitude > 0.01f ? to.normalized : aim;
         }
-        FxBatch.Play(Data.popFrames, 25f, Mouth, 1f, Data.sortingLayer, Data.sortingOrder + 3);
+        FxBatch.PlayShot(Data.popFrames, 25f, Mouth, 1f, Data.sortingLayer, Data.sortingOrder + 3);
         OneShot(Data.uncorkSound, Mouth);
         Hold(evolved ? Data.chargeSound : Data.pullSound);
     }
@@ -400,7 +400,7 @@ public class TreasureGourd : Weapon<TreasureGourdData>
             {
                 b.Swallow();
                 swallowed++;
-                FxBatch.Play(Data.absorbFrames, 25f, mouth, 1f, Data.sortingLayer, Data.sortingOrder + 4);
+                FxBatch.PlayShot(Data.absorbFrames, 25f, mouth, 1f, Data.sortingLayer, Data.sortingOrder + 4);
                 OneShot(Data.absorbSound, mouth, Random.Range(0.95f, 1.1f) + 0.02f * Mathf.Min(swallowed, 10));
                 continue;
             }
@@ -411,7 +411,7 @@ public class TreasureGourd : Weapon<TreasureGourdData>
         if (caughtShots > 0)
         {
             swallowed += caughtShots;
-            FxBatch.Play(Data.absorbFrames, 25f, mouth, 1f, Data.sortingLayer, Data.sortingOrder + 4);
+            FxBatch.PlayShot(Data.absorbFrames, 25f, mouth, 1f, Data.sortingLayer, Data.sortingOrder + 4);
             OneShot(Data.absorbSound, mouth, Random.Range(0.95f, 1.1f) + 0.02f * Mathf.Min(swallowed, 10));
         }
     }
@@ -568,7 +568,7 @@ public class TreasureGourd : Weapon<TreasureGourdData>
         spheres.Add(s);
 
         OneShot(Data.launchSound, s.pos, Mathf.Lerp(1.08f, 0.9f, full));
-        FxBatch.Play(Data.popFrames, 25f, Mouth, 1.4f, Data.sortingLayer, Data.sortingOrder + 3);
+        FxBatch.PlayShot(Data.popFrames, 25f, Mouth, 1.4f, Data.sortingLayer, Data.sortingOrder + 3);
         Close();
     }
 
@@ -614,7 +614,7 @@ public class TreasureGourd : Weapon<TreasureGourdData>
             if (!Hit(e, s.damage)) Ignite(e, lv);
 
         float scale = s.radius / Mathf.Max(0.01f, Data.blastArtRadius);
-        FxBatch.Play(Data.blastFrames, Data.fps, s.pos, scale, Data.sortingLayer, Data.sortingOrder + 5);
+        FxBatch.PlayShot(Data.blastFrames, Data.fps, s.pos, scale, Data.sortingLayer, Data.sortingOrder + 5);
         OneShot(Data.blastSound, s.pos, Mathf.Lerp(1.05f, 0.88f, s.charge));
         Juice.Shake(0.12f + 0.12f * s.charge);
     }

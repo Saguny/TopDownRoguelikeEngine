@@ -205,13 +205,13 @@ public class DipperFormation : DuelWeapon
     private void Land(Sword s, int i)
     {
         Strike(s.target, s.damage);
-        FxBatch.Play(hitArt, 22f, s.pos, s.volley ? 1.2f : 1f, Layer, Order + 3);
+        FxBatch.PlayShot(hitArt, 22f, s.pos, s.volley ? 1.2f : 1f, Layer, Order + 3);
         if (!s.volley) Sound("dipper_hit", s.pos, 0.45f, 0.95f + i * 0.04f);
         else if (++landed == 7)
         {
             // the seven meet: the Dipper stamped over him
             Vector2 at = AimAt(s.target);
-            FxBatch.Play(sealArt, 16f, at, 1.5f, Layer, Order + 4);
+            FxBatch.PlayShot(sealArt, 16f, at, 1.5f, Layer, Order + 4);
             Sound("dipper_seal", at, 0.9f);
             Juice.Shake(0.22f);
         }

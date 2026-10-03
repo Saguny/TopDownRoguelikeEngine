@@ -21,6 +21,7 @@ public static class WeaponFx
         sr.color = art != null ? Color.white : placeholderColor;
         sr.sortingLayerName = sortingLayer;
         sr.sortingOrder = sortingOrder;
+        if (PlayerShots.UnderRoot(parent)) PlayerShots.Tag(sr);
         return sr;
     }
 
@@ -134,6 +135,7 @@ public sealed class Afterimage
             var sr = go.AddComponent<SpriteRenderer>();
             sr.sortingLayerID = source.sortingLayerID;
             sr.sortingOrder = source.sortingOrder - 1;
+            sr.sharedMaterial = source.sharedMaterial;      // a faded shot's trail fades with it
             sr.enabled = false;
             copies[i] = sr;
         }

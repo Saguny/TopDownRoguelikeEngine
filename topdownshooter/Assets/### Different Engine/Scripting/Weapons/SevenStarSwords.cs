@@ -146,7 +146,7 @@ public class SevenStarSwords : Weapon<SevenStarSwordsData>
         for (int i = 0; i < swords.Count; i++)
         {
             Vector2 from = swords[i].transform.position;
-            if (Data.launchFx != null) FxOneShot.Play(Data.launchFx, from);
+            if (Data.launchFx != null) FxOneShot.PlayShot(Data.launchFx, from);
 
             // each sword's fan is turned a little, so the bursts don't stack into the same lines
             float offset = 360f / n * i / swords.Count;
@@ -240,7 +240,7 @@ public class SevenStarSwords : Weapon<SevenStarSwordsData>
                     if (s.hit.Contains(e)) continue;
                     Hit(e, s.damage);
                     SignatureSlow(e);
-                    if (Data.starHitFx != null) FxOneShot.Play(Data.starHitFx, pos);
+                    if (Data.starHitFx != null) FxOneShot.PlayShot(Data.starHitFx, pos);
                     if (hitSound != null && Time.time >= nextHitSound)
                     {
                         nextHitSound = Time.time + HitSoundEvery;

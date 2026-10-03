@@ -178,7 +178,7 @@ public class DragonLine : Weapon<DragonLineData>
         foreach (var e in touching)
         {
             if (!already.Add(e)) continue;
-            if (bite && Data.biteFx != null) FxOneShot.Play(Data.biteFx, e.transform.position);
+            if (bite && Data.biteFx != null) FxOneShot.PlayShot(Data.biteFx, e.transform.position);
             Hit(e, damage);
         }
     }
@@ -232,7 +232,7 @@ public class DragonLine : Weapon<DragonLineData>
             {
                 fireTimer = 0f;
                 Vector2 at = h + forward * Data.fireReach * AreaMul;
-                if (Data.fireFx != null) FxOneShot.Play(Data.fireFx, at, FxOneShot.Angle(forward), AreaMul);
+                if (Data.fireFx != null) FxOneShot.PlayShot(Data.fireFx, at, FxOneShot.Angle(forward), AreaMul);
                 HitEvery(at, Data.fireRadius * AreaMul, d.nextFire, fire, now, centre, false);
             }
 

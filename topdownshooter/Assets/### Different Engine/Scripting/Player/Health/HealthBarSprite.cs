@@ -50,6 +50,9 @@ public class HealthBarSprite : MonoBehaviour
     public Color backColor = Color.black;
     [Tooltip("hidden while at full health")]
     public bool hideWhenFull = true;
+    [Tooltip("hiding when full: seconds it stays up after health is topped back up, then how long it takes to fade")]
+    [Min(0f)] public float fullLinger = 1.2f;
+    [Min(0.01f)] public float fullFade = 0.35f;
     [Tooltip("the fill shrinks in whole steps of this size, e.g. one pixel of the art. 0 = smoothly")]
     public float pixelWidth = 0f;
 
@@ -248,14 +251,32 @@ public class HealthBarSprite : MonoBehaviour
         // keep left edge fixed after width change
         _fgT.localPosition = new Vector3(-size.x * 0.5f + w * 0.5f, 0f, 0f);
 
-        _fg.color = fillColor;
-        _bg.color = backColor;
+        // hiding when full: up the moment health drops, and once it's full again it waits a
+        // moment, then fades out (in edit mode it simply shows or hides)
+        float alpha = 1f;
+        if (hideWhenFull)
+        {
+            bool full = t >= 0.999f;
+            if (!Application.isPlaying) alpha = full ? 0f : 1f;
+            else
+            {
+                float now = Time.unscaledTime;
+                if (!full) _fullSince = -1f;
+                else if (_fullSince < 0f) _fullSince = now;
+                alpha = _fullSince < 0f ? 1f : 1f - Mathf.Clamp01((now - _fullSince - fullLinger) / fullFade);
+                if (!_everHurt && full) alpha = 0f;      // never shown before the first hit
+                if (!full) _everHurt = true;
+            }
+        }
 
-        
-        bool show = !hideWhenFull || t < 0.999f;
-        _bg.enabled = show;
-        _fg.enabled = show && w > 0f;
+        _fg.color = new Color(fillColor.r, fillColor.g, fillColor.b, fillColor.a * alpha);
+        _bg.color = new Color(backColor.r, backColor.g, backColor.b, backColor.a * alpha);
+        _bg.enabled = alpha > 0f;
+        _fg.enabled = alpha > 0f && w > 0f;
     }
+
+    private float _fullSince = -1f;
+    private bool _everHurt;
 
     
     private GameObject GetOrCreate(string child)
