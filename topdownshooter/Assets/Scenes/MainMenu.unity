@@ -23952,7 +23952,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1342290039
 RectTransform:
   m_ObjectHideFlags: 0
@@ -23997,6 +23997,7 @@ MonoBehaviour:
   endlessToggle: {fileID: 2046971688}
   endlessLockText: {fileID: 0}
   startButton: {fileID: 1006078501}
+  practiceButton: {fileID: 0}
   loadingPanel: {fileID: 370437499}
   gameSceneName: 
   selectedColor: {r: 1, g: 0.8235294, b: 0.23529412, a: 1}
@@ -33202,7 +33203,6 @@ GameObject:
   - component: {fileID: 1794185309}
   - component: {fileID: 1794185312}
   - component: {fileID: 1794185311}
-  - component: {fileID: 1794185310}
   m_Layer: 5
   m_Name: TicketAmount
   m_TagString: Untagged
@@ -33230,19 +33230,6 @@ RectTransform:
   m_AnchoredPosition: {x: -77, y: -35.6}
   m_SizeDelta: {x: 200, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1794185310
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1794185308}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd7dba1232eb8b4c7dd0a10b61e34703, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  format: '{0}'
 --- !u!114 &1794185311
 MonoBehaviour:
   m_ObjectHideFlags: 0
