@@ -12535,19 +12535,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 647764053}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1268390566}
-        m_TargetAssemblyTypeName: MenuNavigator, Assembly-CSharp
-        m_MethodName: Open
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 796172605}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &647764053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25444,7 +25432,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1342290040}
         m_TargetAssemblyTypeName: MapSelectionMenu, Assembly-CSharp
-        m_MethodName: StartGame
+        m_MethodName: StartPractice
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

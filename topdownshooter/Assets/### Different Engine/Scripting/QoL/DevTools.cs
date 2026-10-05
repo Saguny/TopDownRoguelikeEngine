@@ -264,11 +264,7 @@ public class DevTools : MonoBehaviour
     {
         if (loop == null || director == null || inventory == null) return;
 
-        int picks = 0;
-        FillAndMax(UpgradeCategory.Weapon, inventory.WeaponSlots, ref picks);
-        FillAndMax(UpgradeCategory.Passive, inventory.PassiveSlots, ref picks);
-        foreach (var u in inventory.RunUpgrades)
-            if (u != null && !u.TakesSlot) Max(u, ref picks);
+        int picks = PracticeRun.MaxBuild(inventory);     // the same build the Practice button gives
         inventory.SetLevel(Mathf.Max(inventory.CurrentLevel, 1 + picks));
 
         float was = loop.RunSeconds;
@@ -276,28 +272,7 @@ public class DevTools : MonoBehaviour
         if (health != null) health.Heal(health.Max);
     }
 
-    // what's held of a kind levelled to its cap, then new ones taken and maxed until its slots are full
-    private void FillAndMax(UpgradeCategory kind, int slots, ref int picks)
-    {
-        var all = inventory.RunUpgrades.Where(u => u != null && u.TakesSlot && u.Category == kind).ToList();
-        int held = 0;
-        foreach (var u in all.Where(u => u.Level > 0)) { Max(u, ref picks); held++; }
-        foreach (var u in all.Where(u => u.Level == 0))
-        {
-            if (slots > 0 && held >= slots) break;
-            Max(u, ref picks);
-            held++;
-        }
-    }
 
-    private void Max(UpgradeData u, ref int picks)
-    {
-        for (int guard = 0; guard < 32 && u.CanOffer && !u.IsAtCap; guard++)
-        {
-            inventory.TakeUpgrade(u);
-            picks++;
-        }
-    }
 
     private void SetSpeed(float s)
     {

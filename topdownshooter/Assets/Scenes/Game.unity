@@ -12240,19 +12240,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 976561519}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6482cbb4030840f3b3575de0babbeab5, type: 3}
+  m_Script: {fileID: 11500000, guid: ecc44b91c44547c68a9cbfa12a5fe549, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponsGrid: {fileID: 0}
-  passivesGrid: {fileID: 0}
-  slotTemplate: {fileID: 3459028500403986563, guid: 6a92cc9d643bcca4a9806fedcff967dc, type: 3}
-  menu: {fileID: 824823580}
-  weaponsLabel: {fileID: 0}
-  passivesLabel: {fileID: 0}
-  maxedColor: {r: 0.41960785, g: 1, b: 0, a: 1}
-  previewColor: {r: 0.41960785, g: 1, b: 0, a: 1}
-  newSlotAlpha: 0.5
-  previewPulse: 0.12
+  icons: []
+  title: {fileID: 0}
+  gap: 25
 --- !u!114 &976561522
 MonoBehaviour:
   m_ObjectHideFlags: 0

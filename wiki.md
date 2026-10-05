@@ -15,6 +15,7 @@ The project lives in `topdownshooter/`; game code and data are under `Assets/###
 | **Empowered horde** | From 24:00 (when most players are maxed out) every ordinary enemy spawns empowered: 1.15× size, 3× health, 1.5× damage, steadier against knockback, outlined in crimson. Like an elite, but without the envelope. |
 | **Final boss** | Wave 10, or at 28:00 on the run clock at the latest. After the last rush you're healed to full. |
 | **End of the night** | At 30:00 the Wuchang (the black and white guards of the dead) come for the player; that counts as surviving. Beating the final boss wins the run. |
+| **Practice** | Once you've met a map's final boss in a run, the map selection's **Practice** button takes you straight to that boss with a maxed build. Nothing counts: no coins, credits, unlocks or runs towards Endless. |
 | **Endless** | Unlocks after finishing 5 normal runs. Enemy scaling has no limit, overcharge picks appear (see below), bombardment strikes rain down, and your best time is recorded. |
 
 **Qi** is XP. Every kill gives 1 qi (times Growth), and some enemies drop more as pickups in three tiers: azure **qi sparks**, jade **qi beads** and golden **dragon pearls**. The thicker the crowd, the fewer pieces drop, each worth more. Qi only fills the level bar.
@@ -63,7 +64,7 @@ Timeline events add swarms, stampedes, encirclements and elites (elites drop for
 | **Cinnabar Ink Brush** | A giant brush at your heels paints burning cinnabar wherever you walk | Calligraphic Seal Grid (close a loop of ink: everything inside is wiped out) |
 | **Electrical Aura** | A close-range support field; every other pulse it also clears enemy shots within 2 units. Area grows it by +40% at most | — |
 | **Meteorite** | Meteors crash down on the horde | — |
-| **Command Token** (**E**) | An **ability**: a shockwave that hits every enemy on screen and clears every enemy shot (the game's "bomb"). Takes no slot, so it's still offered with every slot full. 8 levels: shorter recharge, a stun, a qi pull, and from level 5 it also cuts 25–70% of each ordinary enemy's max health (not bosses or elites) | — |
+| **Command Token** (**E**) | An **ability** (2 ability slots, keys E and Q): a shockwave that hits every enemy on screen and clears every enemy shot (the game's "bomb"). Takes no slot, so it's still offered with every slot full. 8 levels: shorter recharge, a stun, a qi pull, and from level 5 it also cuts 25–70% of each ordinary enemy's max health (not bosses or elites) | — |
 | *Ice Cloud* | Snow clouds that freeze the horde (currently out of the level-up pool) | Frost Tornado |
 
 Attack class: arrows and blades are **Physical**, talismans, spells and summons **Magical**. Some enemies take more of one than the other.
@@ -127,6 +128,8 @@ Tickets banked between runs, **3 at most**. A run that's won, or lasts 10:00 on 
 - **pity**: if it could have come up but didn't for 6 level ups in a row (5 with 2 credits, 4 with 3), the next level up shows it. This lasts until you take it
 
 Credits are spent when the run starts. Taking one back off an item before then returns it.
+
+**Favor Item** (map selection) opens the picker: every weapon, passive and ability, one ticket each. Picked items turn yellow, the line under the grid says what Confirm spends, and while the picker is open Back reads Close. Favored items' level up cards wear a rainbow frame and say *Favored* instead of *New*; the pause menu's arrow turns Current Upgrades over to show them, with how close each one's pity is.
 
 ---
 

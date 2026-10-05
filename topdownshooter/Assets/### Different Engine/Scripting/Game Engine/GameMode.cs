@@ -6,13 +6,17 @@ using UnityEngine;
 public enum RunMode
 {
     Normal,
-    Endless
+    Endless,
+    // a map's final boss alone, from the map selection's Practice button (PracticeRun)
+    Practice
 }
 
 public static class GameMode
 {
     public static RunMode Current { get; set; } = RunMode.Normal;
     public static bool IsEndless => Current == RunMode.Endless;
+    // nothing a practice run does counts: no coins, credits, unlocks or run counted
+    public static bool IsPractice => Current == RunMode.Practice;
 
 #if UNITY_EDITOR
     private const string EditorKey = "GameMode.EditorDefault";

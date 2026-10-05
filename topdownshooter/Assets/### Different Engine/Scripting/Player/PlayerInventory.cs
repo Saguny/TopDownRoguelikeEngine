@@ -29,6 +29,8 @@ public class PlayerInventory : MonoBehaviour
     [Header("Slots (a normal run; Endless holds everything)")]
     [SerializeField, Min(1)] private int weaponSlots = 6;
     [SerializeField, Min(1)] private int passiveSlots = 6;
+    [Tooltip("abilities held at once (the Command Token on E; a second would go on Q). not lifted in Endless")]
+    [SerializeField, Min(1)] private int abilitySlots = 2;
     [Tooltip("how much likelier an upgrade the player already took this run (a weapon or a passive) is to be offered: 0.1 = 10%")]
     [SerializeField, Min(0f)] private float heldWeaponBonus = 0.1f;
 
@@ -48,6 +50,13 @@ public class PlayerInventory : MonoBehaviour
     public int PassiveSlots => GameMode.IsEndless ? 0 : passiveSlots;
     public int WeaponsHeld => CountTaken(UpgradeCategory.Weapon);
     public int PassivesHeld => CountTaken(UpgradeCategory.Passive);
+    // abilities have their own two slots, one per key: E, then Q
+    public int AbilitySlots => abilitySlots;
+    public int AbilitiesHeld
+    {
+        get { int n = 0; foreach (var u in taken) if (u != null && u.Category == UpgradeCategory.Ability) n++; return n; }
+    }
+    public static readonly KeyCode[] AbilityKeys = { KeyCode.E, KeyCode.Q };
 
     private int CountTaken(UpgradeCategory category)
     {
@@ -238,6 +247,7 @@ public class PlayerInventory : MonoBehaviour
         // a full row takes nothing new: what's held can still level up
         if (WeaponSlots > 0 && WeaponsHeld >= WeaponSlots) pool.RemoveAll(u => u.Category == UpgradeCategory.Weapon && u.Level == 0);
         if (PassiveSlots > 0 && PassivesHeld >= PassiveSlots) pool.RemoveAll(u => u.Category == UpgradeCategory.Passive && u.Level == 0);
+        if (AbilitiesHeld >= AbilitySlots) pool.RemoveAll(u => u.Category == UpgradeCategory.Ability && u.Level == 0);
         return pool;
     }
 
@@ -577,8 +587,9 @@ public class PlayerInventory : MonoBehaviour
             runtimeFor[src] = inst;
         }
 
-        // the credits spent before the run go on its copies
-        RunCredits.BeginRun();
+        // the credits spent before the run go on its copies (a practice run leaves them waiting)
+        if (!GameMode.IsPractice) RunCredits.BeginRun();
+        else RunCredits.ClearActive();
         favourDry.Clear();
         foreach (var u in runtimeUpgrades)
             if (RunCredits.IsFavoured(u)) favourDry[u] = 0;

@@ -62,6 +62,8 @@ public class GameLoopController : MonoBehaviour
         // normal runs end at the time limit if nothing has ended them before
         if (!TryGetComponent(out RunTimeLimit _)) gameObject.AddComponent<RunTimeLimit>();
         loop = StartCoroutine(Loop());
+        // practising the boss: a maxed build and straight to it
+        if (GameMode.IsPractice) StartCoroutine(PracticeRun.Begin(this));
     }
 
     // this is where we inject the scene ui into the spawned prefab

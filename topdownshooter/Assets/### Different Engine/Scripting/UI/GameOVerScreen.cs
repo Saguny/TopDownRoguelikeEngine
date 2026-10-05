@@ -43,10 +43,10 @@ public class GameOverScreen : MonoBehaviour
         // a finished run counts towards Endless (it may be the one that unlocks it; the unlock
         // list hears about it). in Endless the score is how long you lasted
         if (GameMode.IsEndless) ShowBest();
-        else RunProgress.RecordNormalRun();
+        else if (!GameMode.IsPractice) RunProgress.RecordNormalRun();
 
         // a run that went the distance (or was won) earns a credit to favour an item next time
-        RunCredits.EarnFromRun(won, RunStats.RunClock);
+        if (!GameMode.IsPractice) RunCredits.EarnFromRun(won, RunStats.RunClock);
 
         var screen = won && victoryPanel != null ? victoryPanel : panel;
         if (screen != null)

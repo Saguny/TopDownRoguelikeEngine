@@ -65,6 +65,9 @@ public class PauseMenu : MonoBehaviour
         Wire(resumeButton != null ? resumeButton : FindUnderPanel<Button>("Resume"), OnResume);
         Wire(quitButton != null ? quitButton : FindUnderPanel<Button>("Quit"), OnExitToMenu);
 
+        // Current Upgrades and Favored Items share a place; the NextPanel arrow turns between them
+        PanelFlip.Wire(pausePanel);
+
         pausePanel.SetActive(false);
 
         // keep mouse usable

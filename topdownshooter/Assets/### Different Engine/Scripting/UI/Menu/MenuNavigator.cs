@@ -69,9 +69,14 @@ public class MenuNavigator : MonoBehaviour
         Switch(page);
     }
 
+    // a box open over the page (the ticket picker): Back, Escape and B close it first. returns
+    // true when it closed something
+    public static System.Func<bool> CloseModal;
+
     // returns to the page before this one
     public void Back()
     {
+        if (CloseModal != null && CloseModal()) return;
         if (history.Count == 0)
         {
             Home();

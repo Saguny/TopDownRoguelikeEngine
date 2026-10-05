@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 // the level up screen's list of what this run has picked: weapons in one grid, passives in the
-// other, each slot showing its icon and level, in the order they were taken. the slot template is
+// next, abilities (the Command Token) in a third, each slot showing its icon and level, in the
+// order they were taken. the slot template is
 // copied for each. while a card is highlighted, its item previews the pick: its slot pulses with
 // the level it would reach, a new pick shows as a faded NEW slot, and an evolution shows its
 // evolved icon. fields left empty are found by name
@@ -22,6 +23,10 @@ public class LoadoutPanel : MonoBehaviour
     [SerializeField] private TMP_Text weaponsLabel;
     [Tooltip("the same for the Passives title")]
     [SerializeField] private TMP_Text passivesLabel;
+    [Tooltip("where ability slots go. empty: the child called Grid under the Abilities label. none: abilities aren't listed")]
+    [SerializeField] private RectTransform abilitiesGrid;
+    [Tooltip("the same for the Abilities title, e.g. Abilities (1/2)")]
+    [SerializeField] private TMP_Text abilitiesLabel;
 
     [Header("Look")]
     [SerializeField] private Color maxedColor = new Color32(0x6B, 0xFF, 0x00, 0xFF);
@@ -42,12 +47,13 @@ public class LoadoutPanel : MonoBehaviour
 
     private readonly List<Slot> weaponSlots = new List<Slot>();
     private readonly List<Slot> passiveSlots = new List<Slot>();
+    private readonly List<Slot> abilitySlots = new List<Slot>();
     private PlayerInventory inventory;
     private UpgradeData previewing;
     private Slot pulsing;
     private Color levelColor = Color.white;
     private bool found;
-    private string weaponsTitle, passivesTitle;
+    private string weaponsTitle, passivesTitle, abilitiesTitle;
 
     private void Awake() => FindParts();
 
@@ -78,32 +84,37 @@ public class LoadoutPanel : MonoBehaviour
         if (pulsing != null && pulsing.root != null) pulsing.root.transform.localScale = pulsing.scale;
         pulsing = null;
 
-        int weapons = 0, passives = 0;
+        int weapons = 0, passives = 0, abilities = 0;
         if (inventory != null)
         {
             foreach (var u in inventory.Taken)
-            {
-                if (u == null || !u.TakesSlot) continue;   // the Command Token has its own prompt on screen
-                if (u.Category == UpgradeCategory.Weapon) Show(weaponSlots, weaponsGrid, weapons++, u, false);
-                else Show(passiveSlots, passivesGrid, passives++, u, false);
-            }
+                if (Listed(u)) Place(u, false, ref weapons, ref passives, ref abilities);
         }
 
         // a pick that isn't held yet shows as a faded slot at the end of its row
-        if (previewing != null && previewing.Level == 0 && previewing.TakesSlot)
-        {
-            if (previewing.Category == UpgradeCategory.Weapon) Show(weaponSlots, weaponsGrid, weapons++, previewing, true);
-            else Show(passiveSlots, passivesGrid, passives++, previewing, true);
-        }
+        if (previewing != null && previewing.Level == 0 && Listed(previewing))
+            Place(previewing, true, ref weapons, ref passives, ref abilities);
 
         HideFrom(weaponSlots, weapons);
         HideFrom(passiveSlots, passives);
+        HideFrom(abilitySlots, abilities);
 
         if (inventory != null)
         {
             Count(weaponsLabel, weaponsTitle, inventory.WeaponsHeld, inventory.WeaponSlots);
             Count(passivesLabel, passivesTitle, inventory.PassivesHeld, inventory.PassiveSlots);
+            Count(abilitiesLabel, abilitiesTitle, inventory.AbilitiesHeld, inventory.AbilitySlots);
         }
+    }
+
+    // what has a row: weapons and passives that fill a slot, and abilities (the gifts don't)
+    private static bool Listed(UpgradeData u) => u != null && (u.TakesSlot || u.Category == UpgradeCategory.Ability);
+
+    private void Place(UpgradeData u, bool isNew, ref int weapons, ref int passives, ref int abilities)
+    {
+        if (u.Category == UpgradeCategory.Ability) Show(abilitySlots, abilitiesGrid, abilities++, u, isNew);
+        else if (u.Category == UpgradeCategory.Weapon) Show(weaponSlots, weaponsGrid, weapons++, u, isNew);
+        else Show(passiveSlots, passivesGrid, passives++, u, isNew);
     }
 
     // Weapons (3/6). Endless has no limit, so just the title
@@ -203,10 +214,13 @@ public class LoadoutPanel : MonoBehaviour
 
         if (weaponsGrid == null) weaponsGrid = GridUnder("Weapon");
         if (passivesGrid == null) passivesGrid = GridUnder("Passive");
+        if (abilitiesGrid == null) abilitiesGrid = GridUnder("Abilit");
         if (weaponsLabel == null) weaponsLabel = LabelSaying("Weapon");
         if (passivesLabel == null) passivesLabel = LabelSaying("Passive");
+        if (abilitiesLabel == null) abilitiesLabel = LabelSaying("Abilit");
         weaponsTitle = Title(weaponsLabel);
         passivesTitle = Title(passivesLabel);
+        abilitiesTitle = Title(abilitiesLabel);
 
         if (slotTemplate == null)
         {
@@ -221,7 +235,8 @@ public class LoadoutPanel : MonoBehaviour
                 if (level.TryGetComponent(out TMP_Text tmp)) levelColor = tmp.color;
                 else if (level.TryGetComponent(out Text text)) levelColor = text.color;
             }
-            slotTemplate.SetActive(false);
+            // one in the scene is hidden; a prefab asset is left as it is
+            if (slotTemplate.scene.IsValid()) slotTemplate.SetActive(false);
         }
 
         // no grid under the Passives label yet: copy the weapons grid there, empty

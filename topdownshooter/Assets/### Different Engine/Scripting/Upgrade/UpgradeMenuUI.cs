@@ -212,8 +212,13 @@ public class UpgradeMenuUI : MonoBehaviour
             if (ownCategoryText)
                 categoryTexts[i].text = data.CategoryLabel;
 
+            // a favoured item (a ticket spent on it before the run) says so where a new one says New,
+            // and its card wears a rainbow
+            bool favoured = RunCredits.IsFavoured(data);
+            string progress = favoured && data.Level == 0 ? "Favored" : data.GetLevelProgress();
             if (lvlText != null && i < lvlText.Length && lvlText[i] != null)
-                lvlText[i].text = ownCategoryText ? data.GetLevelProgress() : $"{data.CategoryLabel}   {data.GetLevelProgress()}";
+                lvlText[i].text = ownCategoryText ? progress : $"{data.CategoryLabel}   {progress}";
+            RainbowFrame.Set(btn.gameObject, favoured);
 
             if (descriptionTexts != null && i < descriptionTexts.Length && descriptionTexts[i] != null)
                 descriptionTexts[i].text = data.GetDisplayDescription();

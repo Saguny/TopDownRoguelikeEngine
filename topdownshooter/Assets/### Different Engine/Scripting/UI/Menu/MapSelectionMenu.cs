@@ -6,8 +6,10 @@ using UnityEngine.UI;
 // the map selection page. one card per map in the MapCatalog: a Toggle on the card, with
 // MapImage, MapName and MapDescription children filled in from the catalog, and exactly one card
 // picked at a time, its backdrop yellow. a locked map can't be picked: clicking it buzzes and
-// flashes it red. the endless toggle, remembered and locked until endless is earned. and Start
-// Game, which starts the run behind the loading panel. fields left empty are found by name
+// flashes it red. the endless toggle, remembered and locked until endless is earned. Start Game,
+// which starts the run behind the loading panel; Practice, which goes straight to the picked
+// map's final boss once it's been met in a run (greyed out until then); and Favor Item, the
+// ticket picker (FavorPicker). fields left empty are found by name
 public class MapSelectionMenu : MonoBehaviour
 {
     [Tooltip("one toggle per map, in catalog order. cards past the last map are hidden. empty: every MapBackdrop toggle under this panel")]
@@ -18,6 +20,8 @@ public class MapSelectionMenu : MonoBehaviour
     [SerializeField] private TMP_Text endlessLockText;
     [Tooltip("empty: the child called StartGameButton")]
     [SerializeField] private Button startButton;
+    [Tooltip("empty: the child called PracticeButton. open once the picked map's final boss has been met")]
+    [SerializeField] private Button practiceButton;
     [Tooltip("shown from Start Game until the run is on screen. empty: the scene's LoadingPanel")]
     [SerializeField] private GameObject loadingPanel;
     [Tooltip("empty: the scene the MainMenu component starts")]
@@ -62,6 +66,7 @@ public class MapSelectionMenu : MonoBehaviour
             {
                 if (on) MapSelection.Index = index;
                 Tint(card);
+                ShowPractice();
             });
             if (!card.TryGetComponent(out LockedClick lockedClick)) lockedClick = card.gameObject.AddComponent<LockedClick>();
             lockedClick.clicked = () => Refuse(card);
@@ -71,7 +76,11 @@ public class MapSelectionMenu : MonoBehaviour
             endlessToggle.onValueChanged.AddListener(on => { PlayerPrefs.SetInt(EndlessKey, on ? 1 : 0); PlayerPrefs.Save(); });
 
         // the button calls StartGame from the inspector; wire it here if nothing does yet
-        if (startButton != null && !CallsThis(startButton)) startButton.onClick.AddListener(StartGame);
+        if (startButton != null && !CallsThis(startButton, nameof(StartGame))) startButton.onClick.AddListener(StartGame);
+        if (practiceButton != null && !CallsThis(practiceButton, nameof(StartPractice))) practiceButton.onClick.AddListener(StartPractice);
+
+        // the ticket picker runs itself off the parts under this page
+        if (!TryGetComponent(out FavorPicker _)) gameObject.AddComponent<FavorPicker>();
     }
 
     private void OnEnable() => Refresh();
@@ -92,6 +101,24 @@ public class MapSelectionMenu : MonoBehaviour
         if (startButton != null) startButton.interactable = false;
 
         SceneLoader.Load(SceneToLoad(), loadingPanel);
+    }
+
+    // the picked map's final boss on its own, with a maxed build (PracticeRun). nothing counts
+    public void StartPractice()
+    {
+        if (SceneLoader.Busy || !PracticeOpen) return;
+        GameMode.Current = RunMode.Practice;
+        if (startButton != null) startButton.interactable = false;
+        if (practiceButton != null) practiceButton.interactable = false;
+        SceneLoader.Load(SceneToLoad(), loadingPanel);
+    }
+
+    private static bool PracticeOpen => MapProgress.IsUnlocked(MapSelection.Index) && MapProgress.BossSeen(MapSelection.Index);
+
+    // greyed out until the picked map's final boss has been met
+    private void ShowPractice()
+    {
+        if (practiceButton != null) practiceButton.interactable = PracticeOpen && !SceneLoader.Busy;
     }
 
     private void Refresh()
@@ -141,6 +168,7 @@ public class MapSelectionMenu : MonoBehaviour
             endlessLockText.text = unlocked ? string.Empty : $"finish {left} more run{(left == 1 ? "" : "s")} to unlock";
         }
         if (startButton != null) startButton.interactable = !SceneLoader.Busy;
+        ShowPractice();
     }
 
     private void Tint(Toggle card)
@@ -229,6 +257,11 @@ public class MapSelectionMenu : MonoBehaviour
             var t = FindDeep(transform, "StartGameButton");
             if (t != null) startButton = t.GetComponent<Button>();
         }
+        if (practiceButton == null)
+        {
+            var t = FindDeep(transform, "PracticeButton");
+            if (t != null) practiceButton = t.GetComponent<Button>();
+        }
 
         if (loadingPanel == null)
             foreach (var root in gameObject.scene.GetRootGameObjects())
@@ -238,10 +271,10 @@ public class MapSelectionMenu : MonoBehaviour
             }
     }
 
-    private bool CallsThis(Button button)
+    private bool CallsThis(Button button, string method)
     {
         for (int i = 0; i < button.onClick.GetPersistentEventCount(); i++)
-            if (button.onClick.GetPersistentTarget(i) == this && button.onClick.GetPersistentMethodName(i) == nameof(StartGame))
+            if (button.onClick.GetPersistentTarget(i) == this && button.onClick.GetPersistentMethodName(i) == method)
                 return true;
         return false;
     }

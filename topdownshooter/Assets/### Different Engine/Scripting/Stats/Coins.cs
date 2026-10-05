@@ -117,6 +117,7 @@ public static class Coins
     // screen) but not the HUD's envelope counter
     public static int Gift(int amount)
     {
+        if (GameMode.IsPractice) return 0;        // a practice run pays nothing
         int paid = WithGreed(amount);
         if (paid <= 0) return 0;
         Add(paid);

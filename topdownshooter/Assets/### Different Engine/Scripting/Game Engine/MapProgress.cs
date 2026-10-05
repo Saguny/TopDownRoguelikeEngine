@@ -12,11 +12,26 @@ public static class MapProgress
     {
         GameEvents.OnRunWon -= Won;
         GameEvents.OnRunWon += Won;
+        GameEvents.OnFinalBossStarted -= MetBoss;
+        GameEvents.OnFinalBossStarted += MetBoss;
+    }
+
+    // ---- the final boss met: its map's Practice button opens
+
+    private const string BossPrefix = "map_boss_seen_";
+    public static bool BossSeen(int index) => PlayerPrefs.GetInt(BossPrefix + Key(index), 0) == 1;
+
+    private static void MetBoss()
+    {
+        int index = MapSelection.Index;
+        if (index < 0 || BossSeen(index)) return;
+        PlayerPrefs.SetInt(BossPrefix + Key(index), 1);
+        PlayerPrefs.Save();
     }
 
     private static void Won()
     {
-        if (GameMode.IsEndless) return;
+        if (GameMode.IsEndless || GameMode.IsPractice) return;
 
         // the end screen's unlocks: the next map, when this run is what opened it
         int index = MapSelection.Index;
@@ -59,6 +74,13 @@ public static class MapProgress
     private static void ClearAll()
     {
         for (int i = 0; i < MapSelection.Count; i++) MarkCleared(i);
+    }
+
+    [UnityEditor.MenuItem("Tools/Progress/Meet Every Final Boss")]
+    private static void MeetAll()
+    {
+        for (int i = 0; i < MapSelection.Count; i++) PlayerPrefs.SetInt(BossPrefix + Key(i), 1);
+        PlayerPrefs.Save();
     }
 
     [UnityEditor.MenuItem("Tools/Progress/Lock Maps Again")]

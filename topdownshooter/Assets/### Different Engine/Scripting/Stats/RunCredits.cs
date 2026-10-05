@@ -172,6 +172,9 @@ public static class RunCredits
         Changed?.Invoke();
     }
 
+    // a run that doesn't spend them (practice): nothing favoured
+    public static void ClearActive() => active.Clear();
+
     // this run's credits on an item (a run's copy or the asset)
     public static int ActiveStacks(UpgradeData u) => u != null && active.TryGetValue(Key(u), out int s) ? s : 0;
     public static bool IsFavoured(UpgradeData u) => ActiveStacks(u) > 0;
