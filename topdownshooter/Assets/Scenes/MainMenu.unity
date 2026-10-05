@@ -23952,7 +23952,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1342290039
 RectTransform:
   m_ObjectHideFlags: 0
@@ -23997,6 +23997,7 @@ MonoBehaviour:
   endlessToggle: {fileID: 2046971688}
   endlessLockText: {fileID: 0}
   startButton: {fileID: 1006078501}
+  practiceButton: {fileID: 0}
   loadingPanel: {fileID: 370437499}
   gameSceneName: 
   selectedColor: {r: 1, g: 0.8235294, b: 0.23529412, a: 1}
