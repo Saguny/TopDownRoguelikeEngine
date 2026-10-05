@@ -3,16 +3,14 @@ using UnityEngine;
 using UnityEngine.UI;
 
 // two panels sharing a place, a button turning between them like a card: the pause menu's Current
-// Upgrades and Favored Items (its NextPanel arrow). the face showing folds edge-on in a few
-// chunky steps, the other unfolds past flat and settles, the way the game's menus slam in, and the
-// arrow turns to point back. on real time (the game is paused). the pause menu always opens on
+// Upgrades and Favored Items (its NextPanel arrow). the face showing folds edge-on, the other
+// unfolds past flat and settles, the way the game's menus slam in, and the
+// arrow turns to point back. smooth, on real time (the game is paused). the pause menu always opens on
 // the first face. Wire puts one on the button, finding the three by name
 public class PanelFlip : MonoBehaviour
 {
     public RectTransform front, back;
-    [Min(0.05f)] public float seconds = 0.22f;
-    [Tooltip("art frames a second the fold steps at, for the game's pixel feel. 0 = smooth")]
-    [Min(0f)] public float stepsPerSecond = 30f;
+    [Min(0.05f)] public float seconds = 0.3f;
 
     private bool showingBack;
     private Coroutine flipping;
@@ -68,24 +66,25 @@ public class PanelFlip : MonoBehaviour
         showingBack = toBack;
         float half = seconds * 0.4f, rest = seconds - half;
 
-        // folding edge-on
+        // folding edge-on, gathering speed
         for (float t = 0f; t < half; t += Time.unscaledDeltaTime)
         {
-            float k = Stepped(t, half);
-            from.localScale = new Vector3(1f - k * k, 1f + 0.06f * k, 1f);
-            Arrow(k * 0.5f, toBack);
+            float k = Mathf.Clamp01(t / half);
+            float fold = Mathf.Sin(k * Mathf.PI * 0.5f);
+            from.localScale = new Vector3(Mathf.Cos(k * Mathf.PI * 0.5f), 1f + 0.05f * fold, 1f);
+            Arrow(fold * 0.5f, toBack);
             yield return null;
         }
         from.localScale = Vector3.one;
         from.gameObject.SetActive(false);
         to.gameObject.SetActive(true);
 
-        // and the other face unfolding, past flat and back, like a slam landing
+        // and the other face unfolding, a touch past flat and back, like a slam landing
         for (float t = 0f; t < rest; t += Time.unscaledDeltaTime)
         {
-            float k = Stepped(t, rest);
-            float x = 1f - (1f - k) * (1f - k) * (1f - 2.6f * k);   // overshoots a touch past 1
-            to.localScale = new Vector3(Mathf.Max(0.02f, x), 1f + 0.06f * (1f - k), 1f);
+            float k = Mathf.Clamp01(t / rest);
+            float x = BackOut(k);
+            to.localScale = new Vector3(Mathf.Max(0.02f, x), 1f + 0.05f * (1f - k) * (1f - k), 1f);
             Arrow(0.5f + k * 0.5f, toBack);
             yield return null;
         }
@@ -102,11 +101,11 @@ public class PanelFlip : MonoBehaviour
         transform.localScale = new Vector3(arrowScale.x * x, arrowScale.y, arrowScale.z);
     }
 
-    private float Stepped(float t, float length)
+    // eases out, a little past 1 before it settles
+    private static float BackOut(float k)
     {
-        float k = Mathf.Clamp01(t / length);
-        if (stepsPerSecond <= 0f) return k;
-        float steps = Mathf.Max(1f, Mathf.Round(length * stepsPerSecond));
-        return Mathf.Ceil(k * steps) / steps;
+        const float s = 1.4f;
+        float x = k - 1f;
+        return 1f + x * x * ((s + 1f) * x + s);
     }
 }

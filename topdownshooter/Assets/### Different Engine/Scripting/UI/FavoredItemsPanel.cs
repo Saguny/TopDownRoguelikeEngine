@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 // the pause menu's Favored Items: what tickets were spent on for this run (RunCredits), their
 // icons in the panel's Icon images, centred in a row, hover one for its numbers (click to pin
-// it), and a word for each on how close its pity is. with none, the title says so. it fills
+// it), and a word for each on how close its pity is. with none, the row is simply empty. it fills
 // itself each time it's shown (PanelFlip turns the pause menu to it)
 public class FavoredItemsPanel : MonoBehaviour
 {
@@ -16,7 +16,6 @@ public class FavoredItemsPanel : MonoBehaviour
     [Tooltip("the gap between the icons, in canvas units")]
     [SerializeField] private float gap = 25f;
 
-    private string titleWas;
     private readonly List<float> slotY = new List<float>();
 
     private void Awake()
@@ -27,7 +26,6 @@ public class FavoredItemsPanel : MonoBehaviour
         if (title == null)
             foreach (var t in GetComponentsInChildren<TMP_Text>(true))
                 if (t.text != null && t.text.TrimStart().StartsWith("Favor", System.StringComparison.OrdinalIgnoreCase)) { title = t; break; }
-        if (title != null) titleWas = title.text;
         foreach (var i in icons) slotY.Add(i.rectTransform.anchoredPosition.y);
     }
 
@@ -41,7 +39,6 @@ public class FavoredItemsPanel : MonoBehaviour
             foreach (var u in inventory.RunUpgrades)
                 if (u != null && RunCredits.IsFavoured(u)) favoured.Add(u);
 
-        if (title != null) title.text = favoured.Count > 0 ? titleWas : "No Favored Items this run";
 
         // the ones in use, centred as a row where the slots sit
         int shown = Mathf.Min(favoured.Count, icons.Count);
